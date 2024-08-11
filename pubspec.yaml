@@ -1,0 +1,86 @@
+name: fyp_umakan
+description: "My Flutter FYP"
+  
+publish_to: 'none'  
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+# Packages
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Icons
+  iconsax: ^0.0.8
+  cupertino_icons: ^1.0.6
+
+  #State Management
+  get: ^4.6.6
+  get_storage: ^2.1.1
+
+  # Firebase
+  firebase_core: ^3.0.0
+  firebase_storage: ^12.0.0
+  firebase_auth: ^5.0.0
+  cloud_firestore: ^5.0.0
+
+  # Utility
+  intl: ^0.17.0
+  url_launcher: ^6.1.8
+  connectivity_plus: ^4.0.0
+  http: ^1.2.1
+  logger: ^2.3.0
+  flutter_native_splash: ^2.4.0
+  lottie: ^3.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Local Assets
+  assets:
+    - assets/logos/
+    - assets/icons/
+    - assets/images/
+    - assets/images/animations/
+    
+
+  # Local Fonts
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 800
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+
+imports:  # Add this line if it doesn't exist
+  - path: ../popups/loaders.dart
+
+flutter_native_splash:
+  color: "#E5E4D2"
+  color_dark: "#000000"
+  image: assets/logos/UMakanLogo.png
+  image_dark: assets/logos/UMakanLogo.png
+
+  android_12:
+    color: "#E5E4D2"
+    color_dark: "#000000"
+    image: assets/logos/UMakanLogo.png
+    image_dark: assets/logos/UMakanLogo.png
+
+  web: false

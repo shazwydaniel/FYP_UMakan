@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "65631258059",
+    "project_id": "umakan-af531",
+    "storage_bucket": "umakan-af531.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65631258059:android:fbde538ac9277ef66be24e",
+        "android_client_info": {
+          "package_name": "com.example.fyp_umakan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "65631258059-vr7an5lavavh34jina59c4a23d021vl5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fyp_umakan",
+            "certificate_hash": "4a495783d98b928203c99694587962d0a293a9a9"
+          }
+        },
+        {
+          "client_id": "65631258059-duj0q7uab7b6bs1aq7aac9d2j2sdepqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABIXOu7ijwZeai5Ny6zg6I1VXCjeBcQrc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "65631258059-duj0q7uab7b6bs1aq7aac9d2j2sdepqh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "65631258059-vckgru0i92hb5p409kr03l1ptri3cn39.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fypUmakan"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
