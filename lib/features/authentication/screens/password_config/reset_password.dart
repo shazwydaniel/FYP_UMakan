@@ -29,7 +29,7 @@ class ResetPasswordScreen extends StatelessWidget {
 
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(TSizes.defaultSpace),
+          padding: const  EdgeInsets.all(TSizes.defaultSpace),
           child: Column(
             children: [
               Image(image: const AssetImage(TImages.deliveredEmailIllustration), width: THelperFunctions.screenWidth() * 1.2),

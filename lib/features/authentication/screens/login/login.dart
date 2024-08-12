@@ -4,6 +4,7 @@ import 'package:fyp_umakan/features/authentication/controllers/login/login_contr
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/password_config/forget_password.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
+import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
@@ -124,7 +125,7 @@ class LoginScreen extends StatelessWidget {
                       onPressed: () async {
                         bool isLogin = await controller.emailAndPasswordLogIn();
                         if (isLogin) {
-                          Get.to(() => HomePageScreen());
+                          Get.to(() => NavigationMenu());
                           print('-------------SUCCESSFULLY LOGGED IN!--------------');
                         }
                       },
