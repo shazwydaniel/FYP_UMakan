@@ -31,14 +31,18 @@ class AuthenticatorRepository extends GetxController {
 
     //Local Storage
     deviceStorage.writeIfNull('isFirstTime', true);
-    deviceStorage.read('isFirstTime') != true  ? Get.offAll(() => const LoginScreen()) : Get.offAll(() => const LoginScreen());
+    deviceStorage.read('isFirstTime') != true
+        ? Get.offAll(() => const LoginScreen())
+        : Get.offAll(() => const LoginScreen());
     // Change to landing page later
   }
 
   // Register ------------------------------------
-  Future<UserCredential> registerWithEmailandPassword(String email, String password) async {
-    try{
-      return await _auth.createUserWithEmailAndPassword(email: email, password: password);
+  Future<UserCredential> registerWithEmailandPassword(
+      String email, String password) async {
+    try {
+      return await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;
     } on FirebaseException catch (e) {
@@ -53,9 +57,29 @@ class AuthenticatorRepository extends GetxController {
   }
 
   // Login ------------------------------------------
-  Future<UserCredential> loginWithEmailandPassword(String email, String password) async {
-    try{
-      return await _auth.signInWithEmailAndPassword(email: email, password: password);
+  Future<UserCredential> loginWithEmailandPassword(
+      String email, String password) async {
+    try {
+      return await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Logout ------------------------------------------
+  Future<void> logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;
     } on FirebaseException catch (e) {

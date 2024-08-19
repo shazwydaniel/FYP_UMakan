@@ -1,6 +1,10 @@
 import "package:flutter/material.dart";
+import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
+import "package:get/get.dart";
+import "package:get/get_core/src/get_main.dart";
+import "package:get/get_navigation/src/snackbar/snackbar.dart";
 import "package:iconsax/iconsax.dart";
 
 class StudentProfilePageScreen extends StatelessWidget {
@@ -48,7 +52,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 4,  // Thin vertical line width
+                    width: 4, // Thin vertical line width
                     height: 40, // Adjust the height as needed
                     color: TColors.teal,
                   ),
@@ -56,7 +60,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                   Text(
                     'Personal Details',
                     style: TextStyle(
-                      fontSize: 16,  // Adjust the font size as needed
+                      fontSize: 16, // Adjust the font size as needed
                       fontWeight: FontWeight.normal,
                       color: dark ? Colors.white : Colors.white,
                     ),
@@ -98,7 +102,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 4,  // Thin vertical line width
+                    width: 4, // Thin vertical line width
                     height: 40, // Adjust the height as needed
                     color: TColors.cobalt,
                   ),
@@ -106,7 +110,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                   Text(
                     'Financial Details',
                     style: TextStyle(
-                      fontSize: 16,  // Adjust the font size as needed
+                      fontSize: 16, // Adjust the font size as needed
                       fontWeight: FontWeight.normal,
                       color: dark ? Colors.white : Colors.white,
                     ),
@@ -114,7 +118,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Financial Details (Cards) 
+            // Financial Details (Cards)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
@@ -167,7 +171,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 4,  // Thin vertical line width
+                    width: 4, // Thin vertical line width
                     height: 40, // Adjust the height as needed
                     color: TColors.amber,
                   ),
@@ -175,7 +179,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                   Text(
                     'Health Details',
                     style: TextStyle(
-                      fontSize: 16,  // Adjust the font size as needed
+                      fontSize: 16, // Adjust the font size as needed
                       fontWeight: FontWeight.normal,
                       color: dark ? Colors.white : Colors.white,
                     ),
@@ -183,7 +187,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Health Details (Cards) 
+            // Health Details (Cards)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
@@ -208,6 +212,50 @@ class StudentProfilePageScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            //Logout button (Button)
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 40),
+              child: Center(
+                child: OutlinedButton(
+                  onPressed: () async {
+                    try {
+                      await AuthenticatorRepository.instance.logout();
+                    } catch (e) {
+                      Get.snackbar(
+                        'Logout Error',
+                        e.toString(),
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    }
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: TColors.amber),
+                    backgroundColor: TColors.amber,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Iconsax.logout, color: Colors.white, size: 20),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
