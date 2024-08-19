@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/custom_shapes/containers/circular_container.dart';
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/widgets/register_form.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -17,6 +18,7 @@ class HomePageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final controller = Get.put(JournalController());
 
     return Scaffold(
       backgroundColor: dark ? TColors.darkGreen : TColors.cream,
@@ -151,39 +153,45 @@ class HomePageScreen extends StatelessWidget {
                         ),
                       ),
                     // Money Journal Button
-                    Container(
-                      height: 150, // Height of the rectangle card
-                      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                      decoration: BoxDecoration(
-                        color: TColors.teal,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Money Journal',
-                          style: TextStyle(
-                            color: dark ? Colors.white : Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () => controller.navigateToJournal('Money Journal'),
+                      child: Container(
+                        height: 150, // Height of the rectangle card
+                        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: TColors.teal,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Money Journal',
+                            style: TextStyle(
+                              color: dark ? Colors.white : Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     // Food Journal Button
-                    Container(
-                      height: 150, // Height of the rectangle card
-                      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                      decoration: BoxDecoration(
-                        color: TColors.amber,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Food Journal',
-                          style: TextStyle(
-                            color: dark ? Colors.white : Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () => controller.navigateToJournal('Food Journal'),
+                      child: Container(
+                        height: 150, // Height of the rectangle card
+                        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: TColors.amber,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Food Journal',
+                            style: TextStyle(
+                              color: dark ? Colors.white : Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -201,7 +209,7 @@ class HomePageScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 10), // Space between the line and text
                             Text(
-                              'Promotions',
+                              'Ads',
                               style: TextStyle(
                                 fontSize: 20,  // Adjust the font size as needed
                                 fontWeight: FontWeight.bold,
@@ -211,7 +219,7 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Horizontally Scrollable Cards for Cafe's Ads and Promotions
+                      // Horizontally Scrollable Cards for Cafe's Ads
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -226,7 +234,7 @@ class HomePageScreen extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  'Promotion ${index + 1}',
+                                  'Ad ${index + 1}',
                                   style: TextStyle(
                                     color: dark ? Colors.white : Colors.white,
                                     fontSize: 20,
