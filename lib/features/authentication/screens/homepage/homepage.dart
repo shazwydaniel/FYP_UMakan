@@ -66,22 +66,22 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Meal Recommendations Label
+                      // Meal Recommendations (Label)
                       Padding(
                         padding: const EdgeInsets.only(left: 40, right: 40, bottom:20, top:10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: 4,  // Thin vertical line width
-                              height: 40, // Adjust the height as needed
+                              width: 4,
+                              height: 40,
                               color: TColors.teal,
                             ),
-                            const SizedBox(width: 10), // Space between the line and text
+                            const SizedBox(width: 10),
                             Text(
                               'Lunch',
                               style: TextStyle(
-                                fontSize: 20,  // Adjust the font size as needed
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: dark ? Colors.white : Colors.white,
                               ),
@@ -89,31 +89,35 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Scrollable Meal Recommendations Section
+                      // Meal Recommendations Section (Scrollable)
                       Container(
-                        height: 150, // Height of the square cards
+                        height: 150,
                         margin: const EdgeInsets.only(left: 40, right: 40, bottom: 40),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: List.generate(5, (index) {
+                            children: List.generate(4, (index) {
                               return Container(
-                                width: 150, // Width of the square cards
-                                margin: const EdgeInsets.only(right: 10),
+                                width: 150,
+                                margin: const EdgeInsets.only(right: 15),
                                 decoration: BoxDecoration(
                                   color: TColors.mustard,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Meal ${index + 1}',
-                                    style: TextStyle(
-                                      color: dark ? Colors.white : Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  borderRadius: BorderRadius.circular(150),
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/meal_image_${index + 1}.png'),
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
+                                // child: Center(
+                                //   child: Text(
+                                //     'Meal ${index + 1}',
+                                //     style: TextStyle(
+                                //       color: dark ? Colors.white : Colors.black,
+                                //       fontSize: 18,
+                                //       fontWeight: FontWeight.bold,
+                                //     ),
+                                //   ),
+                                // ),
                               );
                             }),
                           ),
@@ -129,22 +133,22 @@ class HomePageScreen extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Journals Label
+                    // Journals (Label)
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20, bottom:20),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: 4,  // Thin vertical line width
-                              height: 40, // Adjust the height as needed
+                              width: 4,
+                              height: 40,
                               color: TColors.amber,
                             ),
-                            const SizedBox(width: 10), // Space between the line and text
+                            const SizedBox(width: 10),
                             Text(
                               'Journals',
                               style: TextStyle(
-                                fontSize: 20,  // Adjust the font size as needed
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: dark ? Colors.black : Colors.black,
                               ),
@@ -156,7 +160,7 @@ class HomePageScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () => controller.navigateToJournal('Money Journal'),
                       child: Container(
-                        height: 150, // Height of the rectangle card
+                        height: 150,
                         margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                         decoration: BoxDecoration(
                           color: TColors.teal,
@@ -178,7 +182,7 @@ class HomePageScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () => controller.navigateToJournal('Food Journal'),
                       child: Container(
-                        height: 150, // Height of the rectangle card
+                        height: 150,
                         margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                         decoration: BoxDecoration(
                           color: TColors.amber,
@@ -196,7 +200,7 @@ class HomePageScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Ads Label
+                    // Ads (Label)
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20, bottom:20, top:20),
                         child: Row(
@@ -219,14 +223,14 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Horizontally Scrollable Cards for Cafe's Ads
+                      // Cafe's Ads (Cards) (Horizontally Scrollable)
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: List.generate(5, (index) {
                             return Container(
-                              width: 300, // Width of the rectangle cards
-                              height: 100, // Height of the rectangle cards
+                              width: 300,
+                              height: 100,
                               margin: const EdgeInsets.only(left: 20, bottom: 20, right: 10),
                               decoration: BoxDecoration(
                                 color: index.isEven ? TColors.cobalt : TColors.bubbleOrange,
