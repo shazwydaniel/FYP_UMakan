@@ -20,46 +20,70 @@ class UserRepository extends GetxController {
 
   // Register ------------------------------------
   Future<void> saveUserRecord(UserModel user) async {
-    try{
-      await _db.collection("Users").doc(user.id).set(user.toJson());
+    try {
+      await _db.collection('Users').doc(user.id).set(user.toJson());
     } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
       throw TFirebaseAuthException(e.code).message;
     } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code).message;
     } on FormatException catch (_) {
+      print('FormatException occurred');
       throw const TFormatException();
     } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
       throw TPlatformException(e.code).message;
     } catch (e) {
+      print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
     }
   }
 
   Future<UserModel> getUserRecord(String userId) async {
-    final doc = await _db.collection('users').doc(userId).get();
+    final doc = await _db.collection('Users').doc(userId).get();
     return UserModel.fromMap(doc.data()!);
   }
 
   // Update User Record ------------------------------------
   Future<void> updateUserRecord(UserModel user) async {
     try {
-      await _db.collection('users').doc(user.id).update(user.toMap());
+      await _db.collection('Users').doc(user.id).update(user.toMap());
     } on FirebaseAuthException catch (e) {
-      throw TFirebaseAuthException(e.code).message;
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code);
     } on FirebaseException catch (e) {
-      throw TFirebaseException(e.code).message;
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
     } on FormatException catch (_) {
+      print('FormatException occurred');
       throw const TFormatException();
     } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code);
     } catch (e) {
+      print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
     }
   }
 
   // Get User Data
   Future<UserModel> getUserData(String userId) async {
-    final doc = await _db.collection('Users').doc(userId).get();
-    return UserModel.fromDocumentSnapshot(doc);
+    try {
+      final doc = await _db.collection('Users').doc(userId).get();
+      final data = doc.data();
+
+      if (data == null) {
+        throw 'User record does not exist';
+      }
+
+      return UserModel.fromMap(data);
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
   }
 }

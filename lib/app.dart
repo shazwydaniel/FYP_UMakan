@@ -14,15 +14,19 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // UserRepository userRepository = UserRepository();
-    
+
     return GetMaterialApp(
-      initialBinding: InitialBinding(),
-      themeMode: ThemeMode.system,
-      theme:TAppTheme.lightTheme,
-      darkTheme: TAppTheme.darkTheme,
-      // home: const LoginScreen(),
-      home: const Scaffold(backgroundColor: TColors.teal, body: Center(child: CircularProgressIndicator(color: Colors.white,)))
-    );
+        initialBinding: InitialBinding(),
+        themeMode: ThemeMode.system,
+        theme: TAppTheme.lightTheme,
+        darkTheme: TAppTheme.darkTheme,
+        // home: const LoginScreen(),
+        home: const Scaffold(
+            backgroundColor: TColors.teal,
+            body: Center(
+                child: CircularProgressIndicator(
+              color: Colors.white,
+            ))));
   }
 }
 

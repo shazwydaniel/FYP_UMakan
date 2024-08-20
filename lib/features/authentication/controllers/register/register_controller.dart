@@ -1,12 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
+import 'package:fyp_umakan/features/authentication/screens/register/verify_email.dart';
+import 'package:fyp_umakan/utils/helpers/network_manager.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/utils/popups/full_screen_loader.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
-
 
 class RegisterController extends GetxController {
   static RegisterController get instance => Get.find();
@@ -15,18 +18,18 @@ class RegisterController extends GetxController {
   final hidePassword = true.obs;
   final privacyPolicy = true.obs;
   final fullName = TextEditingController();
-  final username= TextEditingController();
+  final username = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();
   final phoneNumber = TextEditingController();
   final matricsNumber = TextEditingController();
   final gender = TextEditingController();
   final accommodation = TextEditingController();
-  final monthlyAllowance= TextEditingController();
+  final monthlyAllowance = TextEditingController();
   final monthlyCommittments = TextEditingController();
   final vehicle = TextEditingController();
-  final maritalStatus= TextEditingController();
-  final childrenNumber= TextEditingController();
+  final maritalStatus = TextEditingController();
+  final childrenNumber = TextEditingController();
   final height = TextEditingController();
   final weight = TextEditingController();
   final birthdate = TextEditingController();
@@ -34,28 +37,45 @@ class RegisterController extends GetxController {
 
   // Store userId after registration
   late String userId;
+  final NetworkManager networkManager = Get.put(NetworkManager());
+  final UserRepository userRepository = Get.put(UserRepository());
 
   // Register
-  Future<bool> register() async{
-    try{
+  Future<void> register() async {
+    try {
+      //Start loading
+      //TFullScreenLoader.openLoadingDialog(
+      //  "Processing Your request", TImages.loading);
 
-      // TFullScreenLoader.openLoadingDialog('We are processing your information...', TImages.verifyIllustration);
-
-      // Check Internet Connectivity
+      //Check internet connection
+      final isConnected = await networkManager.isConnected();
+      if (!isConnected) {
+        TLoaders.errorSnackBar(
+            title: 'No Internet',
+            message: 'Please check your internet connection.');
+        return;
+      }
 
       // Form Validation
-      if(!registerFormKey.currentState!.validate()){
-        // TFullScreenLoader.stopLoading();
-        return false;
+      if (!registerFormKey.currentState!.validate()) {
+        TLoaders.errorSnackBar(
+            title: 'Invalid Input',
+            message: 'Please fill all the required fields correctly.');
+        return;
       }
 
       // Privacy Policy Check
       if (!privacyPolicy.value) {
-        return false;
+        TLoaders.errorSnackBar(
+            title: 'Privacy Policy',
+            message: 'You need to accept the privacy policy to proceed.');
+        return;
       }
 
       // Register User in Firebase Auth + User Data
-      final userCredential = await AuthenticatorRepository.instance.registerWithEmailandPassword(email.text.trim(), password.text.trim());
+      final userCredential = await AuthenticatorRepository.instance
+          .registerWithEmailandPassword(
+              email.text.trim(), password.text.trim());
 
       // Save User Data in Firebase Firestore
       final newUser = UserModel(
@@ -78,20 +98,29 @@ class RegisterController extends GetxController {
         birthdate: birthdate.text.trim(),
       );
 
-      final userRepository = Get.put(UserRepository());
+      //Save User Data in Firestore
       await userRepository.saveUserRecord(newUser);
+
+      //Remove Loader
+      //TFullScreenLoader.stopLoading();
+
+      //Show success Message
+      TLoaders.successSnackBar(
+          title: 'Congratulations',
+          message: "Your account has been created! Verify email to continue.");
 
       // Store the userId for later use
       userId = newUser.id;
 
-      // TFullScreenLoader.stopLoading(); 
-
-      return true;
+      //Move to Verify Email Screen
+      //if (kDebugMode) {
+      //print("Navigating to VerifyEmailScreen");
+      //}
+      Get.to(() => VerifyEmailScreen(email: email.text.trim()));
     } catch (e) {
-
-      // TLoaders
-      return false;
-
-    } 
+      // Log the error for debugging
+      debugPrint("Error during registration: $e");
+      TLoaders.errorSnackBar(title: 'Yikes!', message: e.toString());
+    }
   }
 }
