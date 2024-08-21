@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import "package:flutter/material.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
@@ -80,52 +82,62 @@ class MoneyJournalMainPage extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Stack(
                         children: [
                           // Left side text elements
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Food Allowance Left',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Title Text
+                                Text(
+                                  'Food Allowance Left',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 3),
-                              Text(
-                                'for this month',
-                                style: TextStyle(
-                                  color: TColors.olive,
+                                SizedBox(height: 3),
+                                Text(
+                                  'for this month',
+                                  style: TextStyle(
+                                    color: TColors.olive,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 15),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: TColors.olive.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: 
-                                      Text(
-                                        '7%',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
                                   ),
-                                  SizedBox(width: 160),
-                                  Text(
+                                ),
+                                SizedBox(height: 15),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleOlive.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    '7%',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Allowance Left (label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: -10.0,
+                            right: 0,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  child: Text(
                                     'RM',
                                     style: TextStyle(
                                       color: TColors.olive,
@@ -133,26 +145,23 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          // Allowance Left (label)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 30.0),
-                            child: Text(
-                              '50',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 60,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                ),
+                                Text(
+                                  '50',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
+
                   // Next Allowance Reset (Card)
                   Container(
                     height: 150, // Height of the rectangle card
@@ -163,55 +172,66 @@ class MoneyJournalMainPage extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Stack(
                         children: [
                           // Left side text elements
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Next Allowance Reset!',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Title Text
+                                Text(
+                                  'Next Allowance Reset!',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 3),
-                              // Allowance Reset Date (label)
-                              Text(
-                                '1 September 2024',
-                                style: TextStyle(
-                                  color: TColors.cream,
+                                SizedBox(height: 3),
+                                // Allowance Reset Date (label)
+                                Text(
+                                  '1 September 2024',
+                                  style: TextStyle(
+                                    color: TColors.cream,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 15),
-                              Row(
-                                children: [
-                                  // Monthly Allowance (label)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Obx(
-                                      ()=> Text(
-                                        'RM' + controller.user.value.monthlyAllowance,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                SizedBox(height: 15),
+                                // Monthly Allowance (label)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleGreen.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Obx(
+                                    () => Text(
+                                      'RM' + controller.user.value.monthlyAllowance,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 120),
-                                  Text(
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Days Counter (label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: -10.0,
+                            right: 0,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  child: Text(
                                     'days',
                                     style: TextStyle(
                                       color: TColors.cream,
@@ -219,20 +239,16 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          // Days Counter (label)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 30.0),
-                            child: Text(
-                              '10',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 60,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                ),
+                                Text(
+                                  '10',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -265,65 +281,226 @@ class MoneyJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Spendings (Cards) 
+            // Today's Spendings (Cards)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
                 children: [
-                  // First Card
+                  // First Item (Card)
                   Container(
-                    height: 100, // Height of the rectangle card
+                    height: 100,
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Item 1',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Chicken Chop',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'FSKTM',
+                                  style: TextStyle(
+                                    color: TColors.olive,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Item Price (label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: -16.0,
+                            right: 0,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  child: Text(
+                                    'RM',
+                                    style: TextStyle(
+                                      color: TColors.olive,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '10',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Second Card
+
+                  // Second Item (Card)
                   Container(
-                    height: 100, // Height of the rectangle card
+                    height: 100,
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Item 2',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Nasi Ayam Penyet',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'KK7',
+                                  style: TextStyle(
+                                    color: TColors.olive,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Item Price (label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: -16.0,
+                            right: 0,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  child: Text(
+                                    'RM',
+                                    style: TextStyle(
+                                      color: TColors.olive,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '6',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Third Card
+
+                  // Third Item (Card)
                   Container(
-                    height: 100, // Height of the rectangle card
+                    height: 100,
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Item 3',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Oden',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'KK MART',
+                                  style: TextStyle(
+                                    color: TColors.olive,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Item Price (label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: -16.0,
+                            right: 0,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  child: Text(
+                                    'RM',
+                                    style: TextStyle(
+                                      color: TColors.olive,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '11',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

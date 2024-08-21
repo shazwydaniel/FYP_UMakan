@@ -26,7 +26,7 @@ class TColors{
   // Bubble Colors
   static const Color bubbleRed = Color(0x89862E29);
   static const Color bubbleGreen = Color(0xB380E4BE);
-  static const Color bubbleCream = Color(0x544D5548);
+  static const Color bubbleOlive = Color(0xFF4D5548);
   static const Color bubbleBlue = Color(0xFF85ABE4);
   static const Color bubbleOrange = Color(0xFFD48F44);
 
