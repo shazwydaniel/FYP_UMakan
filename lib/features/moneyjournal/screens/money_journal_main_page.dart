@@ -102,7 +102,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                               ),
                               SizedBox(height: 3),
                               Text(
-                                'for this week',
+                                'for this month',
                                 style: TextStyle(
                                   color: TColors.olive,
                                     fontSize: 12,
@@ -205,7 +205,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                     ),
                                     child: Obx(
                                       ()=> Text(
-                                        controller.user.value.monthlyAllowance,
+                                        'RM' + controller.user.value.monthlyAllowance,
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -213,7 +213,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 150),
+                                  SizedBox(width: 120),
                                   Text(
                                     'days',
                                     style: TextStyle(
