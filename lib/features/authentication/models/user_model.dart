@@ -113,4 +113,52 @@ class UserModel {
       'Birthdate': birthdate,
     };
   }
+
+  // Static Function to Create an Empty User Model
+  static UserModel empty() => UserModel(
+    id: '', 
+    fullName: '', 
+    username: '', 
+    email: '', 
+    password: '', 
+    phoneNumber: '', 
+    matricsNumber: '', 
+    gender: '', 
+    accommodation: '', 
+    vehicle: '', 
+    maritalStatus: '', 
+    childrenNumber: '', 
+    monthlyAllowance: '', 
+    monthlyCommittments: '', 
+    height: '', 
+    weight: '', 
+    birthdate: '');
+
+  // Create a UserModel from Firebase Document Snapshot
+  factory UserModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
+    if (document.data() != null){
+      final data = document.data()!;
+      return UserModel(
+        id: document.id, 
+        fullName: data['FullName'] ?? '', 
+        username: data['Username'] ?? '', 
+        email: data['Email'] ?? '', 
+        password: data['Password'] ?? '', 
+        phoneNumber: data['PhoneNumber'] ?? '', 
+        matricsNumber: data['MatricsNumber'] ?? '', 
+        gender: data['Gender'] ?? '', 
+        accommodation: data['Accomodation'] ?? '', 
+        vehicle: data['Vehicle Ownership'] ?? '', 
+        maritalStatus: data['Marital Status'] ?? '', 
+        childrenNumber: data['Number of Children'] ?? '', 
+        monthlyAllowance: data['Monthly Allowance'] ?? '', 
+        monthlyCommittments: data['Monthly Commitments'] ?? '', 
+        height: data['Height'] ?? '', 
+        weight: data['Weight'] ?? '', 
+        birthdate: data['Birthdate'] ?? '');
+    } else {
+      return UserModel.empty();
+    }
+  }
+
 }

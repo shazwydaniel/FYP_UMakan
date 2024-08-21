@@ -16,8 +16,7 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   // Widgets Binding
-  final WidgetsBinding widgetsBinding =
-      WidgetsFlutterBinding.ensureInitialized();
+  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
   // GetX Local Storage
   await GetStorage.init();
@@ -26,8 +25,7 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize Firebase & Authenticate Repository
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-      .then(
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then(
     (FirebaseApp value) => Get.put(AuthenticatorRepository()),
   );
 

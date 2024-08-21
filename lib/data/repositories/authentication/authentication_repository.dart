@@ -20,6 +20,9 @@ class AuthenticatorRepository extends GetxController {
   final deviceStorage = GetStorage();
   final _auth = FirebaseAuth.instance;
 
+  // Get Authenticated User
+  User? get authUser => _auth.currentUser;
+
   @override
   void onReady() {
     //Remove Native Splash Screen

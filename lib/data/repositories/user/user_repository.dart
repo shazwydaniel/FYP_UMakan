@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
@@ -67,7 +68,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Get User Data
+  // Get User Data ------------------------------------
   Future<UserModel> getUserData(String userId) async {
     try {
       final doc = await _db.collection('Users').doc(userId).get();
@@ -78,6 +79,63 @@ class UserRepository extends GetxController {
       }
 
       return UserModel.fromMap(data);
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Fetch User Details Based on User ID ------------------------------------
+  Future<UserModel> fetchUserDetails() async {
+    try {
+      final documentSnapshot = await _db.collection('Users').doc(AuthenticatorRepository.instance.authUser?.uid).get();
+      if (documentSnapshot.exists) {
+        return UserModel.fromSnapshot(documentSnapshot);
+      } else {
+        return UserModel.empty();
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Update User Data in Firestore ------------------------------------
+  Future<void> updateUserDetails(UserModel updatedUser) async {
+    try {
+      await _db.collection("User").doc(updatedUser.id).update(updatedUser.toJson());
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Update Any Field in Specific Users Collection ------------------------------------
+  Future<void> updateSingleField(Map<String, dynamic> json) async {
+    try {
+      await _db.collection("User").doc().update(json);
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Remoce User Data from Firestore ------------------------------------
+  Future<void> removeUserRecord(String userId) async {
+    try {
+      await _db.collection("User").doc(userId).delete();
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code);

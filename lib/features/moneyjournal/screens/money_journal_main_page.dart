@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
+import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
+import "package:get/get.dart";
 import "package:iconsax/iconsax.dart";
 
 class MoneyJournalMainPage extends StatelessWidget {
@@ -9,6 +11,8 @@ class MoneyJournalMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+
+    final controller = Get.put(UserController());
     
     return Scaffold(
       backgroundColor: TColors.olive,
@@ -35,6 +39,16 @@ class MoneyJournalMainPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Obx(
+                    () => Text(
+                      controller.user.value.fullName + "'s",
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: dark ? Colors.white : Colors.white,
+                      ),
+                    ),
+                  ),
                   Text(
                     'Money',
                     style: TextStyle(
@@ -59,41 +73,172 @@ class MoneyJournalMainPage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
                 children: [
-                  // Allowance Left
+                  // Food Allowance Left (Card)
                   Container(
                     height: 150, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Food Allowance Left',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Left side text elements
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Food Allowance Left',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              Text(
+                                'for this week',
+                                style: TextStyle(
+                                  color: TColors.olive,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: TColors.olive.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: 
+                                      Text(
+                                        '7%',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                  ),
+                                  SizedBox(width: 160),
+                                  Text(
+                                    'RM',
+                                    style: TextStyle(
+                                      color: TColors.olive,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          // Allowance Left (label)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: Text(
+                              '50',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 60,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Next Allowance Reset
+                  // Next Allowance Reset (Card)
                   Container(
                     height: 150, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       color: TColors.teal,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(
-                      child: Text(
-                        'Next Allowance Reset',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Left side text elements
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Next Allowance Reset!',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 3),
+                              // Allowance Reset Date (label)
+                              Text(
+                                '1 September 2024',
+                                style: TextStyle(
+                                  color: TColors.cream,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                children: [
+                                  // Monthly Allowance (label)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Obx(
+                                      ()=> Text(
+                                        controller.user.value.monthlyAllowance,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 150),
+                                  Text(
+                                    'days',
+                                    style: TextStyle(
+                                      color: TColors.cream,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          // Days Counter (label)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: Text(
+                              '10',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 60,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
