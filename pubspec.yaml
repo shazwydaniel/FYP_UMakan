@@ -1,11 +1,11 @@
 name: fyp_umakan
 description: "My Flutter FYP"
-  
-publish_to: 'none'  
+
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
+  sdk: ">=3.3.4 <4.0.0"
 
 # Packages
 dependencies:
@@ -34,6 +34,7 @@ dependencies:
   logger: ^2.3.0
   flutter_native_splash: ^2.4.0
   lottie: ^3.1.2
+  smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -49,7 +50,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/images/animations/
-    
+    - assets/users/
 
   # Local Fonts
   fonts:
@@ -68,7 +69,7 @@ flutter:
         - asset: assets/fonts/Poppins-Light.ttf
           weight: 300
 
-imports:  # Add this line if it doesn't exist
+imports: # Add this line if it doesn't exist
   - path: ../popups/loaders.dart
 
 flutter_native_splash:
