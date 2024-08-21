@@ -17,16 +17,23 @@ class MoneyJournalMainPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: TColors.olive,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(30.0),
+        preferredSize: Size.fromHeight(80.0), // Adjusted for the text
         child: AppBar(
           backgroundColor: dark ? TColors.olive : TColors.olive,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: dark ? Colors.white : Colors.white),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
           elevation: 0,
+          leading: Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back,
+                    color: dark ? Colors.white : Colors.white),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          centerTitle: false,
+          title: Container(),
         ),
       ),
       body: SingleChildScrollView(
@@ -35,20 +42,10 @@ class MoneyJournalMainPage extends StatelessWidget {
           children: [
             // Title
             Container(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 100),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(
-                    () => Text(
-                      controller.user.value.fullName + "'s",
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: dark ? Colors.white : Colors.white,
-                      ),
-                    ),
-                  ),
                   Text(
                     'Money',
                     style: TextStyle(

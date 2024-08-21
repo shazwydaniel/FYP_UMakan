@@ -37,7 +37,7 @@ class FoodJournalMainPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 10),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -153,6 +153,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                               ? Colors.white
                                               : Colors.black,
                                           fontSize: 16,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
@@ -165,8 +166,8 @@ class FoodJournalMainPage extends StatelessWidget {
                                         '\RM${(index + 1) * 5}',
                                         style: TextStyle(
                                           color: dark
-                                              ? Colors.white70
-                                              : Colors.black54,
+                                              ? TColors.cream
+                                              : TColors.cream,
                                           fontSize: 16,
                                         ),
                                       ),
@@ -177,7 +178,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                         width: 6,
                                         height: 6,
                                         decoration: const BoxDecoration(
-                                          color: TColors.teal,
+                                          color: TColors.cream,
                                           shape: BoxShape.circle,
                                         ),
                                       ),
@@ -188,8 +189,8 @@ class FoodJournalMainPage extends StatelessWidget {
                                         '${100 + (index + 1) * 50} cal',
                                         style: TextStyle(
                                           color: dark
-                                              ? Colors.white70
-                                              : Colors.black54,
+                                              ? TColors.cream
+                                              : TColors.cream,
                                           fontSize: 16,
                                         ),
                                       ),
@@ -298,6 +299,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                               ? Colors.white
                                               : Colors.black,
                                           fontSize: 16,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
@@ -310,8 +312,8 @@ class FoodJournalMainPage extends StatelessWidget {
                                         '\RM${(index + 1) * 5}',
                                         style: TextStyle(
                                           color: dark
-                                              ? Colors.white70
-                                              : Colors.black54,
+                                              ? TColors.cream
+                                              : TColors.cream,
                                           fontSize: 16,
                                         ),
                                       ),
@@ -322,7 +324,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                         width: 6,
                                         height: 6,
                                         decoration: const BoxDecoration(
-                                          color: TColors.teal,
+                                          color: TColors.cream,
                                           shape: BoxShape.circle,
                                         ),
                                       ),
@@ -333,8 +335,8 @@ class FoodJournalMainPage extends StatelessWidget {
                                         '${100 + (index + 1) * 50} cal',
                                         style: TextStyle(
                                           color: dark
-                                              ? Colors.white70
-                                              : Colors.black54,
+                                              ? TColors.cream
+                                              : TColors.cream,
                                           fontSize: 16,
                                         ),
                                       ),
