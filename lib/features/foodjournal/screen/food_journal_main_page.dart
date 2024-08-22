@@ -16,7 +16,7 @@ class FoodJournalMainPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: TColors.amber,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(30.0), // Adjusted for the text
+        preferredSize: const Size.fromHeight(50.0),
         child: AppBar(
           backgroundColor: dark ? TColors.amber : TColors.amber,
           elevation: 0,
