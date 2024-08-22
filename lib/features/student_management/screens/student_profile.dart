@@ -291,7 +291,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Text(
-                                    'overall',
+                                    'Overall',
                                     style: TextStyle(
                                       color: dark ? Colors.black : Colors.black,
                                       fontSize: 14,
@@ -378,7 +378,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Text(
-                                      'overall',
+                                      'Non-Food',
                                       style: TextStyle(
                                         color:
                                             dark ? Colors.black : Colors.black,
