@@ -518,41 +518,208 @@ class MoneyJournalMainPage extends StatelessWidget {
               ),
             ),
             // Add Expense (Button)
-            Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 40),
-              child: Center(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.white),
-                    backgroundColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Add Expense',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(Iconsax.money, color: Colors.white, size: 20),
-                    ],
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
+      // Bottom Navbar
+      bottomNavigationBar: BottomAppBar(
+        color: TColors.darkGreen,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 0.0,
+        child: Container(
+          height: 60.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Iconsax.add_circle, color: TColors.cream, size: 40),
+                      onPressed: () {
+                        _showModal(context);
+                      },
+                    ),
+                    // Text(
+                    //   'Add Expense',
+                    //   style: TextStyle(
+                    //     color: TColors.cream,
+                    //     fontSize: 12.0,
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showModal(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Allows dismissal by tapping outside the dialog
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            height: 500,
+            width: 500,
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: TColors.cream,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6, // Adjust max height as needed
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.black, size: 24),
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                    },
+                  ),
+                ),
+                // Add content for your modal here
+                Text(
+                  'Add Expense',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 30), // Spacing between the title and the input section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Center the Row horizontally
+                  children: [
+                    Text(
+                      'RM',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 10), // Spacing between the "RM" text and TextField
+                    Container(
+                      width: 150, // Adjust width as needed
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter Cost',
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        'Name of Item',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10), // Spacing between the "Category" text and dropdown
+                Container(
+                  width: 300, // Adjust width as needed
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter Name',
+                    ),
+                        keyboardType: TextInputType.number,
+                      ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        'Category',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10), // Spacing between the "Category" text and dropdown
+                Container(
+                  width: 300, // Set custom width for the dropdown
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      value: 'Food', // Default value
+                      items: [
+                        DropdownMenuItem(
+                          value: 'Food',
+                          child: Text('Food'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Non-Food',
+                          child: Text('Non-Food'),
+                        ),
+                      ],
+                      onChanged: (String? newValue) {
+                        // Handle the dropdown value change
+                      },
+                    ),
+                ),
+                SizedBox(height: 25),
+                Container(
+                  width: 120, // Adjust width of the button
+                  height: 50, // Adjust height of the button
+                  decoration: BoxDecoration(
+                    color: TColors.bubbleOrange, // Background color
+                    borderRadius: BorderRadius.circular(20.0), // Rounded corners
+                    border: Border.all(
+                      color: Colors.black, // Black border color
+                      width: 2.0, // Border width
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      // Handle button press
+                    },
+                    child: Center(
+                      child: Text(
+                        'LOG ITEM',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
