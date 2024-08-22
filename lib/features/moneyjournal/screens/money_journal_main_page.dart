@@ -65,12 +65,19 @@ class MoneyJournalMainPage extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
+                  Text(
+                    'Track and Log Your Expenses.',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: dark ? Colors.white : Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),
             // Money Detail (Cards)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Column(
                 children: [
                   // Food Allowance Left (Card)
@@ -613,6 +620,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                       width: 150, // Adjust width as needed
                       child: TextField(
                         decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
                           border: OutlineInputBorder(),
                           hintText: 'Enter Cost',
                         ),
@@ -642,6 +651,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                   width: 300, // Adjust width as needed
                   child: TextField(
                     decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
                       border: OutlineInputBorder(),
                       hintText: 'Enter Name',
                     ),
@@ -669,6 +680,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                   width: 300, // Set custom width for the dropdown
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
                         border: OutlineInputBorder(),
                       ),
                       value: 'Food', // Default value
