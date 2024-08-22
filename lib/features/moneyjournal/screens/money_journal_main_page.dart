@@ -14,8 +14,9 @@ class MoneyJournalMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
 
-    final controller = Get.put(UserController());
-    
+    // Get instance Fix
+    final controller = UserController.instance;
+
     return Scaffold(
       backgroundColor: TColors.olive,
       appBar: PreferredSize(
@@ -113,7 +114,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 ),
                                 SizedBox(height: 15),
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
                                     color: TColors.bubbleOlive.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(20),
@@ -136,7 +138,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  padding: const EdgeInsets.only(
+                                      top: 30.0), // Adjust position
                                   child: Text(
                                     'RM',
                                     style: TextStyle(
@@ -205,14 +208,17 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 SizedBox(height: 15),
                                 // Monthly Allowance (label)
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
                                     color: TColors.bubbleGreen.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Obx(
                                     () => Text(
-                                      'RM' + controller.user.value.monthlyAllowance,
+                                      'RM' +
+                                          controller
+                                              .user.value.monthlyAllowance,
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -230,7 +236,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  padding: const EdgeInsets.only(
+                                      top: 30.0), // Adjust position
                                   child: Text(
                                     'days',
                                     style: TextStyle(
@@ -265,7 +272,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 4,  // Thin vertical line width
+                    width: 4, // Thin vertical line width
                     height: 40, // Adjust the height as needed
                     color: TColors.teal,
                   ),
@@ -273,7 +280,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                   Text(
                     "Today's Spending",
                     style: TextStyle(
-                      fontSize: 16,  // Adjust the font size as needed
+                      fontSize: 16, // Adjust the font size as needed
                       fontWeight: FontWeight.normal,
                       color: dark ? Colors.white : Colors.white,
                     ),
@@ -333,7 +340,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  padding: const EdgeInsets.only(
+                                      top: 30.0), // Adjust position
                                   child: Text(
                                     'RM',
                                     style: TextStyle(
@@ -406,7 +414,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  padding: const EdgeInsets.only(
+                                      top: 30.0), // Adjust position
                                   child: Text(
                                     'RM',
                                     style: TextStyle(
@@ -479,7 +488,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                  padding: const EdgeInsets.only(
+                                      top: 30.0), // Adjust position
                                   child: Text(
                                     'RM',
                                     style: TextStyle(
@@ -516,7 +526,8 @@ class MoneyJournalMainPage extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Colors.white),
                     backgroundColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
