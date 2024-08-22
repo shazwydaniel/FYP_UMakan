@@ -1,5 +1,9 @@
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
+import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
+import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
+import "package:fyp_umakan/features/student_management/screens/health_details_edit.dart";
+import "package:fyp_umakan/features/student_management/screens/personal_detail_edit.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:get/get.dart";
@@ -13,6 +17,8 @@ class StudentProfilePageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    //final controller = UserController.instance;
+    final controller = UserController.instance;
 
     return Scaffold(
       backgroundColor: TColors.bubbleOrange,
@@ -27,27 +33,30 @@ class StudentProfilePageScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Hello',
+                    'Hello,',
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  Text(
-                    'Ahmad Shazwy!',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
+                  Obx(
+                    () => Text(
+                      "${controller.user.value.username} !",
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: dark ? Colors.white : Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+
             // Personal Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -57,6 +66,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     color: TColors.teal,
                   ),
                   const SizedBox(width: 10), // Space between the line and text
+
                   Text(
                     'Personal Details',
                     style: TextStyle(
@@ -65,29 +75,135 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
+                  const SizedBox(width: 180),
                 ],
               ),
             ),
+
             // Personal Details (Cards)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
               child: Column(
                 children: [
-                  // First Card
-                  Container(
-                    height: 150, // Height of the rectangle card
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Name, Matrics Number, Email',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to the new page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PersonalDetailsEdit()),
+                      );
+                    },
+                    child: Card(
+                      elevation: 5, // Set the elevation to add shadow
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(30), // Rounded corners
+                      ),
+                      color: TColors.cream, // Background color of the card
+                      margin: const EdgeInsets.only(
+                          bottom: 20), // Margin around the card
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.all(20), // Padding inside the card
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Align items at the top
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .start, // Align texts to the left
+                                mainAxisAlignment: MainAxisAlignment
+                                    .center, // Center vertically within the card
+                                children: [
+                                  // Full Name
+                                  Text(
+                                    controller.user.value.fullName,
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Matric ID
+                                  Text(
+                                    controller.user.value.matricsNumber,
+                                    style: TextStyle(
+                                      color: dark
+                                          ? Colors.black
+                                          : const Color.fromARGB(
+                                              255, 71, 71, 71),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Email
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      controller.user.value.email,
+                                      style: TextStyle(
+                                        color:
+                                            dark ? Colors.black : Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Number
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      controller.user.value.phoneNumber,
+                                      style: TextStyle(
+                                        color:
+                                            dark ? Colors.black : Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Accommodation
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      controller.user.value.accommodation,
+                                      style: TextStyle(
+                                        color:
+                                            dark ? Colors.black : Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -95,9 +211,10 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Financial Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -107,6 +224,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     color: TColors.cobalt,
                   ),
                   const SizedBox(width: 10), // Space between the line and text
+
                   Text(
                     'Financial Details',
                     style: TextStyle(
@@ -115,48 +233,182 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
+                  const SizedBox(width: 180),
                 ],
               ),
             ),
+
             // Financial Details (Cards)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
               child: Column(
                 children: [
                   // First Card
-                  Container(
-                    height: 150, // Height of the rectangle card
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Monthly Allowance',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to the new page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FinancialDetailsEdit()),
+                      );
+                    },
+                    child: Card(
+                      elevation: 5, // Set elevation for shadow
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(30), // Rounded corners
+                      ),
+                      color: TColors.cream, // Background color of the card
+                      margin: const EdgeInsets.only(
+                          bottom: 10), // Margin around the card
+
+                      child: Padding(
+                        padding: const EdgeInsets.all(
+                            20), // Add padding inside the card
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Align content to the left
+                          children: [
+                            Text(
+                              'Monthly Allowance',
+                              style: TextStyle(
+                                color: dark ? Colors.black : Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 5.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    'overall',
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                    width:
+                                        100), // Add spacer to push the RM and 1000 to the right
+                                Text(
+                                  'RM',
+                                  style: TextStyle(
+                                    color: dark ? Colors.black : Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+
+                                Text(
+                                  controller.user.value.monthlyAllowance,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 50,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  // Second Card
-                  Container(
-                    height: 150, // Height of the rectangle card
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Monthly Committments',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+
+                  //Second Card
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to the new page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FinancialDetailsEdit()),
+                      );
+                    },
+                    child: Card(
+                      elevation: 5, // Set elevation for shadow
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(30), // Rounded corners
+                      ),
+                      color: TColors.cream, // Background color of the card
+                      margin: const EdgeInsets.only(
+                          bottom: 10), // Margin around the card
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(
+                              20), // Add padding inside the card
+                          child: Column(
+                            // Minimize the height of the column
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment
+                                .start, // Align content to the center
+                            children: [
+                              Text(
+                                'Monthly Commitments',
+                                style: TextStyle(
+                                  color: dark ? Colors.black : Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      'overall',
+                                      style: TextStyle(
+                                        color:
+                                            dark ? Colors.black : Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 100),
+                                  Text(
+                                    'RM',
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    controller.user.value.monthlyCommittments,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -164,9 +416,10 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Health Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -176,6 +429,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     color: TColors.amber,
                   ),
                   const SizedBox(width: 10), // Space between the line and text
+
                   Text(
                     'Health Details',
                     style: TextStyle(
@@ -184,29 +438,125 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
+                  const SizedBox(width: 180),
+                  //Edit button (Button)
                 ],
               ),
             ),
-            // Health Details (Cards)
+
+            //Health Details (Card)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
               child: Column(
                 children: [
-                  // First Card
-                  Container(
-                    height: 150, // Height of the rectangle card
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Weight, Height, Birthdate',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  // First Card (Card)
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to the new page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HealthDetailsEdit()),
+                      );
+                    },
+                    child: Card(
+                      elevation: 5, // Set the elevation to add shadow
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(30), // Rounded corners
+                      ),
+                      color: TColors.cream, // Background color of the card
+                      margin: const EdgeInsets.only(
+                          bottom: 20), // Margin around the card
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.all(20), // Padding inside the card
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Align items at the top
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .start, // Align texts to the left
+                                mainAxisAlignment: MainAxisAlignment
+                                    .center, // Center vertically within the card
+                                children: [
+                                  // Weight Label
+                                  Text(
+                                    "weight",
+                                    style: TextStyle(
+                                      color: dark
+                                          ? Colors.black
+                                          : const Color.fromARGB(
+                                              255, 71, 71, 71),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  // Weight
+                                  Text(
+                                    '${controller.user.value.weight}kg',
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Height label
+                                  Text(
+                                    'height',
+                                    style: TextStyle(
+                                      color: dark
+                                          ? Colors.black
+                                          : const Color.fromARGB(
+                                              255, 71, 71, 71),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  // Height
+                                  Text(
+                                    '${controller.user.value.height}cm',
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 10),
+
+                                  // Birthdate label
+                                  Text(
+                                    'birthdate',
+                                    style: TextStyle(
+                                      color: dark
+                                          ? Colors.black
+                                          : const Color.fromARGB(
+                                              255, 71, 71, 71),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  //Birthdate
+                                  Text(
+                                    controller.user.value.birthdate,
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -217,19 +567,60 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             //Logout button (Button)
             Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 40),
+              padding: const EdgeInsets.only(top: 10, bottom: 40),
               child: Center(
                 child: OutlinedButton(
-                  onPressed: () async {
-                    try {
-                      await AuthenticatorRepository.instance.logout();
-                    } catch (e) {
-                      Get.snackbar(
-                        'Logout Error',
-                        e.toString(),
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                    }
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: TColors.cream,
+                          title: Text('Confirm Logout'),
+                          content: Text('Are you sure you want to log out?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop(); // Close the dialog
+                                try {
+                                  await AuthenticatorRepository.instance
+                                      .logout();
+                                } catch (e) {
+                                  Get.snackbar(
+                                    'Logout Error',
+                                    e.toString(),
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: TColors.amber,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text('Log Out'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: TColors.amber),

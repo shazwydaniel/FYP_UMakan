@@ -20,7 +20,7 @@ class MoneyJournalMainPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: TColors.olive,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0), // Adjusted for the text
+        preferredSize: Size.fromHeight(30.0), // Adjusted for the text
         child: AppBar(
           backgroundColor: dark ? TColors.olive : TColors.olive,
           elevation: 0,

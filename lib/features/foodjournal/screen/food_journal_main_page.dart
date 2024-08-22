@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 
 class FoodJournalMainPage extends StatelessWidget {
@@ -9,11 +11,12 @@ class FoodJournalMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final controller = UserController.instance;
 
     return Scaffold(
       backgroundColor: TColors.amber,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0), // Adjusted for the text
+        preferredSize: const Size.fromHeight(30.0), // Adjusted for the text
         child: AppBar(
           backgroundColor: dark ? TColors.amber : TColors.amber,
           elevation: 0,
@@ -28,8 +31,8 @@ class FoodJournalMainPage extends StatelessWidget {
               ),
             ],
           ),
-          centerTitle: false,
-          title: Container(),
+          //centerTitle: false,
+          //title: Container(),
         ),
       ),
       body: SingleChildScrollView(

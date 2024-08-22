@@ -8,16 +8,16 @@ class UserModel {
   String password;
   String phoneNumber;
   String matricsNumber;
-  final String gender;
-  final String accommodation;
-  final String vehicle;
-  final String maritalStatus;
-  final String childrenNumber;
-  final String monthlyAllowance;
-  final String monthlyCommittments;
-  final String height;
-  final String weight;
-  final String birthdate;
+  String gender;
+  String accommodation;
+  String vehicle;
+  String maritalStatus;
+  String childrenNumber;
+  String monthlyAllowance;
+  String monthlyCommittments;
+  String height;
+  String weight;
+  String birthdate;
 
   UserModel({
     required this.id,
@@ -116,49 +116,49 @@ class UserModel {
 
   // Static Function to Create an Empty User Model
   static UserModel empty() => UserModel(
-    id: '', 
-    fullName: '', 
-    username: '', 
-    email: '', 
-    password: '', 
-    phoneNumber: '', 
-    matricsNumber: '', 
-    gender: '', 
-    accommodation: '', 
-    vehicle: '', 
-    maritalStatus: '', 
-    childrenNumber: '', 
-    monthlyAllowance: '', 
-    monthlyCommittments: '', 
-    height: '', 
-    weight: '', 
-    birthdate: '');
+      id: '',
+      fullName: '',
+      username: '',
+      email: '',
+      password: '',
+      phoneNumber: '',
+      matricsNumber: '',
+      gender: '',
+      accommodation: '',
+      vehicle: '',
+      maritalStatus: '',
+      childrenNumber: '',
+      monthlyAllowance: '',
+      monthlyCommittments: '',
+      height: '',
+      weight: '',
+      birthdate: '');
 
   // Create a UserModel from Firebase Document Snapshot
-  factory UserModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
-    if (document.data() != null){
+  factory UserModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    if (document.data() != null) {
       final data = document.data()!;
       return UserModel(
-        id: document.id, 
-        fullName: data['FullName'] ?? '', 
-        username: data['Username'] ?? '', 
-        email: data['Email'] ?? '', 
-        password: data['Password'] ?? '', 
-        phoneNumber: data['PhoneNumber'] ?? '', 
-        matricsNumber: data['MatricsNumber'] ?? '', 
-        gender: data['Gender'] ?? '', 
-        accommodation: data['Accomodation'] ?? '', 
-        vehicle: data['Vehicle Ownership'] ?? '', 
-        maritalStatus: data['Marital Status'] ?? '', 
-        childrenNumber: data['Number of Children'] ?? '', 
-        monthlyAllowance: data['Monthly Allowance'] ?? '', 
-        monthlyCommittments: data['Monthly Commitments'] ?? '', 
-        height: data['Height'] ?? '', 
-        weight: data['Weight'] ?? '', 
-        birthdate: data['Birthdate'] ?? '');
+          id: document.id,
+          fullName: data['FullName'] ?? '',
+          username: data['Username'] ?? '',
+          email: data['Email'] ?? '',
+          password: data['Password'] ?? '',
+          phoneNumber: data['PhoneNumber'] ?? '',
+          matricsNumber: data['MatricsNumber'] ?? '',
+          gender: data['Gender'] ?? '',
+          accommodation: data['Accomodation'] ?? '',
+          vehicle: data['Vehicle Ownership'] ?? '',
+          maritalStatus: data['Marital Status'] ?? '',
+          childrenNumber: data['Number of Children'] ?? '',
+          monthlyAllowance: data['Monthly Allowance'] ?? '',
+          monthlyCommittments: data['Monthly Commitments'] ?? '',
+          height: data['Height'] ?? '',
+          weight: data['Weight'] ?? '',
+          birthdate: data['Birthdate'] ?? '');
     } else {
       return UserModel.empty();
     }
   }
-
 }

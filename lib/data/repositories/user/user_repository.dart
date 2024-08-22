@@ -49,7 +49,7 @@ class UserRepository extends GetxController {
   // Update User Record ------------------------------------
   Future<void> updateUserRecord(UserModel user) async {
     try {
-      await _db.collection('Users').doc(user.id).update(user.toMap());
+      await _db.collection('Users').doc(user.id).update(user.toJson());
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.message}');
       throw TFirebaseAuthException(e.code);
@@ -91,7 +91,10 @@ class UserRepository extends GetxController {
   // Fetch User Details Based on User ID ------------------------------------
   Future<UserModel> fetchUserDetails() async {
     try {
-      final documentSnapshot = await _db.collection('Users').doc(AuthenticatorRepository.instance.authUser?.uid).get();
+      final documentSnapshot = await _db
+          .collection('Users')
+          .doc(AuthenticatorRepository.instance.authUser?.uid)
+          .get();
       if (documentSnapshot.exists) {
         return UserModel.fromSnapshot(documentSnapshot);
       } else {
@@ -109,7 +112,10 @@ class UserRepository extends GetxController {
   // Update User Data in Firestore ------------------------------------
   Future<void> updateUserDetails(UserModel updatedUser) async {
     try {
-      await _db.collection("User").doc(updatedUser.id).update(updatedUser.toJson());
+      await _db
+          .collection("Users")
+          .doc(updatedUser.id)
+          .update(updatedUser.toJson());
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code);
@@ -122,7 +128,10 @@ class UserRepository extends GetxController {
   // Update Any Field in Specific Users Collection ------------------------------------
   Future<void> updateSingleField(Map<String, dynamic> json) async {
     try {
-      await _db.collection("User").doc().update(json);
+      await _db
+          .collection("Users")
+          .doc(AuthenticatorRepository.instance.authUser?.uid)
+          .update(json);
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code);
@@ -132,10 +141,10 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Remoce User Data from Firestore ------------------------------------
+  // Remoce All User Data from Firestore ------------------------------------
   Future<void> removeUserRecord(String userId) async {
     try {
-      await _db.collection("User").doc(userId).delete();
+      await _db.collection("Users").doc(userId).delete();
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code);
