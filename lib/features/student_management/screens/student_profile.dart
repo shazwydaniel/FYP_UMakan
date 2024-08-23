@@ -17,7 +17,6 @@ class StudentProfilePageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    //final controller = UserController.instance;
     final controller = UserController.instance;
 
     return Scaffold(
@@ -56,7 +55,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Personal Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -82,7 +81,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Personal Details (Cards)
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
                 children: [
                   GestureDetector(
@@ -214,7 +213,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Financial Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -240,7 +239,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Financial Details (Cards)
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
                 children: [
                   // First Card
@@ -302,7 +301,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
                                 const SizedBox(
                                     width:
-                                        100), // Add spacer to push the RM and 1000 to the right
+                                        80), // Add spacer to push the RM and 1000 to the right
                                 Text(
                                   'RM',
                                   style: TextStyle(
@@ -387,7 +386,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 100),
+                                  SizedBox(width: 80),
                                   Text(
                                     'RM',
                                     style: TextStyle(
@@ -419,7 +418,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Health Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -446,7 +445,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             //Health Details (Card)
             Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Column(
                 children: [
                   // First Card (Card)

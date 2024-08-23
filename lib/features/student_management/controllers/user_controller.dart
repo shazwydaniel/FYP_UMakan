@@ -9,6 +9,7 @@ class UserController extends GetxController {
   final profileLoading = false.obs;
   Rx<UserModel> user = UserModel.empty().obs;
   final userRepository = Get.put(UserRepository());
+  //final controller = UserRepository.instance;
 
   @override
   void onInit() {
@@ -22,7 +23,6 @@ class UserController extends GetxController {
       profileLoading.value = true;
       final user = await userRepository.fetchUserDetails();
       this.user(user);
-      profileLoading.value = false;
     } catch (e) {
       user(UserModel.empty());
     } finally {

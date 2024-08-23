@@ -4,6 +4,7 @@ import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edge
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/widgets/register_form.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
@@ -19,6 +20,7 @@ class HomePageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = Get.put(JournalController());
+    final userController = Get.put(UserController());
 
     return Scaffold(
       backgroundColor: dark ? TColors.darkGreen : TColors.cream,
@@ -39,10 +41,10 @@ class HomePageScreen extends StatelessWidget {
                           children: [
                             // Title 1
                             Positioned(
-                              top: 100,
+                              top: 90,
                               left: 40,
                               child: Text(
-                                'Recommend-',
+                                'Welcome,',
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
@@ -50,16 +52,19 @@ class HomePageScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
+
                             // Title 2
                             Positioned(
                               top: 140,
                               left: 40,
-                              child: Text(
-                                'ations',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: dark ? Colors.white : Colors.white,
+                              child: Obx(
+                                () => Text(
+                                  "${userController.user.value.username} !",
+                                  style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: dark ? Colors.white : Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -68,7 +73,8 @@ class HomePageScreen extends StatelessWidget {
                       ),
                       // Meal Recommendations (Label)
                       Padding(
-                        padding: const EdgeInsets.only(left: 40, right: 40, bottom:20, top:10),
+                        padding: const EdgeInsets.only(
+                            left: 40, right: 40, bottom: 20, top: 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -79,7 +85,7 @@ class HomePageScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'Lunch',
+                              'Recommendations',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -92,7 +98,8 @@ class HomePageScreen extends StatelessWidget {
                       // Meal Recommendations Section (Scrollable)
                       Container(
                         height: 150,
-                        margin: const EdgeInsets.only(left: 40, right: 40, bottom: 40),
+                        margin: const EdgeInsets.only(
+                            left: 40, right: 40, bottom: 40),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -104,7 +111,8 @@ class HomePageScreen extends StatelessWidget {
                                   color: TColors.mustard,
                                   borderRadius: BorderRadius.circular(150),
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/meal_image_${index + 1}.png'),
+                                    image: AssetImage(
+                                        'assets/images/meal_image_${index + 1}.png'),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -134,34 +142,37 @@ class HomePageScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // Journals (Label)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20, bottom:20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 4,
-                              height: 40,
-                              color: TColors.amber,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 4,
+                            height: 40,
+                            color: TColors.amber,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Journals',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.black : Colors.black,
                             ),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Journals',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: dark ? Colors.black : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
                     // Money Journal Button
                     GestureDetector(
-                      onTap: () => controller.navigateToJournal('Money Journal'),
+                      onTap: () =>
+                          controller.navigateToJournal('Money Journal'),
                       child: Container(
                         height: 150,
-                        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        margin: const EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20),
                         decoration: BoxDecoration(
                           color: TColors.teal,
                           borderRadius: BorderRadius.circular(10),
@@ -183,7 +194,8 @@ class HomePageScreen extends StatelessWidget {
                       onTap: () => controller.navigateToJournal('Food Journal'),
                       child: Container(
                         height: 150,
-                        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        margin: const EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20),
                         decoration: BoxDecoration(
                           color: TColors.amber,
                           borderRadius: BorderRadius.circular(10),
@@ -201,55 +213,60 @@ class HomePageScreen extends StatelessWidget {
                       ),
                     ),
                     // Ads (Label)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20, bottom:20, top:20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 4,  // Thin vertical line width
-                              height: 40, // Adjust the height as needed
-                              color: TColors.cobalt,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 20, top: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 4, // Thin vertical line width
+                            height: 40, // Adjust the height as needed
+                            color: TColors.cobalt,
+                          ),
+                          const SizedBox(
+                              width: 10), // Space between the line and text
+                          Text(
+                            'Ads',
+                            style: TextStyle(
+                              fontSize: 20, // Adjust the font size as needed
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.black : Colors.black,
                             ),
-                            const SizedBox(width: 10), // Space between the line and text
-                            Text(
-                              'Ads',
-                              style: TextStyle(
-                                fontSize: 20,  // Adjust the font size as needed
-                                fontWeight: FontWeight.bold,
-                                color: dark ? Colors.black : Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      // Cafe's Ads (Cards) (Horizontally Scrollable)
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: List.generate(5, (index) {
-                            return Container(
-                              width: 300,
-                              height: 100,
-                              margin: const EdgeInsets.only(left: 20, bottom: 20, right: 10),
-                              decoration: BoxDecoration(
-                                color: index.isEven ? TColors.cobalt : TColors.bubbleOrange,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Ad ${index + 1}',
-                                  style: TextStyle(
-                                    color: dark ? Colors.white : Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                    ),
+                    // Cafe's Ads (Cards) (Horizontally Scrollable)
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(5, (index) {
+                          return Container(
+                            width: 300,
+                            height: 100,
+                            margin: const EdgeInsets.only(
+                                left: 20, bottom: 20, right: 10),
+                            decoration: BoxDecoration(
+                              color: index.isEven
+                                  ? TColors.cobalt
+                                  : TColors.bubbleOrange,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Ad ${index + 1}',
+                                style: TextStyle(
+                                  color: dark ? Colors.white : Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            );
-                          }),
-                        ),
+                            ),
+                          );
+                        }),
                       ),
+                    ),
                   ],
                 ),
               ),
