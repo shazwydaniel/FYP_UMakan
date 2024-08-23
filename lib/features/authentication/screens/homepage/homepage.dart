@@ -71,10 +71,11 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+
                       // Meal Recommendations (Label)
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 40, right: 40, bottom: 20, top: 10),
+                            left: 40, right: 40, bottom: 10, top: 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
