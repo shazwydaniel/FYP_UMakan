@@ -66,6 +66,15 @@ class TImages {
   static const String onBoardingImage3 =
       "assets/images/on_boarding_images/sammy-line-delivery.gif";
 
+  //Logos
+  // ignore: constant_identifier_names
+  static const String KK12_Logo = "assets/logos/KK12_Logo.png";
+  static const String KK7_Logo = "assets/logos/KK7_Logo.jpeg";
+  static const String KK8_Logo = "assets/logos/KK8_Logo.png";
+  static const String KK11_Logo = "assets/logos/KK11_Logo.png";
+  static const String Zus_Logo = "assets/logos/Zus_Logo.png";
+  static const String QBistro_Logo = "assets/logos/QBistro_Logo.png";
+
   // // -- Products
   // static const String productImage1 = "assets/images/products/nike-shoes.png";
   // static const String productImage2 = "assets/images/products/product-1.png";
