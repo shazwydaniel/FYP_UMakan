@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
+import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
+import 'package:fyp_umakan/features/cafes/screens/cafe.dart';
+import 'package:fyp_umakan/features/moneyjournal/screens/money_journal_main_page.dart';
+import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
+import 'package:bubble_lens/bubble_lens.dart';
+import 'package:get/get.dart';
 
 class DiscoverPageScreen extends StatelessWidget {
   const DiscoverPageScreen({super.key});
@@ -10,12 +17,39 @@ class DiscoverPageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
 
+    final List<CafeDetailsData> cafes = [
+      CafeDetailsData(
+          name: 'QBistro',
+          logoPath: TImages.QBistro_Logo,
+          details: 'QBistro serves a variety of meals and snacks.'),
+      CafeDetailsData(
+          name: 'Zus Coffee',
+          logoPath: TImages.Zus_Logo,
+          details: 'Zus Coffee is known for its artisanal coffee blends.'),
+      CafeDetailsData(
+          name: 'KK7 Cafe',
+          logoPath: TImages.KK7_Logo,
+          details: 'KK7 Cafe offers a variety of traditional meals.'),
+      CafeDetailsData(
+          name: 'KK8',
+          logoPath: TImages.KK8_Logo,
+          details: 'KK8 serves a variety of meals and snacks.'),
+      CafeDetailsData(
+          name: 'KK11',
+          logoPath: TImages.KK11_Logo,
+          details: 'KK11 Coffee is known for its artisanal coffee blends.'),
+      CafeDetailsData(
+          name: 'KK12 Cafe',
+          logoPath: TImages.KK12_Logo,
+          details: 'KK12 Cafe offers a variety of traditional meals.'),
+    ];
+
     return Scaffold(
       backgroundColor: TColors.mustard,
-      body: Column(
+      body: Stack(
         children: [
           // Title Section
-          Container(
+          /*Container(
             padding: const EdgeInsets.only(left: 40, right: 40, top: 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,8 +73,62 @@ class DiscoverPageScreen extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 20),*/
+
+          // BubbleLens Section
+          Positioned.fill(
+            child: Container(
+              color: TColors.mustard,
+              height: MediaQuery.of(context).size.height -
+                  500, // Set height dynamically
+
+              child: BubbleLens(
+                duration: const Duration(milliseconds: 100),
+                width: MediaQuery.of(context).size.width,
+                height:
+                    MediaQuery.of(context).size.height, // Use available height
+                widgets: cafes.map((cafe) {
+                  return GestureDetector(
+                    onTap: () {
+                      // Navigate to the cafe details page
+                      Get.to(() => CafePage(cafe: cafe));
+                    },
+                    child: Image.asset(cafe.logoPath),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: 100, // Adjust this value to position the title as desired
+            left: 40,
+            right: 40,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Discover Cafes',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: dark ? Colors.white : Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Browse for your meals and add them to your journal',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: dark ? Colors.white : Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // Spacer to push content to the center
-          Expanded(
+          /*Expanded(
             child: Center(
               child: Stack(
                 children: [
@@ -250,7 +338,7 @@ class DiscoverPageScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );
