@@ -75,6 +75,20 @@ class TImages {
   static const String Zus_Logo = "assets/logos/Zus_Logo.png";
   static const String QBistro_Logo = "assets/logos/QBistro_Logo.png";
 
+  //food items
+  static const String blueberry_muffin =
+      "assets/images/food_items/blueberry_muffin.jpg";
+  static const String cappuccino = "assets/images/food_items/cappucino.webp";
+  static const String chicken_rice =
+      "assets/images/food_items/chicken_rice.jpg";
+  static const String espresso = "assets/images/food_items/espresso.jpg";
+  static const String fried_noodles =
+      "assets/images/food_items/fried_noodles.jpg";
+  static const String milo_ais = "assets/images/food_items/milo_ais.png";
+  static const String nasi_lemak = "assets/images/food_items/nasi_lemak.jpg";
+  static const String roti_canai = "assets/images/food_items/roti_canai.webp";
+  static const String teh_tarik = "assets/images/food_items/teh_tarik.webp";
+
   // // -- Products
   // static const String productImage1 = "assets/images/products/nike-shoes.png";
   // static const String productImage2 = "assets/images/products/product-1.png";

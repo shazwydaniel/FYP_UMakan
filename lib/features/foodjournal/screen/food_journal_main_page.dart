@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -11,7 +14,7 @@ class FoodJournalMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final controller = UserController.instance;
+    final controller = Get.put(FoodJournalController());
 
     return Scaffold(
       backgroundColor: TColors.amber,
@@ -31,8 +34,6 @@ class FoodJournalMainPage extends StatelessWidget {
               ),
             ],
           ),
-          //centerTitle: false,
-          //title: Container(),
         ),
       ),
       body: SingleChildScrollView(
@@ -88,14 +89,17 @@ class FoodJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Circles (Card)
-            Container(
-              height: 230,
-              margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(4, (index) {
+            // Display Lunch Items (Cards)
+            // Display added lunch items as cards
+            Obx(() {
+              return Container(
+                height: 230,
+                margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: controller.lunchItems.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.lunchItems[index];
                     return SizedBox(
                       width: 220,
                       height: 250, // Width of each card
@@ -103,9 +107,7 @@ class FoodJournalMainPage extends StatelessWidget {
                         elevation: 0, // Optional: Add elevation if you want
                         color: TColors.amber, // Set card color to transparent
                         shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius
-                                .zero // Adjust radius to match design
-                            ),
+                            borderRadius: BorderRadius.zero),
                         margin: const EdgeInsets.only(right: 15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,11 +117,9 @@ class FoodJournalMainPage extends StatelessWidget {
                               height: 120, // Height for the image
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
-                                borderRadius: BorderRadius.circular(
-                                    200), // Rounded top corners
+                                borderRadius: BorderRadius.circular(200),
                                 image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/meal_image_${index + 1}.png'),
+                                  image: AssetImage(item.imagePath),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -131,7 +131,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                 children: [
                                   Center(
                                     child: Text(
-                                      'Meal ${index + 1}',
+                                      item.name,
                                       style: const TextStyle(
                                         color: Colors.white, // Make text white
                                         fontSize: 18,
@@ -145,12 +145,11 @@ class FoodJournalMainPage extends StatelessWidget {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 8.0),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(
-                                            0.2), // Translucent grey background
+                                        color: Colors.white.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        'Location ${index + 1}', // Changed for clarity
+                                        item.cafe,
                                         style: TextStyle(
                                           color: dark
                                               ? Colors.white
@@ -166,7 +165,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        '\RM${(index + 1) * 5}',
+                                        '\RM${item.price}',
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream
@@ -174,9 +173,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                           fontSize: 16,
                                         ),
                                       ),
-                                      SizedBox(
-                                          width:
-                                              8), // Reduced space between text and circle
+                                      SizedBox(width: 8),
                                       Container(
                                         width: 6,
                                         height: 6,
@@ -185,11 +182,9 @@ class FoodJournalMainPage extends StatelessWidget {
                                           shape: BoxShape.circle,
                                         ),
                                       ),
-                                      SizedBox(
-                                          width:
-                                              8), // Reduced space between circle and calorie text
+                                      SizedBox(width: 8),
                                       Text(
-                                        '${100 + (index + 1) * 50} cal',
+                                        '${item.calories} cal',
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream
@@ -206,10 +201,10 @@ class FoodJournalMainPage extends StatelessWidget {
                         ),
                       ),
                     );
-                  }),
+                  },
                 ),
-              ),
-            ),
+              );
+            }),
             //Lunch History (Text)
             Padding(
               padding: const EdgeInsets.only(

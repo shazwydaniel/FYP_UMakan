@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/cafes/screens/cafe.dart';
+import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/moneyjournal/screens/money_journal_main_page.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -16,32 +17,159 @@ class DiscoverPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final FoodJournalController controller = Get.put(FoodJournalController());
 
     final List<CafeDetailsData> cafes = [
       CafeDetailsData(
-          name: 'QBistro',
-          logoPath: TImages.QBistro_Logo,
-          details: 'QBistro serves a variety of meals and snacks.'),
+        name: 'QBistro',
+        logoPath: TImages.QBistro_Logo,
+        details: 'QBistro serves a variety of meals and snacks.',
+        items: [
+          CafeItemData(
+              item: 'Nasi Lemak',
+              price: 3.50,
+              calories: 600,
+              image: TImages.nasi_lemak,
+              location: 'QBistro'),
+          CafeItemData(
+              item: 'Roti Canai',
+              price: 1.50,
+              calories: 400,
+              image: TImages.roti_canai,
+              location: 'QBistro'),
+          CafeItemData(
+              item: 'Teh Tarik',
+              price: 1.80,
+              calories: 150,
+              image: TImages.teh_tarik,
+              location: 'QBistro'),
+        ],
+      ),
       CafeDetailsData(
-          name: 'Zus Coffee',
-          logoPath: TImages.Zus_Logo,
-          details: 'Zus Coffee is known for its artisanal coffee blends.'),
+        name: 'Zus Coffee',
+        logoPath: TImages.Zus_Logo,
+        details: 'Zus Coffee is known for its artisanal coffee blends.',
+        items: [
+          CafeItemData(
+              item: 'Cappuccino',
+              price: 4.50,
+              calories: 120,
+              image: TImages.cappuccino,
+              location: 'Zus Coffee'),
+          CafeItemData(
+              item: 'Espresso',
+              price: 3.00,
+              calories: 80,
+              image: TImages.espresso,
+              location: 'Zus Coffee'),
+          CafeItemData(
+              item: 'Blueberry Muffin',
+              price: 2.50,
+              calories: 320,
+              image: TImages.blueberry_muffin,
+              location: 'Zus Coffee'),
+        ],
+      ),
       CafeDetailsData(
-          name: 'KK7 Cafe',
-          logoPath: TImages.KK7_Logo,
-          details: 'KK7 Cafe offers a variety of traditional meals.'),
+        name: 'KK7 Cafe',
+        logoPath: TImages.KK7_Logo,
+        details: 'KK7 Cafe offers a variety of traditional meals.',
+        items: [
+          CafeItemData(
+              item: 'Chicken Rice',
+              price: 4.00,
+              calories: 550,
+              image: TImages.chicken_rice,
+              location: 'KK7'),
+          CafeItemData(
+              item: 'Fried Noodles',
+              price: 3.50,
+              calories: 500,
+              image: TImages.fried_noodles,
+              location: 'KK7'),
+          CafeItemData(
+              item: 'Milo Ice',
+              price: 2.00,
+              calories: 200,
+              image: TImages.milo_ais,
+              location: 'KK7'),
+        ],
+      ),
       CafeDetailsData(
-          name: 'KK8',
-          logoPath: TImages.KK8_Logo,
-          details: 'KK8 serves a variety of meals and snacks.'),
+        name: 'KK8',
+        logoPath: TImages.KK8_Logo,
+        details: 'KK8 serves a variety of meals and snacks.',
+        items: [
+          CafeItemData(
+              item: 'Nasi Lemak',
+              price: 3.50,
+              calories: 600,
+              image: TImages.nasi_lemak,
+              location: 'KK8'),
+          CafeItemData(
+              item: 'Roti Canai',
+              price: 1.50,
+              calories: 400,
+              image: TImages.roti_canai,
+              location: 'KK18'),
+          CafeItemData(
+              item: 'Teh Tarik',
+              price: 1.80,
+              calories: 150,
+              image: TImages.teh_tarik,
+              location: 'KK8'),
+        ],
+      ),
       CafeDetailsData(
-          name: 'KK11',
-          logoPath: TImages.KK11_Logo,
-          details: 'KK11 Coffee is known for its artisanal coffee blends.'),
+        name: 'KK11',
+        logoPath: TImages.KK11_Logo,
+        details: 'KK11 Coffee is known for its artisanal coffee blends.',
+        items: [
+          CafeItemData(
+              item: 'Chicken Rice',
+              price: 4.00,
+              calories: 550,
+              image: TImages.chicken_rice,
+              location: 'KK11'),
+          CafeItemData(
+              item: 'Fried Noodles',
+              price: 3.50,
+              calories: 500,
+              image: TImages.fried_noodles,
+              location: 'KK11'),
+          CafeItemData(
+              item: 'Milo Ice',
+              price: 2.00,
+              calories: 200,
+              image: TImages.milo_ais,
+              location: 'KK11'),
+        ],
+      ),
       CafeDetailsData(
-          name: 'KK12 Cafe',
-          logoPath: TImages.KK12_Logo,
-          details: 'KK12 Cafe offers a variety of traditional meals.'),
+        name: 'KK12 Cafe',
+        logoPath: TImages.KK12_Logo,
+        details: 'KK12 Cafe offers a variety of traditional meals.',
+        items: [
+          CafeItemData(
+              item: 'Nasi Lemak',
+              price: 3.50,
+              calories: 600,
+              image: TImages.nasi_lemak,
+              location: 'KK12'),
+          CafeItemData(
+              item: 'Roti Canai',
+              price: 1.50,
+              calories: 400,
+              image: TImages.roti_canai,
+              location: 'KK12'),
+          CafeItemData(
+              item: 'Teh Tarik',
+              price: 1.80,
+              calories: 150,
+              image: TImages.teh_tarik,
+              location: 'KK12'),
+        ],
+      ),
     ];
 
     return Scaffold(
