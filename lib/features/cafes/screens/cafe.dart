@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
-import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+
 import 'package:get/get.dart';
 
-import '../../foodjournal/model/food_journal_model.dart';
+import '../../foodjournal/model/journal_model.dart';
 
 class CafePage extends StatelessWidget {
   final CafeDetailsData cafe;
-  final FoodJournalController foodJournalController =
-      Get.find<FoodJournalController>();
+  final JournalController foodJournalController = Get.find<JournalController>();
 
   CafePage({
     super.key,
@@ -44,7 +44,7 @@ class CafePage extends StatelessWidget {
                   return InkWell(
                     onTap: () {
                       // Create a new FoodJournalItem from the selected cafe item
-                      final foodJournalItem = FoodJournalItem(
+                      final foodJournalItem = JournalItem(
                         name: item.item,
                         price: item.price,
                         calories: item.calories,
@@ -55,7 +55,14 @@ class CafePage extends StatelessWidget {
                       foodJournalController.addLunchItem(foodJournalItem);
 
                       // Provide feedback to the user, e.g., snackbar or toast
-                      Get.snackbar('Item Added', '${item.item} added to Food');
+                      Get.snackbar(
+                        'Item Added',
+                        '${item.item} added to Food',
+                        duration: Duration(seconds: 1),
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.green,
+                        colorText: Colors.white,
+                      );
                     },
                     child: ListTile(
                       leading: Image.asset(

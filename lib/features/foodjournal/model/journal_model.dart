@@ -1,11 +1,11 @@
-class FoodJournalItem {
+class JournalItem {
   final String name;
   final double price;
   final int calories;
   final String imagePath;
   final String cafe;
 
-  FoodJournalItem(
+  JournalItem(
       {required this.name,
       required this.price,
       required this.calories,

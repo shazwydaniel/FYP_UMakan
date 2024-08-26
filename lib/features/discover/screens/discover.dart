@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/cafes/screens/cafe.dart';
-import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+
 import 'package:fyp_umakan/features/moneyjournal/screens/money_journal_main_page.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -17,7 +18,7 @@ class DiscoverPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final FoodJournalController controller = Get.put(FoodJournalController());
+    final JournalController controller = Get.put(JournalController());
 
     final List<CafeDetailsData> cafes = [
       CafeDetailsData(

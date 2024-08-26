@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
@@ -14,7 +14,7 @@ class FoodJournalMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final controller = Get.put(FoodJournalController());
+    final controller = Get.put(JournalController());
 
     return Scaffold(
       backgroundColor: TColors.amber,
