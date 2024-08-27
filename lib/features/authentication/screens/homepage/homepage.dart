@@ -129,7 +129,7 @@ class HomePageScreen extends StatelessWidget {
                                 ),
                               ),
 
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 10),
 
                               // Recommended Food Allowance - Monthly (Value)
                               Container(
@@ -201,29 +201,42 @@ class HomePageScreen extends StatelessWidget {
                                         bottom: 0,
                                         right: 0,
                                         child: 
-                                          // Status of Food Allowance (Card)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                            decoration: BoxDecoration(
-                                              color: TColors.teal.withOpacity(0.7),
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(Iconsax.emoji_happy, color: Colors.white, size: 16,),
-                                                  const SizedBox(width: 5),
-                                                  // Status of Food Allowance (Label)
-                                                  Text(
-                                                    'Enough',
-                                                    style: TextStyle(
+                                          Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: Obx(() {
+                                              final recommendedAllowance = userController.user.value.recommendedMoneyAllowance;
+                                              final remainingAllowance = userController.user.value.actualRemainingFoodAllowance;
+
+                                              return Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                decoration: BoxDecoration(
+                                                  color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      remainingAllowance >= recommendedAllowance
+                                                          ? Iconsax.emoji_happy
+                                                          : Iconsax.emoji_sad,
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 12,
+                                                      size: 16,
                                                     ),
-                                                  ),
-                                                ],
-                                            ),
+                                                    const SizedBox(width: 5),
+                                                    Text(
+                                                      remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                           ),
                                       ),
                                     ],
