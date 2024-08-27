@@ -165,7 +165,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        '\RM${item.price}',
+                                        '\RM${item.price.toStringAsFixed(2)}',
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream

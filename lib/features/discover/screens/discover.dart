@@ -169,6 +169,24 @@ class DiscoverPageScreen extends StatelessWidget {
               calories: 150,
               image: TImages.teh_tarik,
               location: 'KK12'),
+          CafeItemData(
+              item: 'Nasi Lemak',
+              price: 3.50,
+              calories: 600,
+              image: TImages.nasi_lemak,
+              location: 'KK12'),
+          CafeItemData(
+              item: 'Roti Canai',
+              price: 1.50,
+              calories: 400,
+              image: TImages.roti_canai,
+              location: 'KK12'),
+          CafeItemData(
+              item: 'Teh Tarik',
+              price: 1.80,
+              calories: 150,
+              image: TImages.teh_tarik,
+              location: 'KK12'),
         ],
       ),
     ];

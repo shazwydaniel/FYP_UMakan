@@ -73,7 +73,7 @@ class CafePage extends StatelessWidget {
                       ),
                       title: Text(item.item),
                       subtitle: Text('${item.calories} calories'),
-                      trailing: Text('\$${item.price.toStringAsFixed(2)}'),
+                      trailing: Text('\RM${item.price.toStringAsFixed(2)}'),
                     ),
                   );
                 },
