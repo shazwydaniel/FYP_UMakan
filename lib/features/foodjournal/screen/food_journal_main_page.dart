@@ -79,7 +79,7 @@ class FoodJournalMainPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Lunch',
+                    'Today',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

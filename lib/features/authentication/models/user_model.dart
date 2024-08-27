@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class UserModel {
   final String id;
@@ -18,6 +19,11 @@ class UserModel {
   String height;
   String weight;
   String birthdate;
+  int age;
+  int status;
+  double recommendedCalorieIntake;
+  double recommendedMoneyAllowance;
+  double actualRemainingFoodAllowance;
 
   UserModel({
     required this.id,
@@ -37,6 +43,11 @@ class UserModel {
     required this.height,
     required this.weight,
     required this.birthdate,
+    required this.age,
+    required this.status,
+    this.recommendedCalorieIntake = 0.0,
+    this.recommendedMoneyAllowance = 0.0,
+    this.actualRemainingFoodAllowance = 0.0,
   });
 
   // Convert a UserModel into a Map
@@ -59,6 +70,11 @@ class UserModel {
       'height': height,
       'weight': weight,
       'birthdate': birthdate,
+      'age': age,
+      'status': status,
+      'recommendedCalorieIntake': recommendedCalorieIntake,
+      'recommendedMoneyAllowance': recommendedMoneyAllowance,
+      'actualRemainingFoodAllowance': actualRemainingFoodAllowance,
     };
   }
 
@@ -82,6 +98,11 @@ class UserModel {
       height: map['height'],
       weight: map['weight'],
       birthdate: map['birthdate'],
+      age: map['age'] ?? 0,
+      status: map['status'] ?? 0,
+      recommendedCalorieIntake: map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+      recommendedMoneyAllowance: map['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+      actualRemainingFoodAllowance: map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
     );
   }
 
@@ -111,6 +132,11 @@ class UserModel {
       'Height': height,
       'Weight': weight,
       'Birthdate': birthdate,
+      'Age': age,
+      'Status': status,
+      'Recommended Calorie Intake': recommendedCalorieIntake,
+      'Recommended Money Allowance': recommendedMoneyAllowance,
+      'Actual Remaining Food Allowance': actualRemainingFoodAllowance,
     };
   }
 
@@ -132,7 +158,13 @@ class UserModel {
       monthlyCommittments: '',
       height: '',
       weight: '',
-      birthdate: '');
+      birthdate: '',
+      age: 0,
+      status: 0,
+      recommendedCalorieIntake: 0.0,
+      recommendedMoneyAllowance: 0.0,
+      actualRemainingFoodAllowance: 0.0,
+  );
 
   // Create a UserModel from Firebase Document Snapshot
   factory UserModel.fromSnapshot(
@@ -156,9 +188,52 @@ class UserModel {
           monthlyCommittments: data['Monthly Commitments'] ?? '',
           height: data['Height'] ?? '',
           weight: data['Weight'] ?? '',
-          birthdate: data['Birthdate'] ?? '');
+          birthdate: data['Birthdate'] ?? '',
+          age: data['Age'] ?? 0,
+          status: data['Status'] ?? 0,
+          recommendedCalorieIntake: data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+          recommendedMoneyAllowance: data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+          actualRemainingFoodAllowance: data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0);
     } else {
       return UserModel.empty();
     }
+  }
+
+  // Method to calculate age from birthdate
+  int calculateAge() {
+    final birthDate = DateFormat('dd/MM/yyyy').parse(birthdate);
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  // Method to calculate the status based on vehicle, maritalStatus, and childrenNumber
+  int calculateStatus() {
+    int status = 0;
+
+    // Check vehicle ownership
+    if (vehicle.toLowerCase().contains('owned')) {
+      status += 1;
+    } else if (vehicle.toLowerCase().contains('leased')) {
+      status += 2;
+    }
+
+    // Check marital status
+    if (maritalStatus.toLowerCase() == 'married') {
+      status += 3;
+    } else if (maritalStatus.toLowerCase() == 'single') {
+      status += 1;
+    }
+
+    // Check number of children
+    int children = int.tryParse(childrenNumber) ?? 0;
+    if (children > 0) {
+      status += children;
+    }
+
+    return status;
   }
 }

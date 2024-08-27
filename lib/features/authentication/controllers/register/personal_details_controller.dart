@@ -39,6 +39,10 @@ class PersonalDetailsController extends GetxController {
       // Fetch existing user data
       final existingUser = await userRepository.getUserRecord(userId);
 
+      // Assume you have a way to get age and status, for example, you may fetch these from the existing user or set them to default values
+      int userAge = existingUser.age;
+      int userStatus = existingUser.status;
+
       // Update User Personal Details in Firebase
       final userDetails = UserModel(
         id: userId,
@@ -58,6 +62,8 @@ class PersonalDetailsController extends GetxController {
         height: height.text.trim(),
         weight: weight.text.trim(),
         birthdate: birthdate.text.trim(),
+        age: userAge,
+        status: userStatus,
       );
 
       await userRepository.updateUserRecord(userDetails);

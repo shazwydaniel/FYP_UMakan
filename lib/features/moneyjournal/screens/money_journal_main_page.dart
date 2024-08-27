@@ -156,12 +156,22 @@ class MoneyJournalMainPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  '50',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 60,
-                                    fontWeight: FontWeight.bold,
+                                // Text(
+                                //   '50',
+                                //   style: TextStyle(
+                                //     color: Colors.black,
+                                //     fontSize: 60,
+                                //     fontWeight: FontWeight.bold,
+                                //   ),
+                                // ),
+                                Obx(
+                                  () => Text(
+                                    controller.user.value.actualRemainingFoodAllowance.toStringAsFixed(2),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],

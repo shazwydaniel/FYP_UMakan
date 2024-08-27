@@ -109,7 +109,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Update User Data in Firestore ------------------------------------
+  // Update User Details in Firestore ------------------------------------
   Future<void> updateUserDetails(UserModel updatedUser) async {
     try {
       await _db

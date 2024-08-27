@@ -77,6 +77,10 @@ class RegisterController extends GetxController {
           .registerWithEmailandPassword(
               email.text.trim(), password.text.trim());
 
+      // Default values for age and status
+      int defaultAge = 0; // Replace with actual logic if needed
+      int defaultStatus = 0; // Replace with actual logic if needed
+
       // Save User Data in Firebase Firestore
       final newUser = UserModel(
         id: userCredential.user!.uid,
@@ -96,6 +100,8 @@ class RegisterController extends GetxController {
         height: height.text.trim(),
         weight: weight.text.trim(),
         birthdate: birthdate.text.trim(),
+        age: defaultAge,
+        status: defaultStatus,
       );
 
       //Save User Data in Firestore
