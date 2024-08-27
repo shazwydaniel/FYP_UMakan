@@ -17,6 +17,7 @@ class TColors{
   // Background Colours
   static const Color mustard = Color(0xFFE9CF38);
   static const Color cobalt = Color(0xFF4D83D4);
+  static const Color indigo = Color(0xFF8377D1);
 
   // Text Colors
   static const Color textDark = Color(0xFF000500);

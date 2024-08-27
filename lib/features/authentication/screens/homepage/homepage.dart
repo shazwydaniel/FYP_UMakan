@@ -37,7 +37,7 @@ class HomePageScreen extends StatelessWidget {
                 color: TColors.amber,
                 padding: const EdgeInsets.all(0),
                 child: SizedBox(
-                  height: 660,
+                  height: 600,
                   child: Column(
                     children: [
                       Expanded(
@@ -89,13 +89,14 @@ class HomePageScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // UMakan Recommends (Label)
                               Text.rich(
                                 TextSpan(
                                   children: [
                                     TextSpan(
                                       text: 'UM',
                                       style: TextStyle(
-                                        fontSize: 23,
+                                        fontSize: 28,
                                         fontWeight: FontWeight.bold,
                                         color: TColors.teal,
                                       ),
@@ -103,7 +104,7 @@ class HomePageScreen extends StatelessWidget {
                                     TextSpan(
                                       text: 'akan',
                                       style: TextStyle(
-                                        fontSize: 23,
+                                        fontSize: 28,
                                         fontWeight: FontWeight.bold,
                                         color: TColors.mustard,
                                       ),
@@ -111,7 +112,7 @@ class HomePageScreen extends StatelessWidget {
                                     TextSpan(
                                       text: '.  ',
                                       style: TextStyle(
-                                        fontSize: 23,
+                                        fontSize: 28,
                                         fontWeight: FontWeight.bold,
                                         color: TColors.amber,
                                       ),
@@ -119,7 +120,7 @@ class HomePageScreen extends StatelessWidget {
                                     TextSpan(
                                       text: 'Recommends',
                                       style: TextStyle(
-                                        fontSize: 23,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -127,77 +128,230 @@ class HomePageScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
+
                               const SizedBox(height: 8),
+
+                              // Recommended Food Allowance - Monthly (Value)
                               Container(
-                                padding: const EdgeInsets.all(12), // Padding inside the card
+                                height: 120,
                                 decoration: BoxDecoration(
-                                  color: TColors.cobalt, // Background color of the card
-                                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                                  color: TColors.cobalt,
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                        "Food Allowance",
-                                        style: TextStyle(
-                                          color: Colors.white, // Text color
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                    ),
-                                    Obx(
-                                      () => Text(
-                                        "RM${userController.user.value.recommendedMoneyAllowance}",
-                                        style: TextStyle(
-                                          color: Colors.white, // Text color
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Stack(
+                                    children: [
+                                      // Left side text elements
+                                      Positioned(
+                                        left: 0,
+                                        top: 0,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            // Title Text
+                                            Text(
+                                              'Food Allowance',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Monthly',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 10.0, right:2.0,),
+                                                  child: Text(
+                                                    'RM',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Obx(
+                                                  () => Text(
+                                                    "${userController.user.value.recommendedMoneyAllowance}",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 28,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      // Right Side Text Elements
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: 
+                                          // Status of Food Allowance (Card)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: TColors.teal.withOpacity(0.7),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Iconsax.emoji_happy, color: Colors.white, size: 16,),
+                                                  const SizedBox(width: 5),
+                                                  // Status of Food Allowance (Label)
+                                                  Text(
+                                                    'Enough',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                            ),
+                                          ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 5),
+
+                              const SizedBox(height: 10),
+
+                              // Recommended Calorie Intake - Daily (Value)
                               Container(
-                                padding: const EdgeInsets.all(12), // Padding inside the card
+                                height: 120,
                                 decoration: BoxDecoration(
-                                  color: TColors.cobalt, // Background color of the card
-                                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                                  color: TColors.indigo,
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                        "Daily Calorie Intake",
-                                        style: TextStyle(
-                                          color: Colors.white, // Text color
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                    ),
-                                    Obx(
-                                      () => Text(
-                                        "${userController.user.value.recommendedCalorieIntake} kcal",
-                                        style: TextStyle(
-                                          color: Colors.white, // Text color
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Stack(
+                                    children: [
+                                      // Left side text elements
+                                      Positioned(
+                                        left: 0,
+                                        top: 0,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            // Title Text
+                                            Text(
+                                              'Calorie Intake',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Daily',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                Obx(
+                                                  () => Text(
+                                                    "${userController.user.value.recommendedCalorieIntake}",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 28,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 10.0, left:2.0,),
+                                                  child: Text(
+                                                    'kcal',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      // Right Side Text Elements
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child:
+                                        // Status of Calorie Intake (Card)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                color: TColors.amber.withOpacity(0.7),
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    Iconsax.emoji_sad, color: Colors.white, size: 16,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  // Status of Calorie Intake (Label)
+                                                  Text(
+                                                    'Exceeded',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-
+                      SizedBox(height: 35),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
                       // Meal Recommendations (Label)
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 40, right: 40, bottom: 10, top: 10),
+                        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -212,7 +366,7 @@ class HomePageScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: dark ? Colors.white : Colors.white,
+                                color: dark ? Colors.black : Colors.black,
                               ),
                             ),
                           ],
@@ -221,8 +375,7 @@ class HomePageScreen extends StatelessWidget {
                       // Meal Recommendations Section (Scrollable)
                       Container(
                         height: 150,
-                        margin: const EdgeInsets.only(
-                            left: 40, right: 40, bottom: 40, top:5),
+                        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -236,7 +389,7 @@ class HomePageScreen extends StatelessWidget {
                                   image: DecorationImage(
                                     image: AssetImage(
                                         'assets/images/meal_image_${index + 1}.png'),
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                                 // child: Center(
@@ -254,20 +407,9 @@ class HomePageScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
                     // Journals (Label)
                     Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20),
+                      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 20),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -288,6 +430,28 @@ class HomePageScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    // Food Journal Button
+                    GestureDetector(
+                      onTap: () => controller.navigateToJournal('Food Journal'),
+                      child: Container(
+                        height: 150,
+                        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: TColors.amber,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Food Journal',
+                            style: TextStyle(
+                              color: dark ? Colors.white : Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     // Money Journal Button
                     GestureDetector(
                       onTap: () =>
@@ -303,29 +467,6 @@ class HomePageScreen extends StatelessWidget {
                         child: Center(
                           child: Text(
                             'Money Journal',
-                            style: TextStyle(
-                              color: dark ? Colors.white : Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Food Journal Button
-                    GestureDetector(
-                      onTap: () => controller.navigateToJournal('Food Journal'),
-                      child: Container(
-                        height: 150,
-                        margin: const EdgeInsets.only(
-                            left: 20, right: 20, bottom: 20),
-                        decoration: BoxDecoration(
-                          color: TColors.amber,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Food Journal',
                             style: TextStyle(
                               color: dark ? Colors.white : Colors.white,
                               fontSize: 20,
