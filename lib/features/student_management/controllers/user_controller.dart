@@ -58,25 +58,29 @@ class UserController extends GetxController {
       // Retrieve the price from the expenseData
       double price = double.tryParse(expenseData['price'].toString()) ?? 0.0;
 
-      // Fetch the current user data
-      final currentUser = user.value;
-
-      // Calculate the updated actualRemainingFoodAllowance
-      double newActualRemainingFoodAllowance = currentUser.actualRemainingFoodAllowance - price;
-
-      // Update the user model with the new actualRemainingFoodAllowance
+      // Update the user model directly
       user.update((user) {
         if (user != null) {
-          user.actualRemainingFoodAllowance = newActualRemainingFoodAllowance;
+          user.actualRemainingFoodAllowance -= price;
+
+          // Print the updated allowance and price to the console
+          print('Price: $price');
+          print('Updated actualRemainingFoodAllowance: ${user.actualRemainingFoodAllowance}');
         }
       });
 
       // Save the updated user data back to Firestore
-      await saveUserDetails();
+      await userRepository.updateUserDetails(user.value);
     } catch (e) {
       // Handle error
       print('Error adding expense: $e');
     }
+  }
+
+  Future<void> removeExpense(String expenseId) async {
+    final userId = currentUserId;
+    await moneyJournalRepository.removeExpense(userId, expenseId);
+    // await refreshExpenses(); // Assuming you have a method to refresh the expense list after deletion
   }
 
   // Method to Get Expenses

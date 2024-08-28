@@ -680,10 +680,10 @@ class MoneyJournalMainPage extends StatelessWidget {
                           // 'location': locationController.text,
                         };
 
-                        print('Logging expense: $expenseData for category: $selectedCategory');
+                        print('----- Logging expense: $expenseData for category: $selectedCategory -----');
 
                         // Log the item
-                        await repository.addExpense(
+                        await UserController.instance.addExpense(
                           userId,
                           selectedCategory,
                           expenseData,

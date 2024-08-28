@@ -23,14 +23,15 @@ class MoneyJournalRepository {
   // Add New Expense to Money Journal
   Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
-      // Create a document reference with an auto-generated ID
       final docRef = _db
           .collection('money_journal')
           .doc(userId)
           .collection('expenses')
           .doc();
 
-      // Set the expense data including the generated document ID
+      // Print the expense data being added
+      print('Adding expense: $expenseData');
+
       await docRef.set({
         'expense_ID': docRef.id,
         'type': expenseType,
