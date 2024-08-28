@@ -13,6 +13,8 @@ class UserController extends GetxController {
   final userRepository = Get.put(UserRepository());
   final moneyJournalRepository = Get.put(MoneyJournalRepository());
 
+  String get currentUserId => user.value.id;
+
   @override
   void onInit() {
     super.onInit();

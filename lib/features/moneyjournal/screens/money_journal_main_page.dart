@@ -624,6 +624,8 @@ class MoneyJournalMainPage extends StatelessWidget {
     String selectedCategory = 'Non-Food';
     final MoneyJournalRepository repository = MoneyJournalRepository();
 
+    final String userId = UserController.instance.currentUserId;
+
     showDialog(
       context: context,
       barrierDismissible: true, // Allows dismissal by tapping outside the dialog
@@ -804,7 +806,7 @@ class MoneyJournalMainPage extends StatelessWidget {
 
                         // Log the item
                         await repository.addExpense(
-                          'userId', // Replace with the actual user ID
+                          userId, // Replace with the actual user ID
                           selectedCategory,
                           expenseData,
                         );
