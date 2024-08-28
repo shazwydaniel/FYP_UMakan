@@ -23,16 +23,20 @@ class MoneyJournalRepository {
   // Add New Expense to Money Journal
   Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
-      await _db
+      // Create a document reference with an auto-generated ID
+      final docRef = _db
           .collection('money_journal')
           .doc(userId)
           .collection('expenses')
-          .doc()
-          .set({
-            'type': expenseType,
-            ...expenseData,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
+          .doc();
+
+      // Set the expense data including the generated document ID
+      await docRef.set({
+        'expense_ID': docRef.id,
+        'type': expenseType,
+        ...expenseData,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw 'Failed to add expense: ${e.message}';

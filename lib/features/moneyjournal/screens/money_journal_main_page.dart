@@ -339,7 +339,11 @@ class MoneyJournalMainPage extends StatelessWidget {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No expenses found.'));
+                      return Center(
+                        child: Text(
+                          'No expenses found.'
+                        )
+                      );
                     }
 
                     final expenses = snapshot.data!;
@@ -350,6 +354,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                         final price = (expense['price'] ?? '0').toString();
                         final itemName = expense['itemName'] ?? 'No item name';
                         final type = expense['type'] ?? 'Unknown';
+                        final expenseID = expense['expense_ID'] ?? 'Unknown';
 
                         return Container(
                           height: 100,
@@ -398,6 +403,20 @@ class MoneyJournalMainPage extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+                                // Delete Expense Item
+                                // Trash icon at the top right
+                                // Positioned(
+                                //   top: -15,
+                                //   right: 0,
+                                //   left: 280,
+                                //   child: IconButton(
+                                //     icon: Icon(Icons.delete, color: Colors.red),
+                                //     onPressed: () async {
+                                //       // Call the removeExpense method to delete the item
+                                //       await controller.removeExpense(expenseID);
+                                //     },
+                                //   ),
+                                // ),
                                 // Item Price (label) - Positioned at the bottom right
                                 Positioned(
                                   bottom: -16.0,
@@ -419,7 +438,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                         price,
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 60,
+                                          fontSize: 50,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -680,7 +699,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                         Get.off(() => const MoneyJournalMainPage(), preventDuplicates: false);
                       } catch (e) {
                         print('Error logging expense: $e');
-                        // Handle error, e.g., show a Snackbar or alert dialog
+                        TLoaders.errorSnackBar( title: 'Error Logging Expense', message: "Invalid Input");
                       }
                     },
                     child: Center(
