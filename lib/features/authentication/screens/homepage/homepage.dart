@@ -37,7 +37,7 @@ class HomePageScreen extends StatelessWidget {
                 color: TColors.amber,
                 padding: const EdgeInsets.all(0),
                 child: SizedBox(
-                  height: 600,
+                  height: 580,
                   child: Column(
                     children: [
                       Expanded(
@@ -93,34 +93,34 @@ class HomePageScreen extends StatelessWidget {
                               Text.rich(
                                 TextSpan(
                                   children: [
+                                    // TextSpan(
+                                    //   text: 'UM',
+                                    //   style: TextStyle(
+                                    //     fontSize: 28,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color: TColors.teal,
+                                    //   ),
+                                    // ),
+                                    // TextSpan(
+                                    //   text: 'akan',
+                                    //   style: TextStyle(
+                                    //     fontSize: 28,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color: TColors.mustard,
+                                    //   ),
+                                    // ),
+                                    // TextSpan(
+                                    //   text: '.  ',
+                                    //   style: TextStyle(
+                                    //     fontSize: 28,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color: TColors.amber,
+                                    //   ),
+                                    // ),
                                     TextSpan(
-                                      text: 'UM',
+                                      text: 'We Suggest You To Have',
                                       style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: TColors.teal,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'akan',
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: TColors.mustard,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '.  ',
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: TColors.amber,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'Recommends',
-                                      style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
