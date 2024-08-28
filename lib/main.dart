@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
+import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
@@ -33,8 +34,9 @@ Future<void> main() async {
 
   //Initalise Controllers and User Repository
   //Get.put(UserController());
-  Get.put(NetworkManager());
   //Get.put(UserRepository());
+  // Get.put(MoneyJournalRepository());
+  Get.put(NetworkManager());
 
   // Await Splash Until Other Items Load
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);

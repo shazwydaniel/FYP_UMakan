@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import "package:flutter/material.dart";
+import "package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart";
+import "package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
@@ -87,6 +89,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: TColors.cream,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -128,7 +138,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    '7%',
+                                    '%',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -189,6 +199,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: TColors.teal,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -317,6 +335,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: TColors.cream,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -391,6 +417,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: TColors.cream,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -465,6 +499,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: TColors.cream,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -576,6 +618,12 @@ class MoneyJournalMainPage extends StatelessWidget {
   }
 
   void _showModal(BuildContext context) {
+    final TextEditingController priceController = TextEditingController();
+    final TextEditingController itemNameController = TextEditingController();
+    final TextEditingController locationController = TextEditingController();
+    String selectedCategory = 'Non-Food';
+    final MoneyJournalRepository repository = MoneyJournalRepository();
+
     showDialog(
       context: context,
       barrierDismissible: true, // Allows dismissal by tapping outside the dialog
@@ -628,14 +676,25 @@ class MoneyJournalMainPage extends StatelessWidget {
                     SizedBox(width: 10), // Spacing between the "RM" text and TextField
                     Container(
                       width: 150, // Adjust width as needed
-                      child: TextField(
+                      child: 
+                      // TextField(
+                      //   keyboardType: TextInputType.number,
+                      //   decoration: InputDecoration(
+                      //     fillColor: Colors.white,
+                      //     filled: true,
+                      //     border: OutlineInputBorder(),
+                      //     hintText: 'Enter Cost',
+                      //   ),
+                      // ),
+                      TextField(
+                        controller: priceController,
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
+                          labelText: 'Enter Cost',
+                          border: OutlineInputBorder(),
                           fillColor: Colors.white,
                           filled: true,
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter Cost',
                         ),
-                        keyboardType: TextInputType.number,
                       ),
                     ),
                   ],
@@ -659,15 +718,24 @@ class MoneyJournalMainPage extends StatelessWidget {
                 SizedBox(height: 10), // Spacing between the "Category" text and dropdown
                 Container(
                   width: 300, // Adjust width as needed
-                  child: TextField(
+                  child: 
+                  // TextField(
+                  //   decoration: InputDecoration(
+                  //     fillColor: Colors.white,
+                  //     filled: true,
+                  //     border: OutlineInputBorder(),
+                  //     hintText: 'Enter Name',
+                  //   ),
+                  // ),
+                  TextField(
+                    controller: itemNameController,
                     decoration: InputDecoration(
+                      hintText: 'Item Name',
+                      border: OutlineInputBorder(),
                       fillColor: Colors.white,
                       filled: true,
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter Name',
                     ),
-                        keyboardType: TextInputType.number,
-                      ),
+                  ),
                 ),
                 SizedBox(height: 20),
                 Row(
@@ -688,43 +756,65 @@ class MoneyJournalMainPage extends StatelessWidget {
                 SizedBox(height: 10), // Spacing between the "Category" text and dropdown
                 Container(
                   width: 300, // Set custom width for the dropdown
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        border: OutlineInputBorder(),
-                      ),
-                      value: 'Food', // Default value
-                      items: [
-                        DropdownMenuItem(
-                          value: 'Food',
-                          child: Text('Food'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Non-Food',
-                          child: Text('Non-Food'),
-                        ),
-                      ],
-                      onChanged: (String? newValue) {
-                        // Handle the dropdown value change
-                      },
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(),
                     ),
+                    value: selectedCategory, // Default value
+                    items: [
+                      DropdownMenuItem(
+                        value: 'Food',
+                        child: Text('Food'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Non-Food',
+                        child: Text('Non-Food'),
+                      ),
+                    ],
+                    onChanged: (String? newValue) {
+                      selectedCategory = newValue!; // Update the selected category
+                    },
+                  ),
                 ),
                 SizedBox(height: 25),
                 Container(
-                  width: 120, // Adjust width of the button
-                  height: 50, // Adjust height of the button
+                  width: 120,
+                  height: 50,
                   decoration: BoxDecoration(
-                    color: TColors.bubbleOrange, // Background color
-                    borderRadius: BorderRadius.circular(20.0), // Rounded corners
+                    color: TColors.bubbleOrange,
+                    borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(
-                      color: Colors.black, // Black border color
-                      width: 2.0, // Border width
+                      color: Colors.black,
+                      width: 2.0,
                     ),
                   ),
                   child: TextButton(
-                    onPressed: () {
-                      // Handle button press
+                    onPressed: () async {
+                      try {
+                        // Create the expense data
+                        final expenseData = {
+                          'price': double.parse(priceController.text),
+                          'itemName': itemNameController.text,
+                          // 'location': locationController.text,
+                        };
+
+                        print('Logging expense: $expenseData for category: $selectedCategory');
+
+                        // Log the item
+                        await repository.addExpense(
+                          'userId', // Replace with the actual user ID
+                          selectedCategory,
+                          expenseData,
+                        );
+
+                        // Close the modal
+                        Navigator.pop(context);
+                      } catch (e) {
+                        print('Error logging expense: $e');
+                        // Handle error, e.g., show a Snackbar or alert dialog
+                      }
                     },
                     child: Center(
                       child: Text(

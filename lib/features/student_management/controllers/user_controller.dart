@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ class UserController extends GetxController {
   final profileLoading = false.obs;
   Rx<UserModel> user = UserModel.empty().obs;
   final userRepository = Get.put(UserRepository());
-  //final controller = UserRepository.instance;
+  final moneyJournalRepository = Get.put(MoneyJournalRepository());
 
   @override
   void onInit() {
@@ -27,10 +28,31 @@ class UserController extends GetxController {
       updateAge();
       updateStatus();
       await updateCalculatedFields();
+      await setupUser(user.id);
     } catch (e) {
       user(UserModel.empty());
     } finally {
       profileLoading.value = false;
+    }
+  }
+
+  // Setup the Money Journal for a user
+  Future<void> setupUser(String userId) async {
+    try {
+      await moneyJournalRepository.initializeUserJournal(userId);
+    } catch (e) {
+      print('Error initializing user journal: $e');
+      // Handle any specific error handling you need here
+    }
+  }
+
+  // Method to add expense
+  Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
+    try {
+      await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
+    } catch (e) {
+      // Handle error
+      print('Error adding expense: $e');
     }
   }
 
