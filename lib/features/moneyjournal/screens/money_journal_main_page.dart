@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import "package:flutter/material.dart";
+import "package:fyp_umakan/common/widgets/loaders/loaders.dart";
 import "package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart";
 import "package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
@@ -664,13 +665,19 @@ class MoneyJournalMainPage extends StatelessWidget {
 
                         // Log the item
                         await repository.addExpense(
-                          userId, // Replace with the actual user ID
+                          userId,
                           selectedCategory,
                           expenseData,
                         );
 
                         // Close the modal
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
+
+                        // Success Message
+                        TLoaders.successSnackBar( title: 'Expense Logged', message: "Your spending for today has been updated!.");
+
+                        // Refresh the page
+                        Get.off(() => const MoneyJournalMainPage(), preventDuplicates: false);
                       } catch (e) {
                         print('Error logging expense: $e');
                         // Handle error, e.g., show a Snackbar or alert dialog

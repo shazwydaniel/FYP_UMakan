@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
+import 'package:fyp_umakan/features/moneyjournal/screens/money_journal_main_page.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -48,10 +50,29 @@ class UserController extends GetxController {
     }
   }
 
-  // Method to Add Expenses
   Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
+      // Add the expense
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
+
+      // Retrieve the price from the expenseData
+      double price = double.tryParse(expenseData['price'].toString()) ?? 0.0;
+
+      // Fetch the current user data
+      final currentUser = user.value;
+
+      // Calculate the updated actualRemainingFoodAllowance
+      double newActualRemainingFoodAllowance = currentUser.actualRemainingFoodAllowance - price;
+
+      // Update the user model with the new actualRemainingFoodAllowance
+      user.update((user) {
+        if (user != null) {
+          user.actualRemainingFoodAllowance = newActualRemainingFoodAllowance;
+        }
+      });
+
+      // Save the updated user data back to Firestore
+      await saveUserDetails();
     } catch (e) {
       // Handle error
       print('Error adding expense: $e');
