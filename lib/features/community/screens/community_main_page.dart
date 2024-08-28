@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import "package:flutter/material.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
@@ -69,41 +71,165 @@ class CommunityMainPageScreen extends StatelessWidget {
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
                 children: [
-                  // First Card
+                  // Organisation 1 (Card)
                   Container(
                     height: 150, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Organisation 1',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2), // Shadow color
+                          spreadRadius: 2, // How wide the shadow spreads
+                          blurRadius: 10, // Softness of the shadow
+                          offset: Offset(0, 8), // Position of the shadow (x, y)
                         ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Title Text
+                                const Text(
+                                  'SWRC Food Bank',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text(
+                                  '012-3456789',
+                                  style: TextStyle(
+                                    color: TColors.bubbleOlive,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleOlive.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    'IN CAMPUS',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Organisation Picture - Positioned at the bottom right
+                          const Positioned(
+                            bottom: 0.0,
+                            right: 0,
+                            child: 
+                            CircleAvatar(
+                              radius: 45,
+                              backgroundImage: AssetImage(
+                                '/Users/shazwydaniel/fyp_umakan/assets/images/FoodBank.png',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Second Card
+                  // Organisation 2 (Card)
                   Container(
                     height: 150, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       color: TColors.cream,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Organisation 2',
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
                         ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Title Text
+                                const Text(
+                                  'Masjid Ar-Rahman',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text(
+                                  '019-87654321',
+                                  style: TextStyle(
+                                    color: TColors.bubbleOlive,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleOlive.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    'OUTSIDE CAMPUS',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Organisation Picture - Positioned at the bottom right
+                          const Positioned(
+                            bottom: 0.0,
+                            right: 0,
+                            child: 
+                            CircleAvatar(
+                              radius: 45,
+                              backgroundImage: AssetImage(
+                                '/Users/shazwydaniel/fyp_umakan/assets/images/Masjid.png',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -138,60 +264,233 @@ class CommunityMainPageScreen extends StatelessWidget {
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
                 children: [
-                  // First Card
+                  // News 1 (Card)
                   Container(
                     height: 100, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: TColors.amber,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'News 1',
-                        style: TextStyle(
-                          color: dark ? Colors.white : Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
                         ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Message
+                                const Text(
+                                  '"Help Me Im Starving"',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                // Details (Label)
+                                const Text(
+                                  'Ahchong, 019-87654321',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Location (Label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: 
+                            Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleRed.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    'KK8',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Second Card
+                  // News 2 (Card)
                   Container(
                     height: 100, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: TColors.amber,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'News 2',
-                        style: TextStyle(
-                          color: dark ? Colors.white : Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
                         ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Message
+                                const Text(
+                                  '"I have extra maggi!"',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                // Details (Label)
+                                const Text(
+                                  'Bakar, 013-3465432',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Location (Label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: 
+                            Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleRed.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    'KK12',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  // Third Card
+                  // News 3 (Card)
                   Container(
                     height: 100, // Height of the rectangle card
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: TColors.amber,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'News 3',
-                        style: TextStyle(
-                          color: dark ? Colors.white : Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 8),
                         ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          // Left side text elements
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Message
+                                const Text(
+                                  '"Carpool to SWRC event?"',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  softWrap: true, // Enable text wrapping
+                                  overflow: TextOverflow.visible, // Handle overflow
+                                ),
+                                SizedBox(height: 5),
+                                // Details (Label)
+                                const Text(
+                                  'Clarence, 017-09865412',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Location (Label) - Positioned at the bottom right
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: 
+                            Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleRed.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    'KK1',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -205,14 +504,14 @@ class CommunityMainPageScreen extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.white),
+                    side: const BorderSide(color: Colors.white),
                     backgroundColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
@@ -223,7 +522,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Icon(Iconsax.message_text, color: Colors.white, size: 20),
                     ],
                   ),
