@@ -48,13 +48,24 @@ class UserController extends GetxController {
     }
   }
 
-  // Method to add expense
+  // Method to Add Expenses
   Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
     } catch (e) {
       // Handle error
       print('Error adding expense: $e');
+    }
+  }
+
+  // Method to Get Expenses
+  Future<List<Map<String, dynamic>>> getExpenses() async {
+    try {
+      final userId = currentUserId;
+      return await moneyJournalRepository.getExpenses(userId);
+    } catch (e) {
+      print('Error fetching expenses: $e');
+      return [];
     }
   }
 

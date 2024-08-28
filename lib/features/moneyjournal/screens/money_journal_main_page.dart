@@ -252,8 +252,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                   child: Obx(
                                     () => Text(
                                       'RM' +
-                                          controller
-                                              .user.value.monthlyAllowance,
+                                          controller.user.value.monthlyAllowance,
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -323,260 +322,119 @@ class MoneyJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Today's Spendings (Cards)
+            // Retrieving Expense Items from Firebase - Today's Spending (Cards)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
-              child: Column(
-                children: [
-                  // First Item (Card)
-                  Container(
-                    height: 100,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          // Left side text elements
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Chicken Chop',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  'FSKTM',
-                                  style: TextStyle(
-                                    color: TColors.olive,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Item Price (label) - Positioned at the bottom right
-                          Positioned(
-                            bottom: -16.0,
-                            right: 0,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 30.0), // Adjust position
-                                  child: Text(
-                                    'RM',
-                                    style: TextStyle(
-                                      color: TColors.olive,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '10',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 60,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              child: Obx(() {
+                if (controller.profileLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-                  // Second Item (Card)
-                  Container(
-                    height: 100,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          // Left side text elements
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Nasi Ayam Penyet',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  'KK7',
-                                  style: TextStyle(
-                                    color: TColors.olive,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Item Price (label) - Positioned at the bottom right
-                          Positioned(
-                            bottom: -16.0,
-                            right: 0,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 30.0), // Adjust position
-                                  child: Text(
-                                    'RM',
-                                    style: TextStyle(
-                                      color: TColors.olive,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '6',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 60,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return FutureBuilder<List<Map<String, dynamic>>>(
+                  future: controller.getExpenses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No expenses found.'));
+                    }
 
-                  // Third Item (Card)
-                  Container(
-                    height: 100,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.cream,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          // Left side text elements
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                    final expenses = snapshot.data!;
+
+                    return Column(
+                      children: expenses.map((expense) {
+                        final createdAt = expense['createdAt'] ?? 'Unknown';
+                        final price = (expense['price'] ?? '0').toString();
+                        final itemName = expense['itemName'] ?? 'No item name';
+                        final type = expense['type'] ?? 'Unknown';
+
+                        return Container(
+                          height: 100,
+                          margin: const EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
+                            color: TColors.cream,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Stack(
                               children: [
-                                Text(
-                                  'Oden',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                // Left side text elements
+                                Positioned(
+                                  left: 0,
+                                  top: 0,
+                                  bottom: 0,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        itemName,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        type,
+                                        style: TextStyle(
+                                          color: TColors.darkGreen,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  'KK MART',
-                                  style: TextStyle(
-                                    color: TColors.olive,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                // Item Price (label) - Positioned at the bottom right
+                                Positioned(
+                                  bottom: -16.0,
+                                  right: 0,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 30.0),
+                                        child: Text(
+                                          'RM',
+                                          style: TextStyle(
+                                            color: TColors.darkGreen,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        price,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 60,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          // Item Price (label) - Positioned at the bottom right
-                          Positioned(
-                            bottom: -16.0,
-                            right: 0,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 30.0), // Adjust position
-                                  child: Text(
-                                    'RM',
-                                    style: TextStyle(
-                                      color: TColors.olive,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '11',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 60,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                );
+              }),
             ),
-            // Add Expense (Button)
           ],
         ),
       ),
