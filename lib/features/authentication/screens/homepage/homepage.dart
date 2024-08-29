@@ -14,6 +14,7 @@ import 'package:fyp_umakan/utils/constants/text_strings.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 class HomePageScreen extends StatelessWidget {
   const HomePageScreen({super.key});
@@ -178,16 +179,20 @@ class HomePageScreen extends StatelessWidget {
                                                       ),
                                                     ),
                                                   ),
-                                                  Obx(
-                                                    () => Text(
-                                                      "${userController.user.value.recommendedMoneyAllowance}",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 28,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
+                                                  Obx(() {
+                                                  // Format the value with up to 2 decimal places
+                                                  String formattedAllowance = NumberFormat('0.00').format(userController.user.value.recommendedMoneyAllowance);
+
+                                                  return Text(
+                                                    "$formattedAllowance",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 28,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
-                                                  ),
+                                                  );
+                                                },
+                                              ),
                                                 ],
                                               ),
                                             ],

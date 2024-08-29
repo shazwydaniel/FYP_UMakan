@@ -12,6 +12,7 @@ import "package:get/get.dart";
 import "package:get/get_core/src/get_main.dart";
 import "package:get/get_navigation/src/snackbar/snackbar.dart";
 import "package:iconsax/iconsax.dart";
+import "package:intl/intl.dart";
 
 class StudentProfilePageScreen extends StatelessWidget {
   const StudentProfilePageScreen({super.key});
@@ -264,15 +265,19 @@ class StudentProfilePageScreen extends StatelessWidget {
                                                               ),
                                                             ),
                                                           ),
-                                                          Obx(
-                                                            () => Text(
-                                                              "${controller.user.value.recommendedMoneyAllowance}",
+                                                          Obx((){
+                                                            // Format the value with up to 2 decimal places
+                                                            String formattedAllowance = NumberFormat('0.00').format(controller.user.value.recommendedMoneyAllowance);
+
+                                                            return Text(
+                                                              "$formattedAllowance",
                                                               style: TextStyle(
                                                                 color: Colors.white,
                                                                 fontSize: 28,
                                                                 fontWeight: FontWeight.bold,
                                                               ),
-                                                            ),
+                                                            );
+                                                            },
                                                           ),
                                                         ],
                                                       ),
