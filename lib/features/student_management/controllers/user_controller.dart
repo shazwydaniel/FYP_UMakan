@@ -23,6 +23,16 @@ class UserController extends GetxController {
     fetchUserRecord();
   }
 
+  Future<void> refreshUserData() async {
+    try {
+      await fetchUserRecord();
+      await updateCalculatedFields();
+      print('------- Page is refreshed! -------');
+    } catch (e) {
+      print('Error refreshing user data: $e');
+    }
+  }
+
   // Fetch User Record
   Future<void> fetchUserRecord() async {
     try {
