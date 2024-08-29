@@ -197,44 +197,39 @@ class HomePageScreen extends StatelessWidget {
                                         Positioned(
                                           bottom: 0,
                                           right: 0,
-                                          child: 
-                                            Positioned(
-                                              bottom: 0,
-                                              right: 0,
-                                              child: Obx(() {
-                                                final recommendedAllowance = userController.user.value.recommendedMoneyAllowance;
-                                                final remainingAllowance = userController.user.value.actualRemainingFoodAllowance;
-        
-                                                return Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                  decoration: BoxDecoration(
-                                                    color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
-                                                    borderRadius: BorderRadius.circular(20),
+                                          child: Obx(() {
+                                            final recommendedAllowance = userController.user.value.recommendedMoneyAllowance;
+                                            final remainingAllowance = userController.user.value.actualRemainingFoodAllowance;
+    
+                                            return Container(
+                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    remainingAllowance >= recommendedAllowance
+                                                        ? Iconsax.emoji_happy
+                                                        : Iconsax.emoji_sad,
+                                                    color: Colors.white,
+                                                    size: 16,
                                                   ),
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Icon(
-                                                        remainingAllowance >= recommendedAllowance
-                                                            ? Iconsax.emoji_happy
-                                                            : Iconsax.emoji_sad,
-                                                        color: Colors.white,
-                                                        size: 16,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Text(
-                                                        remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ],
+                                                  const SizedBox(width: 5),
+                                                  Text(
+                                                    remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
                                                   ),
-                                                );
-                                              }),
-                                            ),
+                                                ],
+                                              ),
+                                            );
+                                          }),
                                         ),
                                       ],
                                     ),
@@ -322,31 +317,31 @@ class HomePageScreen extends StatelessWidget {
                                           right: 0,
                                           child:
                                           // Status of Calorie Intake (Card)
-                                              Container(
-                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                decoration: BoxDecoration(
-                                                  color: TColors.amber.withOpacity(0.7),
-                                                  borderRadius: BorderRadius.circular(20),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: TColors.amber.withOpacity(0.7),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Iconsax.emoji_sad, color: Colors.white, size: 16,
                                                 ),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      Iconsax.emoji_sad, color: Colors.white, size: 16,
-                                                    ),
-                                                    const SizedBox(width: 5),
-                                                    // Status of Calorie Intake (Label)
-                                                    Text(
-                                                      'Exceeded',
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                const SizedBox(width: 5),
+                                                // Status of Calorie Intake (Label)
+                                                Text(
+                                                  'Exceeded',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
