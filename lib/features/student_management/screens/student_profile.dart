@@ -252,75 +252,88 @@ class StudentProfilePageScreen extends StatelessWidget {
                             builder: (context) => FinancialDetailsEdit()),
                       );
                     },
-                    child: Card(
-                      elevation: 5, // Set elevation for shadow
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
+                    child: Container(
+                      height: 135,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: TColors.cream,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
                       ),
-                      color: TColors.cream, // Background color of the card
-                      margin: const EdgeInsets.only(
-                          bottom: 10), // Margin around the card
-
                       child: Padding(
-                        padding: const EdgeInsets.all(
-                            20), // Add padding inside the card
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, // Align content to the left
+                        padding: const EdgeInsets.all(20.0),
+                        child: Stack(
                           children: [
-                            Text(
-                              'Monthly Allowance',
-                              style: TextStyle(
-                                color: dark ? Colors.black : Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 5.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    'Overall',
+                            // Left side text elements
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Monthly Allowance',
                                     style: TextStyle(
-                                      color: dark ? Colors.black : Colors.black,
-                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-
-                                const SizedBox(
-                                    width:
-                                        80), // Add spacer to push the RM and 1000 to the right
-                                Text(
-                                  'RM',
-                                  style: TextStyle(
-                                    color: dark ? Colors.black : Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
+                                  SizedBox(height: 34),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      'Overall',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 10),
-
-                                Text(
-                                  controller.user.value.monthlyAllowance,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.bold,
+                                ],
+                              ),
+                            ),
+                            // Right side price elements
+                            Positioned(
+                              bottom: -16.0,
+                              right: 0,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 22.0),
+                                    child: Text(
+                                      'RM',
+                                      style: TextStyle(
+                                        color: TColors.darkGreen,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    controller.user.value.monthlyAllowance,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -328,7 +341,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     ),
                   ),
 
-                  //Second Card
+                  // Second Card
                   GestureDetector(
                     onTap: () {
                       // Navigate to the new page
@@ -338,37 +351,42 @@ class StudentProfilePageScreen extends StatelessWidget {
                             builder: (context) => FinancialDetailsEdit()),
                       );
                     },
-                    child: Card(
-                      elevation: 5, // Set elevation for shadow
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
+                    child: Container(
+                      height: 135,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: TColors.cream,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
                       ),
-                      color: TColors.cream, // Background color of the card
-                      margin: const EdgeInsets.only(
-                          bottom: 10), // Margin around the card
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(
-                              20), // Add padding inside the card
-                          child: Column(
-                            // Minimize the height of the column
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment
-                                .start, // Align content to the center
-                            children: [
-                              Text(
-                                'Monthly Commitments',
-                                style: TextStyle(
-                                  color: dark ? Colors.black : Colors.black,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Stack(
+                          children: [
+                            // Left side text elements
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  Text(
+                                    'Monthly Commitments',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 34),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8.0, vertical: 5.0),
@@ -379,23 +397,32 @@ class StudentProfilePageScreen extends StatelessWidget {
                                     child: Text(
                                       'Non-Food',
                                       style: TextStyle(
-                                        color:
-                                            dark ? Colors.black : Colors.black,
+                                        color: Colors.black,
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 80),
-                                  Text(
-                                    'RM',
-                                    style: TextStyle(
-                                      color: dark ? Colors.black : Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                                ],
+                              ),
+                            ),
+                            // Right side price elements
+                            Positioned(
+                              bottom: -16.0,
+                              right: 0,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 22.0),
+                                    child: Text(
+                                      'RM',
+                                      style: TextStyle(
+                                        color: TColors.darkGreen,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(width: 10),
                                   Text(
                                     controller.user.value.monthlyCommittments,
                                     style: TextStyle(
@@ -406,8 +433,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -415,7 +442,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             // Health Details (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
