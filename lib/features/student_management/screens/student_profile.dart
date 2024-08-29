@@ -283,44 +283,39 @@ class StudentProfilePageScreen extends StatelessWidget {
                                                 Positioned(
                                                   bottom: 0,
                                                   right: 0,
-                                                  child: 
-                                                    Positioned(
-                                                      bottom: 0,
-                                                      right: 0,
-                                                      child: Obx(() {
-                                                        final recommendedAllowance = controller.user.value.recommendedMoneyAllowance;
-                                                        final remainingAllowance = controller.user.value.actualRemainingFoodAllowance;
+                                                  child: Obx(() {
+                                                    final recommendedAllowance = controller.user.value.recommendedMoneyAllowance;
+                                                    final remainingAllowance = controller.user.value.actualRemainingFoodAllowance;
 
-                                                        return Container(
-                                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                          decoration: BoxDecoration(
-                                                            color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
-                                                            borderRadius: BorderRadius.circular(20),
+                                                    return Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                      decoration: BoxDecoration(
+                                                        color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
+                                                        borderRadius: BorderRadius.circular(20),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            remainingAllowance >= recommendedAllowance
+                                                                ? Iconsax.emoji_happy
+                                                                : Iconsax.emoji_sad,
+                                                            color: Colors.white,
+                                                            size: 16,
                                                           ),
-                                                          child: Row(
-                                                            mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              Icon(
-                                                                remainingAllowance >= recommendedAllowance
-                                                                    ? Iconsax.emoji_happy
-                                                                    : Iconsax.emoji_sad,
-                                                                color: Colors.white,
-                                                                size: 16,
-                                                              ),
-                                                              const SizedBox(width: 5),
-                                                              Text(
-                                                                remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
-                                                                style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            ],
+                                                          const SizedBox(width: 5),
+                                                          Text(
+                                                            remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: 12,
+                                                            ),
                                                           ),
-                                                        );
-                                                      }),
-                                                    ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
                                                 ),
                                               ],
                                             ),
@@ -451,273 +446,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Calculated Recommendations (Label)
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
-            //   child: Row(
-            //     crossAxisAlignment: CrossAxisAlignment.center,
-            //     children: [
-            //       Container(
-            //         width: 4, // Thin vertical line width
-            //         height: 40, // Adjust the height as needed
-            //         color: TColors.cobalt,
-            //       ),
-            //       const SizedBox(width: 10), // Space between the line and text
-
-            //       Text(
-            //         'We Recommend',
-            //         style: TextStyle(
-            //           fontSize: 16, // Adjust the font size as needed
-            //           fontWeight: FontWeight.bold,
-            //           color: dark ? Colors.white : Colors.white,
-            //         ),
-            //       ),
-            //       const SizedBox(width: 180),
-            //     ],
-            //   ),
-            // ),
-
-            // Calculated Recommendations (Cards)
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
-            //   child: Column(
-            //     children: [
-            //       // Recommended Food Allowance - Monthly (Value)
-            //                   Container(
-            //                     height: 120,
-            //                     decoration: BoxDecoration(
-            //                       color: TColors.cobalt,
-            //                       borderRadius: BorderRadius.circular(20),
-            //                       boxShadow: [
-            //                         BoxShadow(
-            //                           color: Colors.black.withOpacity(0.1),
-            //                           spreadRadius: 1,
-            //                           blurRadius: 3,
-            //                           offset: Offset(0, 8),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                     child: Padding(
-            //                       padding: const EdgeInsets.all(20.0),
-            //                       child: Stack(
-            //                         children: [
-            //                           // Left side text elements
-            //                           Positioned(
-            //                             left: 0,
-            //                             top: 0,
-            //                             child: Column(
-            //                               crossAxisAlignment: CrossAxisAlignment.start,
-            //                               mainAxisAlignment: MainAxisAlignment.center,
-            //                               children: [
-            //                                 // Title Text
-            //                                 Text(
-            //                                   'Food Allowance',
-            //                                   style: TextStyle(
-            //                                     color: Colors.white,
-            //                                     fontSize: 18,
-            //                                     fontWeight: FontWeight.bold,
-            //                                   ),
-            //                                 ),
-            //                                 Text(
-            //                                   'Monthly',
-            //                                   style: TextStyle(
-            //                                     color: Colors.white,
-            //                                     fontSize: 12,
-            //                                     fontWeight: FontWeight.bold,
-            //                                   ),
-            //                                 ),
-            //                                 SizedBox(height: 5),
-            //                                 Row(
-            //                                   children: [
-            //                                     Padding(
-            //                                       padding: const EdgeInsets.only(top: 10.0, right:2.0,),
-            //                                       child: Text(
-            //                                         'RM',
-            //                                         style: TextStyle(
-            //                                           color: Colors.white,
-            //                                           fontSize: 15,
-            //                                           fontWeight: FontWeight.bold,
-            //                                         ),
-            //                                       ),
-            //                                     ),
-            //                                     Obx(
-            //                                       () => Text(
-            //                                         "${controller.user.value.recommendedMoneyAllowance}",
-            //                                         style: TextStyle(
-            //                                           color: Colors.white,
-            //                                           fontSize: 28,
-            //                                           fontWeight: FontWeight.bold,
-            //                                         ),
-            //                                       ),
-            //                                     ),
-            //                                   ],
-            //                                 ),
-            //                               ],
-            //                             ),
-            //                           ),
-            //                           // Right Side Text Elements
-            //                           Positioned(
-            //                             bottom: 0,
-            //                             right: 0,
-            //                             child: 
-            //                               Positioned(
-            //                                 bottom: 0,
-            //                                 right: 0,
-            //                                 child: Obx(() {
-            //                                   final recommendedAllowance = controller.user.value.recommendedMoneyAllowance;
-            //                                   final remainingAllowance = controller.user.value.actualRemainingFoodAllowance;
-
-            //                                   return Container(
-            //                                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            //                                     decoration: BoxDecoration(
-            //                                       color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
-            //                                       borderRadius: BorderRadius.circular(20),
-            //                                     ),
-            //                                     child: Row(
-            //                                       mainAxisSize: MainAxisSize.min,
-            //                                       children: [
-            //                                         Icon(
-            //                                           remainingAllowance >= recommendedAllowance
-            //                                               ? Iconsax.emoji_happy
-            //                                               : Iconsax.emoji_sad,
-            //                                           color: Colors.white,
-            //                                           size: 16,
-            //                                         ),
-            //                                         const SizedBox(width: 5),
-            //                                         Text(
-            //                                           remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
-            //                                           style: TextStyle(
-            //                                             color: Colors.white,
-            //                                             fontWeight: FontWeight.bold,
-            //                                             fontSize: 12,
-            //                                           ),
-            //                                         ),
-            //                                       ],
-            //                                     ),
-            //                                   );
-            //                                 }),
-            //                               ),
-            //                           ),
-            //                         ],
-            //                       ),
-            //                     ),
-            //                   ),
-
-            //                   const SizedBox(height: 10),
-
-            //                   // Recommended Calorie Intake - Daily (Value)
-            //                   Container(
-            //                     height: 120,
-            //                     decoration: BoxDecoration(
-            //                       color: TColors.indigo,
-            //                       borderRadius: BorderRadius.circular(20),
-            //                       boxShadow: [
-            //                         BoxShadow(
-            //                           color: Colors.black.withOpacity(0.1),
-            //                           spreadRadius: 1,
-            //                           blurRadius: 3,
-            //                           offset: Offset(0, 8),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                     child: Padding(
-            //                       padding: const EdgeInsets.all(20.0),
-            //                       child: Stack(
-            //                         children: [
-            //                           // Left side text elements
-            //                           Positioned(
-            //                             left: 0,
-            //                             top: 0,
-            //                             child: Column(
-            //                               crossAxisAlignment: CrossAxisAlignment.start,
-            //                               mainAxisAlignment: MainAxisAlignment.center,
-            //                               children: [
-            //                                 // Title Text
-            //                                 Text(
-            //                                   'Calorie Intake',
-            //                                   style: TextStyle(
-            //                                     color: Colors.white,
-            //                                     fontSize: 18,
-            //                                     fontWeight: FontWeight.bold,
-            //                                   ),
-            //                                 ),
-            //                                 Text(
-            //                                   'Daily',
-            //                                   style: TextStyle(
-            //                                     color: Colors.white,
-            //                                     fontSize: 12,
-            //                                     fontWeight: FontWeight.bold,
-            //                                   ),
-            //                                 ),
-            //                                 SizedBox(height: 5),
-            //                                 Row(
-            //                                   children: [
-            //                                     Obx(
-            //                                       () => Text(
-            //                                         "${controller.user.value.recommendedCalorieIntake}",
-            //                                         style: TextStyle(
-            //                                           color: Colors.white,
-            //                                           fontSize: 28,
-            //                                           fontWeight: FontWeight.bold,
-            //                                         ),
-            //                                       ),
-            //                                     ),
-            //                                     Padding(
-            //                                       padding: const EdgeInsets.only(top: 10.0, left:2.0,),
-            //                                       child: Text(
-            //                                         'kcal',
-            //                                         style: TextStyle(
-            //                                           color: Colors.white,
-            //                                           fontSize: 15,
-            //                                           fontWeight: FontWeight.bold,
-            //                                         ),
-            //                                       ),
-            //                                     ),
-            //                                   ],
-            //                                 ),
-            //                               ],
-            //                             ),
-            //                           ),
-            //                           // Right Side Text Elements
-            //                           Positioned(
-            //                             bottom: 0,
-            //                             right: 0,
-            //                             child:
-            //                             // Status of Calorie Intake (Card)
-            //                                 Container(
-            //                                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            //                                   decoration: BoxDecoration(
-            //                                     color: TColors.amber.withOpacity(0.7),
-            //                                     borderRadius: BorderRadius.circular(20),
-            //                                   ),
-            //                                   child: Row(
-            //                                     mainAxisSize: MainAxisSize.min,
-            //                                     children: [
-            //                                       Icon(
-            //                                         Iconsax.emoji_sad, color: Colors.white, size: 16,
-            //                                       ),
-            //                                       const SizedBox(width: 5),
-            //                                       // Status of Calorie Intake (Label)
-            //                                       Text(
-            //                                         'Exceeded',
-            //                                         style: TextStyle(
-            //                                           color: Colors.white,
-            //                                           fontWeight: FontWeight.bold,
-            //                                           fontSize: 12,
-            //                                         ),
-            //                                       ),
-            //                                     ],
-            //                                   ),
-            //                                 ),
-            //                           ),
-            //                         ],
-            //                       ),
-            //                     ),
-            //                   ),
-            //     ],
-            //   ),   
-            // ),
 
             // Financial Details (Label)
             Padding(
