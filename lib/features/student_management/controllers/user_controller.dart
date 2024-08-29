@@ -62,6 +62,7 @@ class UserController extends GetxController {
       user.update((user) {
         if (user != null) {
           user.actualRemainingFoodAllowance -= price;
+          user.monthlyCommittments = (double.parse(user.monthlyCommittments) + price).toString();
 
           // Print the updated allowance and price to the console
           print('Price: $price');
