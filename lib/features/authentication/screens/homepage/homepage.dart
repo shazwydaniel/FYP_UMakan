@@ -478,13 +478,24 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                         child: Center(
-                          child: Text(
-                            'Food Journal',
-                            style: TextStyle(
-                              color: dark ? Colors.white : Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Iconsax.flash,
+                                color: dark ? Colors.white : Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Food Journal',
+                                style: TextStyle(
+                                  color: dark ? Colors.white : Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -510,13 +521,24 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                         child: Center(
-                          child: Text(
-                            'Money Journal',
-                            style: TextStyle(
-                              color: dark ? Colors.white : Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Iconsax.money_recive,
+                                color: dark ? Colors.white : Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Money Journal',
+                                style: TextStyle(
+                                  color: dark ? Colors.white : Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
