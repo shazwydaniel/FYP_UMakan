@@ -516,7 +516,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Monthly Allowance',
+                                    'Monthly Allowances',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 20,
