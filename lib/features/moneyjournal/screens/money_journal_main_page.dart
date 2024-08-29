@@ -49,31 +49,51 @@ class MoneyJournalMainPage extends StatelessWidget {
             // Title
             Container(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
-                  Text(
-                    'Money',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Journal',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Track and Log Your Expenses.',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Text and Description Column
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Money',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Journal',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Track and Log Your Expenses.',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Icon
+                      Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Icon(
+                          Iconsax.money_recive,
+                          size: 70,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

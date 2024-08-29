@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
@@ -40,35 +42,62 @@ class FoodJournalMainPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Title
             Container(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 0),
+              child: Stack(
                 children: [
-                  Text(
-                    'Food',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Journal',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Text and Description Column
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Food',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Journal',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Track and Log Your Meals.',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Icon
+                      Padding(
+                        padding: const EdgeInsets.only(top:15),
+                        child: Icon(
+                          Iconsax.flash,
+                          size: 70,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-
             //Lunch (Text)
             Padding(
               padding: const EdgeInsets.only(
-                  left: 30, right: 30, bottom: 20, top: 10),
+                  left: 30, right: 30, bottom: 20, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
