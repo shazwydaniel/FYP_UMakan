@@ -157,7 +157,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 30.0), // Adjust position
+                                      top: 25.0), // Adjust position
                                   child: Text(
                                     'RM',
                                     style: TextStyle(
@@ -424,7 +424,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 30.0),
+                                        padding: const EdgeInsets.only(top: 22.0),
                                         child: Text(
                                           'RM',
                                           style: TextStyle(

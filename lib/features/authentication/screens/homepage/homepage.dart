@@ -536,7 +536,7 @@ class HomePageScreen extends StatelessWidget {
                           const SizedBox(
                               width: 10), // Space between the line and text
                           Text(
-                            'Ads',
+                            'Advertisements',
                             style: TextStyle(
                               fontSize: 20, // Adjust the font size as needed
                               fontWeight: FontWeight.bold,
@@ -550,26 +550,74 @@ class HomePageScreen extends StatelessWidget {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: List.generate(5, (index) {
+                        children: List.generate(4, (index) {
                           return Container(
                             width: 300,
-                            height: 100,
                             margin: const EdgeInsets.only(
-                                left: 20, bottom: 20, right: 10),
-                            decoration: BoxDecoration(
-                              color: index.isEven
-                                  ? TColors.cobalt
-                                  : TColors.bubbleOrange,
-                              borderRadius: BorderRadius.circular(10),
+                              left: 20,
+                              right: 10,
                             ),
-                            child: Center(
-                              child: Text(
-                                'Ad ${index + 1}',
-                                style: TextStyle(
-                                  color: dark ? Colors.white : Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            decoration: BoxDecoration(
+                              color: index.isEven ? TColors.cobalt : TColors.bubbleOrange,
+                              borderRadius: BorderRadius.circular(20), // Increased border radius for a softer look
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0), // Added padding for better content spacing
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Buy 2 Shawarma\nFree 1!',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20, // Adjusted font size
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8), // Spacing between texts
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 2,
+                                            horizontal: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: index.isEven ? TColors.bubbleBlue.withOpacity(0.8) : TColors.darkGreen.withOpacity(0.4),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Text(
+                                            '6.6.24 - 10.6.24',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'KK12',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 35,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
