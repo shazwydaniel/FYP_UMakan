@@ -134,7 +134,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                               children: [
                                 // Title Text
                                 Text(
-                                  'Food Allowance Left',
+                                  'Food Money Left',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 20,
@@ -303,7 +303,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '10',
+                                  '3',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 60,
@@ -345,7 +345,7 @@ class MoneyJournalMainPage extends StatelessWidget {
             ),
             // Retrieving Expense Items from Firebase - Today's Spending (Cards)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),
               child: Obx(() {
                 if (controller.profileLoading.value) {
                   return Center(child: CircularProgressIndicator());

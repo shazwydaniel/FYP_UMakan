@@ -118,7 +118,7 @@ class HomePageScreen extends StatelessWidget {
                                     //   ),
                                     // ),
                                     TextSpan(
-                                      text: 'We Suggest You To Have',
+                                      text: 'Based on Your Data',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -160,7 +160,7 @@ class HomePageScreen extends StatelessWidget {
                                           children: [
                                             // Title Text
                                             Text(
-                                              'Food Allowance',
+                                              'Monthly Food Allowance',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
@@ -168,7 +168,7 @@ class HomePageScreen extends StatelessWidget {
                                               ),
                                             ),
                                             Text(
-                                              'Monthly',
+                                              'Recommended to have',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 12,
@@ -283,7 +283,7 @@ class HomePageScreen extends StatelessWidget {
                                           children: [
                                             // Title Text
                                             Text(
-                                              'Calorie Intake',
+                                              'Daily Calorie Intake',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
@@ -291,7 +291,7 @@ class HomePageScreen extends StatelessWidget {
                                               ),
                                             ),
                                             Text(
-                                              'Daily',
+                                              'Recommended to consume',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 12,

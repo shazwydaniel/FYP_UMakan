@@ -235,7 +235,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                                     children: [
                                                       // Title Text
                                                       Text(
-                                                        'Food Allowance',
+                                                        'Monthly Food Allowance',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
@@ -243,7 +243,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                                         ),
                                                       ),
                                                       Text(
-                                                        'Monthly',
+                                                        'Recommended to have',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 12,
@@ -358,7 +358,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                                     children: [
                                                       // Title Text
                                                       Text(
-                                                        'Calorie Intake',
+                                                        'Daily Calorie Intake',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
@@ -366,7 +366,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                                         ),
                                                       ),
                                                       Text(
-                                                        'Daily',
+                                                        'Recommended to consume',
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 12,
@@ -887,7 +887,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Monthly Commitments',
+                                    'Expenses',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 20,
@@ -933,6 +933,104 @@ class StudentProfilePageScreen extends StatelessWidget {
                                   ),
                                   Text(
                                     controller.user.value.monthlyCommittments,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Third Card
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to the new page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FinancialDetailsEdit()),
+                      );
+                    },
+                    child: Container(
+                      height: 135,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: TColors.cream,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Stack(
+                          children: [
+                            // Left side text elements
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Food Money',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 34),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 5.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      '%',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Right side price elements
+                            Positioned(
+                              bottom: -16.0,
+                              right: 0,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 22.0),
+                                    child: Text(
+                                      'RM',
+                                      style: TextStyle(
+                                        color: TColors.darkGreen,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    controller.user.value.actualRemainingFoodAllowance.toString(),
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 50,
