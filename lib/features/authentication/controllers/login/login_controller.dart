@@ -40,12 +40,6 @@ class LoginController extends GetxController {
       final userCredentials = await AuthenticatorRepository.instance
           .loginWithEmailandPassword(email.text.trim(), password.text.trim());
 
-      // Fetch user data from Firestore
-      // final user = await UserRepository.instance.getUserData(userCredentials.user!.uid);
-
-      // Navigate to HomePage and pass user data
-      // Get.off(() => HomePageScreen(user: user));
-
       // Removed by chatgpt
       AuthenticatorRepository.instance.screenRedirect();
       return true;

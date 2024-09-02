@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -13,6 +16,7 @@ import 'package:fyp_umakan/utils/exceptions/format_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/platform_exceptions.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserRepository extends GetxController {
   static UserRepository get instance => Get.find();
@@ -151,6 +155,101 @@ class UserRepository extends GetxController {
     } catch (e) {
       print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Method to add or update a field in a document
+  Future<void> addFieldToUser(
+      String userId, Map<String, dynamic> newField) async {
+    try {
+      await _db.collection('Users').doc(userId).update(newField);
+    } catch (e) {
+      print('Failed to add/update field: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  //Upload any Image
+  Future<String> uploadImage(String path, XFile image) async {
+    try {
+      final ref = FirebaseStorage.instance
+          .ref(path)
+          .child(image.name); //assign 'ref' as a location in firebase storage
+      await ref.putFile(File(image.path)); //put our file into the path 'ref'
+      final url =
+          await ref.getDownloadURL(); // get URL from the reference of the image
+
+      return url;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Method to pick an image using ImagePicker
+  Future<void> pickAndUploadImage(String userId) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      try {
+        // Upload image to Firebase Storage
+        final imageUrl = await uploadImage('Vendor/Items/$userId', image);
+
+        // Update Firestore with the image URL
+        await addFieldToUser(userId, {'imageUrl': imageUrl});
+        print('Image uploaded successfully: $imageUrl');
+      } catch (e) {
+        print('Failed to upload image: $e');
+        throw 'Something went wrong. Please try again';
+      }
+    } else {
+      print('No image selected');
+    }
+  }
+
+  Future<String?> fetchUserRole(String uid) async {
+    try {
+      // Check the "Users" collection first
+      DocumentSnapshot userDocSnapshot =
+          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+
+      if (userDocSnapshot.exists) {
+        // Cast the data to Map<String, dynamic> and access the role field
+        Map<String, dynamic>? userData =
+            userDocSnapshot.data() as Map<String, dynamic>?;
+        String? role = userData?['Role'];
+        if (role != null) {
+          return role;
+        } else {
+          throw Exception("Role field is missing in the user document");
+        }
+      }
+
+      // If not found in "Users", check the "Vendors" collection
+      DocumentSnapshot vendorDocSnapshot =
+          await FirebaseFirestore.instance.collection('Vendors').doc(uid).get();
+
+      if (vendorDocSnapshot.exists) {
+        // Assume that if the user is found in the vendors collection, they are a vendor
+        return 'Vendor'; // Return 'Vendor' role
+      }
+
+      // If the document does not exist in either collection
+      throw Exception(
+          "User document does not exist in either 'users' or 'vendors'");
+    } catch (e) {
+      debugPrint("Error fetching user role: $e");
+      throw "Something went wrong. Please try again.";
     }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/appbar/appbar.dart';
+import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/student_management/controllers/update_profile_controller.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:fyp_umakan/utils/constants/text_strings.dart';
@@ -14,6 +16,7 @@ class PersonalDetailsEdit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(UpdateProfileController());
+
     return Scaffold(
       backgroundColor: TColors.bubbleOrange,
       appBar: const TAppBar(
@@ -103,7 +106,7 @@ class PersonalDetailsEdit extends StatelessWidget {
                       style: TextStyle(color: Colors.white),
                       controller: controller.phoneNumber,
                       validator: (value) =>
-                          TValidator.validateEmptyText('Full Name', value),
+                          TValidator.validateEmptyText('Phone Number', value),
                       expands: false,
                       decoration: const InputDecoration(
                         labelStyle: TextStyle(color: Colors.white),
@@ -132,7 +135,7 @@ class PersonalDetailsEdit extends StatelessWidget {
                       style: TextStyle(color: Colors.white),
                       controller: controller.accommodation,
                       validator: (value) =>
-                          TValidator.validateEmptyText('Full Name', value),
+                          TValidator.validateEmptyText('Accommodation', value),
                       expands: false,
                       decoration: const InputDecoration(
                         labelStyle: TextStyle(color: Colors.white),

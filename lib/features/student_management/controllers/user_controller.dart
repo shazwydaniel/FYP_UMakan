@@ -60,7 +60,8 @@ class UserController extends GetxController {
     }
   }
 
-  Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
+  Future<void> addExpense(String userId, String expenseType,
+      Map<String, dynamic> expenseData) async {
     try {
       // Add the expense
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
@@ -72,11 +73,13 @@ class UserController extends GetxController {
       user.update((user) {
         if (user != null) {
           user.actualRemainingFoodAllowance -= price;
-          user.monthlyCommittments = (double.parse(user.monthlyCommittments) + price).toString();
+          user.monthlyCommittments =
+              (double.parse(user.monthlyCommittments) + price).toString();
 
           // Print the updated allowance and price to the console
           print('Price: $price');
-          print('Updated actualRemainingFoodAllowance: ${user.actualRemainingFoodAllowance}');
+          print(
+              'Updated actualRemainingFoodAllowance: ${user.actualRemainingFoodAllowance}');
         }
       });
 
@@ -113,7 +116,8 @@ class UserController extends GetxController {
       final birthDate = DateFormat('dd/MM/yyyy').parse(currentUser.birthdate);
       final today = DateTime.now();
       int age = today.year - birthDate.year;
-      if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+      if (today.month < birthDate.month ||
+          (today.month == birthDate.month && today.day < birthDate.day)) {
         age--;
       }
 
@@ -167,17 +171,22 @@ class UserController extends GetxController {
     final currentUser = user.value;
 
     // Convert String fields to double
-    double monthlyAllowance = double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
-    double monthlyCommittments = double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
+    double monthlyAllowance =
+        double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
+    double monthlyCommittments =
+        double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
 
     // Calculate Recommended Daily Calories Intake
-    double recommendedCalorieIntake = getDailyCaloriesIntake(currentUser.gender, currentUser.age);
-    
+    double recommendedCalorieIntake =
+        getDailyCaloriesIntake(currentUser.gender, currentUser.age);
+
     // Calculate Recommended Monthly Budget Allocation for Food
-    double recommendedMoneyAllowance = getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
-    
+    double recommendedMoneyAllowance =
+        getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
+
     // Calculate Actual Monthly Food Allocation
-    double actualRemainingFoodAllowance = monthlyAllowance - monthlyCommittments;
+    double actualRemainingFoodAllowance =
+        monthlyAllowance - monthlyCommittments;
 
     // Update the user model with the calculated values
     user.update((user) {

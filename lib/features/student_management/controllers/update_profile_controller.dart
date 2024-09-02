@@ -11,6 +11,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 class UpdateProfileController extends GetxController {
   static UpdateProfileController get instance => Get.find();
 
+  final userController = UserController.instance;
   final fullName = TextEditingController();
   final matricsNumber = TextEditingController();
   final phoneNumber = TextEditingController();
@@ -20,14 +21,14 @@ class UpdateProfileController extends GetxController {
   final weight = TextEditingController();
   final height = TextEditingController();
   final birthDate = TextEditingController();
-  final userController = UserController.instance;
+  final userRepository = Get.put(UserRepository());
   GlobalKey<FormState> updateProfileFormKey = GlobalKey<FormState>();
 
   //init user data when Home Screen Appears
   @override
   void onInit() {
-    initalizeNames();
     super.onInit();
+    initalizeNames();
   }
 
   //Fetch user Record
@@ -84,15 +85,15 @@ class UpdateProfileController extends GetxController {
       Map<String, dynamic> birthDateData = {'Birthdate': birthDate.text.trim()};
 
       //Use methods in User Repository to transfer to Firebase
-      await UserRepository.instance.updateSingleField(fullNameData);
-      await UserRepository.instance.updateSingleField(matricsNumberData);
-      await UserRepository.instance.updateSingleField(phoneNumberData);
-      await UserRepository.instance.updateSingleField(accommodationData);
-      await UserRepository.instance.updateSingleField(monthlyAllowanceData);
-      await UserRepository.instance.updateSingleField(monthlyCommittmentsData);
-      await UserRepository.instance.updateSingleField(weightData);
-      await UserRepository.instance.updateSingleField(heightData);
-      await UserRepository.instance.updateSingleField(birthDateData);
+      await userRepository.updateSingleField(fullNameData);
+      await userRepository.updateSingleField(matricsNumberData);
+      await userRepository.updateSingleField(phoneNumberData);
+      await userRepository.updateSingleField(accommodationData);
+      await userRepository.updateSingleField(monthlyAllowanceData);
+      await userRepository.updateSingleField(monthlyCommittmentsData);
+      await userRepository.updateSingleField(weightData);
+      await userRepository.updateSingleField(heightData);
+      await userRepository.updateSingleField(birthDateData);
 
       //Update Rx value
       userController.user.value.fullName = fullName.text.trim();

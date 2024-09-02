@@ -206,240 +206,312 @@ class StudentProfilePageScreen extends StatelessWidget {
 
                                   // Calculated Recommendations (Cards)
                                   Column(
-                                      children: [
-                            // Recommended Food Allowance - Monthly (Value)
-                                        Container(
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            color: TColors.cobalt,
-                                            borderRadius: BorderRadius.circular(20),
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //     color: Colors.black.withOpacity(0.1),
-                                            //     spreadRadius: 1,
-                                            //     blurRadius: 3,
-                                            //     offset: Offset(0, 8),
-                                            //   ),
-                                            // ],
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Stack(
-                                              children: [
-                                                // Left side text elements
-                                                Positioned(
-                                                  left: 0,
-                                                  top: 0,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      // Title Text
-                                                      Text(
-                                                        'Monthly Food Allowance',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
+                                    children: [
+                                      // Recommended Food Allowance - Monthly (Value)
+                                      Container(
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                          color: TColors.cobalt,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          // boxShadow: [
+                                          //   BoxShadow(
+                                          //     color: Colors.black.withOpacity(0.1),
+                                          //     spreadRadius: 1,
+                                          //     blurRadius: 3,
+                                          //     offset: Offset(0, 8),
+                                          //   ),
+                                          // ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Stack(
+                                            children: [
+                                              // Left side text elements
+                                              Positioned(
+                                                left: 0,
+                                                top: 0,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    // Title Text
+                                                    Text(
+                                                      'Monthly Food Allowance',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
-                                                      Text(
-                                                        'Recommended to have',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
+                                                    ),
+                                                    Text(
+                                                      'Recommended to have',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
-                                                      SizedBox(height: 5),
-                                                      Row(
-                                                        children: [
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(top: 10.0, right:2.0,),
-                                                            child: Text(
-                                                              'RM',
-                                                              style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 15,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            top: 10.0,
+                                                            right: 2.0,
+                                                          ),
+                                                          child: Text(
+                                                            'RM',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
-                                                          Obx((){
+                                                        ),
+                                                        Obx(
+                                                          () {
                                                             // Format the value with up to 2 decimal places
-                                                            String formattedAllowance = NumberFormat('0.00').format(controller.user.value.recommendedMoneyAllowance);
+                                                            String
+                                                                formattedAllowance =
+                                                                NumberFormat(
+                                                                        '0.00')
+                                                                    .format(controller
+                                                                        .user
+                                                                        .value
+                                                                        .recommendedMoneyAllowance);
 
                                                             return Text(
                                                               "$formattedAllowance",
                                                               style: TextStyle(
-                                                                color: Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 fontSize: 28,
-                                                                fontWeight: FontWeight.bold,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                             );
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                                // Right Side Text Elements
-                                                Positioned(
-                                                  bottom: 0,
-                                                  right: 0,
-                                                  child: Obx(() {
-                                                    final recommendedAllowance = controller.user.value.recommendedMoneyAllowance;
-                                                    final remainingAllowance = controller.user.value.actualRemainingFoodAllowance;
+                                              ),
+                                              // Right Side Text Elements
+                                              Positioned(
+                                                bottom: 0,
+                                                right: 0,
+                                                child: Obx(() {
+                                                  final recommendedAllowance =
+                                                      controller.user.value
+                                                          .recommendedMoneyAllowance;
+                                                  final remainingAllowance =
+                                                      controller.user.value
+                                                          .actualRemainingFoodAllowance;
 
-                                                    return Container(
-                                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                      decoration: BoxDecoration(
-                                                        color: remainingAllowance >= recommendedAllowance ? TColors.teal.withOpacity(0.7) : TColors.amber.withOpacity(0.7),
-                                                        borderRadius: BorderRadius.circular(20),
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          Icon(
-                                                            remainingAllowance >= recommendedAllowance
-                                                                ? Iconsax.emoji_happy
-                                                                : Iconsax.emoji_sad,
+                                                  return Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 5),
+                                                    decoration: BoxDecoration(
+                                                      color: remainingAllowance >=
+                                                              recommendedAllowance
+                                                          ? TColors.teal
+                                                              .withOpacity(0.7)
+                                                          : TColors.amber
+                                                              .withOpacity(0.7),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Icon(
+                                                          remainingAllowance >=
+                                                                  recommendedAllowance
+                                                              ? Iconsax
+                                                                  .emoji_happy
+                                                              : Iconsax
+                                                                  .emoji_sad,
+                                                          color: Colors.white,
+                                                          size: 16,
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        Text(
+                                                          remainingAllowance >=
+                                                                  recommendedAllowance
+                                                              ? 'Enough'
+                                                              : 'Not Enough',
+                                                          style: TextStyle(
                                                             color: Colors.white,
-                                                            size: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 12,
                                                           ),
-                                                          const SizedBox(width: 5),
-                                                          Text(
-                                                            remainingAllowance >= recommendedAllowance ? 'Enough' : 'Not Enough',
-                                                            style: TextStyle(
-                                                              color: Colors.white,
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }),
-                                                ),
-                                              ],
-                                            ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                            ],
                                           ),
                                         ),
+                                      ),
 
-                                        const SizedBox(height: 10),
+                                      const SizedBox(height: 10),
 
-                                        // Recommended Calorie Intake - Daily (Value)
-                                        Container(
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            color: TColors.indigo,
-                                            borderRadius: BorderRadius.circular(20),
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //     color: Colors.black.withOpacity(0.1),
-                                            //     spreadRadius: 1,
-                                            //     blurRadius: 3,
-                                            //     offset: Offset(0, 8),
-                                            //   ),
-                                            // ],
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Stack(
-                                              children: [
-                                                // Left side text elements
-                                                Positioned(
-                                                  left: 0,
-                                                  top: 0,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                      // Recommended Calorie Intake - Daily (Value)
+                                      Container(
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                          color: TColors.indigo,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          // boxShadow: [
+                                          //   BoxShadow(
+                                          //     color: Colors.black.withOpacity(0.1),
+                                          //     spreadRadius: 1,
+                                          //     blurRadius: 3,
+                                          //     offset: Offset(0, 8),
+                                          //   ),
+                                          // ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Stack(
+                                            children: [
+                                              // Left side text elements
+                                              Positioned(
+                                                left: 0,
+                                                top: 0,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    // Title Text
+                                                    Text(
+                                                      'Daily Calorie Intake',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'Recommended to consume',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Row(
+                                                      children: [
+                                                        Obx(
+                                                          () => Text(
+                                                            "${controller.user.value.recommendedCalorieIntake}",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 28,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            top: 10.0,
+                                                            left: 2.0,
+                                                          ),
+                                                          child: Text(
+                                                            'kcal',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              // Right Side Text Elements
+                                              Positioned(
+                                                bottom: 0,
+                                                right: 0,
+                                                child:
+                                                    // Status of Calorie Intake (Card)
+                                                    Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                                  decoration: BoxDecoration(
+                                                    color: TColors.amber
+                                                        .withOpacity(0.7),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      // Title Text
-                                                      Text(
-                                                        'Daily Calorie Intake',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
+                                                      Icon(
+                                                        Iconsax.emoji_sad,
+                                                        color: Colors.white,
+                                                        size: 16,
                                                       ),
+                                                      const SizedBox(width: 5),
+                                                      // Status of Calorie Intake (Label)
                                                       Text(
-                                                        'Recommended to consume',
+                                                        'Exceeded',
                                                         style: TextStyle(
                                                           color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontSize: 12,
-                                                          fontWeight: FontWeight.bold,
                                                         ),
-                                                      ),
-                                                      SizedBox(height: 5),
-                                                      Row(
-                                                        children: [
-                                                          Obx(
-                                                            () => Text(
-                                                              "${controller.user.value.recommendedCalorieIntake}",
-                                                              style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 28,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(top: 10.0, left:2.0,),
-                                                            child: Text(
-                                                              'kcal',
-                                                              style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 15,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                // Right Side Text Elements
-                                                Positioned(
-                                                  bottom: 0,
-                                                  right: 0,
-                                                  child:
-                                                  // Status of Calorie Intake (Card)
-                                                      Container(
-                                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                        decoration: BoxDecoration(
-                                                          color: TColors.amber.withOpacity(0.7),
-                                                          borderRadius: BorderRadius.circular(20),
-                                                        ),
-                                                        child: Row(
-                                                          mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            Icon(
-                                                              Iconsax.emoji_sad, color: Colors.white, size: 16,
-                                                            ),
-                                                            const SizedBox(width: 5),
-                                                            // Status of Calorie Intake (Label)
-                                                            Text(
-                                                              'Exceeded',
-                                                              style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontWeight: FontWeight.bold,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ],
-                                    ),   
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -763,7 +835,9 @@ class StudentProfilePageScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    controller.user.value.actualRemainingFoodAllowance.toString(),
+                                    controller
+                                        .user.value.actualRemainingFoodAllowance
+                                        .toString(),
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 50,
