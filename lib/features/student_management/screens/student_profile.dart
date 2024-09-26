@@ -6,8 +6,10 @@ import "package:fyp_umakan/features/student_management/controllers/user_controll
 import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/health_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/personal_detail_edit.dart";
+import "package:fyp_umakan/features/vendor/screens/vendor_register.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
+import "package:fyp_umakan/vendor_navigation_menu.dart";
 import "package:get/get.dart";
 import "package:get/get_core/src/get_main.dart";
 import "package:get/get_navigation/src/snackbar/snackbar.dart";
@@ -1074,6 +1076,41 @@ class StudentProfilePageScreen extends StatelessWidget {
                     children: [
                       Text(
                         'Logout',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Iconsax.logout, color: Colors.white, size: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 40),
+              child: Center(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Get.to(() => VendorRegisterPage());
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: TColors.bubbleGreen),
+                    backgroundColor: TColors.bubbleGreen,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Vendor',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
