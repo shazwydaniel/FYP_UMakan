@@ -6,28 +6,31 @@ import 'package:get/get.dart';
 
 import '../../foodjournal/model/journal_model.dart';
 
-class CafePage extends StatelessWidget {
-  final CafeDetailsData cafe;
+/*class CafePage extends StatelessWidget {
+  final CafeDetails cafe;
+  final CafeItem cafeItem;
+  
   final JournalController foodJournalController = Get.find<JournalController>();
 
   CafePage({
     super.key,
     required this.cafe,
+    required this.cafeItem,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(cafe.name)),
+      appBar: AppBar(title: Text(cafe.cafeName)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(cafe.logoPath),
+            Image.asset(cafe.cafeLogo),
             SizedBox(height: 16),
             Text(
-              cafe.details,
+              cafe.cafeDetails,
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),
@@ -38,7 +41,7 @@ class CafePage extends StatelessWidget {
             SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
-                itemCount: cafe.items.length,
+                itemCount: cafeItems.length
                 itemBuilder: (context, index) {
                   final item = cafe.items[index];
                   return InkWell(
@@ -84,4 +87,4 @@ class CafePage extends StatelessWidget {
       ),
     );
   }
-}
+}*/

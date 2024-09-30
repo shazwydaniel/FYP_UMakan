@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/model/vendor_model.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
@@ -42,6 +43,27 @@ class VendorRepository {
       print('Error: $e');
       // Optionally rethrow the error or handle it in a way that suits your app
       throw e; // Re-throwing the error to maintain the Future<UserCredential> return type
+    }
+  }
+
+  // Fetch User Details Based on User ID ------------------------------------
+  Future<Vendor> fetchUserDetails() async {
+    try {
+      final documentSnapshot = await _db
+          .collection('Vendors')
+          .doc(AuthenticatorRepository.instance.authUser?.uid)
+          .get();
+      if (documentSnapshot.exists) {
+        return Vendor.fromSnapshot(documentSnapshot);
+      } else {
+        return Vendor.empty();
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
     }
   }
 

@@ -31,7 +31,7 @@ class VendorController extends GetxController {
   //Variable for Cafe
   final cafeName = TextEditingController();
   final cafeLogo = TextEditingController();
-  final cafeDetails = TextEditingController();
+  final cafeLocation = TextEditingController();
 
   //Variables for Menu Item
   final itemName = TextEditingController();
@@ -45,16 +45,34 @@ class VendorController extends GetxController {
   GlobalKey<FormState> cafeFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> itemFormKey = GlobalKey<FormState>();
 
+  final profileLoading = false.obs;
   // Store userId after login
   late String userId;
   final NetworkManager networkManager = Get.put(NetworkManager());
+
+  String get currentUserId => vendor.value.id;
 
   @override
   void onInit() {
     super.onInit();
     // Get the current user ID when the controller is initialized
     userId = getCurrentUserId();
-    print("Current User ID: $userId");
+    fetchUserRecord();
+  }
+
+  // Fetch User Record
+  Future<void> fetchUserRecord() async {
+    try {
+      profileLoading.value = true;
+      final user = await vendorRepository.fetchUserDetails();
+      print("Fetched user: ${user.vendorName}"); // Debug print
+      this.vendor(user);
+    } catch (e) {
+      print("Error fetching vendor: $e");
+      vendor(Vendor.empty());
+    } finally {
+      profileLoading.value = false;
+    }
   }
 
   String getCurrentUserId() {
@@ -129,7 +147,7 @@ class VendorController extends GetxController {
       // Create a map for the cafe data
       Map<String, dynamic> cafeData = {
         'cafeName': cafeName.text.trim(),
-        'cafeDetails': cafeDetails.text.trim(),
+        'cafeLocation': cafeLocation.text.trim(),
       };
 
       // Add the cafe details to Firestore
@@ -139,7 +157,7 @@ class VendorController extends GetxController {
       cafe.update((cafe) {
         if (cafe != null) {
           cafe.name = cafeName.text.trim();
-          cafe.details = cafeDetails.text.trim();
+          cafe.location = cafeLocation.text.trim();
         }
       });
 

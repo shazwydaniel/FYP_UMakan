@@ -20,177 +20,6 @@ class DiscoverPageScreen extends StatelessWidget {
     final dark = THelperFunctions.isDarkMode(context);
     final JournalController controller = Get.put(JournalController());
 
-    final List<CafeDetailsData> cafes = [
-      CafeDetailsData(
-        name: 'QBistro',
-        logoPath: TImages.QBistro_Logo,
-        details: 'QBistro serves a variety of meals and snacks.',
-        items: [
-          CafeItemData(
-              item: 'Nasi Lemak',
-              price: 3.50,
-              calories: 600,
-              image: TImages.nasi_lemak,
-              location: 'QBistro'),
-          CafeItemData(
-              item: 'Roti Canai',
-              price: 1.50,
-              calories: 400,
-              image: TImages.roti_canai,
-              location: 'QBistro'),
-          CafeItemData(
-              item: 'Teh Tarik',
-              price: 1.80,
-              calories: 150,
-              image: TImages.teh_tarik,
-              location: 'QBistro'),
-        ],
-      ),
-      CafeDetailsData(
-        name: 'Zus Coffee',
-        logoPath: TImages.Zus_Logo,
-        details: 'Zus Coffee is known for its artisanal coffee blends.',
-        items: [
-          CafeItemData(
-              item: 'Cappuccino',
-              price: 4.50,
-              calories: 120,
-              image: TImages.cappuccino,
-              location: 'Zus Coffee'),
-          CafeItemData(
-              item: 'Espresso',
-              price: 3.00,
-              calories: 80,
-              image: TImages.espresso,
-              location: 'Zus Coffee'),
-          CafeItemData(
-              item: 'Blueberry Muffin',
-              price: 2.50,
-              calories: 320,
-              image: TImages.blueberry_muffin,
-              location: 'Zus Coffee'),
-        ],
-      ),
-      CafeDetailsData(
-        name: 'KK7 Cafe',
-        logoPath: TImages.KK7_Logo,
-        details: 'KK7 Cafe offers a variety of traditional meals.',
-        items: [
-          CafeItemData(
-              item: 'Chicken Rice',
-              price: 4.00,
-              calories: 550,
-              image: TImages.chicken_rice,
-              location: 'KK7'),
-          CafeItemData(
-              item: 'Fried Noodles',
-              price: 3.50,
-              calories: 500,
-              image: TImages.fried_noodles,
-              location: 'KK7'),
-          CafeItemData(
-              item: 'Milo Ice',
-              price: 2.00,
-              calories: 200,
-              image: TImages.milo_ais,
-              location: 'KK7'),
-        ],
-      ),
-      CafeDetailsData(
-        name: 'KK8',
-        logoPath: TImages.KK8_Logo,
-        details: 'KK8 serves a variety of meals and snacks.',
-        items: [
-          CafeItemData(
-              item: 'Nasi Lemak',
-              price: 3.50,
-              calories: 600,
-              image: TImages.nasi_lemak,
-              location: 'KK8'),
-          CafeItemData(
-              item: 'Roti Canai',
-              price: 1.50,
-              calories: 400,
-              image: TImages.roti_canai,
-              location: 'KK18'),
-          CafeItemData(
-              item: 'Teh Tarik',
-              price: 1.80,
-              calories: 150,
-              image: TImages.teh_tarik,
-              location: 'KK8'),
-        ],
-      ),
-      CafeDetailsData(
-        name: 'KK11',
-        logoPath: TImages.KK11_Logo,
-        details: 'KK11 Coffee is known for its artisanal coffee blends.',
-        items: [
-          CafeItemData(
-              item: 'Chicken Rice',
-              price: 4.00,
-              calories: 550,
-              image: TImages.chicken_rice,
-              location: 'KK11'),
-          CafeItemData(
-              item: 'Fried Noodles',
-              price: 3.50,
-              calories: 500,
-              image: TImages.fried_noodles,
-              location: 'KK11'),
-          CafeItemData(
-              item: 'Milo Ice',
-              price: 2.00,
-              calories: 200,
-              image: TImages.milo_ais,
-              location: 'KK11'),
-        ],
-      ),
-      CafeDetailsData(
-        name: 'KK12 Cafe',
-        logoPath: TImages.KK12_Logo,
-        details: 'KK12 Cafe offers a variety of traditional meals.',
-        items: [
-          CafeItemData(
-              item: 'Nasi Lemak',
-              price: 3.50,
-              calories: 600,
-              image: TImages.nasi_lemak,
-              location: 'KK12'),
-          CafeItemData(
-              item: 'Roti Canai',
-              price: 1.50,
-              calories: 400,
-              image: TImages.roti_canai,
-              location: 'KK12'),
-          CafeItemData(
-              item: 'Teh Tarik',
-              price: 1.80,
-              calories: 150,
-              image: TImages.teh_tarik,
-              location: 'KK12'),
-          CafeItemData(
-              item: 'Nasi Lemak',
-              price: 3.50,
-              calories: 600,
-              image: TImages.nasi_lemak,
-              location: 'KK12'),
-          CafeItemData(
-              item: 'Roti Canai',
-              price: 1.50,
-              calories: 400,
-              image: TImages.roti_canai,
-              location: 'KK12'),
-          CafeItemData(
-              item: 'Teh Tarik',
-              price: 1.80,
-              calories: 150,
-              image: TImages.teh_tarik,
-              location: 'KK12'),
-        ],
-      ),
-    ];
-
     return Scaffold(
       backgroundColor: TColors.mustard,
       body: Stack(
@@ -222,7 +51,7 @@ class DiscoverPageScreen extends StatelessWidget {
           ),
           SizedBox(height: 20),*/
 
-          // BubbleLens Section
+          /*/ BubbleLens Section
           Positioned.fill(
             child: Container(
               color: TColors.mustard,
@@ -238,14 +67,14 @@ class DiscoverPageScreen extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       // Navigate to the cafe details page
-                      Get.to(() => CafePage(cafe: cafe));
+                      //Get.to(() => CafePage(cafe: cafe));
                     },
                     child: Image.asset(cafe.logoPath),
                   );
                 }).toList(),
               ),
             ),
-          ),
+          ),*/
 
           Positioned(
             top: 100, // Adjust this value to position the title as desired

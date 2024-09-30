@@ -1,10 +1,12 @@
 // lib/features/cafes/model/cafe_model.dart
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CafeDetails {
   final String id;
   String name;
   String logo;
-  String details;
+  String location;
   //final List<String> cafeReviews;
 
   CafeDetails(
@@ -13,14 +15,14 @@ class CafeDetails {
     required this.id,
     required this.name,
     required this.logo,
-    required this.details,
+    required this.location,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'cafeName': name,
       'cafeLogo': logo,
-      'cafeDetails': details,
+      'cafeLocation': location,
       //'cafeReviews': cafeReviews,
     };
   }
@@ -30,7 +32,7 @@ class CafeDetails {
         id: '',
         name: '',
         logo: '',
-        details: '',
+        location: '',
       );
 
   factory CafeDetails.fromMap(Map<String, dynamic> data, String documentId) {
@@ -38,17 +40,32 @@ class CafeDetails {
       id: documentId,
       name: data['cafeName'] ?? '',
       logo: data['cafeLogo'] ?? '',
-      details: data['cafeDetails'] ?? '',
+      location: data['cafeLocation'] ?? '',
     );
   }
   Map<String, dynamic> toJson() {
     return {
       "Id": id,
       'Cafe Name': name,
-      'Cafe Details': details,
+      'Cafe Details': location,
       'Cafe Image': logo,
       // 'Cafe Reviews': cafeReviews,
     };
+  }
+
+  // Create a UserModel from Firebase Document Snapshot
+  factory CafeDetails.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    if (document.data() != null) {
+      final data = document.data()!;
+      return CafeDetails(
+          id: document.id,
+          name: data['cafeName'] ?? '',
+          logo: data['logoName'] ?? '',
+          location: data['cafeLocation'] ?? '');
+    } else {
+      return CafeDetails.empty();
+    }
   }
 }
 

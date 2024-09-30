@@ -3,6 +3,7 @@ import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dar
 import 'package:fyp_umakan/features/community/screens/community_main_page.dart';
 import 'package:fyp_umakan/features/discover/screens/discover.dart';
 import 'package:fyp_umakan/features/student_management/screens/student_profile.dart';
+import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/profile/vendor_profile.dart';
 import 'package:fyp_umakan/features/vendor/screens/reviews/vendor_reviews.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_register.dart';
@@ -19,6 +20,7 @@ class VendorNavigationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(VendorNavigationController());
+    Get.put(VendorController());
     final darkMode = THelperFunctions.isDarkMode(context);
 
     return Scaffold(

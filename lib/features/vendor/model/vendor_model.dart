@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Vendor {
   final String id;
   final String vendorName;
@@ -25,14 +27,30 @@ class Vendor {
         role: '',
       );
 
+  // Create a UserModel from Firebase Document Snapshot
+  factory Vendor.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
+    if (document.data() != null) {
+      final data = document.data()!;
+      return Vendor(
+          id: document.id,
+          vendorName: data['Vendor Name'] ?? '',
+          vendorEmail: data['Vendor Email'] ?? '',
+          contactInfo: data['Contact Info'] ?? '',
+          password: data['Password'] ?? '',
+          role: data['Role'] ?? '');
+    } else {
+      return Vendor.empty();
+    }
+  }
+
   factory Vendor.fromMap(Map<String, dynamic> map, String id) {
     return Vendor(
-      id: map['id'],
-      vendorName: map['vendorName'],
-      contactInfo: map['contactInfo'],
-      vendorEmail: map['vendorEmail'],
-      role: map['role'],
-      password: map['password'], // Extract it from the map
+      id: map['Id'],
+      vendorName: map['Vendor Name'],
+      contactInfo: map['Contact Info'],
+      vendorEmail: map['Vendor Email'],
+      role: map['Role'],
+      password: map['Password'], // Extract it from the map
     );
   }
 

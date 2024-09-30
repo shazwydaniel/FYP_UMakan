@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/add_cafe.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/vendor_menu.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 
 class VendorCafePage extends StatelessWidget {
@@ -16,7 +17,9 @@ class VendorCafePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Cafes'),
+        backgroundColor: TColors.olive,
       ),
+      backgroundColor: TColors.olive,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -67,8 +70,19 @@ class VendorCafePage extends StatelessWidget {
                         child: Card(
                           margin: const EdgeInsets.only(bottom: 16.0),
                           child: ListTile(
-                            title: Text(cafe.name),
-                            subtitle: Text(cafe.details),
+                            title: Text(
+                              cafe.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              cafe.location,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
                             onTap: () {
                               // Navigate to the detailed cafe page with cafe.id
                               Navigator.push(
@@ -109,6 +123,8 @@ class VendorCafePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: Size(double.infinity, 50),
+                  foregroundColor: TColors.olive,
+                  backgroundColor: TColors.textLight,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

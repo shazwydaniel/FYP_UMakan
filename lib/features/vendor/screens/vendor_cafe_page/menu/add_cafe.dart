@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:fyp_umakan/utils/validators/validation.dart';
 import 'package:iconsax/iconsax.dart';
@@ -13,10 +14,14 @@ class AddCafe extends StatelessWidget {
 
     // Clear the form fields when the AddCafe page is opened
     controller.cafeName.clear();
-    controller.cafeDetails.clear();
+    controller.cafeLocation.clear();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Add Cafe')),
+      appBar: AppBar(
+        title: Text('Add Cafe'),
+        backgroundColor: TColors.olive,
+      ),
+      backgroundColor: TColors.olive,
       body: SingleChildScrollView(
         // Wrap the Column in a SingleChildScrollView
         child: Padding(
@@ -27,54 +32,54 @@ class AddCafe extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.white),
                   controller: controller.cafeName,
                   validator: (value) =>
                       TValidator.validateEmptyText('Cafe Name', value),
                   expands: false,
                   decoration: const InputDecoration(
-                    labelStyle: TextStyle(color: Colors.black),
-                    floatingLabelStyle: TextStyle(color: Colors.black),
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Cafe Name',
                     prefixIcon: Icon(
                       Iconsax.user,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                           color:
-                              Colors.black), // Underline color when not focused
+                              Colors.white), // Underline color when not focused
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: Colors.black), // Underline color when focused
+                          color: Colors.white), // Underline color when focused
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
                 TextFormField(
-                  style: TextStyle(color: Colors.black),
-                  controller: controller.cafeDetails,
+                  style: TextStyle(color: Colors.white),
+                  controller: controller.cafeLocation,
                   validator: (value) =>
-                      TValidator.validateEmptyText('Cafe Details', value),
+                      TValidator.validateEmptyText('Cafe Location', value),
                   expands: false,
                   decoration: const InputDecoration(
-                    labelStyle: TextStyle(color: Colors.black),
-                    floatingLabelStyle: TextStyle(color: Colors.black),
-                    labelText: 'Cafe Details',
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
+                    labelText: 'Cafe Location',
                     prefixIcon: Icon(
                       Iconsax.user,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                           color:
-                              Colors.black), // Underline color when not focused
+                              Colors.white), // Underline color when not focused
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: Colors.black), // Underline color when focused
+                          color: Colors.white), // Underline color when focused
                     ),
                   ),
                 ),
@@ -96,6 +101,10 @@ class AddCafe extends StatelessWidget {
                         // Fetch updated list of cafes
                       }
                     },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: TColors.olive,
+                      backgroundColor: TColors.textLight,
+                    ),
                     child: const Text('Save'),
                   ),
                 ),

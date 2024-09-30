@@ -6,6 +6,7 @@ import "package:fyp_umakan/features/student_management/controllers/user_controll
 import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/health_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/personal_detail_edit.dart";
+import "package:fyp_umakan/features/vendor/controller/vendor_controller.dart";
 import "package:fyp_umakan/features/vendor/screens/vendor_register.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
@@ -22,6 +23,7 @@ class VendorProfilePageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final controller = Get.put(VendorController());
 
     return Scaffold(
       backgroundColor: TColors.bubbleOrange,
@@ -43,12 +45,14 @@ class VendorProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  Text(
-                    "Vendor!",
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
+                  Obx(
+                    () => Text(
+                      controller.vendor.value.vendorName,
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: dark ? Colors.white : Colors.white,
+                      ),
                     ),
                   ),
                 ],
