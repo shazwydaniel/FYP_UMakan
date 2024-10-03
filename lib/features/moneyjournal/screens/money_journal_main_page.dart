@@ -134,7 +134,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                               children: [
                                 // Title Text
                                 Text(
-                                  'Food Money Left',
+                                  'Food Money',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 20,
@@ -143,7 +143,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 ),
                                 SizedBox(height: 3),
                                 Text(
-                                  'for this month',
+                                  'left for this month',
                                   style: TextStyle(
                                     color: TColors.olive,
                                     fontSize: 12,
@@ -254,7 +254,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 SizedBox(height: 3),
                                 // Allowance Reset Date (label)
                                 Text(
-                                  '1 October 2024',
+                                  '1 November 2024',
                                   style: TextStyle(
                                     color: TColors.cream,
                                     fontSize: 12,

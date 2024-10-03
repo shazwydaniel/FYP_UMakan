@@ -37,14 +37,21 @@ class UserController extends GetxController {
   Future<void> fetchUserRecord() async {
     try {
       profileLoading.value = true;
-      final user = await userRepository.fetchUserDetails();
-      this.user(user);
-      updateAge();
-      updateStatus();
-      await updateCalculatedFields();
-      await setupUser(user.id);
+      final userFromDb = await userRepository.fetchUserDetails();
+      
+      // Only update the user if it's not null
+      if (userFromDb != null) {
+        this.user(userFromDb);
+        updateAge();
+        updateStatus();
+        await updateCalculatedFields();
+        await setupUser(userFromDb.id);
+      } else {
+        this.user(UserModel.empty());
+      }
     } catch (e) {
-      user(UserModel.empty());
+      this.user(UserModel.empty());
+      print('Error fetching user record: $e');
     } finally {
       profileLoading.value = false;
     }
@@ -60,8 +67,7 @@ class UserController extends GetxController {
     }
   }
 
-  Future<void> addExpense(String userId, String expenseType,
-      Map<String, dynamic> expenseData) async {
+  Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
       // Add the expense
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
@@ -69,16 +75,17 @@ class UserController extends GetxController {
       // Retrieve the price from the expenseData
       double price = double.tryParse(expenseData['price'].toString()) ?? 0.0;
 
-      // Update the user model directly
+      // Update the user model directly without resetting
       user.update((user) {
         if (user != null) {
-          user.additionalExpense += price;
-
-          // Print the updated allowance and price to the console
+          user.additionalExpense = (user.additionalExpense ?? 0.0) + price; // Ensure it retains previous value
           print('Price: $price');
           print('Updated additionalExpense: ${user.additionalExpense}');
         }
       });
+
+      // Update calculated fields after adding expense
+      await updateCalculatedFields();
 
       // Save the updated user data back to Firestore
       await userRepository.updateUserDetails(user.value);
@@ -196,7 +203,7 @@ class UserController extends GetxController {
     });
 
     // Save the updated user data back to Firestore
-    await saveUserDetails();
+    await userRepository.updateUserDetails(user.value);
   }
 
   // Logic for daily calorie intake based on gender and age
