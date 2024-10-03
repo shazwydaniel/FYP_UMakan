@@ -9,7 +9,6 @@ import 'package:fyp_umakan/features/authentication/screens/onboarding/onboarding
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/verify_email.dart';
 import 'package:fyp_umakan/features/student_management/controllers/update_profile_controller.dart';
-import 'package:fyp_umakan/features/vendor/screens/vendor_home_page.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';

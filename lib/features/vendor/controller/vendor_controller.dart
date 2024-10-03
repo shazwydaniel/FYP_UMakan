@@ -57,6 +57,7 @@ class VendorController extends GetxController {
     super.onInit();
     // Get the current user ID when the controller is initialized
     userId = getCurrentUserId();
+    print("Current user id: ${userId}");
     fetchUserRecord();
   }
 

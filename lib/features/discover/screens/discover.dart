@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
-import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
-import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/cafes/screens/cafe.dart';
+import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
 
-import 'package:fyp_umakan/features/moneyjournal/screens/money_journal_main_page.dart';
-import 'package:fyp_umakan/navigation_menu.dart';
+import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
-import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
-import 'package:bubble_lens/bubble_lens.dart';
 import 'package:get/get.dart';
 
 class DiscoverPageScreen extends StatelessWidget {
@@ -18,14 +14,19 @@ class DiscoverPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final JournalController controller = Get.put(JournalController());
+    final JournalController journalController = Get.put(JournalController());
+    final DiscoverController discoverController =
+        Get.put(DiscoverController(VendorRepository()));
+
+    discoverController
+        .fetchAllCafesFromAllVendors(); // Fetch cafes from all vendors
 
     return Scaffold(
       backgroundColor: TColors.mustard,
       body: Stack(
         children: [
           // Title Section
-          /*Container(
+          Container(
             padding: const EdgeInsets.only(left: 40, right: 40, top: 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +36,7 @@ class DiscoverPageScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: dark ? Colors.white : Colors.white,
+                    color: dark ? Colors.white : Colors.black,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -43,278 +44,44 @@ class DiscoverPageScreen extends StatelessWidget {
                   'Browse for your meals and add them to your journal',
                   style: TextStyle(
                     fontSize: 15,
-                    color: dark ? Colors.white : Colors.white,
+                    color: dark ? Colors.white : Colors.black,
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20),*/
-
-          /*/ BubbleLens Section
-          Positioned.fill(
-            child: Container(
-              color: TColors.mustard,
-              height: MediaQuery.of(context).size.height -
-                  500, // Set height dynamically
-
-              child: BubbleLens(
-                duration: const Duration(milliseconds: 100),
-                width: MediaQuery.of(context).size.width,
-                height:
-                    MediaQuery.of(context).size.height, // Use available height
-                widgets: cafes.map((cafe) {
-                  return GestureDetector(
+          // Cafes List Section
+          Obx(() {
+            if (discoverController.cafe.isEmpty) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.only(top: 180), // Space for title
+              itemCount: discoverController.cafe.length,
+              itemBuilder: (context, index) {
+                final cafe = discoverController.cafe[index];
+                return Card(
+                  margin: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text(cafe.name),
+                    subtitle: Text(cafe.location), // Adjust as needed
                     onTap: () {
-                      // Navigate to the cafe details page
-                      //Get.to(() => CafePage(cafe: cafe));
+                      // Navigate to CafePage
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CafePage(
+                            cafe: cafe,
+                            vendorId: cafe.vendorId,
+                          ), // Adjust this according to CafePage
+                        ),
+                      );
                     },
-                    child: Image.asset(cafe.logoPath),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),*/
-
-          Positioned(
-            top: 100, // Adjust this value to position the title as desired
-            left: 40,
-            right: 40,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Discover Cafes',
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: dark ? Colors.white : Colors.white,
                   ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Browse for your meals and add them to your journal',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: dark ? Colors.white : Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Spacer to push content to the center
-          /*Expanded(
-            child: Center(
-              child: Stack(
-                children: [
-                  Center(
-                    child: Container(
-                      width: 150, // Set the width of the circular card
-                      height: 150, // Set the height of the circular card
-                      decoration: BoxDecoration(
-                        color: TColors
-                            .amber, // Background color of the circular card
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Kolej Kediaman",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: dark ? Colors.white : Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  //Surrounding Circles
-                  Positioned(
-                    left:
-                        150, // Center the circle horizontally near the left edge of central circle
-                    top:
-                        150, // Center the circle vertically near the top edge of central circle with some padding
-                    child: Container(
-                      width: 75, // Circle width
-                      height: 75, // Circle height
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.2), // Shadow color
-                            blurRadius: 10, // Shadow blur radius
-                            spreadRadius: 2, // Shadow spread radius
-                            offset: Offset(0, 4), // Shadow offset
-                          ),
-                        ],
-                        color: Colors
-                            .white, // Background color of the surrounding circle
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          TImages.QBistro_Logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right:
-                        150, // Center the circle horizontally near the right edge of central circle with some padding
-                    bottom:
-                        150, // Center the circle vertically near the top edge of central circle with some padding
-                    child: Container(
-                      width: 75, // Circle width
-                      height: 75, // Circle height
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.2), // Shadow color
-                            blurRadius: 10, // Shadow blur radius
-                            spreadRadius: 2, // Shadow spread radius
-                            offset: Offset(0, 4), // Shadow offset
-                          ),
-                        ],
-                        color: Colors
-                            .white, // Background color of the surrounding circle
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          TImages.Zus_Logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right:
-                        100, // Center the circle horizontally near the right edge of central circle with some padding
-                    top:
-                        180, // Center the circle vertically near the top edge of central circle with some padding
-                    child: Container(
-                      width: 75, // Circle width
-                      height: 75, // Circle height
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.2), // Shadow color
-                            blurRadius: 10, // Shadow blur radius
-                            spreadRadius: 2, // Shadow spread radius
-                            offset: Offset(0, 4), // Shadow offset
-                          ),
-                        ],
-                        color: Colors
-                            .white, // Background color of the surrounding circle
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          TImages.KK7_Logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left:
-                        100, // Center the circle horizontally near the right edge of central circle with some padding
-                    bottom:
-                        180, // Center the circle vertically near the top edge of central circle with some padding
-                    child: Container(
-                      width: 75, // Circle width
-                      height: 75, // Circle height
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.2), // Shadow color
-                            blurRadius: 10, // Shadow blur radius
-                            spreadRadius: 2, // Shadow spread radius
-                            offset: Offset(0, 4), // Shadow offset
-                          ),
-                        ],
-                        color: Colors
-                            .white, // Background color of the surrounding circle
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          TImages.KK8_Logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right:
-                        70, // Center the circle horizontally near the right edge of central circle with some padding
-                    top:
-                        310, // Center the circle vertically near the top edge of central circle with some padding
-                    child: Container(
-                      width: 75, // Circle width
-                      height: 75, // Circle height
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.2), // Shadow color
-                            blurRadius: 10, // Shadow blur radius
-                            spreadRadius: 2, // Shadow spread radius
-                            offset: Offset(0, 4), // Shadow offset
-                          ),
-                        ],
-                        color: Colors
-                            .white, // Background color of the surrounding circle
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          TImages.KK12_Logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left:
-                        70, // Center the circle horizontally near the right edge of central circle with some padding
-                    bottom:
-                        310, // Center the circle vertically near the top edge of central circle with some padding
-                    child: Container(
-                      width: 75, // Circle width
-                      height: 75, // Circle height
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.2), // Shadow color
-                            blurRadius: 10, // Shadow blur radius
-                            spreadRadius: 2, // Shadow spread radius
-                            offset: Offset(0, 4), // Shadow offset
-                          ),
-                        ],
-                        color: Colors
-                            .white, // Background color of the surrounding circle
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          TImages.KK11_Logo,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),*/
+                );
+              },
+            );
+          }),
         ],
       ),
     );

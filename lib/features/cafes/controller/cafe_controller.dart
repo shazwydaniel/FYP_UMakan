@@ -10,10 +10,10 @@ class CafeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchCafes();
+    //fetchCafes();
   }
 
-  Future<void> fetchCafes() async {
+  /*Future<void> fetchCafes() async {
     try {
       isLoading.value = true;
       var querySnapshot = await _firestore.collection('cafes').get();
@@ -27,5 +27,5 @@ class CafeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
+  }*/
 }

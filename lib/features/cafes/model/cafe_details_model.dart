@@ -1,5 +1,3 @@
-// lib/features/cafes/model/cafe_model.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CafeDetails {
@@ -7,6 +5,7 @@ class CafeDetails {
   String name;
   String logo;
   String location;
+  final String vendorId;
   //final List<String> cafeReviews;
 
   CafeDetails(
@@ -16,6 +15,7 @@ class CafeDetails {
     required this.name,
     required this.logo,
     required this.location,
+    required this.vendorId,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +23,7 @@ class CafeDetails {
       'cafeName': name,
       'cafeLogo': logo,
       'cafeLocation': location,
+      'vendorId': vendorId,
       //'cafeReviews': cafeReviews,
     };
   }
@@ -33,14 +34,17 @@ class CafeDetails {
         name: '',
         logo: '',
         location: '',
+        vendorId: '',
       );
 
-  factory CafeDetails.fromMap(Map<String, dynamic> data, String documentId) {
+  factory CafeDetails.fromMap(
+      Map<String, dynamic> data, String documentId, String vendorID) {
     return CafeDetails(
       id: documentId,
       name: data['cafeName'] ?? '',
       logo: data['cafeLogo'] ?? '',
       location: data['cafeLocation'] ?? '',
+      vendorId: vendorID,
     );
   }
   Map<String, dynamic> toJson() {
@@ -49,6 +53,7 @@ class CafeDetails {
       'Cafe Name': name,
       'Cafe Details': location,
       'Cafe Image': logo,
+      'Vendor ID': vendorId,
       // 'Cafe Reviews': cafeReviews,
     };
   }
@@ -59,10 +64,12 @@ class CafeDetails {
     if (document.data() != null) {
       final data = document.data()!;
       return CafeDetails(
-          id: document.id,
-          name: data['cafeName'] ?? '',
-          logo: data['logoName'] ?? '',
-          location: data['cafeLocation'] ?? '');
+        id: document.id,
+        name: data['cafeName'] ?? '',
+        logo: data['logoName'] ?? '',
+        vendorId: data['vendorId'] ?? '',
+        location: data['cafeLocation'] ?? '',
+      );
     } else {
       return CafeDetails.empty();
     }

@@ -45,7 +45,7 @@ class Vendor {
 
   factory Vendor.fromMap(Map<String, dynamic> map, String id) {
     return Vendor(
-      id: map['Id'],
+      id: id,
       vendorName: map['Vendor Name'],
       contactInfo: map['Contact Info'],
       vendorEmail: map['Vendor Email'],
