@@ -254,7 +254,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 SizedBox(height: 3),
                                 // Allowance Reset Date (label)
                                 Text(
-                                  '1 September 2024',
+                                  '1 October 2024',
                                   style: TextStyle(
                                     color: TColors.cream,
                                     fontSize: 12,
@@ -303,7 +303,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '3',
+                                  '30',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 60,
@@ -360,9 +360,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Center(
-                        child: Text(
-                          'No expenses found.'
-                        )
+                        child: Text('No expenses found.'),
                       );
                     }
 
@@ -376,96 +374,144 @@ class MoneyJournalMainPage extends StatelessWidget {
                         final type = expense['type'] ?? 'Unknown';
                         final expenseID = expense['expense_ID'] ?? 'Unknown';
 
-                        return Container(
-                          height: 100,
-                          margin: const EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                            color: TColors.cream,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                offset: Offset(0, 8),
-                              ),
-                            ],
+                        // Replacing Container with Dismissible
+                        return Dismissible(
+                          key: Key(expenseID), // Unique key for each item
+                          direction: DismissDirection.endToStart, // Swipe from right to left
+                          background: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(right: 20.0),
+                            color: TColors.amber,
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Stack(
-                              children: [
-                                // Left side text elements
-                                Positioned(
-                                  left: 0,
-                                  top: 0,
-                                  bottom: 0,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        itemName,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        type,
-                                        style: TextStyle(
-                                          color: TColors.darkGreen,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                        ),
+                          confirmDismiss: (direction) async {
+                            // Show a confirmation dialog before deleting the item
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: TColors.cream,
+                                  title: Text(
+                                    "Delete Confirmation",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                    ),
                                   ),
+                                  content: Text(
+                                    "Are you sure you want to delete this expense?",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(color: TColors.textDark),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(true),
+                                      child: Text(
+                                        "Delete",
+                                        style: TextStyle(color: TColors.amber),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          onDismissed: (direction) async {
+                            // Call the removeExpense method to delete the item
+                            await controller.removeExpense(expenseID);
+
+                            // Snackbar Successful Delete
+                            TLoaders.errorSnackBar( title: 'Expense Deleted', message: "Selected expense has been deleted!.");
+                          },
+                          child: Container(
+                            height: 100,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                              color: TColors.cream,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 8),
                                 ),
-                                // Delete Expense Item
-                                // Trash icon at the top right
-                                // Positioned(
-                                //   top: -15,
-                                //   right: 0,
-                                //   left: 280,
-                                //   child: IconButton(
-                                //     icon: Icon(Icons.delete, color: Colors.red),
-                                //     onPressed: () async {
-                                //       // Call the removeExpense method to delete the item
-                                //       await controller.removeExpense(expenseID);
-                                //     },
-                                //   ),
-                                // ),
-                                // Item Price (label) - Positioned at the bottom right
-                                Positioned(
-                                  bottom: -16.0,
-                                  right: 0,
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 22.0),
-                                        child: Text(
-                                          'RM',
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Stack(
+                                children: [
+                                  // Left side text elements
+                                  Positioned(
+                                    left: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          itemName,
                                           style: TextStyle(
-                                            color: TColors.darkGreen,
-                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        price,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 50,
-                                          fontWeight: FontWeight.bold,
+                                        Text(
+                                          type,
+                                          style: TextStyle(
+                                            color: TColors.darkGreen,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  // Item Price (label) - Positioned at the bottom right
+                                  Positioned(
+                                    bottom: -16.0,
+                                    right: 0,
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 22.0),
+                                          child: Text(
+                                            'RM',
+                                            style: TextStyle(
+                                              color: TColors.darkGreen,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          price,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 50,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -714,6 +760,9 @@ class MoneyJournalMainPage extends StatelessWidget {
 
                         // Success Message
                         TLoaders.successSnackBar( title: 'Expense Logged', message: "Your spending for today has been updated!.");
+
+                        priceController.clear();
+                        itemNameController.clear();
 
                         // Refresh the page
                         Get.off(() => const MoneyJournalMainPage(), preventDuplicates: false);

@@ -24,6 +24,8 @@ class UserModel {
   double recommendedCalorieIntake;
   double recommendedMoneyAllowance;
   double actualRemainingFoodAllowance;
+  double additionalAllowance;
+  double additionalExpense;
 
   UserModel({
     required this.id,
@@ -48,6 +50,8 @@ class UserModel {
     this.recommendedCalorieIntake = 0.0,
     this.recommendedMoneyAllowance = 0.0,
     this.actualRemainingFoodAllowance = 0.0,
+    this.additionalAllowance = 0.0,
+    this.additionalExpense = 0.0,
   });
 
   // Convert a UserModel into a Map
@@ -75,6 +79,8 @@ class UserModel {
       'recommendedCalorieIntake': recommendedCalorieIntake,
       'recommendedMoneyAllowance': recommendedMoneyAllowance,
       'actualRemainingFoodAllowance': actualRemainingFoodAllowance,
+      'additionalAllowance': additionalAllowance,
+      'additionalExpense': additionalExpense,
     };
   }
 
@@ -103,6 +109,8 @@ class UserModel {
       recommendedCalorieIntake: map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
       recommendedMoneyAllowance: map['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
       actualRemainingFoodAllowance: map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+      additionalAllowance: map['additionalAllowance']?.toDouble() ?? 0.0,
+      additionalExpense: map['additionalExpense']?.toDouble() ?? 0.0,
     );
   }
 
@@ -137,6 +145,8 @@ class UserModel {
       'Recommended Calorie Intake': recommendedCalorieIntake,
       'Recommended Money Allowance': recommendedMoneyAllowance,
       'Actual Remaining Food Allowance': actualRemainingFoodAllowance,
+      'Additional Allowance': additionalAllowance,
+      'Additional Expense': additionalExpense,  
     };
   }
 
@@ -164,6 +174,8 @@ class UserModel {
       recommendedCalorieIntake: 0.0,
       recommendedMoneyAllowance: 0.0,
       actualRemainingFoodAllowance: 0.0,
+      additionalAllowance: 0.0,
+      additionalExpense: 0.0,
   );
 
   // Create a UserModel from Firebase Document Snapshot
@@ -193,7 +205,9 @@ class UserModel {
           status: data['Status'] ?? 0,
           recommendedCalorieIntake: data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
           recommendedMoneyAllowance: data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
-          actualRemainingFoodAllowance: data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0);
+          actualRemainingFoodAllowance: data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+          additionalAllowance: data['additionalAllowance']?.toDouble() ?? 0.0,
+          additionalExpense: data['additionalExpense']?.toDouble() ?? 0.0);
     } else {
       return UserModel.empty();
     }

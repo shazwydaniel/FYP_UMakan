@@ -72,14 +72,11 @@ class UserController extends GetxController {
       // Update the user model directly
       user.update((user) {
         if (user != null) {
-          user.actualRemainingFoodAllowance -= price;
-          user.monthlyCommittments =
-              (double.parse(user.monthlyCommittments) + price).toString();
+          user.additionalExpense += price;
 
           // Print the updated allowance and price to the console
           print('Price: $price');
-          print(
-              'Updated actualRemainingFoodAllowance: ${user.actualRemainingFoodAllowance}');
+          print('Updated additionalExpense: ${user.additionalExpense}');
         }
       });
 
@@ -171,22 +168,21 @@ class UserController extends GetxController {
     final currentUser = user.value;
 
     // Convert String fields to double
-    double monthlyAllowance =
-        double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
-    double monthlyCommittments =
-        double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
+    double monthlyAllowance = double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
+    double monthlyCommittments = double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
+
+    // Ensure additionalAllowance and additionalExpense are not null
+    double additionalAllowance = currentUser.additionalAllowance ?? 0.0;
+    double additionalExpense = currentUser.additionalExpense ?? 0.0;
 
     // Calculate Recommended Daily Calories Intake
-    double recommendedCalorieIntake =
-        getDailyCaloriesIntake(currentUser.gender, currentUser.age);
+    double recommendedCalorieIntake = getDailyCaloriesIntake(currentUser.gender, currentUser.age);
 
     // Calculate Recommended Monthly Budget Allocation for Food
-    double recommendedMoneyAllowance =
-        getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
+    double recommendedMoneyAllowance = getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
 
     // Calculate Actual Monthly Food Allocation
-    double actualRemainingFoodAllowance =
-        monthlyAllowance - monthlyCommittments;
+    double actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + additionalExpense);
 
     // Update the user model with the calculated values
     user.update((user) {
@@ -194,6 +190,8 @@ class UserController extends GetxController {
         user.recommendedCalorieIntake = recommendedCalorieIntake;
         user.recommendedMoneyAllowance = recommendedMoneyAllowance;
         user.actualRemainingFoodAllowance = actualRemainingFoodAllowance;
+
+        print('Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
       }
     });
 
