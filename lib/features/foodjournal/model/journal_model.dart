@@ -5,13 +5,18 @@ class JournalItem {
   final int calories;
   String imagePath;
   final String cafe;
+  DateTime timestamp; // Made mutable by removing 'final'
 
-  JournalItem(this.imagePath,
-      {required this.id,
-      required this.name,
-      required this.price,
-      required this.calories,
-      required this.cafe});
+  JournalItem(
+    this.imagePath, {
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.calories,
+    required this.cafe,
+    DateTime? timestamp, // Optional in constructor
+  }) : timestamp =
+            timestamp ?? DateTime.now(); // Initialize with current time if null
 
   // Convert a JournalItem to a JSON object
   Map<String, dynamic> toJson() {
@@ -22,6 +27,7 @@ class JournalItem {
       'calories': calories,
       'imagePath': imagePath,
       'cafe': cafe,
+      'timestamp': timestamp.toIso8601String(), // Store as ISO string
     };
   }
 
@@ -38,6 +44,7 @@ class JournalItem {
       calories: (json['calories'] is String)
           ? int.tryParse(json['calories']) ?? 0
           : json['calories'] ?? 0,
+      timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
     );
   }
 
@@ -54,6 +61,9 @@ class JournalItem {
       calories: (data['calories'] is String)
           ? int.tryParse(data['calories']) ?? 0
           : data['calories'] ?? 0,
+      timestamp: data['timestamp'] != null
+          ? DateTime.tryParse(data['timestamp']) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 
@@ -65,6 +75,7 @@ class JournalItem {
       'price': price,
       'imagePath': imagePath,
       'calories': calories,
+      'timestamp': timestamp.toIso8601String(), // Store as ISO string
     };
   }
 

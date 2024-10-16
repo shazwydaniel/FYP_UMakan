@@ -82,7 +82,7 @@ class FoodJournalMainPage extends StatelessWidget {
                       ),
                       // Icon
                       Padding(
-                        padding: const EdgeInsets.only(top:15),
+                        padding: const EdgeInsets.only(top: 15),
                         child: Icon(
                           Iconsax.flash,
                           size: 70,
@@ -256,128 +256,6 @@ class FoodJournalMainPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-            // History (Card)
-            Container(
-              height: 230,
-              margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(4, (index) {
-                    return SizedBox(
-                      width: 220,
-                      height: 250, // Width of each card
-                      child: Card(
-                        elevation: 0, // Optional: Add elevation if you want
-                        color: TColors.amber, // Set card color to transparent
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius
-                                .zero // Adjust radius to match design
-                            ),
-                        margin: const EdgeInsets.only(right: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 140,
-                              height: 120, // Height for the image
-                              decoration: BoxDecoration(
-                                color: TColors.mustard,
-                                borderRadius: BorderRadius.circular(
-                                    200), // Rounded top corners
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/meal_image_${index + 1}.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      'Meal ${index + 1}',
-                                      style: const TextStyle(
-                                        color: Colors.white, // Make text white
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 4), // Space between texts
-                                  Center(
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(
-                                            0.2), // Translucent grey background
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Text(
-                                        'Location ${index + 1}', // Changed for clarity
-                                        style: TextStyle(
-                                          color: dark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 4), // Space between texts
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '\RM${(index + 1) * 5}',
-                                        style: TextStyle(
-                                          color: dark
-                                              ? TColors.cream
-                                              : TColors.cream,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Reduced space between text and circle
-                                      Container(
-                                        width: 6,
-                                        height: 6,
-                                        decoration: const BoxDecoration(
-                                          color: TColors.cream,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Reduced space between circle and calorie text
-                                      Text(
-                                        '${100 + (index + 1) * 50} cal',
-                                        style: TextStyle(
-                                          color: dark
-                                              ? TColors.cream
-                                              : TColors.cream,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                ),
               ),
             ),
           ],
