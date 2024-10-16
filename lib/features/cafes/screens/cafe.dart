@@ -33,7 +33,6 @@ class CafePage extends StatelessWidget {
         if (cafeController.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
-
         if (cafeController.menuItems.isEmpty) {
           return Center(child: Text('No menu items available'));
         }

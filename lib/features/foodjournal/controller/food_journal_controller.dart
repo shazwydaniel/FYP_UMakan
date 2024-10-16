@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
+import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
 import 'package:get/get.dart';
 
 class FoodJournalController extends GetxController {
@@ -21,11 +23,34 @@ class FoodJournalController extends GetxController {
       // Call the repository to add the item to Firestore
       await _foodJournalRepo.addFood(userId, foodData);
 
-      // Show success message if needed
-      Get.snackbar('Success', 'Item added to food journal');
+      // Show success message with onTap to navigate
+      Get.snackbar(
+        'Success',
+        'Item added to food journal',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(10),
+        mainButton: TextButton(
+          onPressed: () {
+            // Navigate to the desired page
+            Get.to(() => FoodJournalMainPage());
+          },
+          child: const Text(
+            'View Journal',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      );
     } catch (e) {
       // Handle errors and show appropriate message
-      Get.snackbar('Error', 'Failed to add item: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to add item: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
