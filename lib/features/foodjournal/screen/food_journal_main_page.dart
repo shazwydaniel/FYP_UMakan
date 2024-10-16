@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
+import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
@@ -17,6 +18,9 @@ class FoodJournalMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = Get.put(JournalController());
+    final foodJController = Get.put(FoodJournalController());
+
+    foodJController.fetchFoodJournalItems();
 
     return Scaffold(
       backgroundColor: TColors.amber,
@@ -126,9 +130,9 @@ class FoodJournalMainPage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: controller.lunchItems.length,
+                  itemCount: foodJController.lunchItems.length,
                   itemBuilder: (context, index) {
-                    final item = controller.lunchItems[index];
+                    final item = foodJController.lunchItems[index];
                     return SizedBox(
                       width: 220,
                       height: 250, // Width of each card
@@ -147,10 +151,10 @@ class FoodJournalMainPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
                                 borderRadius: BorderRadius.circular(200),
-                                image: DecorationImage(
+                                /*image: DecorationImage(
                                   image: AssetImage(item.imagePath),
                                   fit: BoxFit.cover,
-                                ),
+                                ),*/
                               ),
                             ),
                             Padding(
@@ -163,7 +167,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                       item.name,
                                       style: const TextStyle(
                                         color: Colors.white, // Make text white
-                                        fontSize: 18,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

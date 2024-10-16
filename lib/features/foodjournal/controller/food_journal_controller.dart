@@ -29,6 +29,28 @@ class FoodJournalController extends GetxController {
     }
   }
 
+  // Fetch
+  Future<void> fetchFoodJournalItems() async {
+    try {
+      // Fetch list of cafes from the repository
+      final foodJournalList =
+          await _foodJournalRepo.getFoodJournalItem(getCurrentUserId());
+
+      // Check if cafes were found
+      if (foodJournalList.isNotEmpty) {
+        // Assign the fetched cafes to the observable list
+        lunchItems.assignAll(foodJournalList);
+        print("Items Food Journal fetched: ${lunchItems.length}");
+      } else {
+        print('No items found in Food Journal');
+        lunchItems.clear(); // Optionally clear if no cafes are found
+      }
+    } catch (e) {
+      print('Error fetching cafes: $e');
+      lunchItems.clear(); // Handle error by clearing the list
+    }
+  }
+
   String getCurrentUserId() {
     // Get the current user from FirebaseAuth
     User? user = FirebaseAuth.instance.currentUser;

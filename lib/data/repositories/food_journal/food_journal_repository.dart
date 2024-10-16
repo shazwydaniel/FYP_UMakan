@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
+import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/format_exceptions.dart';
@@ -57,6 +58,35 @@ class FoodJournalRepository {
     } on PlatformException catch (e) {
       throw TPlatformException(e.code).message;
     } catch (e) {
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  Future<List<JournalItem>> getFoodJournalItem(String userId) async {
+    try {
+      final querySnapshot = await _db
+          .collection('Users')
+          .doc(userId)
+          .collection('food_journal')
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => JournalItem.fromMap(doc.data(), doc.id))
+          .toList();
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
     }
   }
