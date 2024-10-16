@@ -47,6 +47,7 @@ class FoodJournalRepository {
       await docRef.set({
         'entry_ID': docRef.id,
         ...foodData,
+        'createdAt': FieldValue.serverTimestamp(),
       });
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;
