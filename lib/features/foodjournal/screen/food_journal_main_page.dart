@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 class FoodJournalMainPage extends StatelessWidget {
   const FoodJournalMainPage({super.key});
@@ -142,6 +143,10 @@ class FoodJournalMainPage extends StatelessWidget {
                   itemCount: filteredLunchItems.length,
                   itemBuilder: (context, index) {
                     final item = filteredLunchItems[index];
+                    // Format the timestamp into a readable string
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(item.timestamp);
+
                     return SizedBox(
                       width: 220,
                       height: 250, // Width of each card
@@ -233,6 +238,20 @@ class FoodJournalMainPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 50),
+                                      Text(
+                                        formattedDate,
+                                        style: TextStyle(
+                                          color: dark
+                                              ? TColors.cream
+                                              : TColors.cream,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
@@ -288,6 +307,10 @@ class FoodJournalMainPage extends StatelessWidget {
                   itemCount: filteredLunchItems.length,
                   itemBuilder: (context, index) {
                     final item = filteredLunchItems[index];
+                    // Format the timestamp into a readable string
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(item.timestamp);
+
                     return SizedBox(
                       width: 220,
                       height: 250, // Width of each card
@@ -379,6 +402,20 @@ class FoodJournalMainPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 50),
+                                      Text(
+                                        formattedDate,
+                                        style: TextStyle(
+                                          color: dark
+                                              ? TColors.cream
+                                              : TColors.cream,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
