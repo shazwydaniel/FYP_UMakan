@@ -98,7 +98,7 @@ class FoodJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            //Lunch (Text)
+            //Today (Text)
             Padding(
               padding: const EdgeInsets.only(
                   left: 30, right: 30, bottom: 20, top: 30),
@@ -122,17 +122,26 @@ class FoodJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Display Lunch Items (Cards)
-            // Display added lunch items as cards
+            // Display Today Items (Cards)
             Obx(() {
+              // Get today's date without time (midnight)
+              DateTime today = DateTime.now();
+              DateTime startOfDay =
+                  DateTime(today.year, today.month, today.day);
+
+              // Filter items to show only those added today
+              final filteredLunchItems = foodJController.lunchItems
+                  .where((item) => item.timestamp.isAfter(startOfDay))
+                  .toList();
+
               return Container(
                 height: 230,
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: foodJController.lunchItems.length,
+                  itemCount: filteredLunchItems.length,
                   itemBuilder: (context, index) {
-                    final item = foodJController.lunchItems[index];
+                    final item = filteredLunchItems[index];
                     return SizedBox(
                       width: 220,
                       height: 250, // Width of each card
@@ -140,7 +149,8 @@ class FoodJournalMainPage extends StatelessWidget {
                         elevation: 0, // Optional: Add elevation if you want
                         color: TColors.amber, // Set card color to transparent
                         shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero),
+                          borderRadius: BorderRadius.zero,
+                        ),
                         margin: const EdgeInsets.only(right: 15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -151,10 +161,6 @@ class FoodJournalMainPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
                                 borderRadius: BorderRadius.circular(200),
-                                /*image: DecorationImage(
-                                  image: AssetImage(item.imagePath),
-                                  fit: BoxFit.cover,
-                                ),*/
                               ),
                             ),
                             Padding(
@@ -262,6 +268,128 @@ class FoodJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
+            // Display History Items (Cards)
+            Obx(() {
+              // Get previous's date without time (midnight)
+              DateTime today = DateTime.now();
+              DateTime startOfDay =
+                  DateTime(today.year, today.month, today.day);
+
+              // Filter items to show only those added previously
+              final filteredLunchItems = foodJController.lunchItems
+                  .where((item) => item.timestamp.isBefore(startOfDay))
+                  .toList();
+
+              return Container(
+                height: 230,
+                margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: filteredLunchItems.length,
+                  itemBuilder: (context, index) {
+                    final item = filteredLunchItems[index];
+                    return SizedBox(
+                      width: 220,
+                      height: 250, // Width of each card
+                      child: Card(
+                        elevation: 0, // Optional: Add elevation if you want
+                        color: TColors.amber, // Set card color to transparent
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                        margin: const EdgeInsets.only(right: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 140,
+                              height: 120, // Height for the image
+                              decoration: BoxDecoration(
+                                color: TColors.mustard,
+                                borderRadius: BorderRadius.circular(200),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      item.name,
+                                      style: const TextStyle(
+                                        color: Colors.white, // Make text white
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4), // Space between texts
+                                  Center(
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 8.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        item.cafe,
+                                        style: TextStyle(
+                                          color: dark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4), // Space between texts
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '\RM${item.price.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: dark
+                                              ? TColors.cream
+                                              : TColors.cream,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Container(
+                                        width: 6,
+                                        height: 6,
+                                        decoration: const BoxDecoration(
+                                          color: TColors.cream,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        '${item.calories} cal',
+                                        style: TextStyle(
+                                          color: dark
+                                              ? TColors.cream
+                                              : TColors.cream,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }),
           ],
         ),
       ),
