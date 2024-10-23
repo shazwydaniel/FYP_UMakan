@@ -94,11 +94,46 @@ class FoodJournalMainPage extends StatelessWidget {
                       ),
                       // Icon
                       Padding(
-                        padding: const EdgeInsets.only(top: 15),
-                        child: Icon(
-                          Iconsax.flash,
-                          size: 70,
-                          color: Colors.white,
+                        padding: const EdgeInsets.only(top: 15, right: 30),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape:
+                                BoxShape.circle, // Make the container circular
+                            color: Colors
+                                .transparent, // Set a transparent background
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(
+                                50), // Set border radius for ripple effect
+                            onTap: () {
+                              // Show the pop-up dialog
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                        'Your Title Here'), // Set your dialog title
+                                    content: Text(
+                                        'Your pop-up content here.'), // Set your dialog content
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                        },
+                                        child: Text('Close'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Icon(
+                              Iconsax.shop_add,
+                              size: 75,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -109,7 +144,7 @@ class FoodJournalMainPage extends StatelessWidget {
             //Today (Text)
             Padding(
               padding: const EdgeInsets.only(
-                  left: 30, right: 30, bottom: 20, top: 30),
+                  left: 30, right: 30, bottom: 10, top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -125,6 +160,16 @@ class FoodJournalMainPage extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: dark ? Colors.white : Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Obx(
+                    () => Text(
+                      '(${foodJController.todayCalories} cal)',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: dark ? Colors.white : Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -151,8 +196,9 @@ class FoodJournalMainPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = filteredLunchItems[index];
                     // Format the timestamp into a readable string
-                    String formattedDate =
-                        DateFormat('yyyy-MM-dd').format(item.timestamp);
+                    // Format the timestamp to display only the time in 12-hour format with AM/PM
+                    String formattedTime =
+                        DateFormat('hh:mm a').format(item.timestamp);
 
                     return SizedBox(
                       width: 220,
@@ -173,6 +219,17 @@ class FoodJournalMainPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
                                 borderRadius: BorderRadius.circular(200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                        0.25), // Shadow color with opacity
+                                    spreadRadius:
+                                        2, // How much the shadow spreads
+                                    blurRadius: 10, // How blurry the shadow is
+                                    offset: const Offset(
+                                        0, 4), // Horizontal and vertical offset
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -247,9 +304,9 @@ class FoodJournalMainPage extends StatelessWidget {
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 50),
+                                      SizedBox(width: 70),
                                       Text(
-                                        formattedDate,
+                                        formattedTime,
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream
@@ -270,10 +327,10 @@ class FoodJournalMainPage extends StatelessWidget {
                 ),
               );
             }),
-            //Lunch History (Text)
+            //Meal Yesterday (Text)
             Padding(
               padding: const EdgeInsets.only(
-                  left: 30, right: 30, bottom: 20, top: 10),
+                  left: 30, right: 30, bottom: 10, top: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -284,13 +341,23 @@ class FoodJournalMainPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'History',
+                    'Yesterday',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
+                  const SizedBox(width: 10),
+                  Obx(
+                    () => Text(
+                      '(${foodJController.yesterdayCalories.value} cal)',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: dark ? Colors.white : Colors.white,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -301,10 +368,19 @@ class FoodJournalMainPage extends StatelessWidget {
               DateTime startOfDay =
                   DateTime(today.year, today.month, today.day);
 
-              // Filter items to show only those added previously
-              final filteredLunchItems = foodJController.lunchItems
-                  .where((item) => item.timestamp.isBefore(startOfDay))
-                  .toList();
+              // Get the start and end of yesterday
+              DateTime startOfYesterday =
+                  startOfDay.subtract(const Duration(days: 1));
+              DateTime endOfYesterday =
+                  startOfDay.subtract(const Duration(seconds: 1));
+
+              // Filter items to show only those added on yesterday
+              final filteredLunchItems =
+                  foodJController.lunchItems.where((item) {
+                DateTime itemTime = item.timestamp;
+                return itemTime.isAfter(startOfYesterday) &&
+                    itemTime.isBefore(endOfYesterday);
+              }).toList();
 
               return Container(
                 height: 230,
@@ -315,8 +391,8 @@ class FoodJournalMainPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = filteredLunchItems[index];
                     // Format the timestamp into a readable string
-                    String formattedDate =
-                        DateFormat('yyyy-MM-dd').format(item.timestamp);
+                    String formattedTime =
+                        DateFormat('hh:mm a').format(item.timestamp);
 
                     return SizedBox(
                       width: 220,
@@ -337,6 +413,17 @@ class FoodJournalMainPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
                                 borderRadius: BorderRadius.circular(200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(
+                                        0.25), // Shadow color with opacity
+                                    spreadRadius:
+                                        2, // How much the shadow spreads
+                                    blurRadius: 10, // How blurry the shadow is
+                                    offset: const Offset(
+                                        0, 4), // Horizontal and vertical offset
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -411,9 +498,9 @@ class FoodJournalMainPage extends StatelessWidget {
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(width: 50),
+                                      SizedBox(width: 70),
                                       Text(
-                                        formattedDate,
+                                        formattedTime,
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream
@@ -437,7 +524,7 @@ class FoodJournalMainPage extends StatelessWidget {
             //Meal Summary (Text)
             Padding(
               padding: const EdgeInsets.only(
-                  left: 30, right: 30, bottom: 20, top: 10),
+                  left: 30, right: 30, bottom: 10, top: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -620,7 +707,7 @@ class FoodJournalMainPage extends StatelessWidget {
                           bottom: 10), // Space between lists
                       padding: const EdgeInsets.only(left: 10),
                       child: Card(
-                        elevation: 2, // Add elevation for better visual
+                        elevation: 4, // Add elevation for better visual
                         color: TColors.mustard, // Card color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

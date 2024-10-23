@@ -9,6 +9,18 @@ class FoodJournalController extends GetxController {
   static FoodJournalController get instance => Get.find();
   final FoodJournalRepository _foodJournalRepo = FoodJournalRepository.instance;
   var lunchItems = <JournalItem>[].obs;
+  var todayCalories = 0.obs; // Observable for today's calories
+  var yesterdayCalories = 0.obs; // Observable for yesterday's calories
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Automatically calculate calories whenever lunchItems changes
+    ever(lunchItems, (_) {
+      todayCalories.value = calculateTodayCalories();
+      yesterdayCalories.value = calculateYesterdayCalories();
+    });
+  }
 
   void addToLunch(JournalItem item) {
     lunchItems.add(item);
@@ -88,5 +100,49 @@ class FoodJournalController extends GetxController {
       // Handle the case when there is no user logged in
       throw Exception('No user is currently signed in');
     }
+  }
+
+  //Calculate calories for today
+  int calculateTodayCalories() {
+    DateTime today = DateTime.now();
+    DateTime startOfDay = DateTime(today.year, today.month, today.day);
+
+    // Filter items for today's date and sum their calories
+    final todayItems = lunchItems.where((item) {
+      DateTime itemDate = DateTime(
+          item.timestamp.year, item.timestamp.month, item.timestamp.day);
+      return itemDate == startOfDay;
+    }).toList();
+
+    // Calculate total calories
+    int totalCalories =
+        todayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
+
+    return totalCalories;
+  }
+
+  int calculateYesterdayCalories() {
+    DateTime today = DateTime.now();
+
+    // Get start of today (midnight)
+    DateTime startOfDay = DateTime(today.year, today.month, today.day);
+
+    // Get start of yesterday
+    DateTime startOfYesterday = startOfDay.subtract(const Duration(days: 1));
+
+    // Filter items for yesterday's date and sum their calories
+    final yesterdayItems = lunchItems.where((item) {
+      DateTime itemDate = DateTime(
+          item.timestamp.year, item.timestamp.month, item.timestamp.day);
+
+      // Check if the item is from yesterday
+      return itemDate == startOfYesterday;
+    }).toList();
+
+    // Calculate total calories for yesterday
+    int totalCalories =
+        yesterdayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
+
+    return totalCalories;
   }
 }
