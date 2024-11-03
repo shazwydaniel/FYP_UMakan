@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class AddMenuItemPage extends StatelessWidget {
   final VendorMenuController controller = Get.put(VendorMenuController());
   String vendorId = VendorController.instance.getCurrentUserId();
-  final String cafeId; // Add this line
+  final String cafeId;
 
   // Update the constructor
   AddMenuItemPage({Key? key, required this.cafeId}) : super(key: key);

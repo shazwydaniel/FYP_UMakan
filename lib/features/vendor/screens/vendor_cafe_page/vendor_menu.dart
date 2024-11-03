@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
+import 'package:fyp_umakan/features/vendor/screens/advertisement/vendor_adverts.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/add_menu_category.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/add_menu_item.dart';
@@ -151,11 +153,12 @@ class _VendorMenuState extends State<VendorMenu> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddMenuCategory(),
+                      builder: (context) =>
+                          VendorAdverts(cafeId: widget.cafeId),
                     ),
                   );
                 },
-                child: const Text('Add Category'),
+                child: const Text('Add Advertisement'),
                 style: ElevatedButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),

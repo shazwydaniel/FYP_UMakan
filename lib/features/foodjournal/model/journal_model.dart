@@ -1,15 +1,15 @@
 class JournalItem {
-  final String id;
+  String? id; // Made id nullable
   final String name;
   final double price;
   final int calories;
   String imagePath;
   final String cafe;
-  DateTime timestamp; // Made mutable by removing 'final'
+  DateTime timestamp; // Mutable by removing 'final'
 
   JournalItem(
     this.imagePath, {
-    required this.id,
+    this.id, // id is now optional
     required this.name,
     required this.price,
     required this.calories,
@@ -21,7 +21,7 @@ class JournalItem {
   // Convert a JournalItem to a JSON object
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'id': id, // Handle nullable id
       'name': name,
       'price': price,
       'calories': calories,
@@ -35,7 +35,7 @@ class JournalItem {
   factory JournalItem.fromJson(Map<String, dynamic> json) {
     return JournalItem(
       json['imagePath'] ?? '',
-      id: json['id'] ?? '',
+      id: json['id'], // id can be null here
       name: json['name'] ?? '',
       cafe: json['cafe'] ?? '',
       price: (json['price'] is String)
@@ -52,7 +52,7 @@ class JournalItem {
   factory JournalItem.fromMap(Map<String, dynamic> data, String documentId) {
     return JournalItem(
       data['imagePath'] ?? '',
-      id: documentId,
+      id: documentId, // Still allow documentId to assign id if needed
       name: data['name'] ?? '',
       cafe: data['cafe'] ?? '',
       price: (data['price'] is String)
@@ -82,7 +82,7 @@ class JournalItem {
   // Static Function to Create an Empty JournalItem
   static JournalItem empty() => JournalItem(
         '',
-        id: '',
+        id: null, // id is optional, so default to null
         name: '',
         cafe: '',
         price: 0,

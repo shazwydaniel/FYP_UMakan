@@ -49,7 +49,6 @@ class CafePage extends StatelessWidget {
                 trailing: Text('\RM${item.itemPrice.toStringAsFixed(2)}'),
                 onTap: () async {
                   // Add selected item to the food journal
-
                   final journalItem = JournalItem(
                     '', // Provide an empty string or default image path
                     id: item.id, // Unique ID

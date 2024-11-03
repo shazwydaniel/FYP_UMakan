@@ -80,8 +80,8 @@ class VendorsHome extends StatelessWidget {
               child: Column(
                 children: [
                   _buildCard(context, 'Cafe', Icons.fastfood, VendorCafePage()),
-                  _buildCard(
-                      context, 'Advertisement', Icons.edit, VendorAdverts()),
+                  //_buildCard(
+                  // context, 'Advertisement', Icons.edit, VendorAdverts(cafe)),
                 ],
               ),
             ),

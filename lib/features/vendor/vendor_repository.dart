@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/features/vendor/model/vendor_model.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_exceptions.dart';
@@ -403,5 +404,119 @@ class VendorRepository {
       throw Exception('Failed to delete cafe: $e');
     }
     return allCafes; // Return the combined list of cafes
+  }
+
+  Future<void> addAdvertisementToCafe(
+      String vendorId, String cafeId, Map<String, dynamic> advertData) async {
+    try {
+      final advertRef = await _db
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Advertisements')
+          .doc();
+
+      await advertRef.set({
+        'Advertisement_ID': advertRef.id,
+        ...advertData,
+      });
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  Future<List<Advertisement>> fetchAdvertisements(
+      String vendorId, String cafeId) async {
+    try {
+      // Fetch the advertisements from Firestore
+      QuerySnapshot snapshot = await _db
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Advertisements')
+          .get();
+
+      // Convert the documents to a list of Advertisement objects
+      List<Advertisement> advertisements = snapshot.docs.map((doc) {
+        return Advertisement.fromMap(
+            doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      return advertisements;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  Future<List<Advertisement>> getAllAdvertisementsFromAllCafes() async {
+    List<Advertisement> allAdvertisements =
+        []; // Initialize an empty list to hold all advertisements
+
+    try {
+      // First, get all vendors
+      final vendorSnapshot = await _db.collection('Vendors').get();
+
+      // Iterate through each vendor
+      for (var vendorDoc in vendorSnapshot.docs) {
+        // For each vendor, get their cafes
+        final cafeSnapshot = await vendorDoc.reference.collection('Cafe').get();
+
+        // Iterate through each cafe
+        for (var cafeDoc in cafeSnapshot.docs) {
+          // For each cafe, get their advertisements
+          final adSnapshot =
+              await cafeDoc.reference.collection('Advertisements').get();
+
+          // Map each advertisement document to an Advertisement object and add to the allAdvertisements list
+          allAdvertisements.addAll(adSnapshot.docs.map((doc) {
+            return Advertisement.fromMap(
+                doc.data() as Map<String, dynamic>, doc.id);
+          }));
+        }
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      print("Error fetching advertisements from all cafes: $e");
+      throw Exception('Failed to fetch advertisements: $e');
+    }
+
+    return allAdvertisements; // Return the combined list of advertisements
   }
 }

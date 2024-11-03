@@ -13,7 +13,7 @@ class FoodJournalRepository {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Initialize the money journal for a user
+  // Initialize the food journal for a user
   Future<void> initializeUserJournal(String userId) async {
     try {
       final docRef = _db
@@ -36,7 +36,7 @@ class FoodJournalRepository {
     }
   }
 
-  // Add New Expense to Money Journal
+  // Add New Meal to Food Journal
   Future<void> addFood(String userId, Map<String, dynamic> foodData) async {
     try {
       final docRef =
@@ -88,6 +88,30 @@ class FoodJournalRepository {
     } catch (e) {
       print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
+    }
+  }
+
+  Future<void> deleteItem(String vendorId, String cafeId) async {
+    try {
+      await _db
+          .collection('Users')
+          .doc(vendorId)
+          .collection('food_journal')
+          .doc(cafeId)
+          .delete();
+      // Optionally handle any additional logic, like updating state
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      throw Exception('Failed to delete cafe: $e');
     }
   }
 }

@@ -8,9 +8,11 @@ import 'package:get/get.dart';
 class FoodJournalController extends GetxController {
   static FoodJournalController get instance => Get.find();
   final FoodJournalRepository _foodJournalRepo = FoodJournalRepository.instance;
+
   var lunchItems = <JournalItem>[].obs;
   var todayCalories = 0.obs; // Observable for today's calories
   var yesterdayCalories = 0.obs; // Observable for yesterday's calories
+  var isLoading = false.obs; // Observable to manage loading state
 
   @override
   void onInit() {
@@ -22,11 +24,9 @@ class FoodJournalController extends GetxController {
     });
   }
 
-  void addToLunch(JournalItem item) {
+  /*void addToLunch(JournalItem item) {
     lunchItems.add(item);
-    // Optionally save to persistent storage if needed, e.g., GetStorage.
-  }
-
+  }*/
   Future<void> addFoodToJournal(String userId, JournalItem journalItem) async {
     try {
       // Convert the journalItem to a map (JSON)
@@ -34,6 +34,9 @@ class FoodJournalController extends GetxController {
 
       // Call the repository to add the item to Firestore
       await _foodJournalRepo.addFood(userId, foodData);
+
+      // Add the item to the observable list after Firestore operation
+      lunchItems.add(journalItem);
 
       // Show success message with onTap to navigate
       Get.snackbar(
@@ -144,5 +147,17 @@ class FoodJournalController extends GetxController {
         yesterdayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
 
     return totalCalories;
+  }
+
+  //Delete Item
+  Future<void> deleteJournalItem(String vendorId, String cafeId) async {
+    try {
+      await _foodJournalRepo.deleteItem(vendorId, cafeId);
+      lunchItems.removeWhere(
+          (lunchItem) => lunchItem.id == cafeId); // Update local list
+    } catch (e) {
+      // Handle error, maybe show a snackbar or dialog
+      Get.snackbar('Error', 'Could not delete cafe: $e');
+    }
   }
 }
