@@ -3,6 +3,7 @@ import 'dart:math';
 class Advertisement {
   final String id;
   final String cafeName;
+  final String location;
   final String detail;
   final DateTime? startDate;
   final DateTime? endDate;
@@ -10,6 +11,7 @@ class Advertisement {
   Advertisement({
     required this.id,
     required this.cafeName,
+    required this.location,
     required this.detail,
     required this.startDate,
     required this.endDate,
@@ -20,6 +22,7 @@ class Advertisement {
     return {
       'id': id,
       'cafeName': cafeName,
+      'location': location,
       'detail': detail,
       'startDate': startDate?.toIso8601String(), // Convert DateTime to string.
       'endDate': endDate?.toIso8601String(), // Handle nulls gracefully.
@@ -31,6 +34,7 @@ class Advertisement {
     return Advertisement(
       id: documentId,
       cafeName: data['cafeName'] ?? '',
+      location: data['location'] ?? '',
       detail: data['detail'] ?? '',
       startDate: data['startDate'] != null
           ? DateTime.tryParse(data['startDate']) ?? DateTime.now()
@@ -46,6 +50,7 @@ class Advertisement {
     return {
       'id': id,
       'cafeName': cafeName,
+      'location': location,
       'detail': detail,
       'startDate': startDate?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
@@ -57,6 +62,7 @@ class Advertisement {
     return Advertisement(
       id: json['id'] ?? '', // Handle missing id gracefully.
       cafeName: json['cafeName'] ?? '',
+      location: json['location'] ?? '',
       detail: json['detail'] ?? '',
       startDate: json['startDate'] != null
           ? DateTime.tryParse(json['startDate'])
@@ -70,6 +76,7 @@ class Advertisement {
   static Advertisement empty() => Advertisement(
         id: '',
         cafeName: '',
+        location: '',
         detail: '',
         startDate: null, // Use null to represent an empty date.
         endDate: null,

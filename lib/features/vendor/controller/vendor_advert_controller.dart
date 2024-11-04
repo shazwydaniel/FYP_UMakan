@@ -41,10 +41,12 @@ class AdvertController extends GetxController {
         CafeDetails cafeDetails =
             await vendorRepository.getCafeById(vendorId, cafeId);
         String cafeName = cafeDetails.name;
+        String cafeLocation = cafeDetails.location;
 
         // Create a map for the menu item data
         Map<String, dynamic> adData = {
           'cafeName': cafeName,
+          'location': cafeLocation,
           'detail': adDetail.text.trim(),
           'startDate': startDate.toIso8601String(),
           'endDate': endDate.toIso8601String(),
@@ -59,7 +61,7 @@ class AdvertController extends GetxController {
         endDateController.clear();
 
         // Print confirmation
-        print('Advert added! $cafeName = $cafeDetails');
+        print('Advert added for $cafeName');
       } catch (e) {
         // Handle error
         print('Error adding menu item: $e');
