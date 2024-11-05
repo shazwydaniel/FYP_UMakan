@@ -3,6 +3,7 @@ import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/cafes/screens/cafe.dart';
 import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
+import 'package:fyp_umakan/features/discover/screens/discover_cafes.dart';
 
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -45,7 +46,7 @@ class DiscoverPageScreen extends StatelessWidget {
         children: [
           // Title Section
           Container(
-            padding: const EdgeInsets.only(left: 40, right: 40, top: 100),
+            padding: const EdgeInsets.only(left: 40, right: 40, top: 90),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -102,6 +103,13 @@ class DiscoverPageScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: dark ? TColors.cobalt : TColors.amber,
                       borderRadius: BorderRadius.circular(16.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5), // Shadow color
+                          blurRadius: 2.0, // Spread of the shadow
+                          offset: Offset(0, 2), // Position of the shadow
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Text(
@@ -120,61 +128,6 @@ class DiscoverPageScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-// Screen to display cafes for a selected location
-class LocationCafesScreen extends StatelessWidget {
-  final String location;
-  final DiscoverController discoverController;
-
-  const LocationCafesScreen({
-    Key? key,
-    required this.location,
-    required this.discoverController,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // Filter cafes by location
-    final cafesInLocation = discoverController.cafe
-        .where((cafe) => cafe.location == location)
-        .toList();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Available cafes in $location '),
-        backgroundColor: TColors.mustard,
-      ),
-      body: cafesInLocation.isEmpty
-          ? Center(child: Text('No cafes available in $location'))
-          : ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: cafesInLocation.length,
-              itemBuilder: (context, index) {
-                final cafe = cafesInLocation[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: ListTile(
-                    title: Text(cafe.name),
-                    subtitle: Text(cafe.location),
-                    onTap: () {
-                      // Navigate to CafePage
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CafePage(
-                            cafe: cafe,
-                            vendorId: cafe.vendorId,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
     );
   }
 }
