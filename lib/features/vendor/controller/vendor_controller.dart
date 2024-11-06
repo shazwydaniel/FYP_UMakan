@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
+import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
+import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/verify_email.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/model/vendor_model.dart';
@@ -55,10 +57,15 @@ class VendorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get the current user ID when the controller is initialized
-    userId = getCurrentUserId();
-    print("Current user id: ${userId}");
-    fetchUserRecord();
+    try {
+      // Attempt to get the current user ID, if a user is signed in
+      userId = getCurrentUserId();
+      print("Current user id: $userId");
+      fetchUserRecord(); // Only fetch user record if userId is valid
+    } catch (e) {
+      // Handle the exception, e.g., show a message or redirect to login
+      print("Error: $e");
+    }
   }
 
   // Fetch User Record
