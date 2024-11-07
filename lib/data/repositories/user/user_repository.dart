@@ -16,7 +16,6 @@ import 'package:fyp_umakan/utils/exceptions/format_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/platform_exceptions.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:image_picker/image_picker.dart';
 
 class UserRepository extends GetxController {
   static UserRepository get instance => Get.find();
@@ -130,6 +129,22 @@ class UserRepository extends GetxController {
   }
 
   // Update Any Field in Specific Users Collection ------------------------------------
+  Future<void> createSingleField(Map<String, dynamic> json) async {
+    try {
+      await _db
+          .collection("Users")
+          .doc(AuthenticatorRepository.instance.authUser?.uid)
+          .set(json, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Update Any Field in Specific Users Collection ------------------------------------
   Future<void> updateSingleField(Map<String, dynamic> json) async {
     try {
       await _db
@@ -166,54 +181,6 @@ class UserRepository extends GetxController {
     } catch (e) {
       print('Failed to add/update field: $e');
       throw 'Something went wrong. Please try again';
-    }
-  }
-
-  //Upload any Image
-  Future<String> uploadImage(String path, XFile image) async {
-    try {
-      final ref = FirebaseStorage.instance
-          .ref(path)
-          .child(image.name); //assign 'ref' as a location in firebase storage
-      await ref.putFile(File(image.path)); //put our file into the path 'ref'
-      final url =
-          await ref.getDownloadURL(); // get URL from the reference of the image
-
-      return url;
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw TFirebaseException(e.code);
-    } on FormatException catch (_) {
-      print('FormatException occurred');
-      throw const TFormatException();
-    } on PlatformException catch (e) {
-      print('PlatformException: ${e.message}');
-      throw TPlatformException(e.code).message;
-    } catch (e) {
-      print('Unknown error: $e');
-      throw 'Something went wrong. Please try again';
-    }
-  }
-
-  // Method to pick an image using ImagePicker
-  Future<void> pickAndUploadImage(String userId) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      try {
-        // Upload image to Firebase Storage
-        final imageUrl = await uploadImage('Vendor/Items/$userId', image);
-
-        // Update Firestore with the image URL
-        await addFieldToUser(userId, {'imageUrl': imageUrl});
-        print('Image uploaded successfully: $imageUrl');
-      } catch (e) {
-        print('Failed to upload image: $e');
-        throw 'Something went wrong. Please try again';
-      }
-    } else {
-      print('No image selected');
     }
   }
 

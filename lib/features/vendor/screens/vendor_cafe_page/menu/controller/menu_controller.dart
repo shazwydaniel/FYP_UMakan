@@ -24,12 +24,14 @@ class VendorMenuController extends GetxController {
         CafeDetails cafeDetails =
             await vendorRepository.getCafeById(vendorId, cafeId);
         String itemLocation = cafeDetails.location;
+        String itemCafe = cafeDetails.name;
         // Create a map for the menu item data
         Map<String, dynamic> itemData = {
           'itemName': itemName.text.trim(),
           'itemCost': double.tryParse(itemCost.text.trim()) ?? 0.0,
           'itemCalories': int.tryParse(itemCalories.text.trim()) ?? 0,
           'itemLocation': itemLocation,
+          'itemCafe': itemCafe,
         };
 
         // Call the repository method to add the item to Firestore
