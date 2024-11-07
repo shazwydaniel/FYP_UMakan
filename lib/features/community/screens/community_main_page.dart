@@ -1,8 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
+import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
+import "package:get/get.dart";
+import "package:get/get_core/src/get_main.dart";
 import "../controllers/helping_organisation_controller.dart";
 import "../models/helping_organisation_model.dart";
 import "package:iconsax/iconsax.dart";
@@ -46,7 +50,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Helping Organisations Section
+            // Helping Organisations (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
@@ -69,6 +73,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
+            // Fetch and display Helping Organisations (Firebase)
             FutureBuilder<List<HelpingOrganisation>>(
               future: orgController.fetchOrganisations(),
               builder: (context, snapshot) {
@@ -187,230 +192,173 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // News (Static Cards)
-            Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
-              child: Column(
-                children: [
-                  // News 1 (Card)
-                  Container(
-                    height: 100,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.amber,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  '"Help Me Im Starving"',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                const Text(
-                                  'Ahchong, 019-87654321',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+            // Fetch and display Community News (Firebase)
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('community_news')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error loading community news'));
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No community news available'));
+                }
+
+                // Filter to exclude expired news
+                final newsList = snapshot.data!.docs.where((doc) {
+                  final duration = doc['news_duration'];
+                  final timestamp = (doc['timestamp'] as Timestamp).toDate();
+                  DateTime expiry = timestamp;
+
+                  switch (duration) {
+                    case '1 Day':
+                      expiry = expiry.add(Duration(days: 1));
+                      break;
+                    case '3 Days':
+                      expiry = expiry.add(Duration(days: 3));
+                      break;
+                    case '1 Week':
+                      expiry = expiry.add(Duration(days: 7));
+                      break;
+                  }
+
+                  return expiry.isAfter(DateTime.now());
+                }).toList();
+
+                if (newsList.isEmpty) {
+                  return Center(child: Text('No community news available'));
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+                  child: Column(
+                    children: newsList.map((doc) {
+                      final newsType = doc['type_of_news_message'];
+                      final color = newsType == 'Offer Help' ? TColors.teal : TColors.amber;
+                      final newsId = doc.id; // Get the document ID
+                      final postedUserId = doc['user_id'];
+
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: FirebaseFirestore.instance.collection('Users').doc(postedUserId).get(),
+                        builder: (context, userSnapshot) {
+                          if (userSnapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                            return Text('Unknown User'); // Fallback if the user record is missing
+                          }
+
+                          final userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                          final username = userData['Username'] ?? 'Unknown User'; // Fetch the 'Username' field
+
+                          return Dismissible(
+                            key: Key(newsId),
+                            direction: DismissDirection.endToStart,
+                            confirmDismiss: (direction) async {
+                              return await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Delete Message'),
+                                    content: Text('Are you sure you want to delete this message?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false); // Cancel deletion
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(true); // Confirm deletion
+                                        },
+                                        child: Text('Delete'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            onDismissed: (direction) async {
+                              if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                await FirebaseFirestore.instance
+                                    .collection('community_news')
+                                    .doc(newsId)
+                                    .delete();
+                                Get.snackbar('Success', 'Message deleted successfully.',
+                                    backgroundColor: Colors.green, colorText: Colors.white);
+                              } else {
+                                Get.snackbar('Error', 'You can only delete your own messages.',
+                                    backgroundColor: Colors.red, colorText: Colors.white);
+                              }
+                            },
+                            background: Container(
+                              color: Colors.red,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              alignment: Alignment.centerRight,
+                              child: Icon(Icons.delete, color: Colors.white),
                             ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              width: double.infinity,
+                              height: 100,
+                              margin: const EdgeInsets.only(bottom: 10),
                               decoration: BoxDecoration(
-                                color: TColors.bubbleRed.withOpacity(0.3),
+                                color: color,
                                 borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
                               ),
-                              child: Text(
-                                'KK8',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '"${doc['news_message']}"',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Posted by: $username',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+                          );
+                        },
+                      );
+                    }).toList(),
                   ),
-                  // News 2 (Card)
-                  Container(
-                    height: 100,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.amber,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  '"I have extra maggi!"',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                const Text(
-                                  'Bakar, 013-3465432',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: TColors.bubbleRed.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                'KK12',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // News 3 (Card)
-                  Container(
-                    height: 100,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: TColors.amber,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  '"Carpool to SWRC event?"',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                const Text(
-                                  'Clarence, 017-09865412',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: TColors.bubbleRed.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                'KK1',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
             // Post A Message (Button)
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 40),
               child: Center(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () => _showPostMessageModal(context),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.white),
                     backgroundColor: Colors.transparent,
@@ -440,6 +388,150 @@ class CommunityMainPageScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+  
+  void _showPostMessageModal(BuildContext context) {
+    final TextEditingController messageController = TextEditingController();
+    String selectedType = 'Offer Help';
+    String selectedDuration = '1 Day';
+    String anonymityStatus = 'Public'; // Default value
+    final String? userId = AuthenticatorRepository.instance.authUser?.uid; // Get the current user ID
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: TColors.cream,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Text(
+                  'Post a Message',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  controller: messageController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: 'Enter your message',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  value: selectedType,
+                  items: [
+                    DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
+                    DropdownMenuItem(value: 'Need Help', child: Text('Need Help')),
+                  ],
+                  onChanged: (String? newValue) {
+                    selectedType = newValue!;
+                  },
+                ),
+                SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  value: selectedDuration,
+                  items: [
+                    DropdownMenuItem(value: '1 Day', child: Text('1 Day')),
+                    DropdownMenuItem(value: '3 Days', child: Text('3 Days')),
+                    DropdownMenuItem(value: '1 Week', child: Text('1 Week')),
+                  ],
+                  onChanged: (String? newValue) {
+                    selectedDuration = newValue!;
+                  },
+                ),
+                SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  value: anonymityStatus,
+                  items: [
+                    DropdownMenuItem(value: 'Public', child: Text('Public')),
+                    DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
+                  ],
+                  onChanged: (String? newValue) {
+                    anonymityStatus = newValue!;
+                  },
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: TColors.bubbleOrange,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextButton(
+                    onPressed: () async {
+                      try {
+                        await FirebaseFirestore.instance.collection('community_news').add({
+                          'news_message': messageController.text,
+                          'type_of_news_message': selectedType,
+                          'news_duration': selectedDuration,
+                          'timestamp': Timestamp.now(),
+                          'user_id': userId,
+                          'anonymity_status': anonymityStatus, // Add anonymity status to Firebase
+                        });
+
+                        Get.snackbar('Success', 'Your message has been posted!',
+                            backgroundColor: Colors.green, colorText: Colors.white);
+
+                        Navigator.pop(context);
+                      } catch (e) {
+                        Get.snackbar('Error', 'Failed to post the message',
+                            backgroundColor: Colors.red, colorText: Colors.white);
+                      }
+                    },
+                    child: Text(
+                      'Post',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
