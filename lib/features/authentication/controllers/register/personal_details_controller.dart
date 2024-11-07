@@ -5,32 +5,30 @@ import 'package:get/get.dart';
 import 'package:fyp_umakan/utils/popups/full_screen_loader.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 
-
 class PersonalDetailsController extends GetxController {
   static PersonalDetailsController get instance => Get.find();
 
   // Variables
   final accommodation = TextEditingController();
-  final monthlyAllowance= TextEditingController();
+  final monthlyAllowance = TextEditingController();
   final monthlyCommittments = TextEditingController();
   final vehicle = TextEditingController();
-  final maritalStatus= TextEditingController();
-  final childrenNumber= TextEditingController();
+  final maritalStatus = TextEditingController();
+  final childrenNumber = TextEditingController();
   final height = TextEditingController();
   final weight = TextEditingController();
   final birthdate = TextEditingController();
   GlobalKey<FormState> personalDetailsFormKey = GlobalKey<FormState>();
 
   // Update Personal Details
-  Future<bool> addPersonalDetails(String userId) async{
-    try{
-
+  Future<bool> addPersonalDetails(String userId) async {
+    try {
       // TFullScreenLoader.openLoadingDialog('We are processing your information...', TImages.verifyIllustration);
 
       // Check Internet Connectivity
 
       // Form Validation
-      if(!personalDetailsFormKey.currentState!.validate()){
+      if (!personalDetailsFormKey.currentState!.validate()) {
         return false;
       }
 
@@ -64,16 +62,15 @@ class PersonalDetailsController extends GetxController {
         birthdate: birthdate.text.trim(),
         age: userAge,
         status: userStatus,
+        //role: role.text.trim(),
       );
 
       await userRepository.updateUserRecord(userDetails);
 
       return true;
     } catch (e) {
-
       // TLoaders
       return false;
-
-    } 
+    }
   }
 }

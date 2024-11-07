@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
+import 'package:fyp_umakan/features/discover/screens/discover.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
+import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -12,16 +15,35 @@ import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
-class FoodJournalMainPage extends StatelessWidget {
+class FoodJournalMainPage extends StatefulWidget {
   const FoodJournalMainPage({super.key});
+
+  @override
+  _FoodJournalMainPageState createState() => _FoodJournalMainPageState();
+}
+
+class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Load initial data here if necessary
+  }
+
+  void refreshData() {
+    setState(() {
+      // Trigger a rebuild to refresh the data
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final controller = Get.put(JournalController());
     final foodJController = Get.put(FoodJournalController());
 
     foodJController.fetchFoodJournalItems();
+    String userId = foodJController.getCurrentUserId();
+
+    List<JournalItem> filteredItems;
 
     // Helper function to get the week number of the year
     int getWeekNumber(DateTime date) {
@@ -107,26 +129,7 @@ class FoodJournalMainPage extends StatelessWidget {
                                 50), // Set border radius for ripple effect
                             onTap: () {
                               // Show the pop-up dialog
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                        'Your Title Here'), // Set your dialog title
-                                    content: Text(
-                                        'Your pop-up content here.'), // Set your dialog content
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
-                                        },
-                                        child: Text('Close'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                              _showModal(context);
                             },
                             child: Icon(
                               Iconsax.shop_add,
@@ -183,7 +186,7 @@ class FoodJournalMainPage extends StatelessWidget {
                   DateTime(today.year, today.month, today.day);
 
               // Filter items to show only those added today
-              final filteredLunchItems = foodJController.lunchItems
+              final filteredItems = foodJController.mealItems
                   .where((item) => item.timestamp.isAfter(startOfDay))
                   .toList();
 
@@ -192,88 +195,152 @@ class FoodJournalMainPage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: filteredLunchItems.length,
+                  itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
-                    final item = filteredLunchItems[index];
+                    final item = filteredItems[index];
                     // Format the timestamp into a readable string
                     // Format the timestamp to display only the time in 12-hour format with AM/PM
                     String formattedTime =
                         DateFormat('hh:mm a').format(item.timestamp);
 
-                    return SizedBox(
-                      width: 220,
-                      height: 250, // Width of each card
-                      child: Card(
-                        elevation: 0, // Optional: Add elevation if you want
-                        color: TColors.amber, // Set card color to transparent
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        margin: const EdgeInsets.only(right: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 140,
-                              height: 120, // Height for the image
-                              decoration: BoxDecoration(
-                                color: TColors.mustard,
-                                borderRadius: BorderRadius.circular(200),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(
-                                        0.25), // Shadow color with opacity
-                                    spreadRadius:
-                                        2, // How much the shadow spreads
-                                    blurRadius: 10, // How blurry the shadow is
-                                    offset: const Offset(
-                                        0, 4), // Horizontal and vertical offset
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      item.name,
-                                      style: const TextStyle(
-                                        color: Colors.white, // Make text white
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                    return GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Delete Meal from Journal'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: Text('Close'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    foodJController.deleteJournalItem(
+                                        userId, item.id!);
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: SizedBox(
+                        width: 220,
+                        height: 250, // Width of each card
+                        child: Card(
+                          elevation: 0, // Optional: Add elevation if you want
+                          color: TColors.amber, // Set card color to transparent
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                          margin: const EdgeInsets.only(right: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 140,
+                                height: 120, // Height for the image
+                                decoration: BoxDecoration(
+                                  color: TColors.mustard,
+                                  borderRadius: BorderRadius.circular(200),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(
+                                          0.25), // Shadow color with opacity
+                                      spreadRadius:
+                                          2, // How much the shadow spreads
+                                      blurRadius:
+                                          10, // How blurry the shadow is
+                                      offset: const Offset(0,
+                                          4), // Horizontal and vertical offset
                                     ),
-                                  ),
-                                  SizedBox(height: 4), // Space between texts
-                                  Center(
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(
                                       child: Text(
-                                        item.cafe,
-                                        style: TextStyle(
-                                          color: dark
-                                              ? Colors.white
-                                              : Colors.black,
+                                        item.name,
+                                        style: const TextStyle(
+                                          color:
+                                              Colors.white, // Make text white
                                           fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 4), // Space between texts
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '\RM${item.price.toStringAsFixed(2)}',
+                                    SizedBox(height: 4), // Space between texts
+                                    Center(
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          item.cafe,
+                                          style: TextStyle(
+                                            color: dark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 4), // Space between texts
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '\RM${item.price.toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            color: dark
+                                                ? TColors.cream
+                                                : TColors.cream,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Container(
+                                          width: 6,
+                                          height: 6,
+                                          decoration: const BoxDecoration(
+                                            color: TColors.cream,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          '${item.calories} cal',
+                                          style: TextStyle(
+                                            color: dark
+                                                ? TColors.cream
+                                                : TColors.cream,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Center(
+                                      child: Text(
+                                        '${DateFormat('h:mm a').format(item.timestamp)} cal',
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream
@@ -281,45 +348,12 @@ class FoodJournalMainPage extends StatelessWidget {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      SizedBox(width: 8),
-                                      Container(
-                                        width: 6,
-                                        height: 6,
-                                        decoration: const BoxDecoration(
-                                          color: TColors.cream,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        '${item.calories} cal',
-                                        style: TextStyle(
-                                          color: dark
-                                              ? TColors.cream
-                                              : TColors.cream,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 70),
-                                      Text(
-                                        formattedTime,
-                                        style: TextStyle(
-                                          color: dark
-                                              ? TColors.cream
-                                              : TColors.cream,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -376,7 +410,7 @@ class FoodJournalMainPage extends StatelessWidget {
 
               // Filter items to show only those added on yesterday
               final filteredLunchItems =
-                  foodJController.lunchItems.where((item) {
+                  foodJController.mealItems.where((item) {
                 DateTime itemTime = item.timestamp;
                 return itemTime.isAfter(startOfYesterday) &&
                     itemTime.isBefore(endOfYesterday);
@@ -496,19 +530,16 @@ class FoodJournalMainPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 70),
-                                      Text(
-                                        formattedTime,
-                                        style: TextStyle(
-                                          color: dark
-                                              ? TColors.cream
-                                              : TColors.cream,
-                                          fontSize: 14,
-                                        ),
+                                  Center(
+                                    child: Text(
+                                      '${DateFormat('h:mm a').format(item.timestamp)} cal',
+                                      style: TextStyle(
+                                        color: dark
+                                            ? TColors.cream
+                                            : TColors.cream,
+                                        fontSize: 14,
                                       ),
-                                    ],
+                                    ),
                                   )
                                 ],
                               ),
@@ -546,10 +577,20 @@ class FoodJournalMainPage extends StatelessWidget {
               ),
             ),
 
-            // Meal Summary (Card)
             Obx(() {
               // List of meal labels
               final mealLabels = ['Breakfast', 'Lunch', 'Dinner', 'Others'];
+
+              // Calculate the start and end of the current week
+              DateTime now = DateTime.now();
+              DateTime startOfWeek = DateTime(
+                  now.year,
+                  now.month,
+                  now.day -
+                      now.weekday +
+                      1); // Start of the current week (Monday)
+              DateTime endOfWeek = startOfWeek
+                  .add(Duration(days: 6)); // End of the week (Sunday)
 
               return Container(
                 width: MediaQuery.of(context).size.width,
@@ -564,143 +605,27 @@ class FoodJournalMainPage extends StatelessWidget {
                       CrossAxisAlignment.start, // Align to the left
                   children: List.generate(4, (index) {
                     // Filter the items based on meal type and time ranges
+
                     final filteredItems =
-                        foodJController.lunchItems.where((item) {
-                      DateTime itemTime = item.timestamp;
-
-                      switch (index) {
-                        case 0: // Breakfast (6 AM - 11 AM)
-                          return itemTime.hour >= 6 && itemTime.hour < 11;
-                        case 1: // Lunch (11 AM - 3 PM)
-                          return itemTime.hour >= 11 && itemTime.hour < 15;
-                        case 2: // Dinner (3 PM - 9 PM)
-                          return itemTime.hour >= 15 && itemTime.hour < 21;
-                        case 3: // Others (anything outside the above ranges)
-                          return itemTime.hour < 6 || itemTime.hour >= 21;
-                        default:
-                          return false;
-                      }
-                    }).toList();
-
-                    // Group filtered items by week and day
-                    Map<int, Map<DateTime, List<dynamic>>> itemsByWeek = {};
-
-                    for (var item in filteredItems) {
-                      DateTime itemDate = DateTime(item.timestamp.year,
-                          item.timestamp.month, item.timestamp.day);
-
-                      // Get the week number of the item
-                      int weekNumber = getWeekNumber(itemDate);
-
-                      // Initialize the week group if it doesn't exist
-                      if (!itemsByWeek.containsKey(weekNumber)) {
-                        itemsByWeek[weekNumber] = {};
-                      }
-
-                      // Initialize the day group within the week
-                      if (!itemsByWeek[weekNumber]!.containsKey(itemDate)) {
-                        itemsByWeek[weekNumber]![itemDate] = [];
-                      }
-
-                      // Add the item to the respective week and day
-                      itemsByWeek[weekNumber]![itemDate]!.add(item);
-                    }
-
-                    // Calculate the total calories and total unique days per week
-                    int totalWeeklyCalories = 0;
-                    int totalUniqueDays = 0;
-
-                    itemsByWeek.forEach((weekNumber, daysMap) {
-                      int weeklyCalories =
-                          0; // To hold the sum of calories for the week
-                      int uniqueDaysInWeek =
-                          daysMap.keys.length; // Unique days in the week
-
-                      // Sum up the calories for this week
-                      daysMap.forEach((day, items) {
-                        // Ensure you handle item.calories safely as a num
-                        weeklyCalories += items.fold<num>(0, (sum, item) {
-                          // Check if item.calories is not null and cast it to int if necessary
-                          return sum +
-                              (item.calories ?? 0)
-                                  .toInt(); // Convert to int to avoid type issues
-                        }).toInt(); // Cast the final sum to int for consistency
-                      });
-
-                      // Add to total calories and day count
-                      totalWeeklyCalories += weeklyCalories;
-                      totalUniqueDays += uniqueDaysInWeek;
-                    });
-
-                    // Calculate the total calories for the previous week for the current meal type
-                    int previousWeekCalories = 0;
-                    int previousUniqueDays = 0;
-
-                    // Calculate the previous week's total calories and unique days
-                    final previousWeekStart = DateTime.now()
-                        .subtract(Duration(days: 14)); // Start from 14 days ago
-                    final previousWeekEnd = DateTime.now()
-                        .subtract(Duration(days: 7)); // End at 7 days ago
-
-                    // Filter items for the previous week for the specific meal type
-                    for (var item in foodJController.lunchItems) {
-                      DateTime itemDate = DateTime(item.timestamp.year,
-                          item.timestamp.month, item.timestamp.day);
-
-                      // Check if the item is in the previous week
-                      if (itemDate.isAfter(previousWeekStart) &&
-                          itemDate.isBefore(previousWeekEnd)) {
-                        // Filter based on meal type
-                        switch (index) {
-                          case 0: // Breakfast
-                            if (item.timestamp.hour >= 6 &&
-                                item.timestamp.hour < 11) {
-                              previousWeekCalories +=
-                                  item.calories ?? 0; // Handle null safely
-                              previousUniqueDays++;
-                            }
-                            break;
-                          case 1: // Lunch
-                            if (item.timestamp.hour >= 11 &&
-                                item.timestamp.hour < 15) {
-                              previousWeekCalories +=
-                                  item.calories ?? 0; // Handle null safely
-                              previousUniqueDays++;
-                            }
-                            break;
-                          case 2: // Dinner
-                            if (item.timestamp.hour >= 15 &&
-                                item.timestamp.hour < 21) {
-                              previousWeekCalories +=
-                                  item.calories ?? 0; // Handle null safely
-                              previousUniqueDays++;
-                            }
-                            break;
-                          case 3: // Others
-                            if (item.timestamp.hour < 6 ||
-                                item.timestamp.hour >= 21) {
-                              previousWeekCalories +=
-                                  item.calories ?? 0; // Handle null safely
-                              previousUniqueDays++;
-                            }
-                            break;
-                        }
-                      }
-                    }
-
-                    // Calculate the weekly daily average calories for the previous week
-                    final previousWeeklyDailyAverageCalories =
-                        previousUniqueDays > 0
-                            ? (previousWeekCalories / previousUniqueDays)
-                                .round()
-                            : 0;
+                        foodJController.averageCaloriesToday(index);
 
                     // Calculate the total calories for each meal type
-                    final totalCalories = filteredItems.fold<int>(
-                      0,
-                      (sum, item) =>
-                          sum + (item.calories ?? 0), // Handle null safely
-                    );
+                    final totalCalories =
+                        foodJController.totalCalories(filteredItems);
+
+                    // Calculate average calories
+                    final averageCalories = filteredItems.isNotEmpty
+                        ? (totalCalories / filteredItems.length)
+                            .toStringAsFixed(2)
+                        : '0.00'; // Avoid division by zero and display 0 if no items
+
+                    // Store the average calories for later use
+                    foodJController.storeAverageCalories(
+                        index, averageCalories);
+
+                    /* Store the average calories value after it's calculated
+                    foodJController.storeAverageCalories(
+                        index, averageCalories);*/
 
                     return Container(
                       margin: const EdgeInsets.only(
@@ -745,22 +670,20 @@ class FoodJournalMainPage extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 8), // Space between texts
-                              // Row to align "Daily Average" on the left and another text on the right
+                              // Row to align "Total Calories" on the left and daily average on the right
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Total: $totalCalories cal', // Weekly average calories
+                                    'Total: $totalCalories cal', // Total calories for this meal
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                     ),
                                   ),
-                                  // Add another text on the right side
-
                                   Text(
-                                    '$previousWeeklyDailyAverageCalories cal', // Replace with right-side info
+                                    '$averageCalories', // Daily average calories (formatted text)
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 20,
@@ -781,6 +704,149 @@ class FoodJournalMainPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showModal(BuildContext context) {
+    final TextEditingController itemName = TextEditingController();
+    final TextEditingController itemCalories = TextEditingController();
+    final TextEditingController itemPrice = TextEditingController();
+    final TextEditingController itemLocation = TextEditingController();
+
+    final foodJController2 = FoodJournalController.instance;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Add Meals",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ),
+              SizedBox(width: 100),
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.close),
+                color: Colors.black,
+              ),
+            ],
+          ),
+
+          backgroundColor: TColors.cream,
+          // Title for the dialog
+          content: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: itemName,
+                  decoration: InputDecoration(
+                    labelText: 'Meal Name', // Label for the Meal Name field
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                TextFormField(
+                  controller: itemCalories,
+                  decoration: InputDecoration(
+                    labelText: 'Amount of Calories',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                TextFormField(
+                  controller: itemPrice,
+                  decoration: InputDecoration(
+                    labelText: 'Cost',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                TextFormField(
+                  controller: itemLocation,
+                  decoration: InputDecoration(
+                    labelText: 'Location',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Center(
+              child: Container(
+                width: 120,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: TColors.bubbleOrange,
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                ),
+                child: TextButton(
+                  onPressed: () async {
+                    // Add selected item to the food journal
+                    final journalItem = JournalItem(
+                      '', // Provide an empty string or default image path
+                      // Unique ID
+                      name: itemName.text.trim(),
+                      price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
+                      calories: int.tryParse(itemCalories.text.trim()) ?? 0,
+                      cafe: itemLocation.text.trim(), // Cafe name
+                    );
+
+                    // Assuming userId is available, you can replace with the actual user ID
+                    String userId =
+                        FoodJournalController.instance.getCurrentUserId();
+
+                    // Optionally, add the item to the local lunch list
+                    foodJController2.addFoodToJournal(userId, journalItem);
+
+                    try {
+                      print('Meal added to food journal!');
+
+                      // Close the dialog
+                      Navigator.of(context).pop();
+                    } catch (e) {
+                      print('Error adding meal to journal: $e');
+                    }
+                  },
+                  child: Text(
+                    'ADD MEAL',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

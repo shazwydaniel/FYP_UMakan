@@ -50,7 +50,7 @@ class CafePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${cafe.name}',
+                              cafe.name,
                               style: TextStyle(
                                 fontSize: 30, // Adjust font size
                                 fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class CafePage extends StatelessWidget {
                                 name: item.itemName,
                                 price: item.itemPrice,
                                 calories: item.itemCalories,
-                                cafe: cafe.name, // Cafe name
+                                cafe: cafe.name,
                               );
 
                               // Assuming userId is available, you can replace with the actual user ID

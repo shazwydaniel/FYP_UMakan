@@ -38,7 +38,7 @@ class UserController extends GetxController {
     try {
       profileLoading.value = true;
       final userFromDb = await userRepository.fetchUserDetails();
-      
+
       // Only update the user if it's not null
       if (userFromDb != null) {
         this.user(userFromDb);
@@ -67,7 +67,8 @@ class UserController extends GetxController {
     }
   }
 
-  Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
+  Future<void> addExpense(String userId, String expenseType,
+      Map<String, dynamic> expenseData) async {
     try {
       // Add the expense
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
@@ -75,10 +76,11 @@ class UserController extends GetxController {
       // Retrieve the price from the expenseData
       double price = double.tryParse(expenseData['price'].toString()) ?? 0.0;
 
-      // Update the user model directly without resetting
+      // Update the user model
       user.update((user) {
         if (user != null) {
-          user.additionalExpense = (user.additionalExpense ?? 0.0) + price; // Ensure it retains previous value
+          user.additionalExpense = (user.additionalExpense ?? 0.0) +
+              price; // Ensure it retains previous value
           print('Price: $price');
           print('Updated additionalExpense: ${user.additionalExpense}');
         }
@@ -175,21 +177,27 @@ class UserController extends GetxController {
     final currentUser = user.value;
 
     // Convert String fields to double
-    double monthlyAllowance = double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
-    double monthlyCommittments = double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
+    double monthlyAllowance =
+        double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
+    double monthlyCommittments =
+        double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
 
     // Ensure additionalAllowance and additionalExpense are not null
     double additionalAllowance = currentUser.additionalAllowance ?? 0.0;
     double additionalExpense = currentUser.additionalExpense ?? 0.0;
 
     // Calculate Recommended Daily Calories Intake
-    double recommendedCalorieIntake = getDailyCaloriesIntake(currentUser.gender, currentUser.age);
+    double recommendedCalorieIntake =
+        getDailyCaloriesIntake(currentUser.gender, currentUser.age);
 
     // Calculate Recommended Monthly Budget Allocation for Food
-    double recommendedMoneyAllowance = getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
+    double recommendedMoneyAllowance =
+        getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
 
     // Calculate Actual Monthly Food Allocation
-    double actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + additionalExpense);
+    double actualRemainingFoodAllowance =
+        (monthlyAllowance + additionalAllowance) -
+            (monthlyCommittments + additionalExpense);
 
     // Update the user model with the calculated values
     user.update((user) {
@@ -197,8 +205,11 @@ class UserController extends GetxController {
         user.recommendedCalorieIntake = recommendedCalorieIntake;
         user.recommendedMoneyAllowance = recommendedMoneyAllowance;
         user.actualRemainingFoodAllowance = actualRemainingFoodAllowance;
+        user.additionalExpense = additionalExpense;
+        user.additionalAllowance = additionalAllowance;
 
-        print('Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
+        print(
+            'Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
       }
     });
 

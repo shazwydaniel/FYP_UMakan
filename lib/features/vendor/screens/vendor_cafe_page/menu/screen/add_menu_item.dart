@@ -81,8 +81,7 @@ class AddMenuItemPage extends StatelessWidget {
                     if (controller.menuFormKey.currentState?.validate() ??
                         false) {
                       // Call the addItem method to add the item to the database
-                      controller.addItem(
-                          vendorId, cafeId); // Pass actual IDs here
+                      controller.addItem(vendorId, cafeId);
 
                       // Close the page after adding the item
                       Navigator.pop(context, true);
