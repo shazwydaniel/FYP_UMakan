@@ -330,10 +330,11 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                   backgroundColor: Colors.red, colorText: Colors.white);
                                             }
                                           },
+                                          // News Card Template
                                           background: Container(
                                             decoration: BoxDecoration(
                                               color: Colors.red,
-                                              borderRadius: BorderRadius.circular(20), // Add this line for rounded corners
+                                              borderRadius: BorderRadius.circular(20),
                                             ),
                                             padding: EdgeInsets.symmetric(horizontal: 20),
                                             alignment: Alignment.centerRight,
@@ -341,14 +342,14 @@ class CommunityMainPageScreen extends StatelessWidget {
                                           ),
                                           child: Container(
                                             width: double.infinity,
-                                            constraints: BoxConstraints(minHeight: 100), // Minimum height set
+                                            constraints: BoxConstraints(minHeight: 100),
                                             margin: const EdgeInsets.only(bottom: 20),
                                             decoration: BoxDecoration(
-                                              color: TColors.cream, // Updated background color
+                                              color: TColors.cream,
                                               borderRadius: BorderRadius.circular(20),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black.withOpacity(0.2),
+                                                  color: Colors.black.withOpacity(0.07),
                                                   spreadRadius: 2,
                                                   blurRadius: 10,
                                                   offset: Offset(0, 8),
@@ -380,6 +381,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                       fontWeight: FontWeight.normal,
                                                     ),
                                                   ),
+                                                  SizedBox(height: 10),
                                                   Align(
                                                     alignment: Alignment.bottomCenter,
                                                     child: Row(
