@@ -460,13 +460,12 @@ class CommunityMainPageScreen extends StatelessWidget {
             ),
             // Post A Message (Button)
             Padding(
-              padding: const EdgeInsets.only(top: 40, bottom: 40),
+              padding: const EdgeInsets.only(top: 30, bottom: 40),
               child: Center(
-                child: OutlinedButton(
+                child: TextButton(
                   onPressed: () => _showPostMessageModal(context),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.white),
-                    backgroundColor: Colors.transparent,
+                  style: TextButton.styleFrom(
+                    backgroundColor: TColors.mustard, // Set background color to TColors.mustard
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -475,16 +474,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      Icon(Iconsax.message_text, color: Colors.black, size: 20),
+                      SizedBox(width: 8),
                       Text(
                         'Post A Message',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Iconsax.message_text, color: Colors.white, size: 20),
                     ],
                   ),
                 ),
