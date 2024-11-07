@@ -653,7 +653,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                   Text(
                                     mealLabels[index], // Meal label
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -662,7 +662,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                   Text(
                                     'Daily Avg. Cal', // Replace with your right-side text
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -678,7 +678,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                   Text(
                                     'Total: $totalCalories cal', // Total calories for this meal
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 16,
                                     ),
                                   ),

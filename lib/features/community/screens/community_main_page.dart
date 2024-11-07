@@ -250,14 +250,6 @@ class CommunityMainPageScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: TColors.bubbleBlue, // Outer container color
                           borderRadius: BorderRadius.circular(20), // Rounded corners
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              offset: Offset(0, 8),
-                            ),
-                          ],
                         ),
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -352,8 +344,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                                             constraints: BoxConstraints(minHeight: 100), // Minimum height set
                                             margin: const EdgeInsets.only(bottom: 20),
                                             decoration: BoxDecoration(
-                                              color: TColors.cream,
-                                              borderRadius: BorderRadius.circular(20), 
+                                              color: TColors.cream, // Updated background color
+                                              borderRadius: BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withOpacity(0.2),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 10,
+                                                  offset: Offset(0, 8),
+                                                ),
+                                              ],
                                             ),
                                             child: Padding(
                                               padding: const EdgeInsets.all(20.0),
@@ -369,18 +369,17 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                     ),
                                                     softWrap: true,
                                                   ),
-                                                  SizedBox(height: 10),
+                                                  SizedBox(height: 15),
                                                   Text(
                                                     anonymityStatus == 'Anonymous'
-                                                      ? 'Posted by : Anonymous'
-                                                      : 'Posted by : $username',
+                                                      ? 'Posted by: Anonymous'
+                                                      : 'Posted by: $username',
                                                     style: TextStyle(
                                                       color: Colors.black,
-                                                      fontSize: 14,
+                                                      fontSize: 15,
                                                       fontWeight: FontWeight.normal,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 10),
                                                   Align(
                                                     alignment: Alignment.bottomCenter,
                                                     child: Row(
@@ -463,10 +462,11 @@ class CommunityMainPageScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 40, bottom: 40),
               child: Center(
-                child: TextButton(
+                child: OutlinedButton(
                   onPressed: () => _showPostMessageModal(context),
-                  style: TextButton.styleFrom(
-                    backgroundColor: TColors.mustard,
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.white),
+                    backgroundColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -475,16 +475,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Iconsax.message_text, color: Colors.black, size: 20),
-                      SizedBox(width: 8),
                       Text(
-                        'Post Message',
+                        'Post A Message',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      SizedBox(width: 8),
+                      Icon(Iconsax.message_text, color: Colors.white, size: 20),
                     ],
                   ),
                 ),

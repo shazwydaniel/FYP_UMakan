@@ -16,7 +16,7 @@ class RecommendationController extends GetxController {
   final userController = UserController.instance;
   final vendorRepo = VendorRepository.instance;
 
-  Future<void> getRecommendedList(int averageCalories) async {
+  Future<List<CafeItem>> getRecommendedList(int averageCalories) async {
     final foodMoney = userController.user.value.actualRemainingFoodAllowance;
     final vendorRepo = VendorRepository.instance;
 
@@ -28,11 +28,12 @@ class RecommendationController extends GetxController {
           item.itemPrice <= foodMoney;
     }).toList();
 
-    print('Avergae Calories :$averageCalories');
+    print('Average Calories :$averageCalories');
     print('Food Money : $foodMoney');
-    // Now, do something with the recommended items, e.g., display them in the UI
     print("Recommended items: $recommendedItems");
-    print("total items: ${recommendedItems.length}");
+    print("Total items: ${recommendedItems.length}");
+
+    return recommendedItems; // Return the list of recommended items
   }
 
   @override
