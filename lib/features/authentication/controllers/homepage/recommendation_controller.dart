@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
@@ -15,6 +17,20 @@ class RecommendationController extends GetxController {
 
   final userController = UserController.instance;
   final vendorRepo = VendorRepository.instance;
+
+  var currentTimeFrameIndex = 3.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Set the initial time frame index
+    currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
+
+    // Update the time frame index every minute
+    Timer.periodic(Duration(minutes: 1), (_) {
+      currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
+    });
+  }
 
   Future<List<CafeItem>> getRecommendedList(int averageCalories) async {
     final foodMoney = userController.user.value.actualRemainingFoodAllowance;
@@ -48,8 +64,16 @@ class RecommendationController extends GetxController {
     return recommendedItems; // Return the list of recommended items
   }
 
-  @override
-  void onInit() {
-    super.onInit();
+  int getCurrentTimeFrameIndex() {
+    DateTime now = DateTime.now();
+    if (now.hour >= 6 && now.hour < 12) {
+      return 0; // Breakfast
+    } else if (now.hour >= 12 && now.hour < 16) {
+      return 1; // Lunch
+    } else if (now.hour >= 16 && now.hour < 21) {
+      return 2; // Dinner
+    } else {
+      return 3; // Others
+    }
   }
 }

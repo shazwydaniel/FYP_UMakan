@@ -26,13 +26,8 @@ class FoodJournalController extends GetxController {
   List<double> dailyAverageCalories =
       List.filled(7, 0.0); // Initialize with 0.0 for each day
 
-  List<double> averageCaloriesByMeal = [
-    0.0,
-    0.0,
-    0.0,
-    0.0
-  ]; // Index 0: Breakfast, 1: Lunch, etc.
-  Timer? _timer;
+  // Cached averages for breakfast, lunch, dinner, and others
+  var cachedAverageCalories = {0: '0.00', 1: '0.00', 2: '0.00', 3: '0.00'}.obs;
 
   // A map to store averageCalories for each meal type
   var averageCaloriesMap = <int, RxString>{}.obs;
@@ -40,36 +35,31 @@ class FoodJournalController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Automatically calculate calories whenever lunchItems changes
+    // Automatically calculate calories whenever mealItems changes
     ever(mealItems, (_) {
       todayCalories.value = calculateTodayCalories();
       yesterdayCalories.value = calculateYesterdayCalories();
     });
-    // Fetch and initialize data, then update averageCaloriesMap
+
+    // Fetch and initialize data, then update averageCaloriesMap and cached averages
     fetchFoodJournalItems().then((_) {
       for (int i = 0; i < 4; i++) {
-        List<JournalItem> items = averageCaloriesToday(i);
-        int totalCalories =
-            items.fold(0, (sum, item) => sum + (item.calories ?? 0));
-        storeAverageCalories(i, totalCalories.toString());
+        updateAndCacheAverageCalories(i);
       }
     });
   }
 
   Future<void> addFoodToJournal(String userId, JournalItem journalItem) async {
     try {
-      // Convert the journalItem to a map (JSON)
       final foodData = journalItem.toJson();
-
-      // Call the repository to add the item to Firestore
       await _foodJournalRepo.addFood(userId, foodData);
-
-      // Add the item to the observable list after Firestore operation
       mealItems.add(journalItem);
-      // Call after updating lunchItems
-
-      // Print the contents of lunchItems to debug
       print("Lunch Items after adding new item: ${mealItems}");
+
+      // Update and cache average calories after adding a new item
+      for (int i = 0; i < 4; i++) {
+        updateAndCacheAverageCalories(i);
+      }
 
       // Show success message with onTap to navigate
       Get.snackbar(
@@ -105,81 +95,55 @@ class FoodJournalController extends GetxController {
   // Fetch
   Future<void> fetchFoodJournalItems() async {
     try {
-      // Fetch list of cafes from the repository
       final foodJournalList =
           await _foodJournalRepo.getFoodJournalItem(getCurrentUserId());
 
-      // Check if cafes were found
       if (foodJournalList.isNotEmpty) {
-        // Assign the fetched cafes to the observable list
         mealItems.assignAll(foodJournalList);
-        print("Items Food Journal fetched: ${mealItems.length}");
+        print("Items Food Journal fetched: $mealItems");
       } else {
         print('No items found in Food Journal');
-        mealItems.clear(); // Optionally clear if no cafes are found
+        mealItems.clear();
       }
     } catch (e) {
       print('Error fetching cafes: $e');
-      mealItems.clear(); // Handle error by clearing the list
+      mealItems.clear();
     }
   }
 
   String getCurrentUserId() {
-    // Get the current user from FirebaseAuth
     User? user = FirebaseAuth.instance.currentUser;
-
-    // Check if the user is logged in
     if (user != null) {
-      // Return the user ID (UID)
       return user.uid;
     } else {
-      // Handle the case when there is no user logged in
       throw Exception('No user is currently signed in');
     }
   }
 
-  //Calculate calories for today
   int calculateTodayCalories() {
     DateTime today = DateTime.now();
     DateTime startOfDay = DateTime(today.year, today.month, today.day);
 
-    // Filter items for today's date and sum their calories
     final todayItems = mealItems.where((item) {
       DateTime itemDate = DateTime(
           item.timestamp.year, item.timestamp.month, item.timestamp.day);
       return itemDate == startOfDay;
     }).toList();
 
-    // Calculate total calories
-    int totalCalories =
-        todayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
-
-    return totalCalories;
+    return todayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
+    ;
   }
 
   int calculateYesterdayCalories() {
     DateTime today = DateTime.now();
-
-    // Get start of today (midnight)
     DateTime startOfDay = DateTime(today.year, today.month, today.day);
-
-    // Get start of yesterday
     DateTime startOfYesterday = startOfDay.subtract(const Duration(days: 1));
-
-    // Filter items for yesterday's date and sum their calories
     final yesterdayItems = mealItems.where((item) {
       DateTime itemDate = DateTime(
           item.timestamp.year, item.timestamp.month, item.timestamp.day);
-
-      // Check if the item is from yesterday
       return itemDate == startOfYesterday;
     }).toList();
-
-    // Calculate total calories for yesterday
-    int totalCalories =
-        yesterdayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
-
-    return totalCalories;
+    return yesterdayItems.fold(0, (sum, item) => sum + (item.calories ?? 0));
   }
 
   //Delete Item
@@ -187,8 +151,11 @@ class FoodJournalController extends GetxController {
     try {
       await _foodJournalRepo.deleteItem(vendorId, cafeId);
       mealItems.removeWhere((lunchItem) => lunchItem.id == cafeId);
-
       print("Lunch Items after deleting new item: ${mealItems}");
+      // Update cached averages after deletion
+      for (int i = 0; i < 4; i++) {
+        updateAndCacheAverageCalories(i);
+      }
     } catch (e) {
       // Handle error, maybe show a snackbar or dialog
       Get.snackbar('Error', 'Could not delete cafe: $e');
@@ -196,26 +163,22 @@ class FoodJournalController extends GetxController {
   }
 
   int totalCalories(List<JournalItem> filteredItems) {
-    int filteredStuff = filteredItems.fold<int>(
+    return filteredItems.fold<int>(
       0,
-      (sum, item) => sum + (item.calories ?? 0), // Handle null safely
+      (sum, item) => sum + (item.calories ?? 0),
     );
-    return filteredStuff;
   }
 
   // This method will filter the meal items based on meal type and week range
   List<JournalItem> averageCaloriesToday(int index) {
     DateTime now = DateTime.now();
-    DateTime todayStart =
-        DateTime(now.year, now.month, now.day); // Start of today
-    DateTime todayEnd = todayStart
-        .add(Duration(days: 1))
-        .subtract(Duration(milliseconds: 1)); // End of today (23:59:59)
+    DateTime todayStart = DateTime(now.year, now.month, now.day);
+    DateTime todayEnd =
+        todayStart.add(Duration(days: 1)).subtract(Duration(milliseconds: 1));
 
     return mealItems.where((item) {
       DateTime itemTime = item.timestamp;
 
-      // Meal type filtering based on time ranges
       bool isInMealTimeRange = false;
       switch (index) {
         case 0: // Breakfast (6 AM - 12 PM)
@@ -254,7 +217,7 @@ class FoodJournalController extends GetxController {
 
     // Update the value for the corresponding index
     averageCaloriesMap[index]!.value = averageCalories;
-    print('map : $averageCaloriesMap');
+    print('updated calories map : $averageCaloriesMap');
   }
 
   // Method to get stored average calories for a specific meal type
@@ -269,17 +232,17 @@ class FoodJournalController extends GetxController {
     return 0; // Return 0 if no value exists
   }
 
-/*
-  Future<void> storeAverageCalories(int index, String averageCalories) async {
-    final prefs = await SharedPreferences.getInstance();
-    String key = 'averageCalories_$index'; // Key for each meal type
-    prefs.setString(key, averageCalories); // Store the value
-  }
+  // Update and cache average calories for a specific meal type
+  void updateAndCacheAverageCalories(int index) {
+    List<JournalItem> items = averageCaloriesToday(index);
+    int totalCal = totalCalories(items);
 
-  // Retrieve stored average calories:
-  Future<String> getStoredAverageCalories(int index) async {
-    final prefs = await SharedPreferences.getInstance();
-    String key = 'averageCalories_$index'; // Key for each meal type
-    return prefs.getString(key) ?? '0.00'; // Default to '0.00' if not found
-  }*/
+    String averageCalories = items.isNotEmpty
+        ? (totalCal / items.length).toStringAsFixed(2)
+        : '0.00';
+
+    // Cache the average for future use
+    cachedAverageCalories[index] = averageCalories;
+    storeAverageCalories(index, averageCalories);
+  }
 }

@@ -35,7 +35,7 @@ Future<void> main() async {
   await GetStorage.init();
 
   //Initalise Controllers and User Repository
-  //Get.put(UserController());
+  Get.put(UserController());
   //Get.put(UserRepository());
   // Get.put(MoneyJournalRepository());
   Get.put(NetworkManager());

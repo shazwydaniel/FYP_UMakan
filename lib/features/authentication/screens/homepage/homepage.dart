@@ -31,17 +31,10 @@ class HomePageScreen extends StatelessWidget {
     final controller = Get.put(JournalController());
     final userController = Get.put(UserController());
     final advertController = Get.put(AdvertController());
-    final vendorController = Get.put(VendorController());
+
     final recommendedController = Get.put(RecommendationController());
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
-
-    // Ensure the method runs after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      recommendedController.getRecommendedList(
-        foodJController.getStoredAverageCalories(3),
-      );
-    });
 
     return Scaffold(
       backgroundColor: dark ? TColors.darkGreen : TColors.cream,
@@ -459,7 +452,9 @@ class HomePageScreen extends StatelessWidget {
                       // Use FutureBuilder to handle the async data loading
                       return FutureBuilder<List<CafeItem>>(
                         future: recommendedController.getRecommendedList(
-                            foodJController.getStoredAverageCalories(3)),
+                            foodJController.getStoredAverageCalories(
+                                recommendedController
+                                    .currentTimeFrameIndex.value)),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -476,8 +471,7 @@ class HomePageScreen extends StatelessWidget {
                                 child: Text(
                                     'No recommended items available.')); // Empty list case
                           } else {
-                            final recommendedMeals = snapshot
-                                .data!; // Data is loaded, assign to recommendedMeals
+                            final recommendedMeals = snapshot.data!;
 
                             return Container(
                               height: 220,
@@ -488,8 +482,6 @@ class HomePageScreen extends StatelessWidget {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   final item = recommendedMeals[index];
-
-                                  // Customize this widget to display item properties, e.g., item name, calories, price
                                   return Card(
                                     elevation: 0,
                                     color: TColors.cream,
@@ -547,7 +539,7 @@ class HomePageScreen extends StatelessWidget {
                                                       horizontal: 8.0),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white
-                                                        .withOpacity(0.2),
+                                                        .withOpacity(0.7),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
