@@ -216,14 +216,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                                           color: TColors.cobalt,
                                           borderRadius:
                                               BorderRadius.circular(20),
-                                          // boxShadow: [
-                                          //   BoxShadow(
-                                          //     color: Colors.black.withOpacity(0.1),
-                                          //     spreadRadius: 1,
-                                          //     blurRadius: 3,
-                                          //     offset: Offset(0, 8),
-                                          //   ),
-                                          // ],
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.all(20.0),
@@ -667,7 +659,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      height: 135,
+                      height: 220,
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
                         color: TColors.cream,
@@ -723,7 +715,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                             ),
                             // Right side price elements
                             Positioned(
-                              bottom: -16.0,
+                              top: 42.0,
                               right: 0,
                               child: Row(
                                 children: [
@@ -749,79 +741,35 @@ class StudentProfilePageScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Third Card
-                  GestureDetector(
-                    onTap: () {
-                      // Navigate to the new page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FinancialDetailsEdit()),
-                      );
-                    },
-                    child: Container(
-                      height: 135,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: TColors.cream,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Stack(
-                          children: [
-                            // Left side text elements
                             Positioned(
-                              left: 0,
-                              top: 0,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Food Money',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 34),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 5.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      '%',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                top: 120.0,
+                                left: 0,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 22.0),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0, vertical: 5.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          'For Food',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Right side price elements
+                                    )
+                                  ],
+                                )),
                             Positioned(
-                              bottom: -16.0,
+                              top: 120.0,
                               right: 0,
                               child: Row(
                                 children: [
@@ -836,14 +784,16 @@ class StudentProfilePageScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  Text(
-                                    controller
-                                        .user.value.actualRemainingFoodAllowance
-                                        .toString(),
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 50,
-                                      fontWeight: FontWeight.bold,
+                                  Obx(
+                                    () => Text(
+                                      controller.user.value
+                                          .actualRemainingFoodAllowance
+                                          .toString(),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 50,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ],
