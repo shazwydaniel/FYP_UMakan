@@ -231,131 +231,193 @@ class CommunityMainPageScreen extends StatelessWidget {
                   return Center(child: Text('No community news available'));
                 }
 
-                return Padding(
-                  padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
-                  child: Column(
-                    children: newsList.map((doc) {
-                      final newsType = doc['type_of_news_message'];
-                      final color = newsType == 'Offer Help' ? TColors.teal : TColors.amber;
-                      final newsId = doc.id; // Get the document ID
-                      final postedUserId = doc['user_id'];
+                bool isExpanded = false; // State to track if container is expanded
 
-                      return FutureBuilder<DocumentSnapshot>(
-                        future: FirebaseFirestore.instance.collection('Users').doc(postedUserId).get(),
-                        builder: (context, userSnapshot) {
-                          if (userSnapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                          if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                            return Text('Unknown User'); // Fallback if the user record is missing
-                          }
-
-                          final userData = userSnapshot.data!.data() as Map<String, dynamic>;
-                          final username = userData['Username'] ?? 'Unknown User'; // Fetch the 'Username' field
-
-                          return Dismissible(
-                            key: Key(newsId),
-                            direction: DismissDirection.endToStart,
-                            confirmDismiss: (direction) async {
-                              return await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Delete Message'),
-                                    content: Text('Are you sure you want to delete this message?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false); // Cancel deletion
-                                        },
-                                        child: Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(true); // Confirm deletion
-                                        },
-                                        child: Text('Delete'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            onDismissed: (direction) async {
-                              if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
-                                await FirebaseFirestore.instance
-                                    .collection('community_news')
-                                    .doc(newsId)
-                                    .delete();
-                                Get.snackbar('Success', 'Message deleted successfully.',
-                                    backgroundColor: Colors.green, colorText: Colors.white);
-                              } else {
-                                Get.snackbar('Error', 'You can only delete your own messages.',
-                                    backgroundColor: Colors.red, colorText: Colors.white);
-                              }
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              alignment: Alignment.centerRight,
-                              child: Icon(Icons.delete, color: Colors.white),
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              height: 100,
-                              margin: const EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    spreadRadius: 2,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 8),
-                                  ),
-                                ],
+                return StatefulBuilder(
+                  builder: (context, setState) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: TColors.bubbleBlue, // Outer container color
+                          borderRadius: BorderRadius.circular(20), // Rounded corners
+                        ),
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 10),
+                            Container(
+                              constraints: BoxConstraints(
+                                maxHeight: isExpanded ? double.infinity : 350, // Expandable height
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20.0),
+                              child: SingleChildScrollView(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '"${doc['news_message']}"',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      'Posted by: $username',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                  children: newsList.map((doc) {
+                                    final newsType = doc['type_of_news_message'];
+                                    final tagColor = newsType == 'Offer Help' ? TColors.teal : TColors.amber;
+                                    final newsId = doc.id; // Document ID
+                                    final postedUserId = doc['user_id'];
+                                    final anonymityStatus = doc['anonymity_status'] ?? 'Public';
+
+                                    return FutureBuilder<DocumentSnapshot>(
+                                      future: FirebaseFirestore.instance.collection('Users').doc(postedUserId).get(),
+                                      builder: (context, userSnapshot) {
+                                        if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                          return Center(child: CircularProgressIndicator());
+                                        }
+                                        if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                                          return Container(); // Display nothing if user data is not found
+                                        }
+
+                                        final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
+                                        final username = userData?['Username'] ?? 'Unknown User';
+
+                                        return Dismissible(
+                                          key: Key(newsId),
+                                          direction: DismissDirection.endToStart,
+                                          confirmDismiss: (direction) async {
+                                            return await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text('Delete Message'),
+                                                  content: Text('Are you sure you want to delete this message?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop(false); // Cancel deletion
+                                                      },
+                                                      child: Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop(true); // Confirm deletion
+                                                      },
+                                                      child: Text('Delete'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          onDismissed: (direction) async {
+                                            if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                              await FirebaseFirestore.instance
+                                                  .collection('community_news')
+                                                  .doc(newsId)
+                                                  .delete();
+                                              Get.snackbar('Success', 'Message deleted successfully.',
+                                                  backgroundColor: Colors.green, colorText: Colors.white);
+                                            } else {
+                                              Get.snackbar('Error', 'You can only delete your own messages.',
+                                                  backgroundColor: Colors.red, colorText: Colors.white);
+                                            }
+                                          },
+                                          background: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius: BorderRadius.circular(20), // Add this line for rounded corners
+                                            ),
+                                            padding: EdgeInsets.symmetric(horizontal: 20),
+                                            alignment: Alignment.centerRight,
+                                            child: Icon(Icons.delete, color: Colors.white),
+                                          ),
+                                          child: Container(
+                                            width: double.infinity,
+                                            constraints: BoxConstraints(minHeight: 100), // Minimum height set
+                                            margin: const EdgeInsets.only(bottom: 20),
+                                            decoration: BoxDecoration(
+                                              color: TColors.cream, // Updated background color
+                                              borderRadius: BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withOpacity(0.2),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 10,
+                                                  offset: Offset(0, 8),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(20.0),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    doc['news_message'],
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                    softWrap: true,
+                                                  ),
+                                                  SizedBox(height: 15),
+                                                  Text(
+                                                    anonymityStatus == 'Anonymous'
+                                                      ? 'Posted by: Anonymous'
+                                                      : 'Posted by: $username',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.normal,
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment: Alignment.bottomRight,
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                      decoration: BoxDecoration(
+                                                        color: tagColor,
+                                                        borderRadius: BorderRadius.circular(15),
+                                                      ),
+                                                      child: Text(
+                                                        newsType,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  isExpanded = !isExpanded; // Toggle expand/collapse
+                                });
+                              },
+                              child: Text(
+                                isExpanded ? 'See less' : 'See more',
+                                style: TextStyle(
+                                  color: TColors.cream,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
             // Post A Message (Button)
             Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 40),
+              padding: const EdgeInsets.only(top: 40, bottom: 40),
               child: Center(
                 child: OutlinedButton(
                   onPressed: () => _showPostMessageModal(context),
@@ -425,7 +487,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                   'Post a Message',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 18.0,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -495,6 +557,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: TColors.bubbleOrange,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.black, width: 2),
                   ),
                   child: TextButton(
                     onPressed: () async {
