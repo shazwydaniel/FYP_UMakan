@@ -45,6 +45,15 @@ class FoodJournalController extends GetxController {
       todayCalories.value = calculateTodayCalories();
       yesterdayCalories.value = calculateYesterdayCalories();
     });
+    // Fetch and initialize data, then update averageCaloriesMap
+    fetchFoodJournalItems().then((_) {
+      for (int i = 0; i < 4; i++) {
+        List<JournalItem> items = averageCaloriesToday(i);
+        int totalCalories =
+            items.fold(0, (sum, item) => sum + (item.calories ?? 0));
+        storeAverageCalories(i, totalCalories.toString());
+      }
+    });
   }
 
   Future<void> addFoodToJournal(String userId, JournalItem journalItem) async {

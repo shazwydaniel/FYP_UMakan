@@ -36,6 +36,13 @@ class HomePageScreen extends StatelessWidget {
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
 
+    // Ensure the method runs after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      recommendedController.getRecommendedList(
+        foodJController.getStoredAverageCalories(3),
+      );
+    });
+
     return Scaffold(
       backgroundColor: dark ? TColors.darkGreen : TColors.cream,
       body:
@@ -452,7 +459,7 @@ class HomePageScreen extends StatelessWidget {
                       // Use FutureBuilder to handle the async data loading
                       return FutureBuilder<List<CafeItem>>(
                         future: recommendedController.getRecommendedList(
-                            foodJController.getStoredAverageCalories(0)),
+                            foodJController.getStoredAverageCalories(3)),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
