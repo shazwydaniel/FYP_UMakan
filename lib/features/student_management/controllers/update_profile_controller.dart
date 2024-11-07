@@ -63,7 +63,7 @@ class UpdateProfileController extends GetxController {
         return;
       }
 
-      //Update User fullname in Firebase Firestore
+      //Update data in Firebase Firestore
       Map<String, dynamic> fullNameData = {'FullName': fullName.text.trim()};
       Map<String, dynamic> matricsNumberData = {
         'MatricsNumber': matricsNumber.text.trim()
@@ -116,6 +116,34 @@ class UpdateProfileController extends GetxController {
       // Log the error for debugging
       debugPrint("Error update: $e");
       TLoaders.errorSnackBar(title: 'OOps!', message: e.toString());
+    }
+  }
+
+  Future<void> updateFoodMoney() async {
+    try {
+      // Retrieve the values from the TextEditingControllers
+      double allowance = double.tryParse(monthlyAllowance.text.trim()) ?? 0.0;
+      double commitments =
+          double.tryParse(monthlyCommittments.text.trim()) ?? 0.0;
+
+      // Calculate the food money
+      double foodMoney = allowance - commitments;
+
+      // Update the user model or store the food money in a variable
+      userController.user.value.actualRemainingFoodAllowance = foodMoney;
+
+      Map<String, dynamic> actualRemainingFoodAllowance = {
+        'Actual Food Remanining Allowance': foodMoney
+      };
+
+      await userRepository.createSingleField(actualRemainingFoodAllowance);
+      // Print the food money to the debug console (optional)
+      print('Food money calculated: \$${foodMoney.toStringAsFixed(2)}');
+    } catch (e) {
+      // Log the error for debugging
+      debugPrint("Error calculating food money: $e");
+      TLoaders.errorSnackBar(
+          title: 'Error!', message: 'Could not calculate food money.');
     }
   }
 }

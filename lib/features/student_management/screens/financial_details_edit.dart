@@ -17,6 +17,8 @@ class FinancialDetailsEdit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(UpdateProfileController());
+    final userController = UserController.instance;
+
     return Scaffold(
       backgroundColor: TColors.bubbleOrange,
       appBar: const TAppBar(
@@ -108,7 +110,11 @@ class FinancialDetailsEdit extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => controller.updateProfile(),
+                onPressed: () {
+                  controller.updateProfile();
+                  controller.updateFoodMoney();
+                  print(userController.user.value.actualRemainingFoodAllowance);
+                },
                 child: const Text('Save'),
               ),
             )

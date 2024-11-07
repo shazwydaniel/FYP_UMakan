@@ -519,4 +519,46 @@ class VendorRepository {
 
     return allAdvertisements; // Return the combined list of advertisements
   }
+
+  Future<List<CafeItem>> getAllItemsFromAllCafes() async {
+    List<CafeItem> allItems =
+        []; // Initialize an empty list to hold all advertisements
+
+    try {
+      // First, get all vendors
+      final vendorSnapshot = await _db.collection('Vendors').get();
+
+      // Iterate through each vendor
+      for (var vendorDoc in vendorSnapshot.docs) {
+        // For each vendor, get their cafes
+        final cafeSnapshot = await vendorDoc.reference.collection('Cafe').get();
+
+        // Iterate through each cafe
+        for (var cafeDoc in cafeSnapshot.docs) {
+          // For each cafe, get their items
+          final adSnapshot = await cafeDoc.reference.collection('Items').get();
+
+          // Map each advertisement document to an Items object and add to the allAdvertisements list
+          allItems.addAll(adSnapshot.docs.map((doc) {
+            return CafeItem.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+          }));
+        }
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      print("Error fetching advertisements from all cafes: $e");
+      throw Exception('Failed to fetch advertisements: $e');
+    }
+
+    return allItems; // Return the combined list of advertisements
+  }
 }

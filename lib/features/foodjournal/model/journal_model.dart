@@ -5,18 +5,23 @@ class JournalItem {
   final int calories;
   String imagePath;
   final String cafe;
-  DateTime timestamp; // Mutable by removing 'final'
+  DateTime timestamp;
 
   JournalItem(
     this.imagePath, {
-    this.id, // id is now optional
+    this.id,
     required this.name,
     required this.price,
     required this.calories,
     required this.cafe,
-    DateTime? timestamp, // Optional in constructor
-  }) : timestamp =
-            timestamp ?? DateTime.now(); // Initialize with current time if null
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
+
+  // Override toString to print a more readable output
+  @override
+  String toString() {
+    return 'JournalItem(foodName: $name)';
+  }
 
   // Convert a JournalItem to a JSON object
   Map<String, dynamic> toJson() {

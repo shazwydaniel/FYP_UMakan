@@ -93,6 +93,12 @@ class CafeItem {
     required this.itemLocation,
   });
 
+  // Override toString to print a more readable output
+  @override
+  String toString() {
+    return 'Cafe Item(Name: $itemName,cost: $itemPrice)';
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
