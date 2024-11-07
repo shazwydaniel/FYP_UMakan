@@ -31,7 +31,7 @@ class CafePage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: TColors.mustard,
           iconTheme: IconThemeData(
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         body: SingleChildScrollView(
@@ -54,7 +54,7 @@ class CafePage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 30, // Adjust font size
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white, // Text color
+                                color: Colors.black, // Text color
                               ),
                             )
                           ],

@@ -68,12 +68,21 @@ class TImages {
 
   //Logos
   // ignore: constant_identifier_names
-  static const String KK12_Logo = "assets/logos/KK12_Logo.png";
+  static const String KK1_Logo = "assets/logos/KK1_Logo.png";
+  static const String KK2_Logo = "assets/logos/KK2_Logo.png";
+  static const String KK3_Logo = "assets/logos/KK3_Logo.png";
+  static const String KK4_Logo = "assets/logos/KK4_Logo.webp";
+  static const String KK5_Logo = "assets/logos/KK5_Logo.jpg";
+  static const String KK6_Logo = "assets/logos/KK6_Logo.jpeg";
   static const String KK7_Logo = "assets/logos/KK7_Logo.jpeg";
   static const String KK8_Logo = "assets/logos/KK8_Logo.png";
+  static const String KK9_Logo = "assets/logos/KK9_Logo.jpeg";
+  static const String KK10_Logo = "assets/logos/KK10_Logo.png";
   static const String KK11_Logo = "assets/logos/KK11_Logo.png";
+  static const String KK12_Logo = "assets/logos/KK12_Logo.png";
   static const String Zus_Logo = "assets/logos/Zus_Logo.png";
   static const String QBistro_Logo = "assets/logos/QBistro_Logo.png";
+  static const String Others_Logo = "assets/logos/Others_Logo.png";
 
   //food items
   static const String blueberry_muffin =

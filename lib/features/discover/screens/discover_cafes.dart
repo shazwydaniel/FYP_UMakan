@@ -7,11 +7,13 @@ import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 
 class LocationCafesScreen extends StatelessWidget {
   final String location;
+  final String image;
   final DiscoverController discoverController;
 
   const LocationCafesScreen({
     Key? key,
     required this.location,
+    required this.image,
     required this.discoverController,
   }) : super(key: key);
 
@@ -28,7 +30,7 @@ class LocationCafesScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: TColors.mustard,
           iconTheme: IconThemeData(
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         body: SingleChildScrollView(
@@ -40,26 +42,35 @@ class LocationCafesScreen extends StatelessWidget {
               child: Stack(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      ClipOval(
+                        child: Image.asset(
+                          image,
+                          width: 100, // Adjust size as needed
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(width: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Cafes in ', // Header text
+                            ' ', // Header text
                             style: TextStyle(
                               fontSize: 30, // Adjust font size
                               fontWeight: FontWeight.bold,
-                              color: Colors.white, // Text color
+                              color: Colors.black, // Text color
                             ),
                           ),
                           Text(
-                            '$location', // Header text
+                            'Cafes in $location', // Header text
                             style: TextStyle(
                               fontSize: 30, // Adjust font size
                               fontWeight: FontWeight.bold,
-                              color: Colors.white, // Text color
+                              color: Colors.black, // Text color
                             ),
                           ),
                           SizedBox(height: 10),
@@ -70,7 +81,7 @@ class LocationCafesScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.only(
                 left: 30,
@@ -85,7 +96,7 @@ class LocationCafesScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                     ))

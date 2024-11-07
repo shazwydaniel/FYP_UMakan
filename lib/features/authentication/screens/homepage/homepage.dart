@@ -626,7 +626,7 @@ class HomePageScreen extends StatelessWidget {
                                       elevation: 0,
                                       color: TColors.cream,
                                       margin: const EdgeInsets.only(
-                                          top: 10, right: 15),
+                                          top: 10, right: 20),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
@@ -674,7 +674,7 @@ class HomePageScreen extends StatelessWidget {
                                                             horizontal: 8.0),
                                                     decoration: BoxDecoration(
                                                       color: Colors.white
-                                                          .withOpacity(0.7),
+                                                          .withOpacity(0.6),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
@@ -706,17 +706,17 @@ class HomePageScreen extends StatelessWidget {
                                                         fontSize: 14,
                                                       ),
                                                     ),
-                                                    SizedBox(width: 8),
+                                                    SizedBox(width: 6),
                                                     Container(
                                                       width: 6,
                                                       height: 6,
                                                       decoration:
                                                           const BoxDecoration(
-                                                        color: TColors.cream,
+                                                        color: Colors.black,
                                                         shape: BoxShape.circle,
                                                       ),
                                                     ),
-                                                    SizedBox(width: 8),
+                                                    SizedBox(width: 6),
                                                     Text(
                                                       '${item.itemCalories} cal',
                                                       style: TextStyle(

@@ -7,6 +7,7 @@ import 'package:fyp_umakan/features/discover/screens/discover_cafes.dart';
 
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 
@@ -23,21 +24,21 @@ class DiscoverPageScreen extends StatelessWidget {
     discoverController
         .fetchAllCafesFromAllVendors(); // Fetch cafes from all vendors
 
-    // Predefined list of locations
-    final List<String> predefinedLocations = [
-      'KK1',
-      'KK2',
-      'KK3',
-      'KK4',
-      'KK5',
-      'KK6',
-      'KK7',
-      'KK8',
-      'KK9',
-      'KK10',
-      'KK11',
-      'KK12',
-      'Others'
+    // Predefined list of locations and corresponding images
+    final List<Map<String, String>> predefinedLocations = [
+      {'name': 'KK1', 'imagePath': TImages.KK1_Logo},
+      {'name': 'KK2', 'imagePath': TImages.KK2_Logo},
+      {'name': 'KK3', 'imagePath': TImages.KK3_Logo},
+      {'name': 'KK4', 'imagePath': TImages.KK4_Logo},
+      {'name': 'KK5', 'imagePath': TImages.KK5_Logo},
+      {'name': 'KK6', 'imagePath': TImages.KK6_Logo},
+      {'name': 'KK7', 'imagePath': TImages.KK7_Logo},
+      {'name': 'KK8', 'imagePath': TImages.KK8_Logo},
+      {'name': 'KK9', 'imagePath': TImages.KK9_Logo},
+      {'name': 'KK10', 'imagePath': TImages.KK10_Logo},
+      {'name': 'KK11', 'imagePath': TImages.KK11_Logo},
+      {'name': 'KK12', 'imagePath': TImages.KK12_Logo},
+      {'name': 'Others', 'imagePath': TImages.Others_Logo},
     ];
 
     return Scaffold(
@@ -85,7 +86,8 @@ class DiscoverPageScreen extends StatelessWidget {
               ),
               itemCount: predefinedLocations.length,
               itemBuilder: (context, index) {
-                final location = predefinedLocations[index];
+                final location = predefinedLocations[index]['name']!;
+                final imagePath = predefinedLocations[index]['imagePath']!;
 
                 return InkWell(
                   onTap: () {
@@ -95,6 +97,7 @@ class DiscoverPageScreen extends StatelessWidget {
                         builder: (context) => LocationCafesScreen(
                           location: location,
                           discoverController: discoverController,
+                          image: imagePath,
                         ),
                       ),
                     );
