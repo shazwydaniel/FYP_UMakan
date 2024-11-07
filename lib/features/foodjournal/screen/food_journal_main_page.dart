@@ -577,20 +577,24 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
               ),
             ),
 
+            //Summary Section
             Obx(() {
-              // List of meal labels
-              final mealLabels = ['Breakfast', 'Lunch', 'Dinner', 'Others'];
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // Logic to calculate and store average calories after the current frame is rendered
+                for (int index = 0; index < 4; index++) {
+                  final filteredItems =
+                      foodJController.averageCaloriesToday(index);
+                  final totalCalories =
+                      foodJController.totalCalories(filteredItems);
 
-              // Calculate the start and end of the current week
-              DateTime now = DateTime.now();
-              DateTime startOfWeek = DateTime(
-                  now.year,
-                  now.month,
-                  now.day -
-                      now.weekday +
-                      1); // Start of the current week (Monday)
-              DateTime endOfWeek = startOfWeek
-                  .add(Duration(days: 6)); // End of the week (Sunday)
+                  final averageCalories = filteredItems.isNotEmpty
+                      ? (totalCalories / filteredItems.length)
+                          .toStringAsFixed(2)
+                      : '0.00';
+
+                  foodJController.storeAverageCalories(index, averageCalories);
+                }
+              });
 
               return Container(
                 width: MediaQuery.of(context).size.width,
@@ -620,8 +624,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                         : '0.00'; // Avoid division by zero and display 0 if no items
 
                     // Store the average calories for later use
-                    foodJController.storeAverageCalories(
-                        index, averageCalories);
+                    //foodJController.storeAverageCalories(
+                    //  index, averageCalories);
 
                     /* Store the average calories value after it's calculated
                     foodJController.storeAverageCalories(
@@ -645,13 +649,17 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Row to align meal label on the left and other info on the right
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    mealLabels[index], // Meal label
+                                    [
+                                      'Breakfast',
+                                      'Lunch',
+                                      'Dinner',
+                                      'Others'
+                                    ][index],
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 18,
