@@ -6,12 +6,12 @@ import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
+import 'package:fyp_umakan/utils/scripts/add_sample_data.dart';
 import 'package:fyp_umakan/utils/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
 import 'app.dart';
 import 'firebase_options.dart';
 
@@ -39,6 +39,8 @@ Future<void> main() async {
   // Get.put(MoneyJournalRepository());
   Get.put(NetworkManager());
   Get.put(VendorController());
+
+  // addSampleOrganisations();
 
   // Await Splash Until Other Items Load
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
