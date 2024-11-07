@@ -122,20 +122,29 @@ class CommunityMainPageScreen extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      Text(
-                                        org.contact,
-                                        style: TextStyle(
-                                          color: TColors.bubbleOlive,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone, // Add phone icon
+                                            color: TColors.bubbleOlive, // Match the color of the contact text
+                                            size: 16, // Adjust size as needed
+                                          ),
+                                          SizedBox(width: 5), // Add some spacing between the icon and the text
+                                          Text(
+                                            org.contact,
+                                            style: TextStyle(
+                                              color: TColors.bubbleOlive,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       const SizedBox(height: 15),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                         decoration: BoxDecoration(
-                                          color: TColors.bubbleOlive.withOpacity(0.3),
+                                          color: TColors.bubbleOrange.withOpacity(0.3),
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         child: Text(
@@ -289,6 +298,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
+                                                  backgroundColor: TColors.cream,
                                                   title: Text('Delete Message'),
                                                   content: Text('Are you sure you want to delete this message?'),
                                                   actions: [
@@ -296,13 +306,19 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                       onPressed: () {
                                                         Navigator.of(context).pop(false); // Cancel deletion
                                                       },
-                                                      child: Text('Cancel'),
+                                                      child: Text(
+                                                        "Cancel",
+                                                        style: TextStyle(color: TColors.textDark),
+                                                      ),
                                                     ),
                                                     TextButton(
                                                       onPressed: () {
                                                         Navigator.of(context).pop(true); // Confirm deletion
                                                       },
-                                                      child: Text('Delete'),
+                                                      child: Text(
+                                                        "Delete",
+                                                        style: TextStyle(color: TColors.amber),
+                                                      ),
                                                     ),
                                                   ],
                                                 );
@@ -366,21 +382,48 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                   ),
                                                   SizedBox(height: 10),
                                                   Align(
-                                                    alignment: Alignment.bottomRight,
-                                                    child: Container(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                      decoration: BoxDecoration(
-                                                        color: tagColor,
-                                                        borderRadius: BorderRadius.circular(15),
-                                                      ),
-                                                      child: Text(
-                                                        newsType,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 12,
+                                                    alignment: Alignment.bottomCenter,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            // Add desired action here (currently empty)
+                                                          },
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(10),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: Colors.black.withOpacity(0.03),
+                                                                  blurRadius: 5,
+                                                                  spreadRadius: 1,
+                                                                  offset: Offset(0, 3),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            child: Image.asset(
+                                                              'assets/icons/telegram.png',
+                                                              height: 20,
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        Container(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                          decoration: BoxDecoration(
+                                                            color: tagColor,
+                                                            borderRadius: BorderRadius.circular(15),
+                                                          ),
+                                                          child: Text(
+                                                            newsType,
+                                                            style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ],
