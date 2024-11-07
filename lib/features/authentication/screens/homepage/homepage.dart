@@ -9,6 +9,7 @@ import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/widgets/register_form.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
@@ -449,7 +450,6 @@ class HomePageScreen extends StatelessWidget {
                         child: Text("see recommended")),*/
                     // Meal Recommendations Section (Scrollable)
                     Obx(() {
-                      // Use FutureBuilder to handle the async data loading
                       return FutureBuilder<List<CafeItem>>(
                         future: recommendedController.getRecommendedList(
                             foodJController.getStoredAverageCalories(
@@ -482,123 +482,257 @@ class HomePageScreen extends StatelessWidget {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   final item = recommendedMeals[index];
-                                  return Card(
-                                    elevation: 0,
-                                    color: TColors.cream,
-                                    margin: const EdgeInsets.only(
-                                        top: 10, right: 15),
-                                    // Width of each item in horizontal list
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 120,
-                                          height: 120, // Height for the image
-                                          decoration: BoxDecoration(
-                                            color: TColors.mustard,
-                                            borderRadius:
-                                                BorderRadius.circular(200),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                    0.25), // Shadow color with opacity
-                                                spreadRadius:
-                                                    2, // How much the shadow spreads
-                                                blurRadius:
-                                                    10, // How blurry the shadow is
-                                                offset: const Offset(0,
-                                                    4), // Horizontal and vertical offset
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Center(
-                                                child: Text(
-                                                  item.itemName,
-                                                  style: const TextStyle(
-                                                    color: Colors
-                                                        .black, // Make text white
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  height:
-                                                      4), // Space between texts
-                                              Center(
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white
-                                                        .withOpacity(0.7),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
                                                   child: Text(
-                                                    item.itemCafe,
+                                                    "Meal Details",
                                                     style: TextStyle(
-                                                      color: dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontSize: 14,
+                                                      color: Colors.black,
+                                                      fontSize: 18.0,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                  height:
-                                                      4), // Space between texts
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                IconButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  icon: Icon(Icons.close),
+                                                  color: Colors.black,
+                                                ),
+                                              ],
+                                            ),
+                                            backgroundColor: TColors.cream,
+                                            content: Container(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text(
-                                                    '\RM${item.itemPrice.toStringAsFixed(2)}',
-                                                    style: TextStyle(
-                                                      color: dark
-                                                          ? TColors.cream
-                                                          : Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 8),
+                                                  SizedBox(height: 10),
                                                   Container(
-                                                    width: 6,
-                                                    height: 6,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      color: TColors.cream,
-                                                      shape: BoxShape.circle,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      border: Border.all(
+                                                          color: Colors.black),
                                                     ),
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  Text(
-                                                    '${item.itemCalories} cal',
-                                                    style: TextStyle(
-                                                      color: dark
-                                                          ? TColors.cream
-                                                          : Colors.black,
-                                                      fontSize: 14,
+                                                    padding:
+                                                        EdgeInsets.all(8.0),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          'Meal Name: ${item.itemName}',
+                                                          style: TextStyle(
+                                                            fontSize: 16.0,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height: TSizes
+                                                                .spaceBtwSections),
+                                                        Text(
+                                                          'Calories: ${item.itemCalories} kcal',
+                                                          style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height: TSizes
+                                                                .spaceBtwSections),
+                                                        Text(
+                                                          'Price: RM${item.itemPrice.toStringAsFixed(2)}',
+                                                          style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            height: TSizes
+                                                                .spaceBtwSections),
+                                                        Text(
+                                                          'Location: ${item.itemCafe}',
+                                                          style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ],
                                               ),
+                                            ),
+                                            actions: <Widget>[
+                                              Center(
+                                                child: Container(
+                                                  width: 120,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    color: TColors.bubbleOrange,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                    border: Border.all(
+                                                      color: Colors.black,
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      // Placeholder for the functionality when adding to the journal
+                                                      // You can handle the functionality in this onPressed callback
+                                                      print(
+                                                          'Add to journal pressed');
+                                                    },
+                                                    child: Text(
+                                                      'ADD ',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Card(
+                                      elevation: 0,
+                                      color: TColors.cream,
+                                      margin: const EdgeInsets.only(
+                                          top: 10, right: 15),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 120,
+                                            height: 120,
+                                            decoration: BoxDecoration(
+                                              color: TColors.mustard,
+                                              borderRadius:
+                                                  BorderRadius.circular(200),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.25),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 10,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Center(
+                                                  child: Text(
+                                                    item.itemName,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Center(
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8.0),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white
+                                                          .withOpacity(0.7),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Text(
+                                                      item.itemCafe,
+                                                      style: TextStyle(
+                                                        color: dark
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      '\RM${item.itemPrice.toStringAsFixed(2)}',
+                                                      style: TextStyle(
+                                                        color: dark
+                                                            ? TColors.cream
+                                                            : Colors.black,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    Container(
+                                                      width: 6,
+                                                      height: 6,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color: TColors.cream,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    Text(
+                                                      '${item.itemCalories} cal',
+                                                      style: TextStyle(
+                                                        color: dark
+                                                            ? TColors.cream
+                                                            : Colors.black,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
