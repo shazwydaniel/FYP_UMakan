@@ -83,6 +83,7 @@ class CafeItem {
   final int itemCalories;
   final String itemImage;
   final String itemLocation;
+  final String itemCafe;
 
   CafeItem({
     required this.id,
@@ -91,12 +92,13 @@ class CafeItem {
     required this.itemCalories,
     required this.itemImage,
     required this.itemLocation,
+    required this.itemCafe,
   });
 
   // Override toString to print a more readable output
   @override
   String toString() {
-    return 'Cafe Item(Name: $itemName,cost: $itemPrice)';
+    return 'Cafe Item(Name: $itemName,cost: $itemPrice, Cafe: $itemCafe)';
   }
 
   Map<String, dynamic> toMap() {
@@ -107,6 +109,7 @@ class CafeItem {
       'itemCalories': itemCalories,
       'itemImage': itemImage,
       'itemLocation': itemLocation,
+      'itemCafe': itemCafe,
     };
   }
 
@@ -118,6 +121,7 @@ class CafeItem {
         itemCalories: 0,
         itemImage: '',
         itemLocation: '',
+        itemCafe: '',
       );
 
   factory CafeItem.fromMap(Map<String, dynamic> map, String documentId) {
@@ -127,18 +131,20 @@ class CafeItem {
       itemPrice: (map['itemCost'] as num?)?.toDouble() ??
           0.0, // Ensure 'itemCost' is present
       itemCalories: (map['itemCalories'] as num?)?.toInt() ?? 0,
-      itemImage: map['itemImage'] ?? '', // Provide default if null
-      itemLocation: map['itemLocation'] ?? '', // Provide default if null
+      itemImage: map['itemImage'] ?? '',
+      itemLocation: map['itemLocation'] ?? '',
+      itemCafe: map['itemCafe'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'Id': id,
-      'Item Name': itemName,
-      'Item Location': itemLocation,
-      'Item Calories': itemCalories,
-      'Item Price': itemPrice,
+      'id': id,
+      'itemName': itemName,
+      'itemLocation': itemLocation,
+      'itemCalories': itemCalories,
+      'itemPrice': itemPrice,
+      'itemCafe': itemCafe,
     };
   }
 }

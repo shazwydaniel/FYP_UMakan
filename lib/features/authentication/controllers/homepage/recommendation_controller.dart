@@ -30,6 +30,7 @@ class RecommendationController extends GetxController {
     Timer.periodic(Duration(minutes: 1), (_) {
       currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
     });
+    print(getCurrentTimeFrameIndex());
   }
 
   Future<List<CafeItem>> getRecommendedList(int averageCalories) async {
@@ -67,12 +68,16 @@ class RecommendationController extends GetxController {
   int getCurrentTimeFrameIndex() {
     DateTime now = DateTime.now();
     if (now.hour >= 6 && now.hour < 12) {
+      print("current index : 0, for breakfast");
       return 0; // Breakfast
     } else if (now.hour >= 12 && now.hour < 16) {
+      print("current index : 1, for lunch");
       return 1; // Lunch
     } else if (now.hour >= 16 && now.hour < 21) {
+      print("current index : 2, for dinner");
       return 2; // Dinner
     } else {
+      print("current index : 3, for others");
       return 3; // Others
     }
   }
