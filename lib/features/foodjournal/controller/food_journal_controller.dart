@@ -183,10 +183,10 @@ class FoodJournalController extends GetxController {
           isInMealTimeRange = itemTime.hour >= 6 && itemTime.hour < 12;
           break;
         case 1: // Lunch (12 PM - 4 PM)
-          isInMealTimeRange = itemTime.hour >= 11 && itemTime.hour < 15;
+          isInMealTimeRange = itemTime.hour >= 12 && itemTime.hour < 16;
           break;
         case 2: // Dinner (7 PM - 9 PM)
-          isInMealTimeRange = itemTime.hour >= 15 && itemTime.hour < 21;
+          isInMealTimeRange = itemTime.hour >= 19 && itemTime.hour < 21;
           break;
         case 3: // Others (anything outside the above ranges)
           isInMealTimeRange = (itemTime.hour >= 16 && itemTime.hour < 19) ||

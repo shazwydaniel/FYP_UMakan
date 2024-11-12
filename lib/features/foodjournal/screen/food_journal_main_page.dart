@@ -647,7 +647,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                     'Dinner',
                                     'Others'
                                   ][index],
-                                  items: foodJController
+                                  allItems: foodJController
                                       .mealItems, // Pass items for the selected meal type
                                 ),
                               ),

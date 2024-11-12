@@ -5,16 +5,34 @@ import 'package:intl/intl.dart';
 
 class JournalHistoryPage extends StatelessWidget {
   final String mealType;
-  final List<JournalItem> items;
+  final List<JournalItem> allItems;
 
   const JournalHistoryPage({
     Key? key,
     required this.mealType,
-    required this.items,
+    required this.allItems,
   }) : super(key: key);
+
+  // Define meal time ranges
+  bool isInMealTime(JournalItem item) {
+    final itemTime = item.timestamp;
+    switch (mealType) {
+      case 'Breakfast':
+        return itemTime.hour >= 6 && itemTime.hour < 12;
+      case 'Lunch':
+        return itemTime.hour >= 12 && itemTime.hour < 16;
+      case 'Dinner':
+        return itemTime.hour >= 19 && itemTime.hour < 21;
+      case 'Others':
+      default:
+        return (itemTime.hour >= 21 || itemTime.hour < 6);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Filter items for the specified meal time
+    final items = allItems.where(isInMealTime).toList();
     return Scaffold(
       backgroundColor: TColors.mustard,
       appBar: AppBar(
