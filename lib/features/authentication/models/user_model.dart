@@ -106,9 +106,12 @@ class UserModel {
       birthdate: map['birthdate'],
       age: map['age'] ?? 0,
       status: map['status'] ?? 0,
-      recommendedCalorieIntake: map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
-      recommendedMoneyAllowance: map['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
-      actualRemainingFoodAllowance: map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+      recommendedCalorieIntake:
+          map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+      recommendedMoneyAllowance:
+          map['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+      actualRemainingFoodAllowance:
+          map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
       additionalAllowance: map['additionalAllowance']?.toDouble() ?? 0.0,
       additionalExpense: map['additionalExpense']?.toDouble() ?? 0.0,
     );
@@ -146,37 +149,37 @@ class UserModel {
       'Recommended Money Allowance': recommendedMoneyAllowance,
       'Actual Remaining Food Allowance': actualRemainingFoodAllowance,
       'Additional Allowance': additionalAllowance,
-      'Additional Expense': additionalExpense,  
+      'Additional Expense': additionalExpense,
     };
   }
 
   // Static Function to Create an Empty User Model
   static UserModel empty() => UserModel(
-      id: '',
-      fullName: '',
-      username: '',
-      email: '',
-      password: '',
-      phoneNumber: '',
-      matricsNumber: '',
-      gender: '',
-      accommodation: '',
-      vehicle: '',
-      maritalStatus: '',
-      childrenNumber: '',
-      monthlyAllowance: '',
-      monthlyCommittments: '',
-      height: '',
-      weight: '',
-      birthdate: '',
-      age: 0,
-      status: 0,
-      recommendedCalorieIntake: 0.0,
-      recommendedMoneyAllowance: 0.0,
-      actualRemainingFoodAllowance: 0.0,
-      additionalAllowance: 0.0,
-      additionalExpense: 0.0,
-  );
+        id: '',
+        fullName: '',
+        username: '',
+        email: '',
+        password: '',
+        phoneNumber: '',
+        matricsNumber: '',
+        gender: '',
+        accommodation: '',
+        vehicle: '',
+        maritalStatus: '',
+        childrenNumber: '',
+        monthlyAllowance: '',
+        monthlyCommittments: '',
+        height: '',
+        weight: '',
+        birthdate: '',
+        age: 0,
+        status: 0,
+        recommendedCalorieIntake: 0.0,
+        recommendedMoneyAllowance: 0.0,
+        actualRemainingFoodAllowance: 0.0,
+        additionalAllowance: 0.0,
+        additionalExpense: 0.0,
+      );
 
   // Create a UserModel from Firebase Document Snapshot
   factory UserModel.fromSnapshot(
@@ -203,9 +206,12 @@ class UserModel {
           birthdate: data['Birthdate'] ?? '',
           age: data['Age'] ?? 0,
           status: data['Status'] ?? 0,
-          recommendedCalorieIntake: data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
-          recommendedMoneyAllowance: data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
-          actualRemainingFoodAllowance: data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+          recommendedCalorieIntake:
+              data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+          recommendedMoneyAllowance:
+              data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+          actualRemainingFoodAllowance:
+              data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
           additionalAllowance: data['additionalAllowance']?.toDouble() ?? 0.0,
           additionalExpense: data['additionalExpense']?.toDouble() ?? 0.0);
     } else {
@@ -218,7 +224,8 @@ class UserModel {
     final birthDate = DateFormat('dd/MM/yyyy').parse(birthdate);
     final today = DateTime.now();
     int age = today.year - birthDate.year;
-    if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
       age--;
     }
     return age;

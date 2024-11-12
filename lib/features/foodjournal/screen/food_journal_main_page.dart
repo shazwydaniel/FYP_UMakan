@@ -4,6 +4,7 @@ import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_
 import 'package:fyp_umakan/features/discover/screens/discover.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
+import 'package:fyp_umakan/features/foodjournal/screen/food_journal_history.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -583,7 +584,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 // Logic to calculate and store average calories after the current frame is rendered
                 for (int index = 0; index < 4; index++) {
                   final filteredItems =
-                      foodJController.averageCaloriesToday(index);
+                      foodJController.filterMealsTypesToday(index);
                   final totalCalories =
                       foodJController.totalCalories(filteredItems);
 
@@ -611,7 +612,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     // Filter the items based on meal type and time ranges
 
                     final filteredItems =
-                        foodJController.averageCaloriesToday(index);
+                        foodJController.filterMealsTypesToday(index);
 
                     // Calculate the total calories for each meal type
                     final totalCalories =
@@ -623,84 +624,98 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                             .toStringAsFixed(2)
                         : '0.00'; // Avoid division by zero and display 0 if no items
 
-                    // Store the average calories for later use
-                    //foodJController.storeAverageCalories(
-                    //  index, averageCalories);
-
-                    /* Store the average calories value after it's calculated
-                    foodJController.storeAverageCalories(
-                        index, averageCalories);*/
-
                     return Container(
                       margin: const EdgeInsets.only(
                           bottom: 10), // Space between lists
                       padding: const EdgeInsets.only(left: 10),
                       child: Card(
                         elevation: 4, // Add elevation for better visual
-                        color: TColors.mustard, // Card color
+                        color: TColors.cream, // Card color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Container(
-                          width: MediaQuery.of(context)
-                              .size
-                              .width, // Set card width
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    [
-                                      'Breakfast',
-                                      'Lunch',
-                                      'Dinner',
-                                      'Others'
-                                    ][index],
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  // Add any text you want on the right side
-                                  Text(
-                                    'Daily Avg. Cal', // Replace with your right-side text
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                        child: InkWell(
+                          onTap: () {
+                            // Navigate to JournalHistoryPage with filteredItems
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => JournalHistoryPage(
+                                  mealType: [
+                                    'Breakfast',
+                                    'Lunch',
+                                    'Dinner',
+                                    'Others'
+                                  ][index],
+                                  items: foodJController
+                                      .mealItems, // Pass items for the selected meal type
+                                ),
                               ),
-                              const SizedBox(height: 8), // Space between texts
-                              // Row to align "Total Calories" on the left and daily average on the right
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Total: $totalCalories cal', // Total calories for this meal
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
+                            );
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context)
+                                .size
+                                .width, // Set card width
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      [
+                                        'Breakfast',
+                                        'Lunch',
+                                        'Dinner',
+                                        'Others'
+                                      ][index],
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    '$averageCalories', // Daily average calories (formatted text)
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20,
+                                    // Add any text you want on the right side
+                                    Text(
+                                      'Avg. cal/meal', // Replace with your right-side text
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8), // Space between texts
-                            ],
+                                  ],
+                                ),
+                                const SizedBox(
+                                    height: 8), // Space between texts
+                                // Row to align "Total Calories" on the left and daily average on the right
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Total: $totalCalories cal', // Total calories for this meal
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$averageCalories', // Daily average calories (formatted text)
+                                      style: const TextStyle(
+                                        color: TColors.amber,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                    height: 8), // Space between texts
+                              ],
+                            ),
                           ),
                         ),
                       ),

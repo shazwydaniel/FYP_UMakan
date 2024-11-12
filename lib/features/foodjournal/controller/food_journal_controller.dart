@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,15 +17,12 @@ class FoodJournalController extends GetxController {
   var todayCalories = 0.obs;
   var yesterdayCalories = 0.obs;
   var isLoading = false.obs;
+  final userController = UserController.instance;
 
   var weekStartDate =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
   // Store the weekly average in a variable
   double weeklyAverageCalories = 0.0;
-
-  // List to store the daily average calories for each day of the week (7 days)
-  List<double> dailyAverageCalories =
-      List.filled(7, 0.0); // Initialize with 0.0 for each day
 
   // Cached averages for breakfast, lunch, dinner, and others
   var cachedAverageCalories = {0: '0.00', 1: '0.00', 2: '0.00', 3: '0.00'}.obs;
@@ -170,7 +168,7 @@ class FoodJournalController extends GetxController {
   }
 
   // This method will filter the meal items based on meal type and week range
-  List<JournalItem> averageCaloriesToday(int index) {
+  List<JournalItem> filterMealsTypesToday(int index) {
     DateTime now = DateTime.now();
     DateTime todayStart = DateTime(now.year, now.month, now.day);
     DateTime todayEnd =
@@ -234,7 +232,7 @@ class FoodJournalController extends GetxController {
 
   // Update and cache average calories for a specific meal type
   void updateAndCacheAverageCalories(int index) {
-    List<JournalItem> items = averageCaloriesToday(index);
+    List<JournalItem> items = filterMealsTypesToday(index);
     int totalCal = totalCalories(items);
 
     String averageCalories = items.isNotEmpty
@@ -244,5 +242,24 @@ class FoodJournalController extends GetxController {
     // Cache the average for future use
     cachedAverageCalories[index] = averageCalories;
     storeAverageCalories(index, averageCalories);
+  }
+
+  double calculateBMR() {
+    final weight = double.tryParse(userController.user.value.weight) ?? 0.0;
+    final height = double.tryParse(userController.user.value.height) ?? 0.0;
+    final age = userController.user.value.age;
+    final gender = userController.user.value.gender;
+
+    double bmr;
+
+    if (gender == 'Male') {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+    } else if (gender == 'Female') {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+    } else {
+      throw Exception("Invalid gender"); // Optional: Handle invalid gender
+    }
+
+    return bmr;
   }
 }
