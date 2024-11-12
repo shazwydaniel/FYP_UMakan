@@ -7,6 +7,8 @@ import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FoodJournalController extends GetxController {
@@ -18,6 +20,24 @@ class FoodJournalController extends GetxController {
   var yesterdayCalories = 0.obs;
   var isLoading = false.obs;
   final userController = UserController.instance;
+
+  // Store daily calories for each meal type
+  Map<String, Map<String, int>> dailyCalories = {
+    'breakfast': {},
+    'lunch': {},
+    'dinner': {},
+    'others': {},
+  };
+
+  // Store weekly averages for each meal type
+  RxMap<String, double> weeklyAverages = {
+    'breakfast': 0.0,
+    'lunch': 0.0,
+    'dinner': 0.0,
+    'others': 0.0,
+  }.obs;
+
+  final storage = GetStorage();
 
   var weekStartDate =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
@@ -44,6 +64,12 @@ class FoodJournalController extends GetxController {
       for (int i = 0; i < 4; i++) {
         updateAndCacheAverageCalories(i);
       }
+    });
+
+    // Fetch food journal items and initialize data
+    fetchFoodJournalItems().then((_) {
+      updateDailyCalories();
+      calculateWeeklyAverages();
     });
   }
 
@@ -261,5 +287,68 @@ class FoodJournalController extends GetxController {
     }
 
     return bmr;
+  }
+
+  // Step 2: Method to calculate daily calories for each meal type
+  void updateDailyCalories() {
+    DateTime today = DateTime.now();
+    String todayKey = DateFormat('yyyy-MM-dd').format(today);
+
+    // Initialize or update daily totals for each meal type
+    dailyCalories['breakfast']![todayKey] =
+        calculateTotalCaloriesForMealType(0);
+    dailyCalories['lunch']![todayKey] = calculateTotalCaloriesForMealType(1);
+    dailyCalories['dinner']![todayKey] = calculateTotalCaloriesForMealType(2);
+    dailyCalories['others']![todayKey] = calculateTotalCaloriesForMealType(3);
+
+    // Store daily calories in persistent storage for weekly calculations
+    storage.write('dailyCalories', dailyCalories);
+  }
+
+  // Helper method to calculate total calories for a meal type index
+  int calculateTotalCaloriesForMealType(int index) {
+    List<JournalItem> items = filterMealsTypesToday(index);
+    return items.fold(0, (sum, item) => sum + (item.calories ?? 0));
+  }
+
+  // Step 3: Calculate weekly averages for each meal type
+  void calculateWeeklyAverages() {
+    DateTime today = DateTime.now();
+    int currentWeekday = today.weekday;
+
+    if (currentWeekday == DateTime.monday) {
+      // Only calculate weekly averages on Mondays
+
+      // Calculate the average calories for the previous week
+      weeklyAverages['breakfast'] = calculateAverageForMealType('breakfast');
+      weeklyAverages['lunch'] = calculateAverageForMealType('lunch');
+      weeklyAverages['dinner'] = calculateAverageForMealType('dinner');
+      weeklyAverages['others'] = calculateAverageForMealType('others');
+
+      // Store the weekly averages in persistent storage
+      storage.write('weeklyAverages', weeklyAverages);
+
+      // Reset daily calories map for the new week
+      resetDailyCalories();
+    }
+  }
+
+  // Helper to calculate average calories for a given meal type
+  double calculateAverageForMealType(String mealType) {
+    var dailyTotals = dailyCalories[mealType]!.values;
+    if (dailyTotals.isEmpty) return 0.0;
+    int totalCalories = dailyTotals.reduce((sum, value) => sum + value);
+    return totalCalories / dailyTotals.length;
+  }
+
+  // Reset daily calories data for the new week
+  void resetDailyCalories() {
+    dailyCalories = {
+      'breakfast': {},
+      'lunch': {},
+      'dinner': {},
+      'others': {},
+    };
+    storage.write('dailyCalories', dailyCalories);
   }
 }

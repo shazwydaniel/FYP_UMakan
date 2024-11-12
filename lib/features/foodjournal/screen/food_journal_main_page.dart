@@ -594,7 +594,23 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                       : '0.00';
 
                   foodJController.storeAverageCalories(index, averageCalories);
+
+                  // Debugging prints for dailyCalories and weeklyAverages
+                  print("Daily total for ${[
+                    'Breakfast',
+                    'Lunch',
+                    'Dinner',
+                    'Others'
+                  ][index]}: $totalCalories");
+                  print("Daily average for ${[
+                    'Breakfast',
+                    'Lunch',
+                    'Dinner',
+                    'Others'
+                  ][index]}: $averageCalories");
                 }
+                // Print out the weeklyAverages map for debugging
+                print("Weekly Averages: ${foodJController.weeklyAverages}");
               });
 
               return Container(
@@ -604,39 +620,38 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                   vertical: 10,
                 ),
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.start, // Align cards to the start
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align to the left
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(4, (index) {
-                    // Filter the items based on meal type and time ranges
-
                     final filteredItems =
                         foodJController.filterMealsTypesToday(index);
-
-                    // Calculate the total calories for each meal type
                     final totalCalories =
                         foodJController.totalCalories(filteredItems);
 
                     // Calculate average calories
-                    final averageCalories = filteredItems.isNotEmpty
+                    final dailyAverageCalories = filteredItems.isNotEmpty
                         ? (totalCalories / filteredItems.length)
                             .toStringAsFixed(2)
-                        : '0.00'; // Avoid division by zero and display 0 if no items
+                        : '0.00';
 
+                    // Weekly average calories from weeklyAverages map in the controller
+                    final mealType =
+                        ['breakfast', 'lunch', 'dinner', 'others'][index];
+                    final weeklyAverageCalories = foodJController
+                            .weeklyAverages[mealType]
+                            ?.toStringAsFixed(2) ??
+                        '0.00';
                     return Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 10), // Space between lists
+                      margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.only(left: 10),
                       child: Card(
-                        elevation: 4, // Add elevation for better visual
-                        color: TColors.cream, // Card color
+                        elevation: 4,
+                        color: TColors.cream,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: InkWell(
                           onTap: () {
-                            // Navigate to JournalHistoryPage with filteredItems
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -678,9 +693,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    // Add any text you want on the right side
                                     Text(
-                                      'Avg. cal/meal', // Replace with your right-side text
+                                      'Avg. cal/meal',
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 16,
@@ -689,22 +703,20 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(
-                                    height: 8), // Space between texts
-                                // Row to align "Total Calories" on the left and daily average on the right
+                                const SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Total: $totalCalories cal', // Total calories for this meal
+                                      'Total: $totalCalories cal',
                                       style: const TextStyle(
                                         color: Colors.black54,
                                         fontSize: 16,
                                       ),
                                     ),
                                     Text(
-                                      '$averageCalories', // Daily average calories (formatted text)
+                                      '$dailyAverageCalories',
                                       style: const TextStyle(
                                         color: TColors.amber,
                                         fontSize: 20,
@@ -712,8 +724,15 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(
-                                    height: 8), // Space between texts
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Weekly Avg: $weeklyAverageCalories cal', // Weekly average calories
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
