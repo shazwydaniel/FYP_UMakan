@@ -73,12 +73,16 @@ class RecommendationController extends GetxController {
     } else if (now.hour >= 12 && now.hour < 16) {
       print("current index : 1, for lunch");
       return 1; // Lunch
-    } else if (now.hour >= 16 && now.hour < 21) {
+    } else if (now.hour >= 19 && now.hour < 24) {
       print("current index : 2, for dinner");
       return 2; // Dinner
-    } else {
+    } else if (now.hour >= 16 && now.hour < 17 ||
+        now.hour >= 0 && now.hour < 6) {
       print("current index : 3, for others");
       return 3; // Others
+    } else {
+      print("current index : 4, outside of options");
+      return 4;
     }
   }
 }
