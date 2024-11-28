@@ -4,8 +4,9 @@ import 'package:fyp_umakan/features/community/screens/community_main_page.dart';
 import 'package:fyp_umakan/features/discover/screens/discover.dart';
 import 'package:fyp_umakan/features/student_management/screens/student_profile.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/features/vendor/screens/advertisement/vendor_adverts.dart';
 import 'package:fyp_umakan/features/vendor/screens/profile/vendor_profile.dart';
-import 'package:fyp_umakan/features/vendor/screens/reviews/vendor_reviews.dart';
+
 import 'package:fyp_umakan/features/vendor/screens/vendor_register.dart';
 import 'package:fyp_umakan/features/vendor/screens/home/vendors_home.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -57,7 +58,7 @@ class VendorNavigationController extends GetxController {
 
   final screens = [
     VendorsHome(),
-    VendorReviewsPage(),
+    VendorAdsPage(),
     VendorProfilePageScreen(),
   ];
 }

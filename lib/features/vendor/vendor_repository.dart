@@ -439,43 +439,6 @@ class VendorRepository {
     }
   }
 
-  Future<List<Advertisement>> fetchAdvertisements(
-      String vendorId, String cafeId) async {
-    try {
-      // Fetch the advertisements from Firestore
-      QuerySnapshot snapshot = await _db
-          .collection('Vendors')
-          .doc(vendorId)
-          .collection('Cafe')
-          .doc(cafeId)
-          .collection('Advertisements')
-          .get();
-
-      // Convert the documents to a list of Advertisement objects
-      List<Advertisement> advertisements = snapshot.docs.map((doc) {
-        return Advertisement.fromMap(
-            doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
-
-      return advertisements;
-    } on FirebaseAuthException catch (e) {
-      print('FirebaseAuthException: ${e.message}');
-      throw TFirebaseAuthException(e.code).message;
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw TFirebaseException(e.code).message;
-    } on FormatException catch (_) {
-      print('FormatException occurred');
-      throw const TFormatException();
-    } on PlatformException catch (e) {
-      print('PlatformException: ${e.message}');
-      throw TPlatformException(e.code).message;
-    } catch (e) {
-      print('Unknown error: $e');
-      throw 'Something went wrong. Please try again';
-    }
-  }
-
   Future<List<Advertisement>> getAllAdvertisementsFromAllCafes() async {
     List<Advertisement> allAdvertisements =
         []; // Initialize an empty list to hold all advertisements
@@ -520,6 +483,48 @@ class VendorRepository {
     return allAdvertisements; // Return the combined list of advertisements
   }
 
+  Future<List<Advertisement>> getAllAdvertisementsForVendor(
+      String vendorId) async {
+    List<Advertisement> allAdvertisements = [];
+
+    try {
+      // Get cafes for the specific vendor
+      final cafeSnapshot = await _db
+          .collection('Vendors')
+          .doc(vendorId) // Filter by the specific vendor's ID
+          .collection('Cafe')
+          .get();
+
+      // Iterate through each cafe of the vendor
+      for (var cafeDoc in cafeSnapshot.docs) {
+        // For each cafe, get their advertisements
+        final adSnapshot =
+            await cafeDoc.reference.collection('Advertisements').get();
+
+        // Map each advertisement document to an Advertisement object and add to the allAdvertisements list
+        allAdvertisements.addAll(adSnapshot.docs.map((doc) {
+          return Advertisement.fromMap(
+              doc.data() as Map<String, dynamic>, doc.id);
+        }));
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      print("Error fetching advertisements for the specific vendor: $e");
+      throw Exception('Failed to fetch advertisements: $e');
+    }
+
+    return allAdvertisements; // Return the list of advertisements for the specific vendor
+  }
+
   Future<List<CafeItem>> getAllItemsFromAllCafes() async {
     List<CafeItem> allItems =
         []; // Initialize an empty list to hold all advertisements
@@ -560,5 +565,21 @@ class VendorRepository {
     }
 
     return allItems; // Return the combined list of advertisements
+  }
+
+  // Update Any Field in Specific Users Collection ------------------------------------
+  Future<void> updateSingleField(Map<String, dynamic> json) async {
+    try {
+      await _db
+          .collection("Vendors")
+          .doc(AuthenticatorRepository.instance.authUser?.uid)
+          .update(json);
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Something went wrong. Please try again';
+    }
   }
 }

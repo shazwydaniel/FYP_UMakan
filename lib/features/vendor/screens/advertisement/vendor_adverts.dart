@@ -1,104 +1,88 @@
 import 'package:flutter/material.dart';
+
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
-import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/features/vendor/screens/advertisement/vendor_add_adverts.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
-class VendorAdverts extends StatelessWidget {
-  VendorAdverts({super.key, required this.cafeId});
+class VendorAdsPage extends StatelessWidget {
+  VendorAdsPage({super.key});
 
-  final String vendorId = VendorController.instance.getCurrentUserId();
-  final String cafeId;
-  final controller = Get.put(AdvertController());
-
-  // Function to show the date picker and set the selected date.
-  Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(), // Default to current date
-      firstDate: DateTime(2000), // Earliest date selectable
-      lastDate: DateTime(2100), // Latest date selectable
-    );
-
-    if (picked != null) {
-      controller.text =
-          picked.toLocal().toString().split(' ')[0]; // Format as YYYY-MM-DD
-    }
-  }
+  final AdvertController advertController = Get.put(AdvertController());
 
   @override
   Widget build(BuildContext context) {
+    // Fetch advertisements when the page loads
+    advertController.fetchVendorAds();
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Advertisment'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: controller.menuFormKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Text Field for Item Name
-              TextField(
-                controller: controller.adDetail,
-                decoration: InputDecoration(
-                  labelText: 'Advertisment Detail',
-                  border: OutlineInputBorder(),
-                ),
+      appBar: AppBar(title: Text('Available Ads')),
+      body: Obx(
+        () {
+          if (advertController.allAdvertisements.isEmpty) {
+            // Show a message if no ads are available
+            return Center(
+              child: Text(
+                'No advertisements available.',
+                style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 16.0),
+            );
+          }
 
-              // Text Field for Start Date
-              TextField(
-                controller: controller.startDateController,
-                readOnly: true, // Prevent manual input
-                decoration: const InputDecoration(
-                  labelText: 'Start Date',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today), // Calendar icon
-                ),
-                onTap: () =>
-                    _selectDate(context, controller.startDateController),
-              ),
-              const SizedBox(height: 16.0),
-
-              // Text Field for End Date
-              TextField(
-                controller: controller.endDateController,
-                readOnly: true, // Prevent manual input
-                decoration: const InputDecoration(
-                  labelText: 'End Date',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today), // Calendar icon
-                ),
-                onTap: () => _selectDate(context, controller.endDateController),
-              ),
-              const SizedBox(height: 16.0),
-
-              // Add Button
-              Center(
+          // Display the list of advertisements
+          return ListView.builder(
+            itemCount: advertController.allAdvertisements.length,
+            itemBuilder: (context, index) {
+              final ad = advertController.allAdvertisements[index];
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () async {
-                    // Call the addAdvert function from the controller
-                    await controller.addAdvert(vendorId, cafeId);
-
-                    // Close the page and return the entered data (optional)
-                    Navigator.pop(context);
-                  },
-                  child: Text('Add Item'),
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    minimumSize:
+                        Size(double.infinity, 60), // Full-width buttons
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  onPressed: () {
+                    /* Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VendorAdverts(cafeId: ),
+                      ),
+                    );*/
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ad.cafeName,
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        ad.detail,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        "Start Date: ${ad.startDate}",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        "End Date: ${ad.endDate}",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              );
+            },
+          );
+        },
       ),
     );
   }

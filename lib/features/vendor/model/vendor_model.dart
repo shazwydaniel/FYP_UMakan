@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Vendor {
   final String id;
-  final String vendorName;
-  final String vendorEmail;
-  final String contactInfo;
+  String vendorName;
+  String vendorEmail;
+  String contactInfo;
   final String role;
-  final String password; // Add this field to match your controller
+  String password; // Add this field to match your controller
 
   Vendor({
     required this.id,

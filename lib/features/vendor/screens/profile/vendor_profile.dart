@@ -3,6 +3,7 @@
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/vendor/controller/vendor_controller.dart";
+import "package:fyp_umakan/features/vendor/screens/profile/vendor_details_edit.dart";
 import "package:fyp_umakan/features/vendor/screens/vendor_register.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
@@ -83,7 +84,12 @@ class VendorProfilePageScreen extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // Add any action for tapping the card if needed
+                      // Navigate to the new page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const VendorDetailsEdit()),
+                      );
                     },
                     child: Card(
                       elevation: 5,

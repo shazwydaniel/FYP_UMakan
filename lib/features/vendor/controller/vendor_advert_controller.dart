@@ -98,4 +98,13 @@ class AdvertController extends GetxController {
     allAdvertisements
         .assignAll(allAds); // Update observable list with all cafes
   }
+
+  void fetchVendorAds() async {
+    List<Advertisement> allAds = await vendorRepository
+        .getAllAdvertisementsForVendor(vendorController.currentUserId);
+    print(
+        "Total cafes fetched from all vendors: ${allAds.length}"); // Debug log
+    allAdvertisements
+        .assignAll(allAds); // Update observable list with all cafes
+  }
 }
