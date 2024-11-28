@@ -55,14 +55,18 @@ class VendorsHome extends StatelessWidget {
                               top: 140,
                               left: 40,
                               child: Obx(
-                                () => Text(
-                                  controller.vendor.value.vendorName,
-                                  style: TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.bold,
-                                    color: dark ? Colors.white : Colors.white,
-                                  ),
-                                ),
+                                () {
+                                  print(
+                                      "Vendor Name: ${controller.vendor.value.vendorName}");
+                                  return Text(
+                                    controller.vendor.value.vendorName,
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold,
+                                      color: dark ? Colors.white : Colors.white,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],

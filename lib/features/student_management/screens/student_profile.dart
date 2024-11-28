@@ -99,29 +99,22 @@ class StudentProfilePageScreen extends StatelessWidget {
                       );
                     },
                     child: Card(
-                      elevation: 5, // Set the elevation to add shadow
+                      elevation: 5,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Rounded corners
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      color: TColors.cream, // Background color of the card
-                      margin: const EdgeInsets.only(
-                          bottom: 20), // Margin around the card
+                      color: TColors.cream,
+                      margin: const EdgeInsets.only(bottom: 20),
                       child: Padding(
-                        padding:
-                            const EdgeInsets.all(20), // Padding inside the card
+                        padding: const EdgeInsets.all(20),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .start, // Align items at the top
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment
-                                    .start, // Align texts to the left
-                                mainAxisAlignment: MainAxisAlignment
-                                    .center, // Center vertically within the card
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // Full Name
                                   Text(
                                     controller.user.value.fullName,
                                     style: TextStyle(
