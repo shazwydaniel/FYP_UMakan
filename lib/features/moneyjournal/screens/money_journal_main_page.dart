@@ -9,6 +9,8 @@ import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:get/get.dart";
 import "package:iconsax/iconsax.dart";
+import 'package:fyp_umakan/features/moneyjournal/controllers/money_journal_controller.dart';
+import "package:intl/intl.dart";
 
 class MoneyJournalMainPage extends StatelessWidget {
   const MoneyJournalMainPage({super.key});
@@ -19,6 +21,7 @@ class MoneyJournalMainPage extends StatelessWidget {
 
     // Get instance Fix
     final controller = UserController.instance;
+    final moneyJournalController = Get.put(MoneyJournalController());
 
     return Scaffold(
       backgroundColor: TColors.olive,
@@ -214,109 +217,108 @@ class MoneyJournalMainPage extends StatelessWidget {
                   ),
 
                   // Next Allowance Reset (Card)
-                  Container(
-                    height: 150, // Height of the rectangle card
-                    margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      color: TColors.teal,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 10,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        children: [
-                          // Left side text elements
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Title Text
-                                Text(
-                                  'Next Allowance Reset!',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                  Obx(() {
+                    moneyJournalController.calculateDaysUntilReset(); // Update the countdown dynamically
+
+                    return Container(
+                      height: 150, // Height of the rectangle card
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        color: TColors.teal,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Stack(
+                          children: [
+                            // Left side text elements
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Title Text
+                                  Text(
+                                    'Next Allowance Reset!',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 3),
-                                // Allowance Reset Date (label)
-                                Text(
-                                  '1 November 2024',
-                                  style: TextStyle(
-                                    color: TColors.cream,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                  SizedBox(height: 3),
+                                  // Allowance Reset Date (label)
+                                  Text(
+                                    '1 ${moneyJournalController.nextResetMonth.value} ${DateTime.now().year}',
+                                    style: TextStyle(
+                                      color: TColors.cream,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 15),
-                                // Monthly Allowance (label)
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: TColors.bubbleGreen.withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Obx(
-                                    () => Text(
-                                      'RM' +
-                                          controller.user.value.monthlyAllowance,
+                                  SizedBox(height: 15),
+                                  // Monthly Allowance (label)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: TColors.bubbleGreen.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Obx(() => Text(
+                                      'RM${controller.user.value.monthlyAllowance}',
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                       ),
+                                    )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Days Counter (label) - Positioned at the bottom right
+                            Positioned(
+                              bottom: -10.0,
+                              right: 0,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 30.0), // Adjust position
+                                    child: Text(
+                                      'days',
+                                      style: TextStyle(
+                                        color: TColors.cream,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Days Counter (label) - Positioned at the bottom right
-                          Positioned(
-                            bottom: -10.0,
-                            right: 0,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 30.0), // Adjust position
-                                  child: Text(
-                                    'days',
+                                  Obx(() => Text(
+                                    '${moneyJournalController.daysUntilReset.value}',
                                     style: TextStyle(
-                                      color: TColors.cream,
-                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontSize: 60,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                ),
-                                Text(
-                                  '30',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 60,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                                  )),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
