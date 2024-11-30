@@ -600,8 +600,29 @@ class HomePageScreen extends StatelessWidget {
                                                   ),
                                                   child: TextButton(
                                                     onPressed: () {
-                                                      // Placeholder for the functionality when adding to the journal
-                                                      // You can handle the functionality in this onPressed callback
+                                                      final journalItem =
+                                                          JournalItem('',
+                                                              id: item.id,
+                                                              name:
+                                                                  item.itemName,
+                                                              price: item
+                                                                  .itemPrice,
+                                                              calories: item
+                                                                  .itemCalories,
+                                                              cafe: item
+                                                                  .itemCafe);
+
+                                                      String userId =
+                                                          FoodJournalController
+                                                              .instance
+                                                              .getCurrentUserId();
+
+                                                      foodJController
+                                                          .addFoodToJournal(
+                                                              userId,
+                                                              journalItem);
+                                                      Navigator.of(context)
+                                                          .pop();
                                                       print(
                                                           'Add to journal pressed');
                                                     },
@@ -884,101 +905,121 @@ class HomePageScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: advertController.allAdvertisements
+                              .where((advertisement) {
+                                // Filter logic: check if today is within the range of startDate and endDate
+                                DateTime today = DateTime.now();
+                                DateTime? startDate = advertisement.startDate;
+                                DateTime? endDate = advertisement.endDate;
+
+                                // If both dates are not null, check the range
+                                if (startDate != null && endDate != null) {
+                                  return today.isAfter(startDate) &&
+                                          today.isBefore(endDate) ||
+                                      today.isAtSameMomentAs(startDate) ||
+                                      today.isAtSameMomentAs(endDate);
+                                }
+                                // If either date is null, exclude the advertisement
+                                return false;
+                              })
+                              .toList()
                               .asMap()
                               .entries
                               .map((entry) {
-                            int index = entry.key; // Get the index
-                            Advertisement advertisement =
-                                entry.value; // Get the advertisement
+                                int index = entry.key; // Get the index
+                                Advertisement advertisement =
+                                    entry.value; // Get the advertisement
 
-                            // Format the DateTime to a string (you can customize the format)
-                            String formattedStartDate = advertisement
-                                        .startDate !=
-                                    null
-                                ? "${advertisement.startDate!.day}-${advertisement.startDate!.month}-${advertisement.startDate!.year}"
-                                : "No Start Date"; // Handle null case
-                            String formattedEndDate = advertisement.endDate !=
-                                    null
-                                ? "${advertisement.endDate!.day}-${advertisement.endDate!.month}-${advertisement.endDate!.year}"
-                                : "No End Date"; // Handle null case
+                                // Format the DateTime to a string (you can customize the format)
+                                String formattedStartDate = advertisement
+                                            .startDate !=
+                                        null
+                                    ? "${advertisement.startDate!.day}-${advertisement.startDate!.month}-${advertisement.startDate!.year}"
+                                    : "No Start Date"; // Handle null case
+                                String formattedEndDate = advertisement
+                                            .endDate !=
+                                        null
+                                    ? "${advertisement.endDate!.day}-${advertisement.endDate!.month}-${advertisement.endDate!.year}"
+                                    : "No End Date"; // Handle null case
 
-                            return Container(
-                              width: 300,
-                              height: 170,
-                              margin: const EdgeInsets.only(
-                                left: 20,
-                                right: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: index.isEven
-                                    ? TColors.tangerine
-                                    : TColors.cobalt,
-                                borderRadius: BorderRadius.circular(
-                                    20), // Increased border radius for a softer look
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(
-                                    20.0), // Added padding for better content spacing
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            advertisement.detail,
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize:
-                                                  20, // Adjusted font size
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            '${advertisement.cafeName} (${advertisement.location})',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                                  18, // Adjusted font size
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(height: 15),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 2,
-                                              horizontal: 8,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: index.isEven
-                                                  ? TColors.bubbleOrange
-                                                  : TColors.bubbleBlue
-                                                      .withOpacity(0.8),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Text(
-                                              '${formattedStartDate} until ${formattedEndDate}',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
+                                return Container(
+                                  width: 300,
+                                  height: 170,
+                                  margin: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: index.isEven
+                                        ? TColors.tangerine
+                                        : TColors.cobalt,
+                                    borderRadius: BorderRadius.circular(
+                                        20), // Increased border radius for a softer look
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(
+                                        20.0), // Added padding for better content spacing
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                advertisement.detail,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize:
+                                                      20, // Adjusted font size
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                '${advertisement.cafeName} (${advertisement.location})',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      18, // Adjusted font size
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 15),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 2,
+                                                  horizontal: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: index.isEven
+                                                      ? TColors.bubbleOrange
+                                                      : TColors.bubbleBlue
+                                                          .withOpacity(0.8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Text(
+                                                  '${formattedStartDate} until ${formattedEndDate}',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(), // Convert Iterable to List
+                                  ),
+                                );
+                              })
+                              .toList(), // Convert Iterable to List
                         ),
                       ),
                     ),

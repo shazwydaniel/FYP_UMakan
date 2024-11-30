@@ -41,7 +41,7 @@ class VendorNavigationMenu extends StatelessWidget {
                 icon: Icon(Iconsax.add, color: TColors.cream), label: 'Items'),
             NavigationDestination(
                 icon: Icon(Iconsax.star, color: TColors.cream),
-                label: 'Review'),
+                label: 'Advertisment'),
             NavigationDestination(
                 icon: Icon(Iconsax.user, color: TColors.cream),
                 label: 'Profile'),

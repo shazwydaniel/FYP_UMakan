@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
-import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/features/vendor/screens/advertisement/vendor_add_adverts.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
-import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/add_menu_category.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/add_menu_item.dart';
+import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/edit_menu_item.dart';
+
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 
@@ -43,30 +43,33 @@ class _VendorMenuState extends State<VendorMenu> {
             // Display all the menu items in a ListView
             Expanded(
               child: Obx(() {
-                // Observe the cafes list and update the UI accordingly
                 if (controller.items.isEmpty) {
-                  return Center(child: Text('No item available.'));
+                  return const Center(child: Text('No item available.'));
                 } else {
                   return ListView.builder(
                     itemCount: controller.items.length,
                     itemBuilder: (context, index) {
                       final item = controller.items[index];
 
-                      // Wrap the ListTile with Dismissible to enable swipe to delete
-                      return Dismissible(
-                        key: Key(item.id), // Unique key for each item
-                        direction: DismissDirection
-                            .endToStart, // Allow swipe from right to left
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          color: Colors.red,
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ),
-                        ),
-
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditMenuItemPage(
+                                menuItem: item,
+                                cafeId: widget.cafeId,
+                              ),
+                            ),
+                          ).then((result) {
+                            if (result == true) {
+                              // Refresh the list after editing
+                              controller.fetchItemsForCafe(
+                                  VendorController.instance.getCurrentUserId(),
+                                  widget.cafeId);
+                            }
+                          });
+                        },
                         child: Container(
                           width: MediaQuery.of(context).size.width *
                               0.9, // Set a fixed width
@@ -94,7 +97,7 @@ class _VendorMenuState extends State<VendorMenu> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    item.itemCalories.toString(),
+                                    '${item.itemCalories} kcal',
                                     style: const TextStyle(
                                       fontSize: 12,
                                     ),
@@ -144,7 +147,7 @@ class _VendorMenuState extends State<VendorMenu> {
               ),
             ),
 
-            // Add Category button
+            // Add Advertisement button
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               margin: const EdgeInsets.only(bottom: 40),

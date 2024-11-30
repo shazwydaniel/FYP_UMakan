@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
+import 'package:fyp_umakan/utils/helpers/network_manager.dart';
+import 'package:fyp_umakan/vendor_navigation_menu.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AdvertController extends GetxController {
   static AdvertController get instance => Get.find();
@@ -12,6 +16,14 @@ class AdvertController extends GetxController {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
 
+  //For Updating
+  final detailUpdateController = TextEditingController();
+  final startDateUpdateController = TextEditingController();
+  final endDateUpdateController = TextEditingController();
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  GlobalKey<FormState> updateForm = GlobalKey<FormState>();
+
+  //For the form
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
   Rx<Advertisement> advertisment = Advertisement.empty().obs;
   final vendorRepository = VendorRepository.instance;
@@ -19,7 +31,12 @@ class AdvertController extends GetxController {
 
   var allAdvertisements = <Advertisement>[].obs;
 
-  //Get Cafe from Id
+  //init user data when Home Screen Appears
+  @override
+  void onInit() {
+    super.onInit();
+    initalizeNames();
+  }
 
   // Add method to handle adding menu items
   Future<void> addAdvert(String vendorId, String cafeId) async {
@@ -46,6 +63,7 @@ class AdvertController extends GetxController {
         // Create a map for the menu item data
         Map<String, dynamic> adData = {
           'cafeName': cafeName,
+          'cafeId': cafeId,
           'location': cafeLocation,
           'detail': adDetail.text.trim(),
           'startDate': startDate.toIso8601String(),
@@ -106,5 +124,102 @@ class AdvertController extends GetxController {
         "Total cafes fetched from all vendors: ${allAds.length}"); // Debug log
     allAdvertisements
         .assignAll(allAds); // Update observable list with all cafes
+  }
+
+  //Fetch User Record
+  Future<void> initalizeNames() async {
+    if (advertisment.value != null) {
+      detailUpdateController.text = advertisment.value.detail ?? '';
+      startDateUpdateController.text = advertisment.value.startDate != null
+          ? dateFormat.format(advertisment.value.startDate!)
+          : '';
+      endDateUpdateController.text = advertisment.value.endDate != null
+          ? dateFormat.format(advertisment.value.endDate!)
+          : '';
+    } else {
+      detailUpdateController.clear();
+      startDateUpdateController.clear();
+      endDateUpdateController.clear();
+    }
+  }
+
+  Future<void> updateAds(String vendorId, String cafeId, String adId) async {
+    try {
+      // Check internet connection
+      final isConnected = await NetworkManager.instance.isConnected();
+      if (!isConnected) {
+        TLoaders.errorSnackBar(
+            title: 'No Internet',
+            message: 'Please check your internet connection.');
+        return;
+      }
+
+      // Form Validation
+      if (!updateForm.currentState!.validate()) {
+        TLoaders.errorSnackBar(
+            title: 'Invalid Input',
+            message: 'Please fill all the required fields correctly.');
+        return;
+      }
+
+      // Debug: Log the data being sent to Firestore
+      print('Updating ad with data:');
+      print('Vendor ID: $vendorId');
+      print('Cafe ID: $cafeId');
+      print('Ad ID: $adId');
+      print('Detail: ${detailUpdateController.text.trim()}');
+      print('Start Date: ${startDateUpdateController.text.trim()}');
+      print('End Date: ${endDateUpdateController.text.trim()}');
+
+      // Update data in Firebase Firestore
+      Map<String, dynamic> detailUpdated = {
+        'detail': detailUpdateController.text.trim()
+      };
+      Map<String, dynamic> startDateUpdated = {
+        'startDate': startDateUpdateController.text.trim()
+      };
+      Map<String, dynamic> endDateUpdated = {
+        'endDate': endDateUpdateController.text.trim()
+      };
+
+      // Use methods in User Repository to transfer to Firebase
+      await vendorRepository.updateSingleFieldAdvert(
+          detailUpdated, vendorId, cafeId, adId);
+      await vendorRepository.updateSingleFieldAdvert(
+          startDateUpdated, vendorId, cafeId, adId);
+      await vendorRepository.updateSingleFieldAdvert(
+          endDateUpdated, vendorId, cafeId, adId);
+
+      // Update Rx value safely
+      advertisment.value.detail = detailUpdateController.text.trim();
+      advertisment.value.startDate =
+          DateTime.tryParse(startDateUpdateController.text.trim());
+      advertisment.value.endDate =
+          DateTime.tryParse(endDateUpdateController.text.trim());
+
+      // Show success Message
+      TLoaders.successSnackBar(
+          title: 'Congratulations',
+          message: "Your advertisement has been updated!");
+
+      Get.off(() => const VendorNavigationMenu());
+    } catch (e) {
+      // Log the error for debugging
+      debugPrint("Error update: $e");
+      TLoaders.errorSnackBar(title: 'Oops!', message: e.toString());
+    }
+  }
+
+  Future<void> deleteAd(String vendorId, String cafeId, String adId) async {
+    try {
+      await vendorRepository.deleteAd(vendorId, cafeId, adId);
+      allAdvertisements.removeWhere((ad) => ad.id == adId); // Update local list
+      TLoaders.successSnackBar(
+        title: 'Deleted',
+        message: 'Advertisement has been deleted successfully!',
+      );
+    } catch (e) {
+      TLoaders.errorSnackBar(title: 'Error', message: e.toString());
+    }
   }
 }

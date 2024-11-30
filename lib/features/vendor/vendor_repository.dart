@@ -334,7 +334,6 @@ class VendorRepository {
           .collection('Cafe')
           .doc(cafeId)
           .delete();
-      // Optionally handle any additional logic, like updating state
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code);
@@ -580,6 +579,60 @@ class VendorRepository {
     } catch (e) {
       print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Update Any Field in Specific Users Collection ------------------------------------
+  Future<void> updateSingleFieldAdvert(Map<String, dynamic> json,
+      String vendorId, String cafeId, String adId) async {
+    try {
+      await _db
+          .collection("Vendors")
+          .doc(vendorId)
+          .collection("Cafe")
+          .doc(cafeId)
+          .collection("Advertisements")
+          .doc(adId)
+          .update(json);
+      print("Advertisement updated successfully!");
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      print("Error updating: $e");
+      throw Exception('Failed to update advertisements: $e');
+    }
+  }
+
+  Future<void> deleteAd(String vendorId, String cafeId, String adId) async {
+    try {
+      await _db
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection("Advertisements")
+          .doc(adId)
+          .delete();
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      throw Exception('Failed to delete ad: $e');
     }
   }
 }
