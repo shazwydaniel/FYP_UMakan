@@ -31,5 +31,12 @@ class TColors{
   static const Color bubbleBlue = Color(0xFF85ABE4);
   static const Color bubbleOrange = Color(0xFFD48F44);
 
+  // New Colours
+  static const Color blush = Color(0xFFE48CA6);
+  static const Color vermillion = Color(0xFFD74009);
+  static const Color stark_blue = Color(0xFF0365B1);
+  static const Color forest = Color(0xFF208251);
+
+
 
 }

@@ -1,9 +1,12 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/styles/spacing_styles.dart';
 import 'package:fyp_umakan/features/authentication/controllers/login/login_controller.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/password_config/forget_password.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
+import 'package:fyp_umakan/features/vendor/screens/vendor_register.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
@@ -146,11 +149,12 @@ class LoginScreen extends StatelessWidget {
 
                             // Create Account Button
                             SizedBox(
-                                width: double.infinity,
-                                child: OutlinedButton(
-                                    onPressed: () =>
-                                        Get.to(() => const RegisterScreen()),
-                                    child: const Text(TTexts.createAccount))),
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () => _showAccountTypeModal(context),
+                                child: const Text(TTexts.createAccount),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -214,4 +218,118 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ))));
   }
+
+void _showAccountTypeModal(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: Container(
+          height: 300,
+          width: 400,
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: TColors.cream,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Close Button
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.black, size: 24),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              // Title
+              Text(
+                'Select Account Type',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 30),
+              // Student Button
+              Container(
+                width: double.infinity,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: TColors.blush,
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Get.to(() => const RegisterScreen()); // Navigate to RegisterScreen
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Iconsax.emoji_happy, color: Colors.black, size: 20),
+                      SizedBox(width: 10),
+                      Text(
+                        'Student',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+              // Vendor Button
+              Container(
+                width: double.infinity,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: TColors.forest,
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Get.to(() => VendorRegisterPage()); // Navigate to VendorRegisterPage
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Iconsax.shop, color: Colors.black, size: 20),
+                      SizedBox(width: 10),
+                      Text(
+                        'Vendor',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 }
