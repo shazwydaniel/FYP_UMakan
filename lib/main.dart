@@ -6,6 +6,7 @@ import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
+import 'package:fyp_umakan/utils/scripts/add_authority_account.dart';
 import 'package:fyp_umakan/utils/scripts/add_community_news_sample_data.dart';
 import 'package:fyp_umakan/utils/scripts/add_sample_data.dart';
 import 'package:fyp_umakan/utils/theme/theme.dart';
@@ -43,6 +44,7 @@ Future<void> main() async {
 
   // addSampleOrganisations();
   // addSampleCommunityNews();
+  // addAuthorityAccount();
 
   // Await Splash Until Other Items Load
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
