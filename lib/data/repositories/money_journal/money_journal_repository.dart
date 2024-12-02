@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 
 class MoneyJournalRepository {
   static MoneyJournalRepository get instance => MoneyJournalRepository();
@@ -9,7 +8,7 @@ class MoneyJournalRepository {
   // Initialize the money journal for a user
   Future<void> initializeUserJournal(String userId) async {
     try {
-      final docRef = _db.collection('money_journal').doc(userId);
+      final docRef = _db.collection('Users').doc(userId).collection('money_journal').doc('meta');
       await docRef.set({'initialized': true}, SetOptions(merge: true)); // Ensure the document is created
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
@@ -23,14 +22,11 @@ class MoneyJournalRepository {
   // Add New Expense to Money Journal
   Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
-      final docRef = _db
-          .collection('money_journal')
+      final docRef = FirebaseFirestore.instance
+          .collection('Users')
           .doc(userId)
-          .collection('expenses')
-          .doc();
-
-      // Print the expense data being added
-      print('Adding expense: $expenseData');
+          .collection('money_journal')
+          .doc(); // Adds expense directly under 'money_journal'
 
       await docRef.set({
         'expense_ID': docRef.id,
@@ -38,32 +34,32 @@ class MoneyJournalRepository {
         ...expenseData,
         'createdAt': FieldValue.serverTimestamp(),
       });
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw 'Failed to add expense: ${e.message}';
     } catch (e) {
-      print('Unknown error: $e');
-      throw 'Something went wrong. Please try again';
+      print('Error adding expense: $e');
     }
   }
 
   // Get All Expenses For a Specific User
   Future<List<Map<String, dynamic>>> getExpenses(String userId) async {
     try {
-      final snapshot = await _db
-          .collection('money_journal')
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Users')
           .doc(userId)
-          .collection('expenses')
+          .collection('money_journal') // Directly fetch expenses
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => doc.data()).toList();
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw 'Failed to retrieve expenses: ${e.message}';
+      // Filter out the 'meta' document by its ID
+      return snapshot.docs
+          .where((doc) => doc.id != 'meta') // Exclude meta document
+          .map((doc) => {
+                'expense_ID': doc.id,
+                ...doc.data(),
+              })
+          .toList();
     } catch (e) {
-      print('Unknown error: $e');
-      throw 'Something went wrong. Please try again';
+      print('Error fetching expenses: $e');
+      return [];
     }
   }
 
@@ -71,8 +67,10 @@ class MoneyJournalRepository {
   Future<void> updateExpense(String userId, String expenseId, Map<String, dynamic> updatedData) async {
     try {
       await _db
-          .collection('money_journal')
+          .collection('Users')
           .doc(userId)
+          .collection('money_journal')
+          .doc()
           .collection('expenses')
           .doc(expenseId)
           .update(updatedData);
@@ -88,18 +86,15 @@ class MoneyJournalRepository {
   // Remove a Specific Expense
   Future<void> removeExpense(String userId, String expenseId) async {
     try {
-      await _db
-          .collection('money_journal')
+      await FirebaseFirestore.instance
+          .collection('Users')
           .doc(userId)
-          .collection('expenses')
-          .doc(expenseId)
+          .collection('money_journal') // Directly access the 'money_journal' subcollection
+          .doc(expenseId) // Reference the specific expense document
           .delete();
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw 'Failed to delete expense: ${e.message}';
     } catch (e) {
-      print('Unknown error: $e');
-      throw 'Something went wrong. Please try again';
+      print('Error removing expense: $e');
+      throw 'Failed to remove expense: $e';
     }
   }
 
@@ -108,7 +103,6 @@ class MoneyJournalRepository {
     try {
       final userDoc = _db.collection('Users').doc(userId);
 
-      // Use a transaction to safely increment the actual food allowance
       await _db.runTransaction((transaction) async {
         final snapshot = await transaction.get(userDoc);
 

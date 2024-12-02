@@ -9,6 +9,7 @@ class MoneyJournalController extends GetxController {
   var daysUntilReset = 0.obs; // Observable for countdown
   var nextResetMonth = ''.obs; // Observable for the next reset month
 
+  // Load expenses for a specific user
   Future<void> loadExpenses(String userId) async {
     try {
       final expenseData = await _moneyJournalRepo.getExpenses(userId);
@@ -18,6 +19,7 @@ class MoneyJournalController extends GetxController {
     }
   }
 
+  // Calculate the number of days until the next allowance reset
   void calculateDaysUntilReset() {
     final now = DateTime.now();
     final nextMonth = now.month == 12
@@ -31,5 +33,14 @@ class MoneyJournalController extends GetxController {
     // Update next reset month name
     nextResetMonth.value = DateFormat.MMMM().format(nextMonth);
   }
-  
+
+  // Initialize the money journal for a user (optional use case)
+  Future<void> initializeMoneyJournal(String userId) async {
+    try {
+      await _moneyJournalRepo.initializeUserJournal(userId);
+      print('Money journal initialized for user: $userId');
+    } catch (e) {
+      print('Error initializing money journal: $e');
+    }
+  }
 }

@@ -3,7 +3,6 @@ import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
-import 'package:fyp_umakan/features/moneyjournal/screens/money_journal_main_page.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -63,12 +62,10 @@ class UserController extends GetxController {
       await moneyJournalRepository.initializeUserJournal(userId);
     } catch (e) {
       print('Error initializing user journal: $e');
-      // Handle any specific error handling you need here
     }
   }
 
-  Future<void> addExpense(String userId, String expenseType,
-      Map<String, dynamic> expenseData) async {
+  Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
       // Add the expense
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
@@ -79,8 +76,7 @@ class UserController extends GetxController {
       // Update the user model
       user.update((user) {
         if (user != null) {
-          user.additionalExpense = (user.additionalExpense ?? 0.0) +
-              price; // Ensure it retains previous value
+          user.additionalExpense = (user.additionalExpense ?? 0.0) + price;
           print('Price: $price');
           print('Updated additionalExpense: ${user.additionalExpense}');
         }
@@ -92,15 +88,17 @@ class UserController extends GetxController {
       // Save the updated user data back to Firestore
       await userRepository.updateUserDetails(user.value);
     } catch (e) {
-      // Handle error
       print('Error adding expense: $e');
     }
   }
 
   Future<void> removeExpense(String expenseId) async {
     final userId = currentUserId;
-    await moneyJournalRepository.removeExpense(userId, expenseId);
-    // await refreshExpenses(); // Assuming you have a method to refresh the expense list after deletion
+    try {
+      await moneyJournalRepository.removeExpense(userId, expenseId);
+    } catch (e) {
+      print('Error removing expense: $e');
+    }
   }
 
   // Method to Get Expenses
@@ -270,7 +268,7 @@ class UserController extends GetxController {
     try {
       await userRepository.updateUserDetails(user.value);
     } catch (e) {
-      // Handle error
+      print('Error saving user details: $e');
     }
   }
 }
