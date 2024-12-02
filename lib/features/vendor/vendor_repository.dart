@@ -635,4 +635,31 @@ class VendorRepository {
       throw Exception('Failed to delete ad: $e');
     }
   }
+
+  // Update Any Field in Specific Users Collection ------------------------------------
+  Future<void> updateSingleFieldCafe(
+      Map<String, dynamic> json, String vendorId, String cafeId) async {
+    try {
+      await _db
+          .collection("Vendors")
+          .doc(vendorId)
+          .collection("Cafe")
+          .doc(cafeId)
+          .update(json);
+      print("Cafe Details updated successfully!");
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      print("Error updating: $e");
+      throw Exception('Failed to update cafe: $e');
+    }
+  }
 }

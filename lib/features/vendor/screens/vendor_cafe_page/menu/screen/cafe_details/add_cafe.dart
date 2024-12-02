@@ -15,6 +15,23 @@ class AddCafe extends StatelessWidget {
     // Clear the form fields when the AddCafe page is opened
     controller.cafeName.clear();
     controller.cafeLocation.clear();
+    controller.openingTime.clear();
+    controller.closingTime.clear();
+
+    // Function to show a time picker
+    Future<void> _selectTime(
+        BuildContext context, TextEditingController timeController) async {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        // Format time as HH:mm
+        timeController.text =
+            pickedTime.format(context); // Localized time format
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -36,13 +53,12 @@ class AddCafe extends StatelessWidget {
                   controller: controller.cafeName,
                   validator: (value) =>
                       TValidator.validateEmptyText('Cafe Name', value),
-                  expands: false,
                   decoration: const InputDecoration(
                     labelStyle: TextStyle(color: Colors.white),
                     floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Cafe Name',
                     prefixIcon: Icon(
-                      Iconsax.user,
+                      Iconsax.home,
                       color: Colors.white,
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -63,13 +79,12 @@ class AddCafe extends StatelessWidget {
                   controller: controller.cafeLocation,
                   validator: (value) =>
                       TValidator.validateEmptyText('Cafe Location', value),
-                  expands: false,
                   decoration: const InputDecoration(
                     labelStyle: TextStyle(color: Colors.white),
                     floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Cafe Location',
                     prefixIcon: Icon(
-                      Iconsax.user,
+                      Iconsax.location,
                       color: Colors.white,
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -83,7 +98,64 @@ class AddCafe extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
+
+                // Opening Time Field
+                TextFormField(
+                  style: TextStyle(color: Colors.white),
+                  controller: controller.openingTime,
+                  readOnly: true, // Prevent manual input
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
+                    labelText: 'Opening Time',
+                    prefixIcon: Icon(
+                      Iconsax.clock,
+                      color: Colors.white,
+                    ),
+                    suffixIcon: Icon(Icons.calendar_today),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color:
+                              Colors.white), // Underline color when not focused
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.white), // Underline color when focused
+                    ),
+                  ),
+                  onTap: () => _selectTime(context, controller.openingTime),
+                ),
+                const SizedBox(height: 16),
+
+                // Closing Time Field
+                TextFormField(
+                  style: TextStyle(color: Colors.white),
+                  controller: controller.closingTime,
+                  readOnly: true, // Prevent manual input
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
+                    labelText: 'Closing Time',
+                    prefixIcon: Icon(
+                      Iconsax.clock,
+                      color: Colors.white,
+                    ),
+                    suffixIcon: Icon(Icons.calendar_today),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color:
+                              Colors.white), // Underline color when not focused
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.white), // Underline color when focused
+                    ),
+                  ),
+                  onTap: () => _selectTime(context, controller.closingTime),
+                ),
                 const SizedBox(height: 20),
+
                 // Save Button
                 SizedBox(
                   width: double.infinity,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
-import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/add_cafe.dart';
+import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/cafe_details/add_cafe.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/vendor_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
@@ -111,22 +111,36 @@ class VendorsHome extends StatelessWidget {
                             color: TColors.textLight,
                           ),
                         ),
-                        subtitle: Text(
-                          cafe.location,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: TColors.textLight,
-                          ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cafe.location,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: TColors.textLight,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${cafe.openingTime} - ${cafe.closingTime}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: TColors.textLight,
+                              ),
+                            ),
+                          ],
                         ),
                         trailing: Icon(
                           Icons.chevron_right,
                           color: TColors.textLight,
                         ),
+                        isThreeLine: true, // Enables a three-line layout
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => VendorMenu(cafeId: cafe.id),
+                              builder: (context) => VendorMenu(cafe: cafe),
                             ),
                           );
                         },

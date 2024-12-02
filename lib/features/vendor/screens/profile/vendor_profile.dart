@@ -294,69 +294,6 @@ class VendorProfilePageScreen extends StatelessWidget {
               ),
             ),
 
-            // Financial Details (Label)
-            Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 4,
-                    height: 40,
-                    color: TColors.cobalt,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Financial Details',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Financial Details (Card)
-            Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                color: TColors.cream,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Business Revenue",
-                        style: TextStyle(
-                          color: dark ? Colors.black : Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      /*Obx(
-                        () => Text(
-                          "RM10",
-                          style: TextStyle(
-                            color: TColors.darkGreen,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),*/
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
             // Logout button
             Padding(
               padding: const EdgeInsets.only(top: 40, bottom: 20),

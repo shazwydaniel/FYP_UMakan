@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
-import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/add_cafe.dart';
+import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/screen/cafe_details/add_cafe.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/vendor_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
@@ -89,7 +89,7 @@ class VendorCafePage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => VendorMenu(
-                                      cafeId: cafe.id), // Pass cafeId here
+                                      cafe: cafe), // Pass cafeId here
                                 ),
                               );
                             },

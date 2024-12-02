@@ -20,6 +20,7 @@ class VendorController extends GetxController {
 
   Rx<Vendor> vendor = Vendor.empty().obs;
   Rx<CafeDetails> cafe = CafeDetails.empty().obs;
+
   final cafes = <CafeDetails>[].obs; // Observable list of cafes
 
   //String get currentVendorId => vendor.value.id;
@@ -30,10 +31,19 @@ class VendorController extends GetxController {
   final vendorName = TextEditingController();
   final contactInfo = TextEditingController();
 
-  //Variable for Cafe
+  //Variable for Add Cafe
   final cafeName = TextEditingController();
   final cafeLogo = TextEditingController();
   final cafeLocation = TextEditingController();
+  final openingTime = TextEditingController();
+  final closingTime = TextEditingController();
+
+  //Variable for Update Cafe
+  final cafeNameUpdate = TextEditingController();
+  final cafeLogoUpdate = TextEditingController();
+  final cafeLocationUpdate = TextEditingController();
+  final openingTimeUpdate = TextEditingController();
+  final closingTimeUpdate = TextEditingController();
 
   //Variables for Menu Item
   final itemName = TextEditingController();
@@ -43,9 +53,13 @@ class VendorController extends GetxController {
   final itemLocation = TextEditingController();
   final role = 'Vendors';
 
+  //To add
   GlobalKey<FormState> vendorFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> cafeFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> itemFormKey = GlobalKey<FormState>();
+
+  //To update
+  GlobalKey<FormState> updateCafeKey = GlobalKey<FormState>();
 
   final profileLoading = false.obs;
   // Store userId after login
@@ -57,6 +71,9 @@ class VendorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    initalizeNames();
+    fetchCafesForVendor(currentUserId);
+    print(cafe.value.name);
     try {
       // Attempt to get the current user ID, if a user is signed in
       userId = getCurrentUserId();
@@ -149,6 +166,14 @@ class VendorController extends GetxController {
     }
   }
 
+  //Fetch User Record
+  Future<void> initalizeNames() async {
+    cafeNameUpdate.text = cafe.value.name;
+    cafeLocationUpdate.text = cafe.value.location;
+    openingTimeUpdate.text = cafe.value.openingTime;
+    closingTimeUpdate.text = cafe.value.closingTime;
+  }
+
   //Add Cafe
   Future<void> addCafe(String vendorId) async {
     try {
@@ -156,6 +181,8 @@ class VendorController extends GetxController {
       Map<String, dynamic> cafeData = {
         'cafeName': cafeName.text.trim(),
         'cafeLocation': cafeLocation.text.trim(),
+        'openingTime': openingTime.text.trim(),
+        'closingTime': closingTime.text.trim(),
       };
 
       // Add the cafe details to Firestore
@@ -166,6 +193,8 @@ class VendorController extends GetxController {
         if (cafe != null) {
           cafe.name = cafeName.text.trim();
           cafe.location = cafeLocation.text.trim();
+          cafe.openingTime = openingTime.text.trim();
+          cafe.closingTime = closingTime.text.trim();
         }
       });
 
@@ -180,21 +209,17 @@ class VendorController extends GetxController {
   // Fetch
   Future<void> fetchCafesForVendor(String vendorId) async {
     try {
-      // Fetch list of cafes from the repository
       final cafeList = await vendorRepository.getCafesForVendor(vendorId);
-
-      // Check if cafes were found
       if (cafeList.isNotEmpty) {
-        // Assign the fetched cafes to the observable list
         cafes.assignAll(cafeList);
         print("Cafes fetched: ${cafes.length}");
       } else {
         print('No cafes found for vendor');
-        cafes.clear(); // Optionally clear if no cafes are found
+        cafes.clear();
       }
     } catch (e) {
       print('Error fetching cafes: $e');
-      cafes.clear(); // Handle error by clearing the list
+      cafes.clear();
     }
   }
 
@@ -206,6 +231,73 @@ class VendorController extends GetxController {
     } catch (e) {
       // Handle error, maybe show a snackbar or dialog
       Get.snackbar('Error', 'Could not delete cafe: $e');
+    }
+  }
+
+  Future<void> updateCafeDetails(String vendorId, String cafeId) async {
+    try {
+      // Check internet connection
+      final isConnected = await NetworkManager.instance.isConnected();
+      if (!isConnected) {
+        TLoaders.errorSnackBar(
+            title: 'No Internet',
+            message: 'Please check your internet connection.');
+        return;
+      }
+
+      // Form Validation
+      if (!updateCafeKey.currentState!.validate()) {
+        TLoaders.errorSnackBar(
+            title: 'Invalid Input',
+            message: 'Please fill all the required fields correctly.');
+        return;
+      }
+
+      // Debug: Log the data being sent to Firestore
+      print('Updating Cafe with data:');
+      print('name: ${cafeNameUpdate.text}');
+      print('location: ${cafeLocationUpdate.text}');
+      print('opening: ${openingTimeUpdate.text}');
+      print('closing: ${closingTimeUpdate.text}');
+
+      // Update data in Firebase Firestore
+      Map<String, dynamic> updateCafeName = {
+        'cafeName': cafeNameUpdate.text.trim()
+      };
+      Map<String, dynamic> updateCafeLocation = {
+        'cafeLocation': cafeLocationUpdate.text.trim()
+      };
+      Map<String, dynamic> updateClosingTime = {
+        'closingTime': closingTimeUpdate.text.trim()
+      };
+      Map<String, dynamic> updateOpeningTime = {
+        'openingTime': openingTimeUpdate.text.trim()
+      };
+
+      // Use methods in User Repository to transfer to Firebase
+      await vendorRepository.updateSingleFieldCafe(
+          updateCafeName, vendorId, cafeId);
+      await vendorRepository.updateSingleFieldCafe(
+          updateCafeLocation, vendorId, cafeId);
+      await vendorRepository.updateSingleFieldCafe(
+          updateClosingTime, vendorId, cafeId);
+      await vendorRepository.updateSingleFieldCafe(
+          updateOpeningTime, vendorId, cafeId);
+
+      cafe.value.name = cafeNameUpdate.text.trim();
+      cafe.value.location = cafeLocationUpdate.text.trim();
+      cafe.value.openingTime = openingTimeUpdate.text.trim();
+      cafe.value.closingTime = closingTimeUpdate.text.trim();
+
+      // Show success Message
+      TLoaders.successSnackBar(
+          title: 'Success!', message: "Your cafe details have been updated!");
+
+      Get.off(() => const VendorNavigationMenu());
+    } catch (e) {
+      // Log the error for debugging
+      debugPrint("Error update: $e");
+      TLoaders.errorSnackBar(title: 'Oops!', message: e.toString());
     }
   }
 }

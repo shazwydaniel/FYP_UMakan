@@ -6,16 +6,17 @@ class CafeDetails {
   String logo;
   String location;
   final String vendorId;
-  //final List<String> cafeReviews;
+  String openingTime;
+  String closingTime;
 
-  CafeDetails(
-      //this.cafeReviews,
-      {
+  CafeDetails({
     required this.id,
     required this.name,
     required this.logo,
     required this.location,
     required this.vendorId,
+    this.openingTime = '',
+    this.closingTime = '',
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +25,8 @@ class CafeDetails {
       'cafeLogo': logo,
       'cafeLocation': location,
       'vendorId': vendorId,
-      //'cafeReviews': cafeReviews,
+      'openingTime': openingTime,
+      'closingTime': closingTime,
     };
   }
 
@@ -35,6 +37,8 @@ class CafeDetails {
         logo: '',
         location: '',
         vendorId: '',
+        openingTime: '',
+        closingTime: '',
       );
 
   factory CafeDetails.fromMap(
@@ -45,6 +49,8 @@ class CafeDetails {
       logo: data['cafeLogo'] ?? '',
       location: data['cafeLocation'] ?? '',
       vendorId: vendorID,
+      openingTime: data['openingTime'] ?? '',
+      closingTime: data['closingTime'] ?? '',
     );
   }
   Map<String, dynamic> toJson() {
@@ -54,7 +60,8 @@ class CafeDetails {
       'Cafe Details': location,
       'Cafe Image': logo,
       'Vendor ID': vendorId,
-      // 'Cafe Reviews': cafeReviews,
+      'Opening Time': openingTime,
+      'Closing Time': closingTime,
     };
   }
 
@@ -69,6 +76,8 @@ class CafeDetails {
         logo: data['logoName'] ?? '',
         vendorId: data['vendorId'] ?? '',
         location: data['cafeLocation'] ?? '',
+        openingTime: data['openingTime'] ?? '',
+        closingTime: data['closingTime'] ?? '',
       );
     } else {
       return CafeDetails.empty();
