@@ -147,7 +147,7 @@ class UserModel {
       'Status': status,
       'Recommended Calorie Intake': recommendedCalorieIntake,
       'Recommended Money Allowance': recommendedMoneyAllowance,
-      'Actual Remaining Food Allowance': actualRemainingFoodAllowance,
+      'Food Money': actualRemainingFoodAllowance,
       'Additional Allowance': additionalAllowance,
       'Additional Expense': additionalExpense,
     };
