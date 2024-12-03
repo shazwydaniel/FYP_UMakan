@@ -270,7 +270,7 @@ class FoodJournalController extends GetxController {
     storeAverageCalories(index, averageCalories);
   }
 
-  // Step 2: Method to calculate daily calories for each meal type
+  //  Method to calculate daily calories for each meal type
   void updateDailyCalories() {
     DateTime today = DateTime.now();
     String todayKey = DateFormat('yyyy-MM-dd').format(today);

@@ -38,7 +38,7 @@ class HomePageScreen extends StatelessWidget {
     advertController.fetchAllAdvertisements();
 
     return Scaffold(
-      backgroundColor: dark ? TColors.darkGreen : TColors.cream,
+      backgroundColor: dark ? TColors.cream : TColors.cream,
       body:
           // RefreshIndicator(
           //   onRefresh: _refreshData,
@@ -451,10 +451,7 @@ class HomePageScreen extends StatelessWidget {
                     // Meal Recommendations Section (Scrollable)
                     Obx(() {
                       return FutureBuilder<List<CafeItem>>(
-                        future: recommendedController.getRecommendedList(
-                            foodJController.getStoredAverageCalories(
-                                recommendedController
-                                    .currentTimeFrameIndex.value)),
+                        future: recommendedController.getRecommendedList(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
