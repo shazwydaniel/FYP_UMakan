@@ -28,7 +28,7 @@ class VendorsHome extends StatelessWidget {
           ClipPath(
             clipper: TCustomCurvedEdges(),
             child: Container(
-              color: TColors.olive,
+              color: TColors.amber,
               height: 230,
               child: Stack(
                 children: [
@@ -98,7 +98,7 @@ class VendorsHome extends StatelessWidget {
                     return Card(
                       elevation: 5,
                       margin: const EdgeInsets.only(bottom: 16.0),
-                      color: TColors.olive,
+                      color: TColors.amber,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),

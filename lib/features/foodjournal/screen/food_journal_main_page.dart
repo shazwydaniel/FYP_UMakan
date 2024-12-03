@@ -725,14 +725,6 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                   ],
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  'Weekly Avg: $weeklyAverageCalories cal', // Weekly average calories
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 16,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
                               ],
                             ),
                           ),

@@ -25,6 +25,7 @@ class UserController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserRecord();
+    refreshUserData();
   }
 
   Future<void> refreshUserData() async {
@@ -70,7 +71,8 @@ class UserController extends GetxController {
     }
   }
 
-  Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
+  Future<void> addExpense(String userId, String expenseType,
+      Map<String, dynamic> expenseData) async {
     try {
       // Add the expense
       await moneyJournalRepository.addExpense(userId, expenseType, expenseData);
@@ -175,6 +177,25 @@ class UserController extends GetxController {
     });
   }
 
+  double calculateBMR() {
+    final weight = double.tryParse(user.value.weight) ?? 0.0;
+    final height = double.tryParse(user.value.height) ?? 0.0;
+    final age = user.value.age;
+    final gender = user.value.gender;
+
+    double bmr;
+
+    if (gender == 'Male') {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+    } else if (gender == 'Female') {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+    } else {
+      throw Exception("Invalid gender"); // Optional: Handle invalid gender
+    }
+
+    return bmr;
+  }
+
   // Calculate and update the recommendedCalorieIntake, recommendedMoneyAllowance, and actualRemainingFoodAllowance
   Future<void> updateCalculatedFields() async {
     final currentUser = user.value;
@@ -189,9 +210,12 @@ class UserController extends GetxController {
     double additionalAllowance = currentUser.additionalAllowance ?? 0.0;
     double additionalExpense = currentUser.additionalExpense ?? 0.0;
 
-    // Calculate Recommended Daily Calories Intake
+    /*Calculate Recommended Daily Calories Intake
     double recommendedCalorieIntake =
-        getDailyCaloriesIntake(currentUser.gender, currentUser.age);
+        getDailyCaloriesIntake(currentUser.gender, currentUser.age);*/
+
+    // Calculate Recommended Daily Calories Intake
+    double recommendedCalorieIntake = calculateBMR();
 
     // Calculate Recommended Monthly Budget Allocation for Food
     double recommendedMoneyAllowance =

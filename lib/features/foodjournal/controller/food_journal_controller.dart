@@ -270,25 +270,6 @@ class FoodJournalController extends GetxController {
     storeAverageCalories(index, averageCalories);
   }
 
-  double calculateBMR() {
-    final weight = double.tryParse(userController.user.value.weight) ?? 0.0;
-    final height = double.tryParse(userController.user.value.height) ?? 0.0;
-    final age = userController.user.value.age;
-    final gender = userController.user.value.gender;
-
-    double bmr;
-
-    if (gender == 'Male') {
-      bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-    } else if (gender == 'Female') {
-      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
-    } else {
-      throw Exception("Invalid gender"); // Optional: Handle invalid gender
-    }
-
-    return bmr;
-  }
-
   // Step 2: Method to calculate daily calories for each meal type
   void updateDailyCalories() {
     DateTime today = DateTime.now();
@@ -311,7 +292,6 @@ class FoodJournalController extends GetxController {
     return items.fold(0, (sum, item) => sum + (item.calories ?? 0));
   }
 
-  // Step 3: Calculate weekly averages for each meal type
   void calculateWeeklyAverages() {
     DateTime today = DateTime.now();
     int currentWeekday = today.weekday;
