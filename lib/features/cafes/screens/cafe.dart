@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/features/cafes/controller/cafe_controller.dart';
@@ -145,12 +148,23 @@ class CafePage extends StatelessWidget {
                                               cafe: cafe.name,
                                             );
 
-                                            String userId =
-                                                FoodJournalController.instance
-                                                    .getCurrentUserId();
+                                            String userId = FoodJournalController.instance.getCurrentUserId();
 
-                                            controller.addFoodToJournal(
-                                                userId, journalItem);
+                                            // Add the meal to the Food Journal
+                                            controller.addFoodToJournal(userId, journalItem);
+
+                                            // Prepare expense data for the Money Journal
+                                            final expenseData = {
+                                              'itemName': item.itemName,
+                                              'price': item.itemPrice,
+                                              'date': DateTime.now().toIso8601String(),
+                                              'type': 'Food', // Ensures it’s logged as a food expense
+                                            };
+
+                                            // Access UserController and add the expense
+                                            final userController = UserController.instance;
+                                            userController.addExpense(userId, 'Food', expenseData);
+
                                             Navigator.of(context).pop();
                                           },
                                           child: Text(
