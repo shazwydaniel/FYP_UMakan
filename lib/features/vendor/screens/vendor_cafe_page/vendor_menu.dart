@@ -33,7 +33,7 @@ class _VendorMenuState extends State<VendorMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(" Your Menu"), // Display the cafe name
+        title: Text(" ${widget.cafe.name}"), // Display the cafe name
         backgroundColor: TColors.olive,
         actions: [
           IconButton(

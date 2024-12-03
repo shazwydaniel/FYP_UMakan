@@ -136,9 +136,8 @@ class CafePage extends StatelessWidget {
                                         ),
                                         child: TextButton(
                                           onPressed: () {
-                                            // Add selected item to the food journal
                                             final journalItem = JournalItem(
-                                              '', // Image path or empty
+                                              '',
                                               id: item.id,
                                               name: item.itemName,
                                               price: item.itemPrice,
@@ -146,15 +145,13 @@ class CafePage extends StatelessWidget {
                                               cafe: cafe.name,
                                             );
 
-                                            // Assuming userId is available
                                             String userId =
                                                 FoodJournalController.instance
                                                     .getCurrentUserId();
 
                                             controller.addFoodToJournal(
                                                 userId, journalItem);
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
+                                            Navigator.of(context).pop();
                                           },
                                           child: Text(
                                             'ADD',

@@ -20,7 +20,6 @@ class VendorController extends GetxController {
 
   Rx<Vendor> vendor = Vendor.empty().obs;
   Rx<CafeDetails> cafe = CafeDetails.empty().obs;
-
   final cafes = <CafeDetails>[].obs; // Observable list of cafes
 
   //String get currentVendorId => vendor.value.id;
@@ -71,9 +70,6 @@ class VendorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    initalizeNames();
-    fetchCafesForVendor(currentUserId);
-    print(cafe.value.name);
     try {
       // Attempt to get the current user ID, if a user is signed in
       userId = getCurrentUserId();
@@ -166,14 +162,6 @@ class VendorController extends GetxController {
     }
   }
 
-  //Fetch User Record
-  Future<void> initalizeNames() async {
-    cafeNameUpdate.text = cafe.value.name;
-    cafeLocationUpdate.text = cafe.value.location;
-    openingTimeUpdate.text = cafe.value.openingTime;
-    closingTimeUpdate.text = cafe.value.closingTime;
-  }
-
   //Add Cafe
   Future<void> addCafe(String vendorId) async {
     try {
@@ -209,17 +197,21 @@ class VendorController extends GetxController {
   // Fetch
   Future<void> fetchCafesForVendor(String vendorId) async {
     try {
+      // Fetch list of cafes from the repository
       final cafeList = await vendorRepository.getCafesForVendor(vendorId);
+
+      // Check if cafes were found
       if (cafeList.isNotEmpty) {
+        // Assign the fetched cafes to the observable list
         cafes.assignAll(cafeList);
         print("Cafes fetched: ${cafes.length}");
       } else {
         print('No cafes found for vendor');
-        cafes.clear();
+        cafes.clear(); // Optionally clear if no cafes are found
       }
     } catch (e) {
       print('Error fetching cafes: $e');
-      cafes.clear();
+      cafes.clear(); // Handle error by clearing the list
     }
   }
 
@@ -254,11 +246,9 @@ class VendorController extends GetxController {
       }
 
       // Debug: Log the data being sent to Firestore
-      print('Updating Cafe with data:');
-      print('name: ${cafeNameUpdate.text}');
-      print('location: ${cafeLocationUpdate.text}');
-      print('opening: ${openingTimeUpdate.text}');
-      print('closing: ${closingTimeUpdate.text}');
+      print('Updating ad with data:');
+      print('Vendor ID: $vendorId');
+      print('Cafe ID: $cafeId');
 
       // Update data in Firebase Firestore
       Map<String, dynamic> updateCafeName = {
@@ -284,10 +274,11 @@ class VendorController extends GetxController {
       await vendorRepository.updateSingleFieldCafe(
           updateOpeningTime, vendorId, cafeId);
 
+      // Update Rx value safely
       cafe.value.name = cafeNameUpdate.text.trim();
       cafe.value.location = cafeLocationUpdate.text.trim();
       cafe.value.openingTime = openingTimeUpdate.text.trim();
-      cafe.value.closingTime = closingTimeUpdate.text.trim();
+      cafe.value.closingTime = closingTime.text.trim();
 
       // Show success Message
       TLoaders.successSnackBar(

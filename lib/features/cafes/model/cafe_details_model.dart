@@ -87,12 +87,12 @@ class CafeDetails {
 
 class CafeItem {
   final String id;
-  final String itemName;
-  final double itemPrice;
-  final int itemCalories;
-  final String itemImage;
-  final String itemLocation;
-  final String itemCafe;
+  String itemName;
+  double itemPrice;
+  int itemCalories;
+  String itemImage;
+  String itemLocation;
+  String itemCafe;
 
   CafeItem({
     required this.id,
@@ -137,9 +137,10 @@ class CafeItem {
     return CafeItem(
       id: documentId,
       itemName: map['itemName'] ?? 'Unknown Item',
-      itemPrice: (map['itemCost'] as num?)?.toDouble() ??
-          0.0, // Ensure 'itemCost' is present
-      itemCalories: (map['itemCalories'] as num?)?.toInt() ?? 0,
+      // Safely parse itemCost from String to double
+      itemPrice: double.tryParse(map['itemCost']?.toString() ?? '0.0') ?? 0.0,
+      // Safely parse itemCalories from String to int
+      itemCalories: int.tryParse(map['itemCalories']?.toString() ?? '0') ?? 0,
       itemImage: map['itemImage'] ?? '',
       itemLocation: map['itemLocation'] ?? '',
       itemCafe: map['itemCafe'] ?? '',

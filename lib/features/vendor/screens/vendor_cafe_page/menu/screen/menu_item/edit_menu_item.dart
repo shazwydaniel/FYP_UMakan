@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
+import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 
 import 'package:get/get.dart';
@@ -8,21 +9,19 @@ class EditMenuItemPage extends StatelessWidget {
   final CafeItem menuItem;
   final String cafeId;
 
-  EditMenuItemPage({required this.menuItem, required this.cafeId});
+  EditMenuItemPage({required this.menuItem, required this.cafeId}) {
+    final controller = Get.put(VendorMenuController());
+    controller.cafeItem.value = menuItem;
+    controller.itemNameUpdate.text = menuItem.itemName;
+    controller.itemCostUpdate.text = menuItem.itemPrice.toString();
+    controller.itemCaloriesUpdate.text = menuItem.itemCalories.toString();
+  }
 
-  final MenuController controller = Get.put(MenuController());
-
-  final TextEditingController itemNameController = TextEditingController();
-  final TextEditingController itemPriceController = TextEditingController();
-  final TextEditingController itemCaloriesController = TextEditingController();
+  VendorMenuController controller = Get.put(VendorMenuController());
+  VendorController vendorController = VendorController.instance;
 
   @override
   Widget build(BuildContext context) {
-    // Prepopulate the fields with the current menu item data
-    itemNameController.text = menuItem.itemName;
-    itemPriceController.text = menuItem.itemPrice.toString();
-    itemCaloriesController.text = menuItem.itemCalories.toString();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Menu Item'),
@@ -31,6 +30,7 @@ class EditMenuItemPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: controller.menuUpdateKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -43,7 +43,7 @@ class EditMenuItemPage extends StatelessWidget {
 
               // Item Name Field
               TextFormField(
-                controller: itemNameController,
+                controller: controller.itemNameUpdate,
                 decoration: const InputDecoration(
                   labelText: 'Item Name',
                   border: OutlineInputBorder(),
@@ -53,7 +53,7 @@ class EditMenuItemPage extends StatelessWidget {
 
               // Item Price Field
               TextFormField(
-                controller: itemPriceController,
+                controller: controller.itemCostUpdate,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Price (RM)',
@@ -64,7 +64,7 @@ class EditMenuItemPage extends StatelessWidget {
 
               // Item Calories Field
               TextFormField(
-                controller: itemCaloriesController,
+                controller: controller.itemCaloriesUpdate,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'Calories',
@@ -73,23 +73,31 @@ class EditMenuItemPage extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              // Save Changes Button
-              /* ElevatedButton(
-                onPressed: () async {
-                  // Call the controller to update the menu item
-                  await controller.updateMenuItem(
-                    cafeId,
-                    menuItem.id,
-                    itemNameController.text.trim(),
-                    double.tryParse(itemPriceController.text) ?? 0.0,
-                    int.tryParse(itemCaloriesController.text) ?? 0,
-                  );
+              // Update Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (controller.menuUpdateKey.currentState?.validate() ??
+                        false) {
+                      await controller.updateCafeDetails(
+                        vendorController.getCurrentUserId(),
+                        cafeId,
+                        menuItem.id,
+                      );
 
-                  // Close the page and return true to indicate success
-                  Navigator.pop(context, true);
-                },
-                child: const Text('Save Changes'),
-              ),*/
+                      Navigator.pop(context, true);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 20),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                  child: const Text('Update Menu Item'),
+                ),
+              ),
             ],
           ),
         ),

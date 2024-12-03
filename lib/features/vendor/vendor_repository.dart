@@ -207,6 +207,9 @@ class VendorRepository {
 
   Future<List<CafeItem>> getItemsForCafe(String vendorId, String cafeId) async {
     try {
+      // Debug: Print vendorId and cafeId
+      print('Fetching items for vendor: $vendorId, cafe: $cafeId');
+
       final querySnapshot = await _db
           .collection('Vendors')
           .doc(vendorId)
@@ -214,6 +217,10 @@ class VendorRepository {
           .doc(cafeId)
           .collection('Items')
           .get();
+
+      // Debug: Print raw Firestore snapshot
+      print(
+          'Firestore raw data: ${querySnapshot.docs.map((doc) => doc.data())}');
 
       return querySnapshot.docs
           .map((doc) => CafeItem.fromMap(doc.data(), doc.id))
@@ -231,7 +238,7 @@ class VendorRepository {
       print('PlatformException: ${e.message}');
       throw TPlatformException(e.code).message;
     } catch (e) {
-      print('Unknown error: $e');
+      print('Error in getItemsForCafe: $e');
       throw 'Something went wrong. Please try again';
     }
   }
@@ -660,6 +667,39 @@ class VendorRepository {
       // Handle any errors
       print("Error updating: $e");
       throw Exception('Failed to update cafe: $e');
+    }
+  }
+
+  Future<void> updateSingleMenuItem(
+    Map<String, dynamic> json,
+    String vendorId,
+    String cafeId,
+    String itemId,
+  ) async {
+    try {
+      await _db
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Items')
+          .doc(itemId)
+          .update(json);
+
+      print('Menu item updated in Firestore');
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      // Handle any errors
+      print("Error updating: $e");
+      throw Exception('Failed to update item: $e');
     }
   }
 }
