@@ -184,39 +184,54 @@ class UserRepository extends GetxController {
     }
   }
 
+  // Method to fetch the user's role
   Future<String?> fetchUserRole(String uid) async {
     try {
-      // Check the "Users" collection first
+      debugPrint("Fetching role for UID: $uid");
+
+      // Check the "Users" collection
       DocumentSnapshot userDocSnapshot =
           await FirebaseFirestore.instance.collection('Users').doc(uid).get();
 
       if (userDocSnapshot.exists) {
-        // Cast the data to Map<String, dynamic> and access the role field
+        debugPrint("User document found in 'Users' collection");
         Map<String, dynamic>? userData =
             userDocSnapshot.data() as Map<String, dynamic>?;
-        String? role = userData?['Role'];
-        if (role != null) {
+
+        if (userData != null && userData.containsKey('Role')) {
+          String? role = userData['Role'];
+          debugPrint("Role found in 'Users': $role");
           return role;
         } else {
+          debugPrint("Role field is missing in the user document");
           throw Exception("Role field is missing in the user document");
         }
       }
 
-      // If not found in "Users", check the "Vendors" collection
+      // Check the "Authority" collection
+      DocumentSnapshot authorityDocSnapshot =
+          await FirebaseFirestore.instance.collection('Authority').doc(uid).get();
+
+      if (authorityDocSnapshot.exists) {
+        debugPrint("User document found in 'Authority' collection");
+        return 'Authority'; // Assume all users in "Authority" are authorities
+      }
+
+      // Check the "Vendors" collection
       DocumentSnapshot vendorDocSnapshot =
           await FirebaseFirestore.instance.collection('Vendors').doc(uid).get();
 
       if (vendorDocSnapshot.exists) {
-        // Assume that if the user is found in the vendors collection, they are a vendor
-        return 'Vendor'; // Return 'Vendor' role
+        debugPrint("User document found in 'Vendors' collection");
+        return 'Vendor'; // Assume all users in "Vendors" are vendors
       }
 
-      // If the document does not exist in either collection
-      throw Exception(
-          "User document does not exist in either 'users' or 'vendors'");
+      // If the document does not exist in any collection
+      debugPrint("No user document found in 'Users', 'Authority', or 'Vendors'");
+      throw Exception("User not found in any collection");
     } catch (e) {
       debugPrint("Error fetching user role: $e");
-      throw "Something went wrong. Please try again.";
+      rethrow; // Re-throw the error for further handling
     }
   }
 }

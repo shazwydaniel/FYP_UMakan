@@ -36,6 +36,7 @@ class TColors{
   static const Color vermillion = Color(0xFFD74009);
   static const Color stark_blue = Color(0xFF0365B1);
   static const Color forest = Color(0xFF208251);
+  static const Color marigold = Color(0xFFD38200);
 
 
 

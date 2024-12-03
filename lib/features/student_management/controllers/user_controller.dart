@@ -276,38 +276,4 @@ class UserController extends GetxController {
       print('Error saving user details: $e');
     }
   }
-
-  Future<void> loginUser(String email, String password) async {
-    try {
-      // Authenticate user
-      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Fetch user details from Firestore
-      final userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userCredential.user?.uid)
-          .get();
-
-      if (userDoc.exists) {
-        final userData = userDoc.data();
-        final role = userData?['role'] ?? 'Student'; // Default to 'Student' if role not found
-
-        if (role == 'Authority') {
-          Get.off(() => AuthorityHomePage());
-        } else if (role == 'Vendor') {
-          Get.off(() => VendorsHome());
-        } else {
-          Get.off(() => HomePageScreen());
-        }
-      } else {
-        throw 'User document not found';
-      }
-    } catch (e) {
-      print('Error logging in: $e');
-      TLoaders.errorSnackBar(title: 'Login Error', message: e.toString());
-    }
-  }
 }

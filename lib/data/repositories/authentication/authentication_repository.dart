@@ -2,13 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:fyp_umakan/authority_navigation_menu.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
 import 'package:fyp_umakan/features/authentication/screens/onboarding/onboarding.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/verify_email.dart';
+import 'package:fyp_umakan/features/authority/screens/authority_home_page.dart';
 import 'package:fyp_umakan/features/student_management/controllers/update_profile_controller.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
@@ -57,7 +60,13 @@ class AuthenticatorRepository extends GetxController {
             // If the user is in the Vendors collection, redirect to VendorNavigationMenu
             debugPrint('Redirecting to Vendor Navigation Menu');
             Get.off(() => const VendorNavigationMenu());
-          } else {
+          } 
+          else if (role == 'Authority') {
+            // If the user is in the Authority collection, redirect to AuthorityHomePage
+            debugPrint('Redirecting to Authority Navigation Menu');
+            Get.off(() => AuthorityNavigationMenu());
+          }
+           else {
             // Otherwise, redirect to the NavigationMenu for regular users
             debugPrint('Redirecting to Navigation Menu');
             Get.off(() => NavigationMenu());
@@ -166,6 +175,7 @@ class AuthenticatorRepository extends GetxController {
     try {
       await FirebaseAuth.instance.signOut();
       Get.delete<UpdateProfileController>();
+      Get.delete<UserController>();
       Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;

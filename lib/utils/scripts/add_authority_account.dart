@@ -7,22 +7,25 @@ Future<void> addAuthorityAccount() async {
     final authorityCollection = FirebaseFirestore.instance.collection('Authority');
 
     // Check if the Authority account already exists
-    final existingAuthority = await authorityCollection.doc('authority001').get();
+    final existingAuthority = await authorityCollection
+        .where('email', isEqualTo: 'shzwydniel@gmail.com') // Check by email
+        .get();
 
-    if (!existingAuthority.exists) {
+    if (existingAuthority.docs.isEmpty) {
       // Create the Authority account in Firebase Authentication
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: 'authority@example.com', // Replace with your desired email
-        password: 'SecurePassword123!', // Replace with a secure password
+        email: 'shzwydniel@gmail.com', // Replace with your desired email
+        password: 'Daniel_2154!', // Replace with a secure password
       );
 
+      final authUid = userCredential.user?.uid;
+
       // Add the Authority account details to Firestore
-      await authorityCollection.doc('authority001').set({
-        'id': 'authority001',
-        'username': 'Authority',
-        'email': 'authority@example.com',
-        'role': 'Authority',
-        'auth_uid': userCredential.user?.uid, // Firebase Auth UID for cross-reference
+      await authorityCollection.doc(authUid).set({
+        'Id': authUid, // Use auth_uid as the Firestore document ID
+        'Username': 'Authority',
+        'Email': 'shzwydniel@gmail.com',
+        'Role': 'Authority',
       });
 
       print('Authority account created successfully.');
