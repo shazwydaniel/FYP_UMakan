@@ -133,10 +133,13 @@ class UpdateProfileController extends GetxController {
       userController.user.value.actualRemainingFoodAllowance = foodMoney;
 
       Map<String, dynamic> actualRemainingFoodAllowance = {
-        'Actual Food Remanining Allowance': foodMoney
+        'Food Money': foodMoney
       };
 
-      await userRepository.createSingleField(actualRemainingFoodAllowance);
+      await userRepository.updateSingleField(actualRemainingFoodAllowance);
+
+      userController.user.value.actualRemainingFoodAllowance = foodMoney;
+
       // Print the food money to the debug console (optional)
       print('Food money calculated: \$${foodMoney.toStringAsFixed(2)}');
     } catch (e) {

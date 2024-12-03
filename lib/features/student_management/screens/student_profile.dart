@@ -887,7 +887,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 15),
 
                                   // Height label
                                   Text(
@@ -912,7 +912,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                                     ),
                                   ),
 
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 15),
 
                                   // Birthdate label
                                   Text(
@@ -930,6 +930,31 @@ class StudentProfilePageScreen extends StatelessWidget {
                                   //Birthdate
                                   Text(
                                     controller.user.value.birthdate,
+                                    style: TextStyle(
+                                      color: dark ? Colors.black : Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 15),
+
+                                  // BMR label
+                                  Text(
+                                    'Basal Metabolic Rate (BMR)',
+                                    style: TextStyle(
+                                      color: dark
+                                          ? Colors.black
+                                          : const Color.fromARGB(
+                                              255, 71, 71, 71),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  //Birthdate
+                                  Text(
+                                    "${controller.calculateBMR()}",
                                     style: TextStyle(
                                       color: dark ? Colors.black : Colors.black,
                                       fontSize: 24,

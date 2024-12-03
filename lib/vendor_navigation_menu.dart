@@ -32,7 +32,7 @@ class VendorNavigationMenu extends StatelessWidget {
           selectedIndex: controller.selectedIndex.value,
           onDestinationSelected: (index) =>
               controller.selectedIndex.value = index,
-          backgroundColor: darkMode ? Colors.teal : TColors.teal,
+          backgroundColor: darkMode ? TColors.amber : TColors.amber,
           indicatorColor: darkMode
               ? Colors.white.withOpacity(0.1)
               : Colors.white.withOpacity(0.1),
