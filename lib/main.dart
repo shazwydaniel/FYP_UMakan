@@ -3,6 +3,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
+import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
@@ -41,6 +42,7 @@ Future<void> main() async {
   // Get.put(MoneyJournalRepository());
   Get.put(NetworkManager());
   Get.put(VendorController());
+  Get.put(FoodJournalController());
 
   // addSampleOrganisations();
   // addSampleCommunityNews();
