@@ -1032,41 +1032,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 40),
-              child: Center(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Get.to(() => VendorRegisterPage());
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: TColors.bubbleGreen),
-                    backgroundColor: TColors.bubbleGreen,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Vendor',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Iconsax.logout, color: Colors.white, size: 20),
-                    ],
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
