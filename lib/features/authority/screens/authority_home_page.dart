@@ -15,16 +15,6 @@ class AuthorityHomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: dark ? TColors.darkGreen : TColors.cream,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: TColors.cream),
-          onPressed: () {
-            Get.back(); // Navigate to the previous screen
-          },
-        ),
-        centerTitle: true,
-        backgroundColor: TColors.stark_blue,
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -34,7 +24,7 @@ class AuthorityHomePage extends StatelessWidget {
                 color: TColors.stark_blue,
                 padding: const EdgeInsets.all(0),
                 child: SizedBox(
-                  height: 260,
+                  height: 270,
                   child: Column(
                     children: [
                       Expanded(
@@ -42,7 +32,7 @@ class AuthorityHomePage extends StatelessWidget {
                           children: [
                             // Title 1
                             Positioned(
-                              top: 90,
+                              top: 110,
                               left: 40,
                               child: Text(
                                 'Welcome,',
@@ -56,7 +46,7 @@ class AuthorityHomePage extends StatelessWidget {
 
                             // Title 2
                             Positioned(
-                              top: 140,
+                              top: 160,
                               left: 40,
                               child: Text(
                                 "Authority !",
@@ -79,10 +69,16 @@ class AuthorityHomePage extends StatelessWidget {
             // Statistical Highlights Section
             _sectionHeader('Statistical Highlights', TColors.teal),
             _statCard(
-              title: 'Financially Struggling Students',
-              value: '21%',
+              title: 'Financially Struggling',
+              value: '37%',
               icon: Iconsax.trend_up,
               color: TColors.forest,
+            ),
+            _statCard(
+              title: 'Nutritionally Struggling',
+              value: '21%',
+              icon: Iconsax.flash_1,
+              color: TColors.blush,
             ),
             _statCard(
               title: 'Average Monthly Expenses',
@@ -90,18 +86,12 @@ class AuthorityHomePage extends StatelessWidget {
               icon: Iconsax.wallet_2,
               color: TColors.vermillion,
             ),
-            _statCard(
-              title: 'Average Daily Calorie Intake',
-              value: '1897 kcal',
-              icon: Iconsax.flash_1,
-              color: TColors.blush,
-            ),
 
             // Financially Struggling Students Section
             _sectionHeader('Financially Struggling Students', TColors.amber),
             Container(
               height: 200,
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               decoration: BoxDecoration(
                 color: TColors.cobalt,
                 borderRadius: BorderRadius.circular(20),
@@ -159,7 +149,7 @@ class AuthorityHomePage extends StatelessWidget {
             _sectionHeader('Vendor Highlights', TColors.mustard),
             Container(
               height: 200,
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               decoration: BoxDecoration(
                 color: TColors.mustard,
                 borderRadius: BorderRadius.circular(20),
@@ -193,7 +183,7 @@ class AuthorityHomePage extends StatelessWidget {
   // Section Header Widget
   Widget _sectionHeader(String title, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 20),
+      padding: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -225,7 +215,7 @@ class AuthorityHomePage extends StatelessWidget {
   }) {
     return Container(
       height: 120,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(20),
