@@ -27,7 +27,8 @@ class AdvertController extends GetxController {
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
   Rx<Advertisement> advertisment = Advertisement.empty().obs;
   final vendorRepository = VendorRepository.instance;
-  final vendorController = Get.put(VendorController());
+  final vendorController =
+      Get.put(VendorController()); //Added Put here, fixed the vendor.value.name
 
   var allAdvertisements = <Advertisement>[].obs;
 
