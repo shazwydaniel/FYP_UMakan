@@ -155,6 +155,7 @@ class CafeItem {
       'itemCalories': itemCalories,
       'itemPrice': itemPrice,
       'itemCafe': itemCafe,
+      'itemImage': itemImage,
     };
   }
 }

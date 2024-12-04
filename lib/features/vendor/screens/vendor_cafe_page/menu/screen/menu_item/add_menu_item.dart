@@ -2,14 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart'; // Import the package
+import 'dart:io';
 
-class AddMenuItemPage extends StatelessWidget {
-  final VendorMenuController controller = Get.put(VendorMenuController());
-  String vendorId = VendorController.instance.getCurrentUserId();
+class AddMenuItemPage extends StatefulWidget {
   final String cafeId;
 
-  // Update the constructor
   AddMenuItemPage({Key? key, required this.cafeId}) : super(key: key);
+
+  @override
+  State<AddMenuItemPage> createState() => _AddMenuItemPageState();
+}
+
+class _AddMenuItemPageState extends State<AddMenuItemPage> {
+  final VendorMenuController controller = Get.put(VendorMenuController());
+  final vendorId = VendorController.instance.getCurrentUserId();
+
+  File? selectedImage; // To store the picked image
+
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        selectedImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +93,55 @@ class AddMenuItemPage extends StatelessWidget {
               ),
               SizedBox(height: 24.0),
 
+              // Image Picker Section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Upload Item Image',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(height: 8.0),
+                  GestureDetector(
+                    onTap: pickImage,
+                    child: Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: selectedImage != null
+                          ? Image.file(
+                              selectedImage!,
+                              fit: BoxFit.cover,
+                            )
+                          : Center(child: Icon(Icons.add_a_photo)),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24.0),
+
               // Add Button
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (controller.menuFormKey.currentState?.validate() ??
                         false) {
-                      // Call the addItem method to add the item to the database
-                      controller.addItem(vendorId, cafeId);
+                      if (selectedImage == null) {
+                        Get.snackbar('Error', 'Please upload an image.');
+                        return;
+                      }
+
+                      // Upload the image and add the item
+                      final imageUrl = await controller.uploadImage(
+                          selectedImage!, vendorId, widget.cafeId);
+                      await controller.addItem(
+                        vendorId,
+                        widget.cafeId,
+                        imageUrl,
+                      );
 
                       // Close the page after adding the item
                       Navigator.pop(context, true);

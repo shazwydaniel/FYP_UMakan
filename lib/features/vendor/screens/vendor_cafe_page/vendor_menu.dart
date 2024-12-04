@@ -76,61 +76,95 @@ class _VendorMenuState extends State<VendorMenu> {
                       final item = controller.items[index];
 
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditMenuItemPage(
-                                menuItem: item,
-                                cafeId: widget.cafe.id,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditMenuItemPage(
+                                  menuItem: item,
+                                  cafeId: widget.cafe.id,
+                                ),
+                              ),
+                            ).then((result) {
+                              if (result == true) {
+                                // Refresh the list after editing
+                                controller.fetchItemsForCafe(
+                                    VendorController.instance
+                                        .getCurrentUserId(),
+                                    widget.cafe.id);
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: 120,
+                            child: Card(
+                              margin: const EdgeInsets.only(bottom: 16.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Text Details on the Left
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            item.itemName,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '\RM${item.itemPrice.toStringAsFixed(2)}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            '${item.itemCalories} kcal',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Circular Image on the Right
+                                    ClipOval(
+                                      child: item.itemImage != null &&
+                                              item.itemImage.isNotEmpty
+                                          ? Image.network(
+                                              item.itemImage,
+                                              width: 80,
+                                              height: 80,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  Icon(
+                                                Icons.broken_image,
+                                                size: 80,
+                                                color: Colors.grey,
+                                              ),
+                                            )
+                                          : Icon(
+                                              Icons.fastfood,
+                                              size: 80,
+                                              color: Colors.grey,
+                                            ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ).then((result) {
-                            if (result == true) {
-                              // Refresh the list after editing
-                              controller.fetchItemsForCafe(
-                                  VendorController.instance.getCurrentUserId(),
-                                  widget.cafe.id);
-                            }
-                          });
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: 120,
-                          child: Card(
-                            margin: const EdgeInsets.only(bottom: 16.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.itemName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '\RM${item.itemPrice.toStringAsFixed(2)}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '${item.itemCalories} kcal',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                          ));
                     },
                   );
                 }

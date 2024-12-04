@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
@@ -12,7 +15,6 @@ class VendorMenuController extends GetxController {
   final itemCost = TextEditingController();
   final itemCalories = TextEditingController();
 
-  // Make sure this is defined as a field in the controller
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
 
   //Update Variable
@@ -41,7 +43,7 @@ class VendorMenuController extends GetxController {
   }
 
   // Add method to handle adding menu items
-  Future<void> addItem(String vendorId, String cafeId) async {
+  Future<void> addItem(String vendorId, String cafeId, String imageUrl) async {
     if (menuFormKey.currentState?.validate() ?? false) {
       print('Form validated successfully.');
       try {
@@ -56,6 +58,7 @@ class VendorMenuController extends GetxController {
           'itemCalories': int.tryParse(itemCalories.text.trim()) ?? 0,
           'itemLocation': itemLocation,
           'itemCafe': itemCafe,
+          'itemImage': imageUrl,
         };
 
         print('itemData being sent: $itemData');
@@ -157,6 +160,22 @@ class VendorMenuController extends GetxController {
       // Log the error for debugging
       debugPrint("Error update: $e");
       TLoaders.errorSnackBar(title: 'Oops!', message: e.toString());
+    }
+  }
+
+  Future<String> uploadImage(
+      File imageFile, String vendorId, String cafeId) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+          'menu_images/$vendorId/$cafeId/${DateTime.now().toIso8601String()}');
+
+      final uploadTask = await storageRef.putFile(imageFile);
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+      return downloadUrl; // Return the URL to store in Firestore
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Image upload failed.');
     }
   }
 }

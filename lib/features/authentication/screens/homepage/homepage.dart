@@ -649,6 +649,7 @@ class HomePageScreen extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
+                                          // Circular container for the image
                                           Container(
                                             width: 120,
                                             height: 120,
@@ -665,8 +666,27 @@ class HomePageScreen extends StatelessWidget {
                                                   offset: const Offset(0, 4),
                                                 ),
                                               ],
+                                              image: item.itemImage != null &&
+                                                      item.itemImage.isNotEmpty
+                                                  ? DecorationImage(
+                                                      image: NetworkImage(
+                                                          item.itemImage),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : null, // Add fallback for missing image
                                             ),
+                                            child: item.itemImage == null ||
+                                                    item.itemImage.isEmpty
+                                                ? Center(
+                                                    child: Icon(
+                                                      Icons.fastfood,
+                                                      size: 40,
+                                                      color: Colors.white,
+                                                    ),
+                                                  )
+                                                : null,
                                           ),
+                                          // Text Details
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Column(
@@ -700,9 +720,7 @@ class HomePageScreen extends StatelessWidget {
                                                     child: Text(
                                                       item.itemCafe,
                                                       style: TextStyle(
-                                                        color: dark
-                                                            ? Colors.white
-                                                            : Colors.black,
+                                                        color: Colors.black,
                                                         fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.w500,
@@ -718,9 +736,7 @@ class HomePageScreen extends StatelessWidget {
                                                     Text(
                                                       '\RM${item.itemPrice.toStringAsFixed(2)}',
                                                       style: TextStyle(
-                                                        color: dark
-                                                            ? TColors.cream
-                                                            : Colors.black,
+                                                        color: Colors.black,
                                                         fontSize: 14,
                                                       ),
                                                     ),
@@ -738,9 +754,7 @@ class HomePageScreen extends StatelessWidget {
                                                     Text(
                                                       '${item.itemCalories} cal',
                                                       style: TextStyle(
-                                                        color: dark
-                                                            ? TColors.cream
-                                                            : Colors.black,
+                                                        color: Colors.black,
                                                         fontSize: 14,
                                                       ),
                                                     ),
