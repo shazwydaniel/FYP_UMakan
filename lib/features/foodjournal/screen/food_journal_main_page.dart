@@ -264,6 +264,13 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                           4), // Horizontal and vertical offset
                                     ),
                                   ],
+                                  image: item.imagePath != null &&
+                                          item.imagePath.isNotEmpty
+                                      ? DecorationImage(
+                                          image: NetworkImage(item.imagePath),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
                                 ),
                               ),
                               Padding(
@@ -431,10 +438,10 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
 
                     return SizedBox(
                       width: 220,
-                      height: 250, // Width of each card
+                      height: 250,
                       child: Card(
-                        elevation: 0, // Optional: Add elevation if you want
-                        color: TColors.amber, // Set card color to transparent
+                        elevation: 0,
+                        color: TColors.amber,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),
@@ -444,21 +451,25 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                           children: [
                             Container(
                               width: 140,
-                              height: 120, // Height for the image
+                              height: 120,
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
                                 borderRadius: BorderRadius.circular(200),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(
-                                        0.25), // Shadow color with opacity
-                                    spreadRadius:
-                                        2, // How much the shadow spreads
-                                    blurRadius: 10, // How blurry the shadow is
-                                    offset: const Offset(
-                                        0, 4), // Horizontal and vertical offset
+                                    color: Colors.black.withOpacity(0.25),
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
                                   ),
                                 ],
+                                image: item.imagePath != null &&
+                                        item.imagePath.isNotEmpty
+                                    ? DecorationImage(
+                                        image: NetworkImage(item.imagePath),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
                               ),
                             ),
                             Padding(

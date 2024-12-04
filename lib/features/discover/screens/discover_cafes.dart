@@ -106,14 +106,11 @@ class LocationCafesScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final cafe = cafesInLocation[index];
 
-                        // Parse opening and closing times
                         final openingTime = parseTime(cafe.openingTime);
                         final closingTime = parseTime(cafe.closingTime);
 
-                        // Get the current time
                         final now = TimeOfDay.now();
 
-                        // Check if the cafe is currently open
                         final isOpen = now.hour > openingTime.hour ||
                             (now.hour == openingTime.hour &&
                                     now.minute >= openingTime.minute) &&

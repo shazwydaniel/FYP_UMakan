@@ -84,10 +84,17 @@ class CafePage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
-                          title: Text(item.itemName),
-                          subtitle: Text('Calories: ${item.itemCalories}'),
-                          trailing:
-                              Text('\RM${item.itemPrice.toStringAsFixed(2)}'),
+                          title: Text(
+                            item.itemName,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Calories: ${item.itemCalories} kcal'),
+                              Text('Cost: ${item.itemPrice}'),
+                            ],
+                          ),
                           onTap: () {
                             showDialog(
                               context: context,
@@ -148,22 +155,29 @@ class CafePage extends StatelessWidget {
                                               cafe: cafe.name,
                                             );
 
-                                            String userId = FoodJournalController.instance.getCurrentUserId();
+                                            String userId =
+                                                FoodJournalController.instance
+                                                    .getCurrentUserId();
 
                                             // Add the meal to the Food Journal
-                                            controller.addFoodToJournal(userId, journalItem);
+                                            controller.addFoodToJournal(
+                                                userId, journalItem);
 
                                             // Prepare expense data for the Money Journal
                                             final expenseData = {
                                               'itemName': item.itemName,
                                               'price': item.itemPrice,
-                                              'date': DateTime.now().toIso8601String(),
-                                              'type': 'Food', // Ensures it’s logged as a food expense
+                                              'date': DateTime.now()
+                                                  .toIso8601String(),
+                                              'type':
+                                                  'Food', // Ensures it’s logged as a food expense
                                             };
 
                                             // Access UserController and add the expense
-                                            final userController = UserController.instance;
-                                            userController.addExpense(userId, 'Food', expenseData);
+                                            final userController =
+                                                UserController.instance;
+                                            userController.addExpense(
+                                                userId, 'Food', expenseData);
 
                                             Navigator.of(context).pop();
                                           },
