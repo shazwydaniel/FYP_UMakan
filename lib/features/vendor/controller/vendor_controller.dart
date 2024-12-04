@@ -70,13 +70,13 @@ class VendorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    fetchUserRecord();
+    print(
+        "VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
     try {
-      // Attempt to get the current user ID, if a user is signed in
       userId = getCurrentUserId();
       print("Current user id: $userId");
-      fetchUserRecord(); // Only fetch user record if userId is valid
     } catch (e) {
-      // Handle the exception, e.g., show a message or redirect to login
       print("Error: $e");
     }
   }
@@ -88,11 +88,12 @@ class VendorController extends GetxController {
       final user = await vendorRepository.fetchUserDetails();
       print("Fetched user: ${user.vendorName}"); // Debug print
       this.vendor(user);
+      vendor(user);
     } catch (e) {
       print("Error fetching vendor: $e");
       vendor(Vendor.empty());
     } finally {
-      profileLoading.value = false;
+      //profileLoading.value = false;
     }
   }
 

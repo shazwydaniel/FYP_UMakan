@@ -1,23 +1,23 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:fyp_umakan/common/widgets/custom_shapes/containers/circular_container.dart';
+
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
-import 'package:fyp_umakan/features/authentication/models/user_model.dart';
-import 'package:fyp_umakan/features/authentication/screens/register/widgets/register_form.dart';
+
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
-import 'package:fyp_umakan/utils/constants/image_strings.dart';
+
 import 'package:fyp_umakan/utils/constants/sizes.dart';
-import 'package:fyp_umakan/utils/constants/text_strings.dart';
+
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';

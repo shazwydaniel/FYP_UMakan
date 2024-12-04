@@ -27,7 +27,7 @@ class AdvertController extends GetxController {
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
   Rx<Advertisement> advertisment = Advertisement.empty().obs;
   final vendorRepository = VendorRepository.instance;
-  final vendorController = VendorController.instance;
+  final vendorController = Get.put(VendorController());
 
   var allAdvertisements = <Advertisement>[].obs;
 

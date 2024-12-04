@@ -26,6 +26,8 @@ class UserController extends GetxController {
     super.onInit();
     fetchUserRecord();
     refreshUserData();
+    print(
+        "VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
   }
 
   Future<void> refreshUserData() async {

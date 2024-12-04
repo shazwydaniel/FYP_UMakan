@@ -12,6 +12,7 @@ import 'package:fyp_umakan/features/authentication/screens/register/verify_email
 import 'package:fyp_umakan/features/authority/screens/authority_home_page.dart';
 import 'package:fyp_umakan/features/student_management/controllers/update_profile_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
+import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
@@ -60,13 +61,11 @@ class AuthenticatorRepository extends GetxController {
             // If the user is in the Vendors collection, redirect to VendorNavigationMenu
             debugPrint('Redirecting to Vendor Navigation Menu');
             Get.off(() => const VendorNavigationMenu());
-          } 
-          else if (role == 'Authority') {
+          } else if (role == 'Authority') {
             // If the user is in the Authority collection, redirect to AuthorityHomePage
             debugPrint('Redirecting to Authority Navigation Menu');
             Get.off(() => AuthorityNavigationMenu());
-          }
-           else {
+          } else {
             // Otherwise, redirect to the NavigationMenu for regular users
             debugPrint('Redirecting to Navigation Menu');
             Get.off(() => NavigationMenu());
@@ -176,6 +175,7 @@ class AuthenticatorRepository extends GetxController {
       await FirebaseAuth.instance.signOut();
       Get.delete<UpdateProfileController>();
       Get.delete<UserController>();
+      Get.delete<VendorController>();
       Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;

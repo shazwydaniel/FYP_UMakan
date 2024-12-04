@@ -41,7 +41,7 @@ Future<void> main() async {
   //Get.put(UserRepository());
   // Get.put(MoneyJournalRepository());
   Get.put(NetworkManager());
-  Get.put(VendorController());
+  // Get.put(VendorController());
   Get.put(FoodJournalController());
 
   // addSampleOrganisations();

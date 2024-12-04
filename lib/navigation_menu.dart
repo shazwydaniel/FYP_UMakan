@@ -29,8 +29,8 @@ class NavigationMenu extends StatelessWidget {
       bottomNavigationBar: Obx(
         () => NavigationBarTheme(
           data: NavigationBarThemeData(
-            labelTextStyle: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) {
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
                 return TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
@@ -38,8 +38,8 @@ class NavigationMenu extends StatelessWidget {
                 );
               }
               return TextStyle(
-                color: TColors.cream, 
-                fontWeight: FontWeight.normal, 
+                color: TColors.cream,
+                fontWeight: FontWeight.normal,
                 fontSize: 13,
               );
             }),

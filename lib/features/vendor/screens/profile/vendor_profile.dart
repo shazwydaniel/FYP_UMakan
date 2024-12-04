@@ -2,6 +2,7 @@
 
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
+import "package:fyp_umakan/features/authentication/screens/login/login.dart";
 import "package:fyp_umakan/features/vendor/controller/vendor_controller.dart";
 import "package:fyp_umakan/features/vendor/screens/profile/vendor_details_edit.dart";
 import "package:fyp_umakan/features/vendor/screens/vendor_register.dart";
@@ -320,6 +321,8 @@ class VendorProfilePageScreen extends StatelessWidget {
                                 try {
                                   await AuthenticatorRepository.instance
                                       .logout();
+
+                                  print("Logged Out from Vendor Account");
                                 } catch (e) {
                                   Get.snackbar(
                                     'Logout Error',
