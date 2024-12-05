@@ -25,9 +25,7 @@ class UserController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserRecord();
-    refreshUserData();
-    print(
-        "VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
+    print("VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
   }
 
   Future<void> refreshUserData() async {
@@ -73,6 +71,7 @@ class UserController extends GetxController {
     }
   }
 
+  // Add Expense
   Future<void> addExpense(String userId, String expenseType,
       Map<String, dynamic> expenseData) async {
     try {
@@ -91,16 +90,17 @@ class UserController extends GetxController {
         }
       });
 
-      // Update calculated fields after adding expense
-      await updateCalculatedFields();
-
       // Save the updated user data back to Firestore
       await userRepository.updateUserDetails(user.value);
+
+      // Update calculated fields after adding expense
+      await updateCalculatedFields();
     } catch (e) {
       print('Error adding expense: $e');
     }
   }
 
+  // Remove Expense
   Future<void> removeExpense(String expenseId) async {
     final userId = currentUserId;
     try {
@@ -179,6 +179,7 @@ class UserController extends GetxController {
     });
   }
 
+  // Calculate User's BMR
   double calculateBMR() {
     final weight = double.tryParse(user.value.weight) ?? 0.0;
     final height = double.tryParse(user.value.height) ?? 0.0;
@@ -212,7 +213,7 @@ class UserController extends GetxController {
     double additionalAllowance = currentUser.additionalAllowance ?? 0.0;
     double additionalExpense = currentUser.additionalExpense ?? 0.0;
 
-    /*Calculate Recommended Daily Calories Intake
+    /*Calculate Recommended Daily Calories Intake (OLD)
     double recommendedCalorieIntake =
         getDailyCaloriesIntake(currentUser.gender, currentUser.age);*/
 
@@ -223,10 +224,13 @@ class UserController extends GetxController {
     double recommendedMoneyAllowance =
         getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
 
-    // Calculate Actual Monthly Food Allocation
-    double actualRemainingFoodAllowance =
-        (monthlyAllowance + additionalAllowance) -
-            (monthlyCommittments + additionalExpense);
+    // Calculate Food Money
+    double actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + additionalExpense);
+    user.update((user) {
+      if (user != null) {
+        user.actualRemainingFoodAllowance = actualRemainingFoodAllowance; // Update cumulatively
+      }
+    });
 
     // Update the user model with the calculated values
     user.update((user) {
@@ -237,8 +241,7 @@ class UserController extends GetxController {
         user.additionalExpense = additionalExpense;
         user.additionalAllowance = additionalAllowance;
 
-        print(
-            'Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
+        print('Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
       }
     });
 

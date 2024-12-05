@@ -620,7 +620,7 @@ class MoneyJournalMainPage extends StatelessWidget {
             ),
             // Grouping and Displaying Expenses by Date
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 0, bottom: 20),
               child: Obx(() {
                 if (controller.profileLoading.value) {
                   return Center(child: CircularProgressIndicator());
@@ -634,13 +634,13 @@ class MoneyJournalMainPage extends StatelessWidget {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                        child: Text('No expenses found in history.'),
-                      );
+                      return Center(child: Text('No expenses found in history.'));
                     }
 
                     final expenses = snapshot.data!;
                     final groupedExpenses = _groupExpensesByDate(expenses);
+
+                    DateTime? lastMonth;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -648,24 +648,121 @@ class MoneyJournalMainPage extends StatelessWidget {
                         final date = entry.key;
                         final items = entry.value;
 
+                        // Calculate total spending for the day
+                        final totalSpending = items.fold<double>(
+                          0.0,
+                          (sum, item) => sum + (item['price'] ?? 0.0),
+                        );
+
+                        // Check if we need to display a new month section
+                        final currentMonth = DateTime(date.year, date.month);
+                        final showMonthLabel = lastMonth == null || currentMonth != lastMonth;
+                        if (showMonthLabel) lastMonth = currentMonth;
+
+                        // Calculate total spending for the month
+                        final totalMonthlySpending = groupedExpenses.entries
+                            .where((e) =>
+                                DateTime(e.key.year, e.key.month) == currentMonth)
+                            .expand((e) => e.value)
+                            .fold<double>(
+                              0.0,
+                              (sum, item) => sum + (item['price'] ?? 0.0),
+                            );
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                DateFormat('EEE, MMM d, yyyy').format(date),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: dark ? Colors.white : TColors.textDark,
-                                ),
+                            if (showMonthLabel)
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 20, top: 20),
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: TColors.bubbleOlive.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Iconsax.quote_down,
+                                        size: 22,
+                                        color: TColors.blush,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        DateFormat('MMMM yyyy').format(currentMonth),
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: TColors.cream,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  // Row(
+                                  //   children: [
+                                  //     Text(
+                                  //       'RM ${totalMonthlySpending.toStringAsFixed(2)}',
+                                  //       style: TextStyle(
+                                  //         fontSize: 18,
+                                  //         fontWeight: FontWeight.bold,
+                                  //         color: TColors.cream,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                ],
                               ),
                             ),
+                            // Date and Total Spending Row
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    DateFormat('EEE, MMM d, yyyy').format(date),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: TColors.cream,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'RM ${totalSpending.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: TColors.cream,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Icon(
+                                        Iconsax.money_send,
+                                        size: 18,
+                                        color: TColors.cream,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Expense Cards
                             ...items.map((expense) {
-                              final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                              final price = (expense['price'] ?? '0').toString();
                               final itemName = expense['itemName'] ?? 'No item name';
+                              final price = (expense['price'] ?? '0').toString();
                               final type = expense['type'] ?? 'Unknown';
                               final expenseID = expense['expense_ID'] ?? 'Unknown';
 
