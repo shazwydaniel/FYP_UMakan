@@ -79,21 +79,45 @@ class CafePage extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      color: TColors.cream,
+                      color: TColors.amber,
                       margin: const EdgeInsets.only(bottom: 20),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
                           title: Text(
                             item.itemName,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: TColors.textLight),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Calories: ${item.itemCalories} kcal'),
-                              Text('Cost: ${item.itemPrice}'),
+                              Text('Calories: ${item.itemCalories} kcal',
+                                  style: TextStyle(color: TColors.textLight)),
+                              Text('Price: RM ${item.itemPrice}',
+                                  style: TextStyle(color: TColors.textLight)),
                             ],
+                          ),
+                          trailing: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2,
+                              ),
+                              image: DecorationImage(
+                                image: item.itemImage.isNotEmpty
+                                    ? NetworkImage(
+                                        item.itemImage) // Load image from a URL
+                                    : AssetImage(
+                                            'assets/images/default_food.png')
+                                        as ImageProvider,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
                           ),
                           onTap: () {
                             showDialog(
@@ -101,98 +125,181 @@ class CafePage extends StatelessWidget {
                               barrierDismissible: true,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Add Meal",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
+                                  backgroundColor: Colors.transparent,
+                                  contentPadding: EdgeInsets.zero,
+                                  content: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: TColors.amber,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          offset: Offset(0, 4),
                                         ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.close),
-                                        color: Colors.black,
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  backgroundColor: TColors.cream,
-                                  content: Text(
-                                    'Do you want to add "${item.itemName}" to your journal?',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.0,
+                                      ],
                                     ),
-                                  ),
-                                  actions: [
-                                    Center(
-                                      child: Container(
-                                        width: 100,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: TColors.bubbleOrange,
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                        child: TextButton(
-                                          onPressed: () {
-                                            final journalItem = JournalItem(
-                                              '',
-                                              id: item.id,
-                                              name: item.itemName,
-                                              price: item.itemPrice,
-                                              calories: item.itemCalories,
-                                              cafe: cafe.name,
-                                            );
-
-                                            String userId =
-                                                FoodJournalController.instance
-                                                    .getCurrentUserId();
-
-                                            // Add the meal to the Food Journal
-                                            controller.addFoodToJournal(
-                                                userId, journalItem);
-
-                                            // Prepare expense data for the Money Journal
-                                            final expenseData = {
-                                              'itemName': item.itemName,
-                                              'price': item.itemPrice,
-                                              'date': DateTime.now()
-                                                  .toIso8601String(),
-                                              'type':
-                                                  'Food', // Ensures it’s logged as a food expense
-                                            };
-
-                                            // Access UserController and add the expense
-                                            final userController =
-                                                UserController.instance;
-                                            userController.addExpense(
-                                                userId, 'Food', expenseData);
-
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(
-                                            'ADD',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Image with Black Border
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors
+                                                    .black, // Black border color
+                                                width: 4, // Border width
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(
+                                                  8), // Match inner border radius
+                                              child: Image.network(
+                                                item.itemImage.isNotEmpty
+                                                    ? item.itemImage
+                                                    : 'https://via.placeholder.com/100',
+                                                width: 240,
+                                                height: 240,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
+
+                                        // Details Section
+                                        Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                item.itemName,
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                'Cost: RM${item.itemPrice.toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: TColors.textLight,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                'Calories: ${item.itemCalories} kcal',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: TColors.textLight,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        // Add Button
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 8),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
+                                                },
+                                                child: Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    color: TColors.textLight,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  final journalItem =
+                                                      JournalItem(
+                                                    '',
+                                                    id: item.id,
+                                                    name: item.itemName,
+                                                    price: item.itemPrice,
+                                                    calories: item.itemCalories,
+                                                    cafe: cafe.name,
+                                                  );
+
+                                                  String userId =
+                                                      FoodJournalController
+                                                          .instance
+                                                          .getCurrentUserId();
+
+                                                  // Add the meal to the Food Journal
+                                                  controller.addFoodToJournal(
+                                                      userId, journalItem);
+
+                                                  // Prepare expense data for the Money Journal
+                                                  final expenseData = {
+                                                    'itemName': item.itemName,
+                                                    'price': item.itemPrice,
+                                                    'date': DateTime.now()
+                                                        .toIso8601String(),
+                                                    'type': 'Food',
+                                                  };
+
+                                                  // Access UserController and add the expense
+                                                  final userController =
+                                                      UserController.instance;
+                                                  userController.addExpense(
+                                                      userId,
+                                                      'Food',
+                                                      expenseData);
+
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
+                                                },
+                                                child: Text(
+                                                  'Add',
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      TColors.mustard,
+                                                  foregroundColor: Colors.black,
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 12,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  side: BorderSide(
+                                                    color: Colors
+                                                        .black, // Border color
+                                                    width: 2, // Border width
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 );
                               },
                             );
