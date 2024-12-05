@@ -299,7 +299,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8.0),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.2),
+                                          color: TColors.mustard,
                                           borderRadius:
                                               BorderRadius.circular(10),
                                         ),
@@ -407,7 +407,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 ],
               ),
             ),
-            // Display History Items (Cards)
+
+            // Display Yesterday Items (Cards)
             Obx(() {
               // Get previous's date without time (midnight)
               DateTime today = DateTime.now();
@@ -461,7 +462,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                 borderRadius: BorderRadius.circular(200),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
+                                    color: TColors.mustard,
                                     spreadRadius: 2,
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
@@ -855,7 +856,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 width: 120,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: TColors.bubbleOrange,
+                  color: TColors.mustard,
                   borderRadius: BorderRadius.circular(20.0),
                   border: Border.all(
                     color: Colors.black,

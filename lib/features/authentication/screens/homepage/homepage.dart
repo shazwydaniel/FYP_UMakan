@@ -486,92 +486,211 @@ class HomePageScreen extends StatelessWidget {
                                         barrierDismissible: true,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    "Meal Details",
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 18.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  icon: Icon(Icons.close),
-                                                  color: Colors.black,
-                                                ),
-                                              ],
-                                            ),
-                                            backgroundColor: TColors.cream,
+                                            backgroundColor: Colors.transparent,
+                                            contentPadding: EdgeInsets.zero,
                                             content: Container(
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                color: TColors.cream,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
+                                                    blurRadius: 10,
+                                                    offset: Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  SizedBox(height: 10),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                      border: Border.all(
-                                                          color: Colors.black),
-                                                    ),
+                                                  // Image with border
+                                                  // Image with border or Icon fallback
+                                                  Padding(
                                                     padding:
-                                                        EdgeInsets.all(8.0),
+                                                        const EdgeInsets.only(
+                                                            top: 20.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: Colors.black,
+                                                          width:
+                                                              2, // Border width
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                10), // Inner radius
+                                                        child: item.itemImage
+                                                                .isNotEmpty
+                                                            ? Image.network(
+                                                                item.itemImage,
+                                                                width: 200,
+                                                                height: 200,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              )
+                                                            : Container(
+                                                                width: 200,
+                                                                height: 200,
+                                                                color: Colors
+                                                                    .grey[200],
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .fastfood,
+                                                                  size: 100,
+                                                                  color: Colors
+                                                                      .black54,
+                                                                ),
+                                                              ),
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  // Details Section
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
-                                                              .start,
+                                                              .center,
                                                       children: [
                                                         Text(
-                                                          'Meal Name: ${item.itemName}',
+                                                          item.itemName,
                                                           style: TextStyle(
-                                                            fontSize: 16.0,
+                                                            fontSize: 18,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color: Colors.black,
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            height: TSizes
-                                                                .spaceBtwSections),
+                                                        SizedBox(height: 8),
                                                         Text(
                                                           'Calories: ${item.itemCalories} kcal',
                                                           style: TextStyle(
-                                                            fontSize: 14.0,
+                                                            fontSize: 16,
                                                             color: Colors.black,
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            height: TSizes
-                                                                .spaceBtwSections),
+                                                        SizedBox(height: 4),
                                                         Text(
                                                           'Price: RM${item.itemPrice.toStringAsFixed(2)}',
                                                           style: TextStyle(
-                                                            fontSize: 14.0,
+                                                            fontSize: 16,
                                                             color: Colors.black,
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            height: TSizes
-                                                                .spaceBtwSections),
+                                                        SizedBox(height: 4),
                                                         Text(
                                                           'Location: ${item.itemCafe}',
                                                           style: TextStyle(
-                                                            fontSize: 14.0,
+                                                            fontSize: 16,
                                                             color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  // Buttons Section
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 8),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        // Cancel Button
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Close the dialog
+                                                          },
+                                                          child: Text(
+                                                            'Cancel',
+                                                            style: TextStyle(
+                                                              color: TColors
+                                                                  .textDark,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        // Add Button
+                                                        ElevatedButton(
+                                                          onPressed: () {
+                                                            final journalItem =
+                                                                JournalItem(
+                                                              imagePath: item
+                                                                  .itemImage,
+                                                              id: item.id,
+                                                              name:
+                                                                  item.itemName,
+                                                              price: item
+                                                                  .itemPrice,
+                                                              calories: item
+                                                                  .itemCalories,
+                                                              cafe:
+                                                                  item.itemCafe,
+                                                            );
+
+                                                            String userId =
+                                                                FoodJournalController
+                                                                    .instance
+                                                                    .getCurrentUserId();
+
+                                                            // Add the meal to the Food Journal
+                                                            foodJController
+                                                                .addFoodToJournal(
+                                                                    userId,
+                                                                    journalItem);
+
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Close the dialog
+                                                            print(
+                                                                'Add to journal pressed');
+                                                          },
+                                                          child: Text(
+                                                            'Add',
+                                                            style: TextStyle(
+                                                                fontSize: 16),
+                                                          ),
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                TColors.mustard,
+                                                            foregroundColor:
+                                                                Colors.black,
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              horizontal: 24,
+                                                              vertical: 12,
+                                                            ),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            side: BorderSide(
+                                                              color: Colors
+                                                                  .black, // Border color
+                                                              width:
+                                                                  2, // Border width
+                                                            ),
                                                           ),
                                                         ),
                                                       ],
@@ -580,62 +699,6 @@ class HomePageScreen extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            actions: <Widget>[
-                                              Center(
-                                                child: Container(
-                                                  width: 120,
-                                                  height: 50,
-                                                  decoration: BoxDecoration(
-                                                    color: TColors.bubbleOrange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.0),
-                                                    border: Border.all(
-                                                      color: Colors.black,
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                  child: TextButton(
-                                                    onPressed: () {
-                                                      final journalItem =
-                                                          JournalItem('',
-                                                              id: item.id,
-                                                              name:
-                                                                  item.itemName,
-                                                              price: item
-                                                                  .itemPrice,
-                                                              calories: item
-                                                                  .itemCalories,
-                                                              cafe: item
-                                                                  .itemCafe);
-
-                                                      String userId =
-                                                          FoodJournalController
-                                                              .instance
-                                                              .getCurrentUserId();
-
-                                                      foodJController
-                                                          .addFoodToJournal(
-                                                              userId,
-                                                              journalItem);
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      print(
-                                                          'Add to journal pressed');
-                                                    },
-                                                    child: Text(
-                                                      'ADD ',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
                                           );
                                         },
                                       );
@@ -711,8 +774,7 @@ class HomePageScreen extends StatelessWidget {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 8.0),
                                                     decoration: BoxDecoration(
-                                                      color: Colors.white
-                                                          .withOpacity(0.6),
+                                                      color: TColors.mustard,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
