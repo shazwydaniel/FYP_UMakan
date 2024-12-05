@@ -7,13 +7,13 @@ class JournalItem {
   final String cafe;
   DateTime timestamp;
 
-  JournalItem(
-    this.imagePath, {
+  JournalItem({
     this.id,
     required this.name,
     required this.price,
     required this.calories,
     required this.cafe,
+    required this.imagePath,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
 
@@ -39,7 +39,6 @@ class JournalItem {
   // Create a JournalItem from a JSON object
   factory JournalItem.fromJson(Map<String, dynamic> json) {
     return JournalItem(
-      json['imagePath'] ?? '',
       id: json['id'], // id can be null here
       name: json['name'] ?? '',
       cafe: json['cafe'] ?? '',
@@ -50,13 +49,13 @@ class JournalItem {
           ? int.tryParse(json['calories']) ?? 0
           : json['calories'] ?? 0,
       timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
+      imagePath: json['imagePath'] ?? '',
     );
   }
 
   // Create a JournalItem from a Map object
   factory JournalItem.fromMap(Map<String, dynamic> data, String documentId) {
     return JournalItem(
-      data['imagePath'] ?? '',
       id: documentId, // Still allow documentId to assign id if needed
       name: data['name'] ?? '',
       cafe: data['cafe'] ?? '',
@@ -69,6 +68,7 @@ class JournalItem {
       timestamp: data['timestamp'] != null
           ? DateTime.tryParse(data['timestamp']) ?? DateTime.now()
           : DateTime.now(),
+      imagePath: data['imagePath'] ?? '',
     );
   }
 
@@ -86,11 +86,11 @@ class JournalItem {
 
   // Static Function to Create an Empty JournalItem
   static JournalItem empty() => JournalItem(
-        '',
         id: null, // id is optional, so default to null
         name: '',
         cafe: '',
         price: 0,
         calories: 0,
+        imagePath: '',
       );
 }

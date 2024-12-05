@@ -144,30 +144,40 @@ class CafePage extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         // Image with Black Border
+                                        // Image with border or Icon fallback
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(top: 20.0),
                                           child: Container(
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                color: Colors
-                                                    .black, // Black border color
-                                                width: 4, // Border width
+                                                color: Colors.black,
+                                                width: 2, // Border width
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(
-                                                  8), // Match inner border radius
-                                              child: Image.network(
-                                                item.itemImage.isNotEmpty
-                                                    ? item.itemImage
-                                                    : 'https://via.placeholder.com/100',
-                                                width: 240,
-                                                height: 240,
-                                                fit: BoxFit.cover,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      10), // Inner radius
+                                              child: item.itemImage.isNotEmpty
+                                                  ? Image.network(
+                                                      item.itemImage,
+                                                      width: 200,
+                                                      height: 200,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Container(
+                                                      width: 200,
+                                                      height: 200,
+                                                      color: Colors.grey[200],
+                                                      child: Icon(
+                                                        Icons.fastfood,
+                                                        size: 100,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
                                             ),
                                           ),
                                         ),
@@ -232,13 +242,14 @@ class CafePage extends StatelessWidget {
                                                 onPressed: () {
                                                   final journalItem =
                                                       JournalItem(
-                                                    '',
-                                                    id: item.id,
-                                                    name: item.itemName,
-                                                    price: item.itemPrice,
-                                                    calories: item.itemCalories,
-                                                    cafe: cafe.name,
-                                                  );
+                                                          id: item.id,
+                                                          name: item.itemName,
+                                                          price: item.itemPrice,
+                                                          calories:
+                                                              item.itemCalories,
+                                                          cafe: cafe.name,
+                                                          imagePath:
+                                                              item.itemImage);
 
                                                   String userId =
                                                       FoodJournalController

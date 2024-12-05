@@ -247,30 +247,34 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                width: 140,
-                                height: 120, // Height for the image
+                                width: 120,
+                                height: 120,
                                 decoration: BoxDecoration(
                                   color: TColors.mustard,
                                   borderRadius: BorderRadius.circular(200),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(
-                                          0.25), // Shadow color with opacity
-                                      spreadRadius:
-                                          2, // How much the shadow spreads
-                                      blurRadius:
-                                          10, // How blurry the shadow is
-                                      offset: const Offset(0,
-                                          4), // Horizontal and vertical offset
+                                      color: Colors.black.withOpacity(0.25),
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
                                     ),
                                   ],
-                                  image: item.imagePath != null &&
+                                ),
+                                child: ClipOval(
+                                  child: item.imagePath != null &&
                                           item.imagePath.isNotEmpty
-                                      ? DecorationImage(
-                                          image: NetworkImage(item.imagePath),
-                                          fit: BoxFit.cover,
+                                      ? Image.network(
+                                          item.imagePath,
+                                          fit: BoxFit.fill,
                                         )
-                                      : null,
+                                      : Center(
+                                          child: Icon(
+                                            Icons.fastfood,
+                                            size: 50,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                 ),
                               ),
                               Padding(
@@ -463,13 +467,21 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
-                                image: item.imagePath != null &&
+                              ),
+                              child: ClipOval(
+                                child: item.imagePath != null &&
                                         item.imagePath.isNotEmpty
-                                    ? DecorationImage(
-                                        image: NetworkImage(item.imagePath),
-                                        fit: BoxFit.cover,
+                                    ? Image.network(
+                                        item.imagePath,
+                                        fit: BoxFit.fill,
                                       )
-                                    : null,
+                                    : Center(
+                                        child: Icon(
+                                          Icons.fastfood,
+                                          size: 50,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
                             ),
                             Padding(
@@ -854,15 +866,12 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                   onPressed: () async {
                     // Add selected item to the food journal
                     final journalItem = JournalItem(
-                      '', // Provide an empty string or default image path
-                      // Unique ID
-                      name: itemName.text.trim(),
-                      price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
-                      calories: int.tryParse(itemCalories.text.trim()) ?? 0,
-                      cafe: itemLocation.text.trim(), // Cafe name
-                    );
+                        name: itemName.text.trim(),
+                        price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
+                        calories: int.tryParse(itemCalories.text.trim()) ?? 0,
+                        cafe: itemLocation.text.trim(),
+                        imagePath: '');
 
-                    // Assuming userId is available, you can replace with the actual user ID
                     String userId =
                         FoodJournalController.instance.getCurrentUserId();
 

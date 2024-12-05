@@ -80,7 +80,6 @@ class FoodJournalController extends GetxController {
       mealItems.add(journalItem);
       print("Lunch Items after adding new item: ${mealItems}");
 
-      // Update and cache average calories after adding a new item
       for (int i = 0; i < 4; i++) {
         updateAndCacheAverageCalories(i);
       }
