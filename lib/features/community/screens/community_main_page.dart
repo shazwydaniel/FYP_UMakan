@@ -50,7 +50,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Helping Organisations (Label)
+            // Supporting Organisations (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
@@ -63,7 +63,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Helping Organisations',
+                    'Supporting Organisations',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
