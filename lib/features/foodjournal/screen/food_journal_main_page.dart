@@ -792,7 +792,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                   children: [
                     IconButton(
                       icon: Icon(Iconsax.add_circle,
-                          color: TColors.cream, size: 40),
+                          color: TColors.textDark, size: 40),
                       onPressed: () {
                         manualAdd(context);
                       },

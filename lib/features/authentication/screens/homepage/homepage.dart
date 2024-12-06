@@ -60,7 +60,7 @@ class HomePageScreen extends StatelessWidget {
                           children: [
                             // Title 1
                             Positioned(
-                              top: 90,
+                              top: 80,
                               left: 40,
                               child: Text(
                                 'Welcome,',
@@ -74,7 +74,7 @@ class HomePageScreen extends StatelessWidget {
 
                             // Title 2
                             Positioned(
-                              top: 140,
+                              top: 130,
                               left: 40,
                               child: Obx(
                                 () => Text(
@@ -94,7 +94,7 @@ class HomePageScreen extends StatelessWidget {
                       // Stats Highlights (Label)
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 30, right: 30, bottom: 10, top: 10),
+                            left: 30, right: 30, bottom: 20, top: 10),
                         child: Container(
                           padding: const EdgeInsets.all(
                               20), // Padding inside the card
@@ -413,7 +413,7 @@ class HomePageScreen extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(left: 10, right: 10, top:5),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -1111,6 +1111,7 @@ class HomePageScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),

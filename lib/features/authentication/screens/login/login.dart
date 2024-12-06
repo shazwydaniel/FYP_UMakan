@@ -219,117 +219,152 @@ class LoginScreen extends StatelessWidget {
                 ))));
   }
 
-void _showAccountTypeModal(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: Container(
-          height: 300,
-          width: 400,
-          padding: EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            color: TColors.cream,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Close Button
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.black, size: 24),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+  void _showAccountTypeModal(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            height: 400, // Adjusted height to fit the new option
+            width: 400,
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: TColors.cream,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Close Button
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.black, size: 24),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
-              ),
-              // Title
-              Text(
-                'Select Account Type',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 30),
-              // Student Button
-              Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: TColors.blush,
-                  borderRadius: BorderRadius.circular(20.0),
-                  border: Border.all(
+                // Title
+                Text(
+                  'Select Account Type',
+                  style: TextStyle(
                     color: Colors.black,
-                    width: 2.0,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Get.to(() => const RegisterScreen()); // Navigate to RegisterScreen
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Iconsax.emoji_happy, color: Colors.black, size: 20),
-                      SizedBox(width: 10),
-                      Text(
-                        'Student',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
+                SizedBox(height: 30),
+                // Student Button
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: TColors.blush,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Get.to(() => const RegisterScreen()); // Navigate to RegisterScreen
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Iconsax.emoji_happy, color: Colors.black, size: 20),
+                        SizedBox(width: 10),
+                        Text(
+                          'Student',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 15),
-              // Vendor Button
-              Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: TColors.forest,
-                  borderRadius: BorderRadius.circular(20.0),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2.0,
+                SizedBox(height: 15),
+                // Vendor Button
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: TColors.forest,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2.0,
+                    ),
                   ),
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Get.to(() => VendorRegisterPage()); // Navigate to VendorRegisterPage
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Iconsax.shop, color: Colors.black, size: 20),
-                      SizedBox(width: 10),
-                      Text(
-                        'Vendor',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Get.to(() => VendorRegisterPage()); // Navigate to VendorRegisterPage
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Iconsax.shop, color: TColors.cream, size: 20),
+                        SizedBox(width: 10),
+                        Text(
+                          'Vendor',
+                          style: TextStyle(
+                            color: TColors.cream,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 15),
+                // Support Organisations Button
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: TColors.stark_blue,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Get.to(() => RegisterScreen()); // Navigate to SupportOrganisationRegisterPage
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Iconsax.people, color: TColors.cream, size: 20),
+                        SizedBox(width: 10),
+                        Text(
+                          'Support Organisations',
+                          style: TextStyle(
+                            color: TColors.cream,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 }
