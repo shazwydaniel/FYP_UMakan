@@ -56,17 +56,21 @@ class EditAdPage extends StatelessWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Confirm Delete'),
+                Text('Confirm Delete',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold)),
                 IconButton(
-                  icon: Icon(Icons.close, color: Colors.red),
+                  icon: Icon(Icons.close, color: Colors.grey),
                   onPressed: () {
                     Navigator.pop(context); // Close the dialog
                   },
                 ),
               ],
             ),
-            content:
-                Text('Are you sure you want to delete this advertisement?'),
+            content: Text(
+              'Are you sure you want to delete this advertisement?',
+              style: TextStyle(color: Colors.black),
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -74,7 +78,7 @@ class EditAdPage extends StatelessWidget {
                 },
                 child: Text(
                   'Cancel',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
                 ),
               ),
               ElevatedButton(
@@ -84,8 +88,18 @@ class EditAdPage extends StatelessWidget {
                   Navigator.pop(context); // Close the dialog
                   Navigator.pop(context); // Return to the previous page
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Text('Delete'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 25, vertical: 10), // Button padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Text(
+                  'Delete',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
             ],
           );
@@ -95,7 +109,10 @@ class EditAdPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Advertisement'),
+        title: Text(
+          'Edit Advertisement',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
@@ -117,6 +134,8 @@ class EditAdPage extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: 'Detail',
                   border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.grey[100],
                 ),
               ),
               SizedBox(height: 20),
@@ -129,6 +148,8 @@ class EditAdPage extends StatelessWidget {
                   labelText: 'Start Date',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.calendar_today), // Calendar icon
+                  filled: true,
+                  fillColor: Colors.grey[100],
                 ),
                 onTap: () => _selectDate(
                     context, advertController.startDateUpdateController),
@@ -143,28 +164,71 @@ class EditAdPage extends StatelessWidget {
                   labelText: 'End Date',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.calendar_today), // Calendar icon
+                  filled: true,
+                  fillColor: Colors.grey[100],
                 ),
                 onTap: () => _selectDate(
                     context, advertController.endDateUpdateController),
               ),
               SizedBox(height: 30),
 
-              // Save Button
-              ElevatedButton(
-                onPressed: () async {
-                  await advertController.updateAds(
-                      vendorController.currentUserId, ad.cafeId, ad.id);
-                },
-                child: Text('Save Changes'),
-              ),
-              SizedBox(height: 20),
+              // Inside the body of your Form widget
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Other widgets like the title, TextFormFields, etc.
 
-              // Delete Button
-              ElevatedButton(
-                onPressed: () => _showDeleteConfirmationDialog(context),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Text('Delete'),
-              ),
+                  SizedBox(height: 30),
+
+                  // Centering the Save and Delete Buttons
+                  Center(
+                    child: Column(
+                      children: [
+                        // Save Button
+                        ElevatedButton(
+                          onPressed: () async {
+                            await advertController.updateAds(
+                                vendorController.currentUserId,
+                                ad.cafeId,
+                                ad.id);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: Text(
+                            'Save Changes',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                        SizedBox(height: 20), // Spacing between buttons
+
+                        // Delete Button
+                        ElevatedButton(
+                          onPressed: () =>
+                              _showDeleteConfirmationDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),

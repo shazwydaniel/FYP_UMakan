@@ -34,7 +34,7 @@ class _VendorMenuState extends State<VendorMenu> {
     return Scaffold(
       appBar: AppBar(
         title: Text(" ${widget.cafe.name}"), // Display the cafe name
-        backgroundColor: TColors.olive,
+        backgroundColor: TColors.mustard,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -59,7 +59,7 @@ class _VendorMenuState extends State<VendorMenu> {
           ),
         ],
       ),
-      backgroundColor: TColors.olive,
+      backgroundColor: TColors.mustard,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -99,6 +99,7 @@ class _VendorMenuState extends State<VendorMenu> {
                             width: MediaQuery.of(context).size.width * 0.9,
                             height: 120,
                             child: Card(
+                              color: TColors.amber,
                               margin: const EdgeInsets.only(bottom: 16.0),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -118,6 +119,7 @@ class _VendorMenuState extends State<VendorMenu> {
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
+                                              color: TColors.textLight,
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -125,12 +127,14 @@ class _VendorMenuState extends State<VendorMenu> {
                                             '\RM${item.itemPrice.toStringAsFixed(2)}',
                                             style: const TextStyle(
                                               fontSize: 14,
+                                              color: TColors.textLight,
                                             ),
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
                                             '${item.itemCalories} kcal',
                                             style: const TextStyle(
+                                              color: TColors.textLight,
                                               fontSize: 12,
                                             ),
                                           ),
@@ -175,6 +179,14 @@ class _VendorMenuState extends State<VendorMenu> {
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               margin: const EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black, // Black border color
+                  width: 2.0, // Border width
+                ),
+                borderRadius:
+                    BorderRadius.circular(15), // Match button's border radius
+              ),
               child: ElevatedButton(
                 onPressed: () async {
                   final result = await Navigator.push(
@@ -195,8 +207,8 @@ class _VendorMenuState extends State<VendorMenu> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: const Size(double.infinity, 50),
-                  foregroundColor: TColors.olive,
-                  backgroundColor: TColors.textLight,
+                  foregroundColor: TColors.amber,
+                  backgroundColor: TColors.cream,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -208,6 +220,14 @@ class _VendorMenuState extends State<VendorMenu> {
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               margin: const EdgeInsets.only(bottom: 40),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black, // Black border color
+                  width: 2.0, // Border width
+                ),
+                borderRadius:
+                    BorderRadius.circular(15), // Match button's border radius
+              ),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -223,8 +243,8 @@ class _VendorMenuState extends State<VendorMenu> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: const Size(double.infinity, 50),
-                  foregroundColor: TColors.olive,
-                  backgroundColor: TColors.textLight,
+                  foregroundColor: TColors.amber,
+                  backgroundColor: TColors.cream,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

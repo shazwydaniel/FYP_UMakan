@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 
@@ -83,7 +84,7 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Menu Item'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: TColors.amber,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -174,15 +175,26 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                 // Update Button
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: saveChanges,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 20),
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blueAccent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color:
+                            TColors.textDark, // Set your desired border color
+                        width: 2.0, // Set the border width
+                      ),
+                      borderRadius: BorderRadius.circular(
+                          15), // Match the button's border radius
                     ),
-                    child: const Text('Update Menu Item'),
+                    child: ElevatedButton(
+                      onPressed: saveChanges,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 20),
+                        foregroundColor: Colors.white,
+                        backgroundColor: TColors.amber,
+                      ),
+                      child: const Text('Update Menu Item'),
+                    ),
                   ),
                 ),
               ],

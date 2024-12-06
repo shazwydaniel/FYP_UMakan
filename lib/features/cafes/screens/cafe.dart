@@ -143,8 +143,6 @@ class CafePage extends StatelessWidget {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        // Image with Black Border
-                                        // Image with border or Icon fallback
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(top: 20.0),

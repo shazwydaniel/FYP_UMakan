@@ -42,9 +42,11 @@ class RecommendationController extends GetxController {
 
     // Calculate daily allowance (divide total by 4 assuming 4 weeks in a month)
     double dailyAllowance = foodMoney / 30;
+    double allowancePerMeal = dailyAllowance / 4;
     print("User's BMR = ${BMR}");
 
     print("Daily Allowance = ${dailyAllowance}");
+    print("Allowance Per Meal= ${allowancePerMeal}");
 
     double caloriesPerMeal = (BMR / 4);
 
@@ -56,7 +58,7 @@ class RecommendationController extends GetxController {
     // Filter items by calories and price only
     List<CafeItem> recommendedItems = items.where((item) {
       bool withinCalorieLimit = item.itemCalories <= caloriesPerMeal;
-      bool withinPriceLimit = item.itemPrice <= dailyAllowance;
+      bool withinPriceLimit = item.itemPrice <= allowancePerMeal;
 
       return withinCalorieLimit && withinPriceLimit;
     }).toList();

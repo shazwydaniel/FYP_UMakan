@@ -26,7 +26,7 @@ class EditCafeDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Cafe Details'),
-        backgroundColor: TColors.olive,
+        backgroundColor: TColors.mustard,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -104,22 +104,34 @@ class EditCafeDetailsPage extends StatelessWidget {
               // Save Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (controller.updateCafeKey.currentState?.validate() ??
-                        false) {
-                      // Update the cafe details
-                      await controller.updateCafeDetails(
-                          controller.currentUserId, cafe.id);
-                      onSave();
-                      Navigator.pop(context, true);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: TColors.olive,
-                    backgroundColor: TColors.textLight,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  margin: const EdgeInsets.only(bottom: 40),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: TColors.mustard, // Black border color
+                      width: 2.0, // Border width
+                    ),
+                    borderRadius: BorderRadius.circular(
+                        15), // Match button's border radius
                   ),
-                  child: const Text('Update'),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (controller.updateCafeKey.currentState?.validate() ??
+                          false) {
+                        // Update the cafe details
+                        await controller.updateCafeDetails(
+                            controller.currentUserId, cafe.id);
+                        onSave();
+                        Navigator.pop(context, true);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: TColors.mustard,
+                      backgroundColor: TColors.textLight,
+                    ),
+                    child: const Text('Update'),
+                  ),
                 ),
               ),
             ],

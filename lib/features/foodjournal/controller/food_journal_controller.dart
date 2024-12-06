@@ -92,16 +92,6 @@ class FoodJournalController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
         margin: const EdgeInsets.all(10),
-        mainButton: TextButton(
-          onPressed: () {
-            // Navigate to the desired page
-            Get.to(() => FoodJournalMainPage());
-          },
-          child: const Text(
-            'View Journal',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
       );
     } catch (e) {
       // Handle errors and show appropriate message
