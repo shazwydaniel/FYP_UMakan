@@ -656,17 +656,27 @@ class HomePageScreen extends StatelessWidget {
                                                                     userId,
                                                                     journalItem);
 
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(); // Close the dialog
+                                                            // Prepare expense data for the Money Journal
+                                                            final expenseData = {
+                                                              'itemName': item.itemName,
+                                                              'price': item.itemPrice,
+                                                              'date': DateTime.now()
+                                                                  .toIso8601String(),
+                                                              'type': 'Food',
+                                                            };
+
+                                                            // Access UserController and add the expense
+                                                            final userController =
+                                                                UserController.instance;
+                                                            userController.addExpense(
+                                                                userId,
+                                                                'Food',
+                                                                expenseData);
+
+                                                            Navigator.of(context).pop(); // Close the dialog
                                                             print(
                                                                 'Add to journal pressed');
                                                           },
-                                                          child: Text(
-                                                            'Add',
-                                                            style: TextStyle(
-                                                                fontSize: 16),
-                                                          ),
                                                           style: ElevatedButton
                                                               .styleFrom(
                                                             backgroundColor:
@@ -691,6 +701,11 @@ class HomePageScreen extends StatelessWidget {
                                                               width:
                                                                   2, // Border width
                                                             ),
+                                                          ),
+                                                          child: Text(
+                                                            'Add',
+                                                            style: TextStyle(
+                                                                fontSize: 16),
                                                           ),
                                                         ),
                                                       ],

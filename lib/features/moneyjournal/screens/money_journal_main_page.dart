@@ -323,28 +323,103 @@ class MoneyJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Today's Spending (Label)
+            // Today's Spending (Label with Total Expense)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 4, // Thin vertical line width
-                    height: 40, // Adjust the height as needed
-                    color: TColors.teal,
-                  ),
-                  const SizedBox(width: 10), // Space between the line and text
-                  Text(
-                    "Today's Spending",
-                    style: TextStyle(
-                      fontSize: 16, // Adjust the font size as needed
-                      fontWeight: FontWeight.normal,
-                      color: dark ? Colors.white : Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+              child: Obx(() {
+                if (controller.profileLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                return FutureBuilder<List<Map<String, dynamic>>>(
+                  future: controller.getExpenses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 4, // Thin vertical line width
+                            height: 40, // Adjust the height as needed
+                            color: TColors.teal,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "Today's Spending",
+                            style: TextStyle(
+                              fontSize: 16, // Adjust the font size as needed
+                              fontWeight: FontWeight.normal,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    final expenses = snapshot.data!;
+                    final now = DateTime.now();
+                    final todaysExpenses = expenses.where((expense) {
+                      final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                      return createdAt != null &&
+                          createdAt.year == now.year &&
+                          createdAt.month == now.month &&
+                          createdAt.day == now.day;
+                    }).toList();
+
+                    final totalTodaySpending = todaysExpenses.fold<double>(
+                      0.0,
+                      (sum, item) => sum + (item['price'] ?? 0.0),
+                    );
+
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 4, // Thin vertical line width
+                              height: 40, // Adjust the height as needed
+                              color: TColors.teal,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              "Today's Spending",
+                              style: TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight: FontWeight.normal,
+                                color: dark ? Colors.white : Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'RM ${totalTodaySpending.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: TColors.cream,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Icon(
+                              Iconsax.money_send,
+                              size: 18,
+                              color: TColors.cream,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }),
             ),
             // Retrieving Expense Items from Firebase - Today's Spending (Cards)
             Padding(
@@ -526,8 +601,287 @@ class MoneyJournalMainPage extends StatelessWidget {
                 );
               }),
             ),
+            // Yesterday's Spending (Label with Total Expense)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              child: Obx(() {
+                if (controller.profileLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-            // Spending History Section
+                return FutureBuilder<List<Map<String, dynamic>>>(
+                  future: controller.getExpenses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 4, // Thin vertical line width
+                            height: 40, // Adjust the height as needed
+                            color: TColors.bubbleOrange,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "Yesterday's Spending",
+                            style: TextStyle(
+                              fontSize: 16, // Adjust the font size as needed
+                              fontWeight: FontWeight.normal,
+                              color: dark ? Colors.white : Colors.white,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    final expenses = snapshot.data!;
+                    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+                    final yesterdayExpenses = expenses.where((expense) {
+                      final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                      return createdAt != null &&
+                          createdAt.year == yesterday.year &&
+                          createdAt.month == yesterday.month &&
+                          createdAt.day == yesterday.day;
+                    }).toList();
+
+                    final totalYesterdaySpending = yesterdayExpenses.fold<double>(
+                      0.0,
+                      (sum, item) => sum + (item['price'] ?? 0.0),
+                    );
+
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 4, // Thin vertical line width
+                              height: 40, // Adjust the height as needed
+                              color: TColors.bubbleOrange,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              "Yesterday's Spending",
+                              style: TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight: FontWeight.normal,
+                                color: dark ? Colors.white : Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'RM ${totalYesterdaySpending.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: TColors.cream,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Icon(
+                              Iconsax.money_send,
+                              size: 18,
+                              color: TColors.cream,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }),
+            ),
+            // Retrieving Expense Items from Firebase - Yesterday's Spending (Cards)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),
+              child: Obx(() {
+                if (controller.profileLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                return FutureBuilder<List<Map<String, dynamic>>>(
+                  future: controller.getExpenses(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No expenses found for yesterday.'));
+                    }
+
+                    final expenses = snapshot.data!;
+                    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+                    final yesterdayExpenses = expenses.where((expense) {
+                      final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                      return createdAt != null &&
+                          createdAt.year == yesterday.year &&
+                          createdAt.month == yesterday.month &&
+                          createdAt.day == yesterday.day;
+                    }).toList();
+
+                    if (yesterdayExpenses.isEmpty) {
+                      return Center(
+                        child: Text('No spending found for yesterday.'),
+                      );
+                    }
+
+                    return Column(
+                      children: yesterdayExpenses.map((expense) {
+                        final itemName = expense['itemName'] ?? 'No item name';
+                        final price = (expense['price'] ?? '0').toString();
+                        final type = expense['type'] ?? 'Unknown';
+                        final expenseID = expense['expense_ID'] ?? 'Unknown';
+
+                        return Dismissible(
+                          key: Key(expenseID),
+                          direction: DismissDirection.endToStart,
+                          background: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.only(right: 20.0),
+                              color: TColors.amber,
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          confirmDismiss: (direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: TColors.cream,
+                                  title: Text(
+                                    "Delete Confirmation",
+                                    style: TextStyle(color: Colors.black, fontSize: 20),
+                                  ),
+                                  content: Text(
+                                    "Are you sure you want to delete this expense?",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(color: TColors.textDark),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(true),
+                                      child: Text(
+                                        "Delete",
+                                        style: TextStyle(color: TColors.amber),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          onDismissed: (direction) async {
+                            await controller.removeExpense(expenseID);
+                            TLoaders.errorSnackBar(
+                              title: 'Expense Deleted',
+                              message: "Selected expense has been deleted!",
+                            );
+                          },
+                          child: Container(
+                            height: 100,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                              color: TColors.cream,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    left: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          itemName,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          type,
+                                          style: TextStyle(
+                                            color: TColors.darkGreen,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: -16.0,
+                                    right: 0,
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 22.0),
+                                          child: Text(
+                                            'RM',
+                                            style: TextStyle(
+                                              color: TColors.darkGreen,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          price,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 50,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                );
+              }),
+            ),
+            // Spending History Section (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
@@ -618,7 +972,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Grouping and Displaying Expenses by Date
+            // Grouping and Displaying Expenses by Date from Firebase - Spending History (Cards)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 0, bottom: 20),
               child: Obx(() {
@@ -638,7 +992,16 @@ class MoneyJournalMainPage extends StatelessWidget {
                     }
 
                     final expenses = snapshot.data!;
-                    final groupedExpenses = _groupExpensesByDate(expenses);
+                    final groupedExpenses = _groupExpensesByDate(
+                      expenses.where((expense) {
+                        final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                        final yesterday = DateTime.now().subtract(const Duration(days: 1));
+                        return createdAt == null ||
+                            createdAt.year != yesterday.year ||
+                            createdAt.month != yesterday.month ||
+                            createdAt.day != yesterday.day;
+                      }).toList(),
+                    );
 
                     DateTime? lastMonth;
 
@@ -675,7 +1038,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                             if (showMonthLabel)
                             Container(
                               margin: const EdgeInsets.only(bottom: 20, top: 20),
-                              padding: const EdgeInsets.all(15),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: TColors.bubbleOlive.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(15),
