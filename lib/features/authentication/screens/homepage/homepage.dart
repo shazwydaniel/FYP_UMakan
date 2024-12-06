@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
@@ -220,56 +221,71 @@ class HomePageScreen extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      // Right Side Text Elements
+                                      // User's Financial Status (Tag)
                                       Positioned(
                                         bottom: 0,
                                         right: 0,
                                         child: Obx(() {
-                                          final recommendedAllowance =
-                                              userController.user.value
-                                                  .recommendedMoneyAllowance;
-                                          final remainingAllowance =
-                                              userController.user.value
-                                                  .actualRemainingFoodAllowance;
+                                          return FutureBuilder<DocumentSnapshot>(
+                                            future: FirebaseFirestore.instance
+                                                .collection('Users')
+                                                .doc(userController.currentUserId)
+                                                .collection('financial_status')
+                                                .doc('current')
+                                                .get(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return CircularProgressIndicator(); // Loading indicator
+                                              } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                                                return Text(
+                                                  'Error or No Data',
+                                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                                ); // Handle error or missing data
+                                              } else {
+                                                final financialStatus = snapshot.data!.get('status');
 
-                                          return Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            decoration: BoxDecoration(
-                                              color: remainingAllowance >=
-                                                      recommendedAllowance
-                                                  ? TColors.teal
-                                                      .withOpacity(0.7)
-                                                  : TColors.amber
-                                                      .withOpacity(0.7),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  remainingAllowance >=
-                                                          recommendedAllowance
-                                                      ? Iconsax.emoji_happy
-                                                      : Iconsax.emoji_sad,
-                                                  color: Colors.white,
-                                                  size: 16,
-                                                ),
-                                                const SizedBox(width: 5),
-                                                Text(
-                                                  remainingAllowance >=
-                                                          recommendedAllowance
-                                                      ? 'Enough'
-                                                      : 'Not Enough',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
+                                                Color statusColor;
+                                                IconData statusIcon;
+                                                String statusText;
+
+                                                if (financialStatus == "Surplus") {
+                                                  statusColor = TColors.teal.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_happy;
+                                                  statusText = "Surplus";
+                                                } else if (financialStatus == "Moderate") {
+                                                  statusColor = TColors.marigold.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_normal;
+                                                  statusText = "Moderate";
+                                                } else {
+                                                  statusColor = TColors.amber.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_sad;
+                                                  statusText = "Deficit";
+                                                }
+
+                                                return Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  decoration: BoxDecoration(
+                                                    color: statusColor,
+                                                    borderRadius: BorderRadius.circular(20),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(statusIcon, color: Colors.white, size: 16),
+                                                      const SizedBox(width: 5),
+                                                      Text(
+                                                        statusText,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                            },
                                           );
                                         }),
                                       ),
@@ -361,42 +377,73 @@ class HomePageScreen extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      // Right Side Text Elements
+                                      // User's Calorie Intake Status (Tag)
                                       Positioned(
                                         bottom: 0,
                                         right: 0,
-                                        child:
-                                            // Status of Calorie Intake (Card)
-                                            Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                TColors.teal.withOpacity(0.7),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Iconsax.emoji_happy,
-                                                color: Colors.white,
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              // Status of Calorie Intake (Label)
-                                              Text(
-                                                'Satisfied',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                        child: Obx(() {
+                                          return FutureBuilder<DocumentSnapshot>(
+                                            future: FirebaseFirestore.instance
+                                                .collection('Users')
+                                                .doc(userController.currentUserId)
+                                                .collection('calorie_intake_status')
+                                                .doc('current')
+                                                .get(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return CircularProgressIndicator(); // Loading indicator
+                                              } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                                                return Text(
+                                                  'Error or No Data',
+                                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                                ); // Handle error or missing data
+                                              } else {
+                                                final calorieStatus = snapshot.data!.get('status');
+
+                                                Color statusColor;
+                                                IconData statusIcon;
+                                                String statusText;
+
+                                                if (calorieStatus == "Underconsumed") {
+                                                  statusColor = TColors.amber.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_sad;
+                                                  statusText = "Underconsumed";
+                                                } else if (calorieStatus == "Met Target") {
+                                                  statusColor = TColors.teal.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_happy;
+                                                  statusText = "Met Target";
+                                                } else {
+                                                  statusColor = TColors.amber.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_normal;
+                                                  statusText = "Overconsumed";
+                                                }
+
+                                                return Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  decoration: BoxDecoration(
+                                                    color: statusColor,
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(statusIcon, color: Colors.white, size: 16),
+                                                      const SizedBox(width: 5),
+                                                      Text(
+                                                        statusText,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          );
+                                        }),
                                       ),
                                     ],
                                   ),

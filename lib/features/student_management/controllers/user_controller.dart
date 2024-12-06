@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 
 class UserController extends GetxController {
   static UserController get instance => Get.find();
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final profileLoading = false.obs;
   Rx<UserModel> user = UserModel.empty().obs;
   final userRepository = Get.put(UserRepository());
@@ -44,15 +44,22 @@ class UserController extends GetxController {
       profileLoading.value = true;
       final userFromDb = await userRepository.fetchUserDetails();
 
-      // Only update the user if it's not null
       if (userFromDb != null) {
         this.user(userFromDb);
         updateAge();
         updateStatus();
         await updateCalculatedFields();
+
+        // Ensure subcollections are initialized
+        await initializeStatusSubcollections(userFromDb.id);
+
+        // Sync statuses for consistency
+        await syncStatuses(userFromDb.id);
+
         await setupUser(userFromDb.id);
       } else {
         this.user(UserModel.empty());
+        print('No user document found.');
       }
     } catch (e) {
       this.user(UserModel.empty());
@@ -203,6 +210,9 @@ class UserController extends GetxController {
   Future<void> updateCalculatedFields() async {
     final currentUser = user.value;
 
+    // await fetchFinancialStatus(currentUser.id);
+    // await fetchCalorieStatus(currentUser.id);
+
     // Convert String fields to double
     double monthlyAllowance =
         double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
@@ -231,6 +241,15 @@ class UserController extends GetxController {
         user.actualRemainingFoodAllowance = actualRemainingFoodAllowance; // Update cumulatively
       }
     });
+
+    // Calculate financial status
+    String financialStatus = calculateFinancialStatus(
+      actualRemainingFoodAllowance,
+      recommendedMoneyAllowance,
+    );
+
+    // Update in Firebase
+    await updateFinancialStatus(currentUser.id, financialStatus);
 
     // Update the user model with the calculated values
     user.update((user) {
@@ -305,4 +324,174 @@ class UserController extends GetxController {
       print('Error saving user details: $e');
     }
   }
+
+  // Update Financial Status in Firebase
+  Future<void> updateFinancialStatus(String userId, String status) async {
+    try {
+      final userRef = _firestore.collection('Users').doc(userId).collection('financial_status');
+      
+      // Update the "current" document
+      await userRef.doc('current').set({
+        'status': status,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      // Also update the "status" document
+      await userRef.doc('status').update({
+        'status': status,
+      });
+
+      print("Financial status updated: $status");
+    } catch (e) {
+      print("Error updating financial status: $e");
+    }
+  }
+
+  // Update Calorie Intake Status in Firebase
+  Future<void> updateCalorieIntakeStatus(String userId, String status, double totalCalories) async {
+    try {
+      final userRef = _firestore.collection('Users').doc(userId).collection('calorie_intake_status');
+      
+      // Update the "current" document
+      await userRef.doc('current').set({
+        'status': status,
+        'total_calories_logged': totalCalories,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      // Also update the "status" document
+      await userRef.doc('status').update({
+        'status': status,
+      });
+
+      print("Calorie intake status updated: $status");
+    } catch (e) {
+      print("Error updating calorie intake status: $e");
+    }
+  }
+
+  // Sync Financial and Calorie Status
+  Future<void> syncStatuses(String userId) async {
+    try {
+      final userRef = _firestore.collection('Users').doc(userId);
+
+      // Fetch financial status from "current"
+      final financialCurrent = await userRef.collection('financial_status').doc('current').get();
+      final financialStatus = financialCurrent.data()?['status'];
+
+      if (financialStatus != null) {
+        // Sync to "status" document
+        await userRef.collection('financial_status').doc('status').update({
+          'status': financialStatus,
+        });
+      }
+
+      // Fetch calorie intake status from "current"
+      final calorieCurrent = await userRef.collection('calorie_intake_status').doc('current').get();
+      final calorieStatus = calorieCurrent.data()?['status'];
+
+      if (calorieStatus != null) {
+        // Sync to "status" document
+        await userRef.collection('calorie_intake_status').doc('status').update({
+          'status': calorieStatus,
+        });
+      }
+
+      print("Statuses synchronized successfully.");
+    } catch (e) {
+      print("Error synchronizing statuses: $e");
+    }
+  }
+
+  String calculateFinancialStatus(double actualRemaining, double recommendedAllowance) {
+    if (actualRemaining >= recommendedAllowance * 1.2) {
+      return "Surplus";
+    } else if (actualRemaining >= recommendedAllowance * 0.9) {
+      return "Moderate";
+    } else {
+      return "Deficit";
+    }
+  }
+
+  String calculateCalorieStatus(double totalCalories, double recommendedIntake) {
+    if (totalCalories < recommendedIntake * 0.9) {
+      return "Deficit";
+    } else if (totalCalories <= recommendedIntake * 1.1) {
+      return "Met Target";
+    } else {
+      return "Overconsumed";
+    }
+  }
+
+  Future<void> initializeStatusSubcollections(String userId) async {
+    try {
+      print('Initializing status subcollections for user: $userId');
+
+      final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
+
+      // Financial Status Subcollection
+      final financialStatusDoc = userRef.collection('financial_status').doc('status');
+      final financialStatusSnapshot = await financialStatusDoc.get();
+
+      if (!financialStatusSnapshot.exists) {
+        await financialStatusDoc.set({
+          'status': 'Moderate', // Default status
+          'actualRemainingFoodAllowance': 0.0, // Initialize with 0
+          'recommendedMoneyAllowance': 0.0, // Initialize with 0
+        });
+        print('Financial Status Subcollection initialized for user: $userId');
+      } else {
+        print('Financial Status Subcollection already exists for user: $userId');
+      }
+
+      // Calorie Intake Status Subcollection
+      final calorieIntakeDoc = userRef.collection('calorie_intake_status').doc('status');
+      final calorieIntakeSnapshot = await calorieIntakeDoc.get();
+
+      if (!calorieIntakeSnapshot.exists) {
+        await calorieIntakeDoc.set({
+          'status': 'Met Target', // Default status
+          'totalCaloriesLogged': 0.0, // Initialize with 0
+          'recommendedCalorieIntake': 0.0, // Initialize with 0
+        });
+        print('Calorie Intake Status Subcollection initialized for user: $userId');
+      } else {
+        print('Calorie Intake Status Subcollection already exists for user: $userId');
+      }
+
+      // Money Journal Subcollection
+      final moneyJournalCollection = userRef.collection('money_journal');
+      final moneyJournalSnapshot = await moneyJournalCollection.limit(1).get();
+
+      if (moneyJournalSnapshot.size == 0) {
+        await moneyJournalCollection.doc('example').set({
+          'itemName': 'Example Item',
+          'price': 0.0,
+          'date': FieldValue.serverTimestamp(),
+          'type': 'Food', // Example entry
+        });
+        print('Money Journal Subcollection initialized for user: $userId');
+      } else {
+        print('Money Journal Subcollection already exists for user: $userId');
+      }
+
+      // Food Journal Subcollection
+      final foodJournalCollection = userRef.collection('food_journal');
+      final foodJournalSnapshot = await foodJournalCollection.limit(1).get();
+
+      if (foodJournalSnapshot.size == 0) {
+        await foodJournalCollection.doc('example').set({
+          'itemName': 'Example Food',
+          'calories': 0.0,
+          'date': FieldValue.serverTimestamp(),
+        });
+        print('Food Journal Subcollection initialized for user: $userId');
+      } else {
+        print('Food Journal Subcollection already exists for user: $userId');
+      }
+    } catch (e) {
+      print('Error initializing subcollections: $e');
+    }
+  }
+
 }
