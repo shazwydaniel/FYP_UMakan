@@ -397,23 +397,30 @@ class MoneyJournalMainPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'RM ${totalTodaySpending.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: TColors.teal,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                'RM ${totalTodaySpending.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: TColors.cream,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Icon(
+                                Iconsax.money_send,
+                                size: 18,
                                 color: TColors.cream,
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            Icon(
-                              Iconsax.money_send,
-                              size: 18,
-                              color: TColors.cream,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     );
@@ -675,23 +682,30 @@ class MoneyJournalMainPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'RM ${totalYesterdaySpending.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: TColors.bubbleOrange,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                'RM ${totalYesterdaySpending.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: TColors.cream,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Icon(
+                                Iconsax.money_send,
+                                size: 18,
                                 color: TColors.cream,
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            Icon(
-                              Iconsax.money_send,
-                              size: 18,
-                              color: TColors.cream,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     );
@@ -1042,14 +1056,6 @@ class MoneyJournalMainPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: TColors.bubbleOlive.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    spreadRadius: 2,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 8),
-                                  ),
-                                ],
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
