@@ -364,10 +364,11 @@ class MoneyJournalMainPage extends StatelessWidget {
                     final now = DateTime.now();
                     final todaysExpenses = expenses.where((expense) {
                       final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                      return createdAt != null &&
-                          createdAt.year == now.year &&
-                          createdAt.month == now.month &&
-                          createdAt.day == now.day;
+                      if (createdAt == null) return false; // Skip if createdAt is null
+                      final expenseDate = DateTime(createdAt.year, createdAt.month, createdAt.day);
+                      final today = DateTime.now();
+                      final todayDate = DateTime(today.year, today.month, today.day);
+                      return expenseDate == todayDate;
                     }).toList();
 
                     final totalTodaySpending = todaysExpenses.fold<double>(
@@ -453,7 +454,11 @@ class MoneyJournalMainPage extends StatelessWidget {
                     final now = DateTime.now();
                     final todaysExpenses = expenses.where((expense) {
                       final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                      return createdAt != null && now.difference(createdAt).inHours < 24;
+                      if (createdAt == null) return false;
+                      final expenseDate = DateTime(createdAt.year, createdAt.month, createdAt.day);
+                      final today = DateTime.now();
+                      final todayDate = DateTime(today.year, today.month, today.day);
+                      return expenseDate == todayDate;
                     }).toList();
 
                     if (todaysExpenses.isEmpty) {
@@ -646,13 +651,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     }
 
                     final expenses = snapshot.data!;
-                    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+                    final now = DateTime.now();
+                    final yesterdayDate = now.subtract(const Duration(days: 1));
+                    final yesterdayStart = DateTime(yesterdayDate.year, yesterdayDate.month, yesterdayDate.day);
+                    final yesterdayEnd = DateTime(yesterdayDate.year, yesterdayDate.month, yesterdayDate.day, 23, 59, 59);
+
                     final yesterdayExpenses = expenses.where((expense) {
                       final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                      return createdAt != null &&
-                          createdAt.year == yesterday.year &&
-                          createdAt.month == yesterday.month &&
-                          createdAt.day == yesterday.day;
+                      return createdAt != null && createdAt.isAfter(yesterdayStart) && createdAt.isBefore(yesterdayEnd);
                     }).toList();
 
                     final totalYesterdaySpending = yesterdayExpenses.fold<double>(
@@ -733,13 +739,14 @@ class MoneyJournalMainPage extends StatelessWidget {
                     }
 
                     final expenses = snapshot.data!;
-                    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+                    final now = DateTime.now();
+                    final yesterdayDate = now.subtract(const Duration(days: 1));
+                    final yesterdayStart = DateTime(yesterdayDate.year, yesterdayDate.month, yesterdayDate.day);
+                    final yesterdayEnd = DateTime(yesterdayDate.year, yesterdayDate.month, yesterdayDate.day, 23, 59, 59);
+
                     final yesterdayExpenses = expenses.where((expense) {
                       final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                      return createdAt != null &&
-                          createdAt.year == yesterday.year &&
-                          createdAt.month == yesterday.month &&
-                          createdAt.day == yesterday.day;
+                      return createdAt != null && createdAt.isAfter(yesterdayStart) && createdAt.isBefore(yesterdayEnd);
                     }).toList();
 
                     if (yesterdayExpenses.isEmpty) {
