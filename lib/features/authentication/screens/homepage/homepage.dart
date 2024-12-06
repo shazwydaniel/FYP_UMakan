@@ -372,7 +372,7 @@ class HomePageScreen extends StatelessWidget {
                                               horizontal: 10, vertical: 5),
                                           decoration: BoxDecoration(
                                             color:
-                                                TColors.amber.withOpacity(0.7),
+                                                TColors.teal.withOpacity(0.7),
                                             borderRadius:
                                                 BorderRadius.circular(20),
                                           ),
@@ -380,14 +380,14 @@ class HomePageScreen extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
-                                                Iconsax.emoji_sad,
+                                                Iconsax.emoji_happy,
                                                 color: Colors.white,
                                                 size: 16,
                                               ),
                                               const SizedBox(width: 5),
                                               // Status of Calorie Intake (Label)
                                               Text(
-                                                'Exceeded',
+                                                'Satisfied',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
