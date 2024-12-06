@@ -24,6 +24,8 @@ class VendorController extends GetxController {
 
   //String get currentVendorId => vendor.value.id;
 
+  final privacyPolicy = true.obs;
+
   //Variables for Register
   final vendorEmail = TextEditingController();
   final vendorPassword = TextEditingController();

@@ -6,6 +6,7 @@ class TImages {
   static const String burger = "assets/images/Burger.png";
   static const String leaf = "assets/images/Leaf.png";
   static const String rice = "assets/images/Rice.png";
+  static const String burger2 = "assets/images/food_items/burger.png";
 
   // Organisations
   static const String foodBank = "assets/images/FoodBank.png";

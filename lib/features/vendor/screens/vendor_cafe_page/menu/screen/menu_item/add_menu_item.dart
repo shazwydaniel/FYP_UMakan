@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart'; // Import the package
 import 'dart:io';
@@ -35,6 +36,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Menu Item'),
+        backgroundColor: TColors.mustard,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -150,6 +152,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                   child: Text('Add Item'),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    backgroundColor: TColors.forest,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),

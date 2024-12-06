@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
@@ -32,6 +33,7 @@ class VendorAdverts extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Advertisment'),
+        backgroundColor: TColors.mustard,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -89,6 +91,7 @@ class VendorAdverts extends StatelessWidget {
                   },
                   child: Text('Add Item'),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: TColors.forest,
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),

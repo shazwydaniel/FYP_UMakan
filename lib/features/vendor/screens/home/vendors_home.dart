@@ -159,25 +159,35 @@ class VendorsHome extends StatelessWidget {
           // Add Cafe Button
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddCafe()),
-                );
-                if (result == true) {
-                  controller.fetchCafesForVendor(vendorId);
-                }
-              },
-              child: const Text('Add Cafe'),
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                minimumSize: const Size(double.infinity, 50),
-                foregroundColor: TColors.olive,
-                backgroundColor: TColors.textLight,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: TColors.amber, // Set your desired border color
+                  width: 2.0, // Set the border width
+                ),
+                borderRadius: BorderRadius.circular(
+                    15), // Match the button's border radius
+              ),
+              child: ElevatedButton(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddCafe()),
+                  );
+                  if (result == true) {
+                    controller.fetchCafesForVendor(vendorId);
+                  }
+                },
+                child: const Text('Add Cafe'),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  minimumSize: const Size(double.infinity, 50),
+                  foregroundColor: TColors.amber,
+                  backgroundColor: TColors.textLight,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
               ),
             ),
