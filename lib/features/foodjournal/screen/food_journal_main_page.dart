@@ -349,7 +349,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                     ),
                                     Center(
                                       child: Text(
-                                        '${DateFormat('h:mm a').format(item.timestamp)} cal',
+                                        '${DateFormat('h:mm a').format(item.timestamp)} ',
                                         style: TextStyle(
                                           color: dark
                                               ? TColors.cream
@@ -930,12 +930,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     };
 
                     // Access UserController and add the expense
-                    final userController =
-                        UserController.instance;
-                    userController.addExpense(
-                        userId,
-                        'Food',
-                        expenseData);
+                    final userController = UserController.instance;
+                    userController.addExpense(userId, 'Food', expenseData);
 
                     try {
                       print('Meal added to food and money journal!');
