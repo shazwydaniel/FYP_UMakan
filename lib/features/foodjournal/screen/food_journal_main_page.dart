@@ -921,8 +921,24 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     // Optionally, add the item to the local lunch list
                     foodJController2.addFoodToJournal(userId, journalItem);
 
+                    // Prepare expense data for the Money Journal
+                    final expenseData = {
+                      'itemName': itemName.text.trim(),
+                      'price': double.tryParse(itemPrice.text.trim()) ?? 0.0,
+                      'date': DateTime.now().toIso8601String(),
+                      'type': 'Food',
+                    };
+
+                    // Access UserController and add the expense
+                    final userController =
+                        UserController.instance;
+                    userController.addExpense(
+                        userId,
+                        'Food',
+                        expenseData);
+
                     try {
-                      print('Meal added to food journal!');
+                      print('Meal added to food and money journal!');
 
                       // Close the dialog
                       Navigator.of(context).pop();
