@@ -426,6 +426,23 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     itemTime.isBefore(endOfYesterday);
               }).toList();
 
+              // Check if there are no items logged yesterday
+              if (filteredLunchItems.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 20),
+                    child: Text(
+                      "No meals logged yesterday",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors
+                            .white, // Adjust the color based on your theme
+                      ),
+                    ),
+                  ),
+                );
+              }
+
               return Container(
                 height: 230,
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -574,6 +591,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 ),
               );
             }),
+
             //Meal Summary (Text)
             Padding(
               padding: const EdgeInsets.only(
