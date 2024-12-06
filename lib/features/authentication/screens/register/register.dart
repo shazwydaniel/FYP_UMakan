@@ -26,19 +26,16 @@ class RegisterScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image(
-                    height: 200, 
+                    height: 200,
                     image: AssetImage(dark ? TImages.leaf : TImages.leaf),
                   ),
                 ],
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
-
-              Text(TTexts.signupStudentTitle.capitalize!, style: Theme.of(context).textTheme.headlineMedium),
-
+              Text(TTexts.signupStudentTitle.capitalize!,
+                  style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: TSizes.spaceBtwSections),
-
               TRegisterForm(),
-
             ],
           ),
         ),

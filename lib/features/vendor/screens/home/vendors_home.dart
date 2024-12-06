@@ -20,7 +20,7 @@ class VendorsHome extends StatelessWidget {
     controller.fetchCafesForVendor(vendorId);
 
     return Scaffold(
-      backgroundColor: dark ? TColors.darkGreen : TColors.cream,
+      backgroundColor: dark ? TColors.mustard : TColors.mustard,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
