@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
-import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
-import 'package:fyp_umakan/features/cafes/screens/cafe.dart';
 import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
 import 'package:fyp_umakan/features/discover/screens/discover_cafes.dart';
-
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
@@ -21,8 +17,7 @@ class DiscoverPageScreen extends StatelessWidget {
     final DiscoverController discoverController =
         Get.put(DiscoverController(VendorRepository()));
 
-    discoverController
-        .fetchAllCafesFromAllVendors(); // Fetch cafes from all vendors
+    discoverController.fetchAllCafesFromAllVendors();
 
     // Predefined list of locations and corresponding images
     final List<Map<String, String>> predefinedLocations = [
@@ -79,17 +74,16 @@ class DiscoverPageScreen extends StatelessWidget {
               padding: const EdgeInsets.only(
                   left: 40, right: 40, top: 16, bottom: 16),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Display 2 rectangles per row
+                crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
-                childAspectRatio: 2, // Rectangle shape
               ),
               itemCount: predefinedLocations.length,
               itemBuilder: (context, index) {
                 final location = predefinedLocations[index]['name']!;
                 final imagePath = predefinedLocations[index]['imagePath']!;
 
-                return InkWell(
+                return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -108,21 +102,40 @@ class DiscoverPageScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16.0),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.5), // Shadow color
-                          blurRadius: 2.0, // Spread of the shadow
-                          offset: Offset(0, 2), // Position of the shadow
+                          color: Colors.black.withOpacity(0.4),
+                          blurRadius: 10.0,
+                          offset: Offset(0, 5),
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        location,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    child: Stack(
+                      children: [
+                        // Background Image
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16.0),
+                            child: Image.asset(
+                              imagePath,
+                              fit: BoxFit.cover,
+                              color: Colors.black.withOpacity(0.3),
+                              colorBlendMode: BlendMode.darken,
+                            ),
+                          ),
                         ),
-                      ),
+
+                        // Overlay Text
+                        Center(
+                          child: Text(
+                            location,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );

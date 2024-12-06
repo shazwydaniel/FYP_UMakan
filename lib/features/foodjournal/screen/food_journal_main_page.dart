@@ -128,10 +128,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(
                                 50), // Set border radius for ripple effect
-                            onTap: () {
-                              // Show the pop-up dialog
-                              _showModal(context);
-                            },
+
                             child: Icon(
                               Iconsax.shop_add,
                               size: 75,
@@ -762,10 +759,37 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: TColors.mustard,
+        shape: CircularNotchedRectangle(),
+        notchMargin: 0.0,
+        child: Container(
+          height: 60.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Iconsax.add_circle,
+                          color: TColors.cream, size: 40),
+                      onPressed: () {
+                        manualAdd(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  void _showModal(BuildContext context) {
+  void manualAdd(BuildContext context) {
     final TextEditingController itemName = TextEditingController();
     final TextEditingController itemCalories = TextEditingController();
     final TextEditingController itemPrice = TextEditingController();
