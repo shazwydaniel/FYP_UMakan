@@ -93,7 +93,7 @@ class CafePage extends StatelessWidget {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Calories: ${item.itemCalories} kcal',
+                              Text('Calories: ${item.itemCalories} cal',
                                   style: TextStyle(color: TColors.textLight)),
                               Text('Price: RM ${item.itemPrice}',
                                   style: TextStyle(color: TColors.textLight)),

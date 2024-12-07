@@ -188,6 +188,23 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                   .where((item) => item.timestamp.isAfter(startOfDay))
                   .toList();
 
+              // Check if there are no items logged yesterday
+              if (filteredItems.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 20),
+                    child: Text(
+                      "No meals logged yet today",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors
+                            .white, // Adjust the color based on your theme
+                      ),
+                    ),
+                  ),
+                );
+              }
+
               return Container(
                 height: 230,
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -469,14 +486,14 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: 140,
+                              width: 120,
                               height: 120,
                               decoration: BoxDecoration(
                                 color: TColors.mustard,
                                 borderRadius: BorderRadius.circular(200),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: TColors.mustard,
+                                    color: Colors.black.withOpacity(0.25),
                                     spreadRadius: 2,
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
@@ -488,7 +505,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                         item.imagePath.isNotEmpty
                                     ? Image.network(
                                         item.imagePath,
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                       )
                                     : Center(
                                         child: Icon(
