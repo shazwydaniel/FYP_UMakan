@@ -36,9 +36,9 @@ class AddCafe extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Cafe'),
-        backgroundColor: TColors.olive,
+        backgroundColor: TColors.amber,
       ),
-      backgroundColor: TColors.olive,
+      backgroundColor: TColors.amber,
       body: SingleChildScrollView(
         // Wrap the Column in a SingleChildScrollView
         child: Padding(
@@ -174,7 +174,7 @@ class AddCafe extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: TColors.olive,
+                      foregroundColor: TColors.amber,
                       backgroundColor: TColors.textLight,
                     ),
                     child: const Text('Save'),
