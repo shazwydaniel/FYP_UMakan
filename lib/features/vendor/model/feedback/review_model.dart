@@ -32,4 +32,14 @@ class ReviewModel {
       timestamp: DateTime.parse(map['timestamp']),
     );
   }
+
+  factory ReviewModel.fromJson(Map<String, dynamic> json) {
+    return ReviewModel(
+      userId: json['userId'],
+      userName: json['userName'],
+      feedback: json['feedback'],
+      rating: json['rating'].toDouble(),
+      timestamp: DateTime.parse(json['timestamp']),
+    );
+  }
 }

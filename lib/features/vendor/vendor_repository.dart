@@ -715,7 +715,7 @@ class VendorRepository {
           .doc(vendorId)
           .collection('Cafe')
           .doc(cafeId)
-          .collection('Feedback')
+          .collection('Reviews')
           .doc();
 
       await feedbackCollection.set(feedback.toMap());
@@ -734,8 +734,40 @@ class VendorRepository {
       print('PlatformException: ${e.message}');
       throw TPlatformException(e.code).message;
     } catch (e) {
-      print('Unknown error: $e');
-      throw 'Unable to submit feedback';
+      print('Unknown submitting review: $e');
+      throw Exception('Failed to submit review: $e');
+    }
+  }
+
+  Future<List<ReviewModel>> fetchReviews(String vendorId, String cafeId) async {
+    try {
+      final snapshot = await _db
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Reviews')
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => ReviewModel.fromJson(doc.data()))
+          .toList();
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Error fetching review: $e');
+      throw Exception('Failed to fetch review: $e');
     }
   }
 }
