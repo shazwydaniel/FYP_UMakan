@@ -158,4 +158,144 @@ class FoodJournalRepository {
       throw Exception("Failed to fetch cafe logs.");
     }
   }
+
+  Future<String> getCafeWithMostFiveStars(String vendorId) async {
+    try {
+      // Reference to the Vendor document
+      final vendorDoc =
+          FirebaseFirestore.instance.collection('Vendors').doc(vendorId);
+
+      // Fetch all cafes under the vendor
+      final cafesSnapshot = await vendorDoc.collection('Cafe').get();
+
+      // Map to store the count of 5-star reviews per café
+      final Map<String, int> cafeFiveStarCounts = {};
+
+      // Iterate over each café
+      for (var cafeDoc in cafesSnapshot.docs) {
+        final cafeData = cafeDoc.data();
+        final String? cafeName = cafeData['cafeName'];
+
+        // Skip if the café name is not available
+        if (cafeName == null) continue;
+
+        // Fetch all reviews under the current café
+        final reviewsSnapshot =
+            await cafeDoc.reference.collection('Reviews').get();
+
+        // Count 5-star reviews for the current café
+        int fiveStarCount = 0;
+        for (var reviewDoc in reviewsSnapshot.docs) {
+          final reviewData = reviewDoc.data();
+          final rating = reviewData['rating'];
+
+          if (rating == 5) {
+            fiveStarCount++;
+          }
+        }
+
+        print("$cafeName has $fiveStarCount five-star reviews");
+
+        // Add the count to the map
+        cafeFiveStarCounts[cafeName] = fiveStarCount;
+      }
+
+      print("Cafe Five-Star Counts: $cafeFiveStarCounts");
+
+      // If no 5-star reviews are found, return 'None'
+      if (cafeFiveStarCounts.isEmpty) {
+        return 'None';
+      }
+
+      // Find the café with the most 5-star reviews
+      String mostFiveStarCafe = '';
+      int maxFiveStarCount = 0;
+
+      cafeFiveStarCounts.forEach((cafe, count) {
+        if (count > maxFiveStarCount) {
+          mostFiveStarCafe = cafe;
+          maxFiveStarCount = count;
+        }
+      });
+
+      print("Cafe with Most 5 Stars: $mostFiveStarCafe");
+      return mostFiveStarCafe;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw Exception("Failed to fetch 5-star reviews: ${e.message}");
+    } catch (e) {
+      print("Error fetching most 5-star reviews: $e");
+      return 'Error';
+    }
+  }
+
+  Future<String> getCafeWithMostOneStars(String vendorId) async {
+    try {
+      // Reference to the Vendor document
+      final vendorDoc =
+          FirebaseFirestore.instance.collection('Vendors').doc(vendorId);
+
+      // Fetch all cafes under the vendor
+      final cafesSnapshot = await vendorDoc.collection('Cafe').get();
+
+      // Map to store the count of 1-star reviews per café
+      final Map<String, int> cafeOneStarCounts = {};
+
+      // Iterate over each café
+      for (var cafeDoc in cafesSnapshot.docs) {
+        final cafeData = cafeDoc.data();
+        final String? cafeName = cafeData['cafeName']; // Get the café name
+
+        if (cafeName == null) {
+          print("Skipping cafe with missing name: ${cafeDoc.id}");
+          continue; // Skip cafes with no name
+        }
+
+        // Fetch all reviews under the current café
+        final reviewsSnapshot =
+            await cafeDoc.reference.collection('Reviews').get();
+
+        // Count 1-star reviews for the current café
+        int oneStarCount = 0;
+        for (var reviewDoc in reviewsSnapshot.docs) {
+          final reviewData = reviewDoc.data();
+          final rating = reviewData['rating'];
+
+          if (rating == 1) {
+            oneStarCount++;
+          }
+        }
+
+        print("$cafeName has $oneStarCount one-star reviews");
+
+        // Add the count to the map
+        cafeOneStarCounts[cafeName] = oneStarCount;
+      }
+
+      // If no 1-star reviews are found, return 'None'
+      if (cafeOneStarCounts.isEmpty) {
+        return 'None';
+      }
+
+      // Find the café with the most 1-star reviews
+      String mostOneStarCafe = 'None';
+      int maxOneStarCount = 0;
+
+      cafeOneStarCounts.forEach((cafe, count) {
+        if (count > maxOneStarCount) {
+          mostOneStarCafe = cafe;
+          maxOneStarCount = count;
+        }
+      });
+
+      print("Cafe with Most 1 Stars: $mostOneStarCafe");
+      return mostOneStarCafe;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw Exception("Failed to fetch 1-star reviews: ${e.message}");
+    } catch (e) {
+      print("Error fetching most 1-star reviews: $e");
+      return 'Error';
+    }
+  }
 }

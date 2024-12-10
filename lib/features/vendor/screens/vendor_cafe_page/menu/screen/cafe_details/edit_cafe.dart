@@ -24,6 +24,7 @@ class EditCafeDetailsPage extends StatelessWidget {
     final controller = VendorController.instance;
 
     return Scaffold(
+      backgroundColor: TColors.mustard,
       appBar: AppBar(
         title: const Text('Edit Cafe Details'),
         backgroundColor: TColors.mustard,

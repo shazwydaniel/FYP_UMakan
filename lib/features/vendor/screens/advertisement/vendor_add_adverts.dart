@@ -31,9 +31,10 @@ class VendorAdverts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.amber,
       appBar: AppBar(
         title: Text('Add Advertisment'),
-        backgroundColor: TColors.mustard,
+        backgroundColor: TColors.amber,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

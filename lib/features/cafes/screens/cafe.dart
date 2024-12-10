@@ -350,6 +350,7 @@ void showFeedbackDialog(
     BuildContext context, String vendorId, CafeDetails cafe) {
   final _feedbackController = TextEditingController();
   double _rating = 0.0;
+  String _anonymous = 'No'; // Default value for anonymity
   final userController = UserController.instance;
   final ReviewController reviewController = Get.put(ReviewController());
   final vendorRepo = VendorRepository.instance;
@@ -406,7 +407,7 @@ void showFeedbackDialog(
                   _rating = rating;
                 },
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
 
               // Feedback Input Field
               Padding(
@@ -432,7 +433,34 @@ void showFeedbackDialog(
                   maxLines: 5,
                 ),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
+
+              // Dropdown for anonymity
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  value: _anonymous, // Current selected value
+                  items: [
+                    DropdownMenuItem(
+                      value: 'Yes',
+                      child: Text('Yes'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'No',
+                      child: Text('No'),
+                    ),
+                  ],
+                  onChanged: (String? newValue) {
+                    _anonymous = newValue ?? 'No'; // Update value on selection
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
 
               // Buttons
               Padding(
@@ -457,24 +485,21 @@ void showFeedbackDialog(
                       onPressed: () async {
                         // Create feedback model
                         final feedback = ReviewModel(
-                          userId: userController
-                              .currentUserId, // Replace with logged-in user's ID
-                          userName: userController.user.value
-                              .username, // Replace with logged-in user's name
+                          userId: userController.currentUserId,
+                          userName: userController.user.value.username,
                           feedback: _feedbackController.text.trim(),
                           rating: _rating,
                           timestamp: DateTime.now(),
                           cafeId: cafe.id,
                           cafeName: cafe.name,
+                          anonymous: _anonymous,
                         );
 
-                        vendorRepo.submitFeedback(
+                        await vendorRepo.submitFeedback(
                           vendorId: vendorId,
                           cafeId: cafe.id,
                           feedback: feedback,
                         );
-
-                        print(vendorId);
 
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text('Feedback submitted successfully!'),

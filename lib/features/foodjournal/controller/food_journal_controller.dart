@@ -321,18 +321,9 @@ class FoodJournalController extends GetxController {
     storage.write('dailyCalories', dailyCalories);
   }
 
-  Future<String> getMostLoggedCafe() async {
-    print("Meal items: $mealItems");
-
-    final Map<String, int> cafeLogs = {};
-
-    for (var item in mealItems) {
-      if (item.cafe != null && item.cafe.isNotEmpty) {
-        cafeLogs[item.cafe] = (cafeLogs[item.cafe] ?? 0) + 1;
-      }
-    }
-
-    print("Cafe logs: $cafeLogs");
+  Future<String> getMostLoggedCafeForVendor(String vendorId) async {
+    final Map<String, int> cafeLogs =
+        await _foodJournalRepo.getCafeLogsByVendor(vendorId);
 
     String mostLoggedCafe = '';
     int maxLogs = 0;
@@ -344,7 +335,6 @@ class FoodJournalController extends GetxController {
       }
     });
 
-    print("Most logged cafe: $mostLoggedCafe");
     return mostLoggedCafe.isNotEmpty ? mostLoggedCafe : 'N/A';
   }
 }

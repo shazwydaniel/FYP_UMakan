@@ -8,6 +8,7 @@ import 'package:fyp_umakan/features/vendor/screens/reviews/view_reviews.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ReviewsPage extends StatelessWidget {
   final ReviewController reviewController = Get.put(ReviewController());
@@ -97,12 +98,11 @@ class ReviewsPage extends StatelessWidget {
 
             // Horizontal Scroll Section
             SizedBox(
-              height: 150,
+              height: 130,
               child: FutureBuilder(
                 future: Future.wait([
-                  foodJournalController.getMostLoggedCafe(),
-                  reviewController.getHighestRatedCafe(),
-                  reviewController.getLowestRatedCafe(),
+                  reviewController.getHighestRatedCafe(vendorId),
+                  reviewController.getLowestRatedCafe(vendorId),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -115,9 +115,10 @@ class ReviewsPage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.only(left: 30),
                     children: [
-                      _buildCard('Most Logged Cafe', cafes[0], TColors.cream),
-                      _buildCard('Highest Rated Cafe', cafes[1], TColors.cream),
-                      _buildCard('Lowest Rated Cafe', cafes[2], TColors.cream),
+                      _buildCard('Highest Rated Cafe', cafes[0], TColors.cream,
+                          Icons.thumb_up_sharp, TColors.forest),
+                      _buildCard('Lowest Rated Cafe', cafes[1], TColors.cream,
+                          Icons.thumb_down, TColors.amber),
                     ],
                   );
                 },
@@ -229,7 +230,8 @@ class ReviewsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(String title, String cafeName, Color color) {
+  Widget _buildCard(String title, String cafeName, Color color, IconData icon,
+      Color thumbColor) {
     return Container(
       width: 200,
       margin: const EdgeInsets.all(8.0),
@@ -237,20 +239,45 @@ class ReviewsPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 6.0,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 18, color: Colors.black),
-            textAlign: TextAlign.center,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(width: 8), // Add spacing between text and icon
+              Icon(
+                icon,
+                color: thumbColor,
+                size: 16,
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
-            cafeName.isNotEmpty ? cafeName : 'N/A',
-            style: TextStyle(fontSize: 14, color: Colors.black),
-            textAlign: TextAlign.center,
+            cafeName.isNotEmpty ? cafeName : 'None',
+            style: const TextStyle(
+              fontSize: 20,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.start,
           ),
         ],
       ),

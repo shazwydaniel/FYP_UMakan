@@ -6,6 +6,7 @@ class ReviewModel {
   final DateTime timestamp;
   final String cafeId;
   final String cafeName;
+  final String anonymous;
 
   ReviewModel({
     required this.userId,
@@ -15,6 +16,7 @@ class ReviewModel {
     required this.timestamp,
     required this.cafeId,
     required this.cafeName,
+    required this.anonymous,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class ReviewModel {
       'timestamp': timestamp.toIso8601String(),
       'cafeId': cafeId,
       'cafeName': cafeName,
+      'anonymous': anonymous,
     };
   }
 
@@ -38,6 +41,7 @@ class ReviewModel {
       timestamp: DateTime.parse(map['timestamp']),
       cafeId: map['cafeId'],
       cafeName: map['cafeName'],
+      anonymous: map['anonymous'],
     );
   }
 
@@ -50,6 +54,7 @@ class ReviewModel {
       timestamp: DateTime.parse(json['timestamp']),
       cafeId: json['cafeId'],
       cafeName: json['cafeName'],
+      anonymous: json['anonymous'],
     );
   }
 }

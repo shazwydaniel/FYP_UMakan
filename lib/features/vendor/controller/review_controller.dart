@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/vendor/model/feedback/review_model.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ class ReviewController extends GetxController {
   final VendorRepository _vendorRepository = VendorRepository();
   final RxList<ReviewModel> review = RxList<ReviewModel>();
   final RxBool isLoadingReviews = false.obs;
+  final foodJRepository = FoodJournalRepository.instance;
 
   Future<void> fetchReviews(String vendorId, String cafeId) async {
     try {
@@ -25,51 +27,17 @@ class ReviewController extends GetxController {
     }
   }
 
-  Future<String> getHighestRatedCafe() async {
-    final Map<String, List<double>> cafeRatings = {};
-
-    for (var item in review) {
-      if (item.cafeName != null) {
-        cafeRatings[item.cafeName] ??= [];
-        cafeRatings[item.cafeName]!.add(item.rating);
-      }
-    }
-
-    String highestRatedCafe = '';
-    double highestAverageRating = 0.0;
-
-    cafeRatings.forEach((cafe, ratings) {
-      double averageRating = ratings.reduce((a, b) => a + b) / ratings.length;
-      if (averageRating > highestAverageRating) {
-        highestRatedCafe = cafe;
-        highestAverageRating = averageRating;
-      }
-    });
-
-    return highestRatedCafe;
+  Future<String> getHighestRatedCafe(String vendorId) async {
+    String mostFiveStars =
+        await foodJRepository.getCafeWithMostFiveStars(vendorId);
+    print("Most 5-Star Reviews: $mostFiveStars");
+    return mostFiveStars;
   }
 
-  Future<String> getLowestRatedCafe() async {
-    final Map<String, List<double>> cafeRatings = {};
-
-    for (var item in review) {
-      if (item.cafeName != null) {
-        cafeRatings[item.cafeName] ??= [];
-        cafeRatings[item.cafeName]!.add(item.rating);
-      }
-    }
-
-    String lowestRatedCafe = '';
-    double lowestAverageRating = double.infinity;
-
-    cafeRatings.forEach((cafe, ratings) {
-      double averageRating = ratings.reduce((a, b) => a + b) / ratings.length;
-      if (averageRating < lowestAverageRating) {
-        lowestRatedCafe = cafe;
-        lowestAverageRating = averageRating;
-      }
-    });
-
-    return lowestRatedCafe;
+  Future<String> getLowestRatedCafe(String vendorId) async {
+    String mostOneStars =
+        await foodJRepository.getCafeWithMostOneStars(vendorId);
+    print("Most 1-Star Reviews: $mostOneStars");
+    return mostOneStars;
   }
 }
