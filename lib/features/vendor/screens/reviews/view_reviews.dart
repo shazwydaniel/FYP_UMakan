@@ -22,15 +22,15 @@ class ViewReviewPage extends StatelessWidget {
     reviewController.fetchReviews(vendorId, cafeId);
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 107, 91, 2),
+      backgroundColor: TColors.mustard,
       appBar: AppBar(
         title: Text(
           'Reviews for $cafeName',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: const Color.fromARGB(255, 107, 91, 2),
+        backgroundColor: TColors.mustard,
         iconTheme: IconThemeData(
-          color: Colors.white, // Sets the color of the back icon to white
+          color: Colors.black, // Sets the color of the back icon to white
         ),
       ),
       body: Obx(() {
@@ -42,7 +42,7 @@ class ViewReviewPage extends StatelessWidget {
           return Center(
             child: Text(
               'No reviews available.',
-              style: TextStyle(fontSize: 16, color: TColors.textLight),
+              style: TextStyle(fontSize: 16, color: TColors.textDark),
             ),
           );
         }
@@ -64,37 +64,42 @@ class ViewReviewPage extends StatelessWidget {
                       children: List.generate(
                         review.rating.toInt(),
                         (index) =>
-                            Icon(Icons.star, color: Colors.amber, size: 16),
+                            Icon(Icons.star, color: Colors.black, size: 16),
                       ),
                     ),
-                    if (review.anonymous !=
-                        'Yes') // Show username only if not anonymous
-                      Row(
-                        children: [
-                          Icon(Icons.person,
-                              color: TColors.textLight, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            "Anonymous",
-                            style: TextStyle(
-                                fontSize: 14, color: TColors.textLight),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: TColors.cream, // Tag background color
+                            borderRadius:
+                                BorderRadius.circular(20), // Rounded corners
+                            border: Border.all(
+                                color: TColors.textDark, width: 1), // Border
                           ),
-                        ],
-                      ),
-                    if (review.anonymous !=
-                        'No') // Show username only if not anonymous
-                      Row(
-                        children: [
-                          Icon(Icons.person,
-                              color: TColors.textLight, size: 16),
-                          const SizedBox(width: 4),
-                          Text(
-                            review.userName,
-                            style: TextStyle(
-                                fontSize: 14, color: TColors.textLight),
+                          child: Row(
+                            children: [
+                              Icon(Icons.person,
+                                  color: TColors.textDark,
+                                  size: 16), // Icon inside tag
+                              const SizedBox(width: 4),
+                              Text(
+                                review.anonymous == 'Yes'
+                                    ? 'Anonymous'
+                                    : review.userName,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: TColors.textDark, // Text color
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -104,7 +109,8 @@ class ViewReviewPage extends StatelessWidget {
                   review.feedback,
                   style: TextStyle(
                     fontSize: 16,
-                    color: TColors.textLight,
+                    color: TColors.textDark,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -114,14 +120,14 @@ class ViewReviewPage extends StatelessWidget {
                   DateFormat('dd MMM yyyy, hh:mm a').format(review.timestamp),
                   style: TextStyle(
                     fontSize: 12,
-                    color: TColors.textLight.withOpacity(0.8),
+                    color: TColors.textDark.withOpacity(0.8),
                   ),
                 ),
                 const SizedBox(height: 10),
 
                 // Divider Line
                 Divider(
-                  color: TColors.textLight.withOpacity(0.5),
+                  color: TColors.textDark.withOpacity(0.5),
                   thickness: 1,
                 ),
               ],

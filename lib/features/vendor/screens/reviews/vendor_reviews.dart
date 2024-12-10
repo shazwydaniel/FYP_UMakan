@@ -23,15 +23,13 @@ class ReviewsPage extends StatelessWidget {
     vendorController.fetchCafesForVendor(vendorId);
 
     return Scaffold(
-      backgroundColor: dark
-          ? const Color.fromARGB(255, 107, 91, 2)
-          : const Color.fromARGB(255, 107, 91, 2),
+      backgroundColor: dark ? TColors.mustard : TColors.mustard,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: const Color.fromARGB(255, 107, 91, 2),
+              color: TColors.mustard,
               height: 230,
               child: Stack(
                 children: [
@@ -43,7 +41,7 @@ class ReviewsPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
-                        color: dark ? Colors.white : Colors.white,
+                        color: dark ? Colors.black : Colors.black,
                       ),
                     ),
                   ),
@@ -54,7 +52,7 @@ class ReviewsPage extends StatelessWidget {
                       'Browse through reviews made by students ',
                       style: TextStyle(
                         fontSize: 15,
-                        color: dark ? Colors.white : Colors.white,
+                        color: dark ? Colors.black : Colors.black,
                       ),
                     ),
                   ),
@@ -65,7 +63,7 @@ class ReviewsPage extends StatelessWidget {
                       'about your cafes',
                       style: TextStyle(
                         fontSize: 15,
-                        color: dark ? Colors.white : Colors.white,
+                        color: dark ? Colors.black : Colors.black,
                       ),
                     ),
                   ),
@@ -81,7 +79,7 @@ class ReviewsPage extends StatelessWidget {
                   Container(
                     width: 4,
                     height: 40,
-                    color: TColors.mustard,
+                    color: TColors.textDark,
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -89,7 +87,7 @@ class ReviewsPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
+                      color: dark ? Colors.black : Colors.black,
                     ),
                   ),
                 ],
@@ -125,7 +123,7 @@ class ReviewsPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
 
             Padding(
               padding: const EdgeInsets.only(left: 30, right: 20, bottom: 20),
@@ -135,7 +133,7 @@ class ReviewsPage extends StatelessWidget {
                   Container(
                     width: 4,
                     height: 40,
-                    color: TColors.mustard,
+                    color: TColors.textDark,
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -143,13 +141,12 @@ class ReviewsPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
+                      color: dark ? Colors.black : Colors.black,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 10),
 
             // Cafes List Section
             Obx(() {
@@ -176,7 +173,7 @@ class ReviewsPage extends StatelessWidget {
                       return Card(
                         elevation: 5,
                         margin: const EdgeInsets.only(bottom: 16.0),
-                        color: TColors.mustard,
+                        color: TColors.cream,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
