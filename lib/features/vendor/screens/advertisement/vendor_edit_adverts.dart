@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:intl/intl.dart';
 
 class EditAdPage extends StatelessWidget {
@@ -108,12 +109,9 @@ class EditAdPage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: TColors.amber,
       appBar: AppBar(
-        title: Text(
-          'Edit Advertisement',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: TColors.amber,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

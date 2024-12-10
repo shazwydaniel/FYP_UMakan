@@ -75,7 +75,7 @@ class VendorsHome extends StatelessWidget {
                 Container(
                   width: 4,
                   height: 40,
-                  color: TColors.amber,
+                  color: TColors.forest,
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -84,6 +84,30 @@ class VendorsHome extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: dark ? Colors.black : Colors.black,
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: TColors.mustard, // Tag background color
+                    borderRadius: BorderRadius.circular(20), // Rounded corners
+                    border:
+                        Border.all(color: TColors.textDark, width: 1), // Border
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Total Cafes: ${controller.cafes.length} ",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: TColors.textDark, // Text color
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -182,8 +206,8 @@ class VendorsHome extends StatelessWidget {
                 },
                 child: const Text('Add Cafe'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.mustard,
-                  foregroundColor: Colors.black,
+                  backgroundColor: TColors.forest,
+                  foregroundColor: Colors.white,
                   side: BorderSide(
                       color: Colors.black, // Border color of the button
                       width: 2.0), // Border width of the button),

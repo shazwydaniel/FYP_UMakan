@@ -9,7 +9,7 @@ class VendorAdsPage extends StatelessWidget {
   VendorAdsPage({super.key});
 
   final AdvertController advertController = Get.put(AdvertController());
-  final DateFormat dateFormat = DateFormat('dd-MM-yyyy'); // Date formatter
+  final DateFormat dateFormat = DateFormat('dd MMM yyyy'); // Date formatter
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +100,12 @@ class VendorAdsPage extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              // Tag
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: isToday
-                                      ? const Color.fromARGB(255, 21, 164, 92)
+                                      ? const Color.fromARGB(255, 52, 204, 128)
                                       : isCompleted
                                           ? Colors.red
                                           : Colors.red,
@@ -161,7 +160,7 @@ class VendorAdsPage extends StatelessWidget {
                         "From ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'} to ${ad.endDate != null ? dateFormat.format(ad.endDate!) : "N/A"}",
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 10),

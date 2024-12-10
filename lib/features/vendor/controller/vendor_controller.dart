@@ -218,6 +218,20 @@ class VendorController extends GetxController {
     }
   }
 
+  // Get total cafe
+  Future<int> getTotalCafe(String vendorId) async {
+    try {
+      final cafeList = await vendorRepository.getCafesForVendor(vendorId);
+
+      if (cafeList.isNotEmpty) {
+        cafes.assignAll(cafeList);
+      }
+      return cafes.length;
+    } catch (e) {
+      throw ('Error fetching length: $e');
+    }
+  }
+
   //Delete Cafe
   Future<void> deleteCafe(String vendorId, String cafeId) async {
     try {
