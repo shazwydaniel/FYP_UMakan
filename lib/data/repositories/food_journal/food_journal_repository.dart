@@ -114,4 +114,48 @@ class FoodJournalRepository {
       throw Exception('Failed to delete cafe: $e');
     }
   }
+
+  Future<Map<String, int>> getCafeLogsByVendor(String vendorId) async {
+    try {
+      final querySnapshot = await _db.collection('Users').get();
+
+      final Map<String, int> cafeLogs = {};
+
+      for (var userDoc in querySnapshot.docs) {
+        final journalSnapshot = await _db
+            .collection('Users')
+            .doc(userDoc.id)
+            .collection('food_journal')
+            .get();
+
+        // Iterate through the food journal entries
+        for (var journalDoc in journalSnapshot.docs) {
+          final data = journalDoc.data();
+
+          // Ensure the item belongs to the given vendorId
+          if (data['vendorId'] == vendorId && data['cafe'] != null) {
+            final String cafeName = data['cafe'];
+
+            // Increment count for the cafe
+            cafeLogs[cafeName] = (cafeLogs[cafeName] ?? 0) + 1;
+          }
+        }
+      }
+
+      print("Cafe Logs for vendorId $vendorId: $cafeLogs");
+      return cafeLogs;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print("Error fetching cafe logs: $e");
+      throw Exception("Failed to fetch cafe logs.");
+    }
+  }
 }

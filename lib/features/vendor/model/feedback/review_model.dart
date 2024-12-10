@@ -4,6 +4,8 @@ class ReviewModel {
   final String feedback;
   final double rating;
   final DateTime timestamp;
+  final String cafeId;
+  final String cafeName;
 
   ReviewModel({
     required this.userId,
@@ -11,6 +13,8 @@ class ReviewModel {
     required this.feedback,
     required this.rating,
     required this.timestamp,
+    required this.cafeId,
+    required this.cafeName,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +24,8 @@ class ReviewModel {
       'feedback': feedback,
       'rating': rating,
       'timestamp': timestamp.toIso8601String(),
+      'cafeId': cafeId,
+      'cafeName': cafeName,
     };
   }
 
@@ -30,6 +36,8 @@ class ReviewModel {
       feedback: map['feedback'],
       rating: map['rating'],
       timestamp: DateTime.parse(map['timestamp']),
+      cafeId: map['cafeId'],
+      cafeName: map['cafeName'],
     );
   }
 
@@ -40,6 +48,8 @@ class ReviewModel {
       feedback: json['feedback'],
       rating: json['rating'].toDouble(),
       timestamp: DateTime.parse(json['timestamp']),
+      cafeId: json['cafeId'],
+      cafeName: json['cafeName'],
     );
   }
 }

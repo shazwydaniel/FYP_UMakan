@@ -97,13 +97,10 @@ class HomePageScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(
                             left: 30, right: 30, bottom: 20, top: 10),
                         child: Container(
-                          padding: const EdgeInsets.all(
-                              20), // Padding inside the card
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: TColors
-                                .bubbleRed, // Background color of the card
-                            borderRadius:
-                                BorderRadius.circular(20), // Rounded corners
+                            color: TColors.bubbleRed,
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,58 +223,83 @@ class HomePageScreen extends StatelessWidget {
                                         bottom: 0,
                                         right: 0,
                                         child: Obx(() {
-                                          return FutureBuilder<DocumentSnapshot>(
+                                          return FutureBuilder<
+                                              DocumentSnapshot>(
                                             future: FirebaseFirestore.instance
                                                 .collection('Users')
-                                                .doc(userController.currentUserId)
+                                                .doc(userController
+                                                    .currentUserId)
                                                 .collection('financial_status')
                                                 .doc('current')
                                                 .get(),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
                                                 return CircularProgressIndicator(); // Loading indicator
-                                              } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                                              } else if (snapshot.hasError ||
+                                                  !snapshot.hasData ||
+                                                  !snapshot.data!.exists) {
                                                 return Text(
                                                   'Error or No Data',
-                                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
                                                 ); // Handle error or missing data
                                               } else {
-                                                final financialStatus = snapshot.data!.get('status');
+                                                final financialStatus = snapshot
+                                                    .data!
+                                                    .get('status');
 
                                                 Color statusColor;
                                                 IconData statusIcon;
                                                 String statusText;
 
-                                                if (financialStatus == "Surplus") {
-                                                  statusColor = TColors.teal.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_happy;
+                                                if (financialStatus ==
+                                                    "Surplus") {
+                                                  statusColor = TColors.teal
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_happy;
                                                   statusText = "Surplus";
-                                                } else if (financialStatus == "Moderate") {
-                                                  statusColor = TColors.marigold.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_normal;
+                                                } else if (financialStatus ==
+                                                    "Moderate") {
+                                                  statusColor = TColors.marigold
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_normal;
                                                   statusText = "Moderate";
                                                 } else {
-                                                  statusColor = TColors.amber.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_sad;
+                                                  statusColor = TColors.amber
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_sad;
                                                   statusText = "Deficit";
                                                 }
 
                                                 return Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                                   decoration: BoxDecoration(
                                                     color: statusColor,
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      Icon(statusIcon, color: Colors.white, size: 16),
+                                                      Icon(statusIcon,
+                                                          color: Colors.white,
+                                                          size: 16),
                                                       const SizedBox(width: 5),
                                                       Text(
                                                         statusText,
                                                         style: TextStyle(
                                                           color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontSize: 12,
                                                         ),
                                                       ),
@@ -382,58 +404,84 @@ class HomePageScreen extends StatelessWidget {
                                         bottom: 0,
                                         right: 0,
                                         child: Obx(() {
-                                          return FutureBuilder<DocumentSnapshot>(
+                                          return FutureBuilder<
+                                              DocumentSnapshot>(
                                             future: FirebaseFirestore.instance
                                                 .collection('Users')
-                                                .doc(userController.currentUserId)
-                                                .collection('calorie_intake_status')
+                                                .doc(userController
+                                                    .currentUserId)
+                                                .collection(
+                                                    'calorie_intake_status')
                                                 .doc('current')
                                                 .get(),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
                                                 return CircularProgressIndicator(); // Loading indicator
-                                              } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                                              } else if (snapshot.hasError ||
+                                                  !snapshot.hasData ||
+                                                  !snapshot.data!.exists) {
                                                 return Text(
                                                   'Error or No Data',
-                                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
                                                 ); // Handle error or missing data
                                               } else {
-                                                final calorieStatus = snapshot.data!.get('status');
+                                                final calorieStatus = snapshot
+                                                    .data!
+                                                    .get('status');
 
                                                 Color statusColor;
                                                 IconData statusIcon;
                                                 String statusText;
 
-                                                if (calorieStatus == "Underconsumed") {
-                                                  statusColor = TColors.amber.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_sad;
+                                                if (calorieStatus ==
+                                                    "Underconsumed") {
+                                                  statusColor = TColors.amber
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_sad;
                                                   statusText = "Underconsumed";
-                                                } else if (calorieStatus == "Met Target") {
-                                                  statusColor = TColors.teal.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_happy;
+                                                } else if (calorieStatus ==
+                                                    "Met Target") {
+                                                  statusColor = TColors.teal
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_happy;
                                                   statusText = "Met Target";
                                                 } else {
-                                                  statusColor = TColors.amber.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_normal;
+                                                  statusColor = TColors.amber
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_normal;
                                                   statusText = "Overconsumed";
                                                 }
 
                                                 return Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                                   decoration: BoxDecoration(
                                                     color: statusColor,
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      Icon(statusIcon, color: Colors.white, size: 16),
+                                                      Icon(statusIcon,
+                                                          color: Colors.white,
+                                                          size: 16),
                                                       const SizedBox(width: 5),
                                                       Text(
                                                         statusText,
                                                         style: TextStyle(
                                                           color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontSize: 12,
                                                         ),
                                                       ),
@@ -460,7 +508,7 @@ class HomePageScreen extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top:5),
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -677,20 +725,20 @@ class HomePageScreen extends StatelessWidget {
                                                         // Add Button
                                                         ElevatedButton(
                                                           onPressed: () {
-                                                            final journalItem =
-                                                                JournalItem(
-                                                              imagePath: item
-                                                                  .itemImage,
-                                                              id: item.id,
-                                                              name:
-                                                                  item.itemName,
-                                                              price: item
-                                                                  .itemPrice,
-                                                              calories: item
-                                                                  .itemCalories,
-                                                              cafe:
-                                                                  item.itemCafe,
-                                                            );
+                                                            final journalItem = JournalItem(
+                                                                imagePath: item
+                                                                    .itemImage,
+                                                                id: item.id,
+                                                                name: item
+                                                                    .itemName,
+                                                                price: item
+                                                                    .itemPrice,
+                                                                calories: item
+                                                                    .itemCalories,
+                                                                cafe: item
+                                                                    .itemCafe,
+                                                                vendorId: item
+                                                                    .vendorId);
 
                                                             String userId =
                                                                 FoodJournalController
@@ -704,23 +752,31 @@ class HomePageScreen extends StatelessWidget {
                                                                     journalItem);
 
                                                             // Prepare expense data for the Money Journal
-                                                            final expenseData = {
-                                                              'itemName': item.itemName,
-                                                              'price': item.itemPrice,
-                                                              'date': DateTime.now()
+                                                            final expenseData =
+                                                                {
+                                                              'itemName':
+                                                                  item.itemName,
+                                                              'price': item
+                                                                  .itemPrice,
+                                                              'date': DateTime
+                                                                      .now()
                                                                   .toIso8601String(),
                                                               'type': 'Food',
                                                             };
 
                                                             // Access UserController and add the expense
                                                             final userController =
-                                                                UserController.instance;
-                                                            userController.addExpense(
-                                                                userId,
-                                                                'Food',
-                                                                expenseData);
+                                                                UserController
+                                                                    .instance;
+                                                            userController
+                                                                .addExpense(
+                                                                    userId,
+                                                                    'Food',
+                                                                    expenseData);
 
-                                                            Navigator.of(context).pop(); // Close the dialog
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Close the dialog
                                                             print(
                                                                 'Add to journal pressed');
                                                           },

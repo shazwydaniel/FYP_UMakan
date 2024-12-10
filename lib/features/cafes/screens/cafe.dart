@@ -65,7 +65,7 @@ class CafePage extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      showFeedbackDialog(context, vendorId, cafe.id);
+                      showFeedbackDialog(context, vendorId, cafe);
                     },
                     icon: Icon(
                       Icons.feedback,
@@ -265,7 +265,8 @@ class CafePage extends StatelessWidget {
                                                               item.itemCalories,
                                                           cafe: cafe.name,
                                                           imagePath:
-                                                              item.itemImage);
+                                                              item.itemImage,
+                                                          vendorId: vendorId);
 
                                                   String userId =
                                                       FoodJournalController
@@ -345,7 +346,8 @@ class CafePage extends StatelessWidget {
   }
 }
 
-void showFeedbackDialog(BuildContext context, String vendorId, String cafeId) {
+void showFeedbackDialog(
+    BuildContext context, String vendorId, CafeDetails cafe) {
   final _feedbackController = TextEditingController();
   double _rating = 0.0;
   final userController = UserController.instance;
@@ -462,11 +464,13 @@ void showFeedbackDialog(BuildContext context, String vendorId, String cafeId) {
                           feedback: _feedbackController.text.trim(),
                           rating: _rating,
                           timestamp: DateTime.now(),
+                          cafeId: cafe.id,
+                          cafeName: cafe.name,
                         );
 
                         vendorRepo.submitFeedback(
                           vendorId: vendorId,
-                          cafeId: cafeId,
+                          cafeId: cafe.id,
                           feedback: feedback,
                         );
 

@@ -930,7 +930,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                         price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
                         calories: int.tryParse(itemCalories.text.trim()) ?? 0,
                         cafe: itemLocation.text.trim(),
-                        imagePath: '');
+                        imagePath: '',
+                        vendorId: '');
 
                     String userId =
                         FoodJournalController.instance.getCurrentUserId();

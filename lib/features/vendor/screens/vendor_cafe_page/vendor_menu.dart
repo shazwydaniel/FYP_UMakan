@@ -207,7 +207,7 @@ class _VendorMenuState extends State<VendorMenu> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: const Size(double.infinity, 50),
-                  foregroundColor: TColors.amber,
+                  foregroundColor: TColors.textDark,
                   backgroundColor: TColors.cream,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -220,14 +220,6 @@ class _VendorMenuState extends State<VendorMenu> {
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               margin: const EdgeInsets.only(bottom: 40),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black, // Black border color
-                  width: 2.0, // Border width
-                ),
-                borderRadius:
-                    BorderRadius.circular(15), // Match button's border radius
-              ),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -243,8 +235,11 @@ class _VendorMenuState extends State<VendorMenu> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: const Size(double.infinity, 50),
-                  foregroundColor: TColors.amber,
-                  backgroundColor: TColors.cream,
+                  foregroundColor: Colors.white,
+                  backgroundColor: TColors.amber,
+                  side: BorderSide(
+                      color: Colors.black, // Border color of the button
+                      width: 2.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

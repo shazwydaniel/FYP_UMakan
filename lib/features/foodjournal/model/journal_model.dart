@@ -6,6 +6,7 @@ class JournalItem {
   String imagePath;
   final String cafe;
   DateTime timestamp;
+  final String vendorId;
 
   JournalItem({
     this.id,
@@ -15,6 +16,7 @@ class JournalItem {
     required this.cafe,
     required this.imagePath,
     DateTime? timestamp,
+    required this.vendorId,
   }) : timestamp = timestamp ?? DateTime.now();
 
   // Override toString to print a more readable output
@@ -32,7 +34,8 @@ class JournalItem {
       'calories': calories,
       'imagePath': imagePath,
       'cafe': cafe,
-      'timestamp': timestamp.toIso8601String(), // Store as ISO string
+      'timestamp': timestamp.toIso8601String(),
+      'vendorId': vendorId,
     };
   }
 
@@ -50,6 +53,7 @@ class JournalItem {
           : json['calories'] ?? 0,
       timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
       imagePath: json['imagePath'] ?? '',
+      vendorId: json['vendorId'] ?? '',
     );
   }
 
@@ -69,6 +73,7 @@ class JournalItem {
           ? DateTime.tryParse(data['timestamp']) ?? DateTime.now()
           : DateTime.now(),
       imagePath: data['imagePath'] ?? '',
+      vendorId: data['vendorId'] ?? '',
     );
   }
 
@@ -80,7 +85,8 @@ class JournalItem {
       'price': price,
       'imagePath': imagePath,
       'calories': calories,
-      'timestamp': timestamp.toIso8601String(), // Store as ISO string
+      'timestamp': timestamp.toIso8601String(),
+      'vendorId': vendorId,
     };
   }
 
@@ -92,5 +98,6 @@ class JournalItem {
         price: 0,
         calories: 0,
         imagePath: '',
+        vendorId: '',
       );
 }

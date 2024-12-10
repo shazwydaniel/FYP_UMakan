@@ -20,7 +20,7 @@ class VendorsHome extends StatelessWidget {
     controller.fetchCafesForVendor(vendorId);
 
     return Scaffold(
-      backgroundColor: dark ? TColors.mustard : TColors.mustard,
+      backgroundColor: dark ? TColors.cream : TColors.cream,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,7 +28,7 @@ class VendorsHome extends StatelessWidget {
           ClipPath(
             clipper: TCustomCurvedEdges(),
             child: Container(
-              color: TColors.amber,
+              color: TColors.forest,
               height: 230,
               child: Stack(
                 children: [
@@ -68,17 +68,27 @@ class VendorsHome extends StatelessWidget {
 
           // Your Cafes Section
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              'Your Cafes',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: dark ? TColors.textLight : TColors.textDark,
-              ),
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 4,
+                  height: 40,
+                  color: TColors.amber,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Your cafes',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: dark ? Colors.black : Colors.black,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 20),
 
           // Cafes List Section
           Flexible(
@@ -122,7 +132,7 @@ class VendorsHome extends StatelessWidget {
                               cafe.location,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: TColors.textLight,
+                                color: TColors.textDark,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -130,14 +140,14 @@ class VendorsHome extends StatelessWidget {
                               '${cafe.openingTime} - ${cafe.closingTime}',
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: TColors.textLight,
+                                color: TColors.textDark,
                               ),
                             ),
                           ],
                         ),
                         trailing: Icon(
                           Icons.chevron_right,
-                          color: TColors.textLight,
+                          color: TColors.textDark,
                         ),
                         isThreeLine: true, // Enables a three-line layout
                         onTap: () {
@@ -160,14 +170,6 @@ class VendorsHome extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: TColors.amber, // Set your desired border color
-                  width: 2.0, // Set the border width
-                ),
-                borderRadius: BorderRadius.circular(
-                    15), // Match the button's border radius
-              ),
               child: ElevatedButton(
                 onPressed: () async {
                   final result = await Navigator.push(
@@ -180,11 +182,14 @@ class VendorsHome extends StatelessWidget {
                 },
                 child: const Text('Add Cafe'),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: TColors.mustard,
+                  foregroundColor: Colors.black,
+                  side: BorderSide(
+                      color: Colors.black, // Border color of the button
+                      width: 2.0), // Border width of the button),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: const Size(double.infinity, 50),
-                  foregroundColor: TColors.amber,
-                  backgroundColor: TColors.textLight,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

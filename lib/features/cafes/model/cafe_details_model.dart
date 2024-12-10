@@ -93,6 +93,7 @@ class CafeItem {
   String itemImage;
   String itemLocation;
   String itemCafe;
+  String vendorId;
 
   CafeItem({
     required this.id,
@@ -102,6 +103,7 @@ class CafeItem {
     required this.itemImage,
     required this.itemLocation,
     required this.itemCafe,
+    required this.vendorId,
   });
 
   // Override toString to print a more readable output
@@ -119,19 +121,20 @@ class CafeItem {
       'itemImage': itemImage,
       'itemLocation': itemLocation,
       'itemCafe': itemCafe,
+      'vendorId': vendorId,
     };
   }
 
   // Static Function to Create an Empty CafeItem Model
   static CafeItem empty() => CafeItem(
-        id: '',
-        itemName: '',
-        itemPrice: 0,
-        itemCalories: 0,
-        itemImage: '',
-        itemLocation: '',
-        itemCafe: '',
-      );
+      id: '',
+      itemName: '',
+      itemPrice: 0,
+      itemCalories: 0,
+      itemImage: '',
+      itemLocation: '',
+      itemCafe: '',
+      vendorId: '');
 
   factory CafeItem.fromMap(Map<String, dynamic> map, String documentId) {
     return CafeItem(
@@ -144,6 +147,7 @@ class CafeItem {
       itemImage: map['itemImage'] ?? '',
       itemLocation: map['itemLocation'] ?? '',
       itemCafe: map['itemCafe'] ?? '',
+      vendorId: map['vendorId'] ?? '',
     );
   }
 
@@ -156,6 +160,7 @@ class CafeItem {
       'itemPrice': itemPrice,
       'itemCafe': itemCafe,
       'itemImage': itemImage,
+      'vendorId': vendorId,
     };
   }
 }

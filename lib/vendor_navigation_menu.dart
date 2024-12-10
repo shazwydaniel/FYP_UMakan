@@ -33,7 +33,7 @@ class VendorNavigationMenu extends StatelessWidget {
           selectedIndex: controller.selectedIndex.value,
           onDestinationSelected: (index) =>
               controller.selectedIndex.value = index,
-          backgroundColor: darkMode ? TColors.amber : TColors.amber,
+          backgroundColor: darkMode ? TColors.forest : TColors.forest,
           indicatorColor: darkMode
               ? Colors.white.withOpacity(0.1)
               : Colors.white.withOpacity(0.1),
@@ -41,11 +41,11 @@ class VendorNavigationMenu extends StatelessWidget {
             NavigationDestination(
                 icon: Icon(Iconsax.add, color: TColors.cream), label: 'Items'),
             NavigationDestination(
-                icon: Icon(Iconsax.note_214, color: TColors.cream),
-                label: 'Advertisment'),
-            NavigationDestination(
                 icon: Icon(Iconsax.star, color: TColors.cream),
                 label: 'Reviews'),
+            NavigationDestination(
+                icon: Icon(Iconsax.note_214, color: TColors.cream),
+                label: 'Advertisment'),
             NavigationDestination(
                 icon: Icon(Iconsax.user, color: TColors.cream),
                 label: 'Profile'),
@@ -62,8 +62,8 @@ class VendorNavigationController extends GetxController {
 
   final screens = [
     VendorsHome(),
-    VendorAdsPage(),
     ReviewsPage(),
+    VendorAdsPage(),
     VendorProfilePageScreen(),
   ];
 }
