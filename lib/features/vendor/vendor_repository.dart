@@ -5,6 +5,7 @@ import 'package:fyp_umakan/data/repositories/authentication/authentication_repos
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
+import 'package:fyp_umakan/features/vendor/model/feedback/review_model.dart';
 import 'package:fyp_umakan/features/vendor/model/vendor_model.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_exceptions.dart';
@@ -700,6 +701,41 @@ class VendorRepository {
       // Handle any errors
       print("Error updating: $e");
       throw Exception('Failed to update item: $e');
+    }
+  }
+
+  Future<void> submitFeedback({
+    required String vendorId,
+    required String cafeId,
+    required ReviewModel feedback,
+  }) async {
+    try {
+      final feedbackCollection = await _db
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Feedback')
+          .doc();
+
+      await feedbackCollection.set(feedback.toMap());
+      print(" added to $cafeId");
+      print("Added to Firebase!!!");
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Unknown error: $e');
+      throw 'Unable to submit feedback';
     }
   }
 }

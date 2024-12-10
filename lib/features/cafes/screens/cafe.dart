@@ -1,11 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
+import 'package:fyp_umakan/features/vendor/controller/review_controller.dart';
+import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/features/vendor/model/feedback/review_model.dart';
+
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/features/cafes/controller/cafe_controller.dart';
@@ -47,14 +52,27 @@ class CafePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    cafe.name,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                  Expanded(
+                    child: Text(
+                      cafe.name,
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow
+                          .ellipsis, // Ensure long names don't overflow
                     ),
                   ),
+                  IconButton(
+                    onPressed: () {
+                      showFeedbackDialog(context, vendorId, cafe.id);
+                    },
+                    icon: Icon(
+                      Icons.feedback,
+                      color: Colors.black,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -95,7 +113,8 @@ class CafePage extends StatelessWidget {
                             children: [
                               Text('Calories: ${item.itemCalories} cal',
                                   style: TextStyle(color: TColors.textLight)),
-                              Text('Price: RM ${item.itemPrice}',
+                              Text(
+                                  'Cost: RM${item.itemPrice.toStringAsFixed(2)}',
                                   style: TextStyle(color: TColors.textLight)),
                             ],
                           ),
@@ -205,7 +224,7 @@ class CafePage extends StatelessWidget {
                                               ),
                                               SizedBox(height: 4),
                                               Text(
-                                                'Calories: ${item.itemCalories} kcal',
+                                                'Calories: ${item.itemCalories} cal',
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                   color: TColors.textLight,
@@ -325,4 +344,167 @@ class CafePage extends StatelessWidget {
       ),
     );
   }
+}
+
+void showFeedbackDialog(BuildContext context, String vendorId, String cafeId) {
+  final _feedbackController = TextEditingController();
+  double _rating = 0.0;
+  final userController = UserController.instance;
+  final ReviewController reviewController = Get.put(ReviewController());
+  final vendorRepo = VendorRepository.instance;
+
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.transparent,
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: TColors.cream,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Title
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Give Review',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+
+              // Star Rating
+              RatingBar.builder(
+                initialRating: _rating,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: false,
+                itemCount: 5,
+                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  _rating = rating;
+                },
+              ),
+              SizedBox(height: 40),
+
+              // Feedback Input Field
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextFormField(
+                  controller: _feedbackController,
+                  decoration: InputDecoration(
+                    labelText: 'What do you think?',
+                    labelStyle: TextStyle(color: TColors.textDark),
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color:
+                              Colors.black), // Underline color when not focused
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.black), // Underline color when focused
+                    ),
+                  ),
+                  maxLines: 5,
+                ),
+              ),
+              SizedBox(height: 40),
+
+              // Buttons
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: TColors.textDark,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Create feedback model
+                        final feedback = ReviewModel(
+                          userId: userController
+                              .currentUserId, // Replace with logged-in user's ID
+                          userName: userController.user.value
+                              .username, // Replace with logged-in user's name
+                          feedback: _feedbackController.text.trim(),
+                          rating: _rating,
+                          timestamp: DateTime.now(),
+                        );
+
+                        vendorRepo.submitFeedback(
+                          vendorId: vendorId,
+                          cafeId: cafeId,
+                          feedback: feedback,
+                        );
+
+                        print(vendorId);
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Feedback submitted successfully!'),
+                        ));
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TColors.mustard,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        side: BorderSide(
+                          color: Colors.black, // Border color
+                          width: 2, // Border width
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
