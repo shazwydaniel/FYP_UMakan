@@ -16,6 +16,7 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/image_strings.dart';
 
 import 'package:fyp_umakan/utils/constants/sizes.dart';
 
@@ -87,6 +88,17 @@ class HomePageScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            ),
+
+                            Positioned(
+                              top: 50,
+                              right: 30,
+                              child: Container(
+                                  width: 155,
+                                  height: 155,
+                                  child: Image.asset(
+                                    TImages.heroBadge,
+                                  )),
                             ),
                           ],
                         ),

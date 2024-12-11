@@ -22,6 +22,14 @@ class TImages {
   //Loading
   static const String loading = "assets/images/animations/Loading.json";
 
+  //Badges
+  static const String initiatorBadge = "assets/badges/Initiator_Badge.png";
+  static const String noviceBadge = "assets/badges/Novice_Badge.png";
+  static const String heroBadge = "assets/badges/Hero_Badge.png";
+  static const String championBadge = "assets/badges/Champion_Badge.png";
+  static const String championBadge2 = "assets/badges/Champion_BadgeV2.png";
+  static const String badgex4 = "assets/badges/Badgex4.png";
+
   // // -- Category Icons
   // static const String sportIcon = "assets/icons/categories/icons8-bowling-64.png";
   // static const String clothIcon = "assets/icons/categories/icons8-tailors-dummy-64.png";

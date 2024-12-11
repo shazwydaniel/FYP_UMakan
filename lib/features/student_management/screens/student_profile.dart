@@ -2,12 +2,14 @@
 
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
+import "package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/health_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/personal_detail_edit.dart";
 import "package:fyp_umakan/features/vendor/screens/vendor_register.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
+import "package:fyp_umakan/utils/constants/image_strings.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:fyp_umakan/vendor_navigation_menu.dart";
 import "package:get/get.dart";
@@ -23,6 +25,7 @@ class StudentProfilePageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = UserController.instance;
+    final fooodJController = FoodJournalController.instance;
 
     return Scaffold(
       backgroundColor: TColors.bubbleOrange,
@@ -58,9 +61,88 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
-            // Personal Details (Label)
+            // Achievements (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4, // Thin vertical line width
+                    height: 40, // Adjust the height as needed
+                    color: TColors.mustard,
+                  ),
+                  const SizedBox(width: 10), // Space between the line and text
+
+                  Text(
+                    'Your Achievements',
+                    style: TextStyle(
+                      fontSize: 16, // Adjust the font size as needed
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.white : Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Achievements Cards
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: Row(
+                children: [
+                  _buildBadgeCard(
+                    context,
+                    dark,
+                    "Initiator",
+                    "Tap to see detail",
+                    "Log meals for at least three meal times on the first day to unlock.",
+                    fooodJController.completedDays,
+                    TImages.initiatorBadge,
+                    1,
+                  ),
+                  const SizedBox(width: 10),
+                  _buildBadgeCard(
+                    context,
+                    dark,
+                    "Novice",
+                    "Tap to see detail",
+                    "Unlock by logging meals for at least three meal times for 3 consecutive days.",
+                    fooodJController.completedDays,
+                    TImages.noviceBadge,
+                    3,
+                  ),
+                  const SizedBox(width: 10),
+                  _buildBadgeCard(
+                    context,
+                    dark,
+                    "Hero",
+                    "Tap to see detail",
+                    "Unlock by logging meals for at least three meal times for 7 consecutive days.",
+                    fooodJController.completedDays,
+                    TImages.heroBadge,
+                    7,
+                  ),
+                  const SizedBox(width: 10), // Space between cards
+                  _buildBadgeCard(
+                    context,
+                    dark,
+                    "Champion",
+                    "Tap to see detail",
+                    "Unlock by logging meals for at least three meal times for 30 consecutive days.",
+                    fooodJController.completedDays,
+                    TImages.championBadge,
+                    30,
+                  ),
+                  const SizedBox(width: 10), // Space between cards
+                ],
+              ),
+            ),
+
+            // Personal Details (Label)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -760,4 +842,149 @@ class StudentProfilePageScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildBadgeCard(
+  BuildContext context,
+  bool dark,
+  String badgeName,
+  String initialDescription,
+  String tappedDescription,
+  RxInt mealTypeCount,
+  String badgeImageUnlocked,
+  int requiredCount,
+) {
+  return Obx(
+    () {
+      bool isUnlocked = mealTypeCount.value >= requiredCount;
+
+      return GestureDetector(
+        onTap: () {
+          // Show badge details in full view
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width *
+                      0.5, // 80% of screen width
+                  height: 400,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: TColors.cream,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Badge Image
+                      Container(
+                        width: 180,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isUnlocked ? Colors.transparent : Colors.grey,
+                        ),
+                        child: isUnlocked
+                            ? Image.asset(
+                                badgeImageUnlocked,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(
+                                Icons.question_mark,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        badgeName,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: dark ? Colors.black : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        tappedDescription, // Show tapped description in dialog
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: dark
+                              ? const Color.fromARGB(255, 71, 71, 71)
+                              : const Color.fromARGB(255, 71, 71, 71),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        child: Card(
+          elevation: 5,
+          color: TColors.cream,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            width: 150,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Badge Image or Locked State
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isUnlocked ? Colors.transparent : Colors.grey,
+                  ),
+                  child: isUnlocked
+                      ? Image.asset(
+                          badgeImageUnlocked,
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(
+                          Icons.question_mark,
+                          size: 50,
+                          color: Colors.white,
+                        ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  badgeName,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: dark ? Colors.black : Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  initialDescription, // Always show initial description on card
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: dark
+                        ? const Color.fromARGB(255, 71, 71, 71)
+                        : const Color.fromARGB(255, 71, 71, 71),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

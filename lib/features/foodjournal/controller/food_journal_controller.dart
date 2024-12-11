@@ -20,6 +20,19 @@ class FoodJournalController extends GetxController {
   var yesterdayCalories = 0.obs;
   var isLoading = false.obs;
   final userController = UserController.instance;
+  var completedDays = 0.obs;
+
+  // Meal type counts
+  RxInt breakfastCount = 0.obs;
+  RxInt lunchCount = 0.obs;
+  RxInt dinnerCount = 0.obs;
+  RxInt othersCount = 0.obs;
+
+  // Day count for completing at least 3 meal types
+  Rx<int> dayCount = 0.obs;
+
+  // Last updated date to reset counts
+  DateTime lastUpdatedDate = DateTime.now();
 
   // Store daily calories for each meal type
   Map<String, Map<String, int>> dailyCalories = {
@@ -77,12 +90,16 @@ class FoodJournalController extends GetxController {
     try {
       final foodData = journalItem.toJson();
       await _foodJournalRepo.addFood(userId, foodData);
+
       mealItems.add(journalItem);
-      print("Lunch Items after adding new item: ${mealItems}");
 
       for (int i = 0; i < 4; i++) {
         updateAndCacheAverageCalories(i);
       }
+
+      // Track meal and day count
+      completedDays.value =
+          trackMealAndDayCount(DateTime.parse(foodData['timestamp'])).value;
 
       // Show success message with onTap to navigate
       Get.snackbar(
@@ -103,6 +120,7 @@ class FoodJournalController extends GetxController {
         colorText: Colors.white,
       );
     }
+    print("Amount of Days Completed : $completedDays");
   }
 
   // Fetch
@@ -336,5 +354,46 @@ class FoodJournalController extends GetxController {
     });
 
     return mostLoggedCafe.isNotEmpty ? mostLoggedCafe : 'N/A';
+  }
+
+  Rx<int> trackMealAndDayCount(DateTime timestamp) {
+    final now = DateTime.now();
+
+    // Reset counts if it's a new day
+    if (lastUpdatedDate.day != now.day ||
+        lastUpdatedDate.month != now.month ||
+        lastUpdatedDate.year != now.year) {
+      breakfastCount.value = 0;
+      lunchCount.value = 0;
+      dinnerCount.value = 0;
+      othersCount.value = 0;
+      lastUpdatedDate = now;
+    }
+
+    // Determine meal type based on timestamp
+    if (timestamp.hour >= 6 && timestamp.hour < 12) {
+      breakfastCount.value++;
+    } else if (timestamp.hour >= 12 && timestamp.hour < 16) {
+      lunchCount.value++;
+    } else if (timestamp.hour >= 19 && timestamp.hour < 21) {
+      dinnerCount.value++;
+    } else {
+      othersCount.value++;
+    }
+
+    // Calculate meal type count
+    RxInt mealTypeCount = 0.obs; // Create a reactive integer
+
+    if (breakfastCount.value > 0) mealTypeCount.value++;
+    if (lunchCount.value > 0) mealTypeCount.value++;
+    if (dinnerCount.value > 0) mealTypeCount.value++;
+    if (othersCount.value > 0) mealTypeCount.value++;
+
+    // Increment dayCount if 3 meal types are logged
+    if (mealTypeCount.value >= 3) {
+      dayCount.value++;
+    }
+
+    return mealTypeCount;
   }
 }

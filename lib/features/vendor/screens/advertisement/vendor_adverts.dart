@@ -123,7 +123,7 @@ class VendorAdsPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+
                               // Edit Icon
                               IconButton(
                                 onPressed: () {
@@ -157,7 +157,7 @@ class VendorAdsPage extends StatelessWidget {
 
                       // Third Row: Date Range
                       Text(
-                        "From ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'} to ${ad.endDate != null ? dateFormat.format(ad.endDate!) : "N/A"}",
+                        "From ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'} until ${ad.endDate != null ? dateFormat.format(ad.endDate!) : "N/A"}",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black,
