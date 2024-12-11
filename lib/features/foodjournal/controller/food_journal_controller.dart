@@ -6,6 +6,7 @@ import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repositor
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
+import 'package:fyp_umakan/features/student_management/screens/badge_unlock_popup.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:get/get.dart';
@@ -68,7 +69,7 @@ class FoodJournalController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Automatically calculate calories whenever mealItems changes
+    monitorBadgeUnlock();
     ever(mealItems, (_) {
       todayCalories.value = calculateTodayCalories();
       yesterdayCalories.value = calculateYesterdayCalories();
@@ -439,5 +440,32 @@ class FoodJournalController extends GetxController {
     } else {
       return SizedBox.shrink();
     }
+  }
+
+  void monitorBadgeUnlock() {
+    ever(dayCount, (count) {
+      String? unlockedBadge;
+      String? badgeImage;
+
+      if (count == 1) {
+        unlockedBadge = "Initiator";
+        badgeImage = TImages.initiatorBadge;
+      } else if (count == 3) {
+        unlockedBadge = "Novice";
+        badgeImage = TImages.noviceBadge;
+      } else if (count == 7) {
+        unlockedBadge = "Hero";
+        badgeImage = TImages.heroBadge;
+      } else if (count == 30) {
+        unlockedBadge = "Champion";
+        badgeImage = TImages.championBadge;
+      }
+
+      if (unlockedBadge != null) {
+        Get.dialog(
+          BadgeUnlockPopup(badgeName: unlockedBadge, badgeImage: badgeImage!),
+        );
+      }
+    });
   }
 }
