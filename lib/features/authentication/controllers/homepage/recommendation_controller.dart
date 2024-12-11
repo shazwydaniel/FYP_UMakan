@@ -63,9 +63,6 @@ class RecommendationController extends GetxController {
       return withinCalorieLimit && withinPriceLimit;
     }).toList();
 
-    print('Recommended items: $recommendedItems');
-    print('Total items: ${recommendedItems.length}');
-
     return recommendedItems; // Return the list of recommended items
   }
 

@@ -38,6 +38,7 @@ class HomePageScreen extends StatelessWidget {
     final recommendedController = Get.put(RecommendationController());
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
+    print("AMOUNT of completed days : ${foodJController.dayCount}");
 
     return Scaffold(
       backgroundColor: dark ? TColors.cream : TColors.cream,
@@ -93,12 +94,14 @@ class HomePageScreen extends StatelessWidget {
                             Positioned(
                               top: 50,
                               right: 30,
-                              child: Container(
-                                  width: 155,
-                                  height: 155,
-                                  child: Image.asset(
-                                    TImages.heroBadge,
-                                  )),
+                              child: Obx(() {
+                                final controller =
+                                    FoodJournalController.instance;
+
+                                // Get the appropriate badge widget
+                                return controller
+                                    .getBadgeWidget(controller.dayCount.value);
+                              }),
                             ),
                           ],
                         ),

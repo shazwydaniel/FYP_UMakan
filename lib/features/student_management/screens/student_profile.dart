@@ -98,7 +98,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Initiator",
                     "Tap to see detail",
                     "Log meals for at least three meal times on the first day to unlock.",
-                    fooodJController.completedDays,
+                    "Congratulations! You logged meals for at least three meal times on the first day",
+                    fooodJController.dayCount,
                     TImages.initiatorBadge,
                     1,
                   ),
@@ -109,7 +110,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Novice",
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 3 consecutive days.",
-                    fooodJController.completedDays,
+                    "Congratulations! You logged meals for at least three meal times 3 consecutive days",
+                    fooodJController.dayCount,
                     TImages.noviceBadge,
                     3,
                   ),
@@ -120,7 +122,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Hero",
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 7 consecutive days.",
-                    fooodJController.completedDays,
+                    "Congratulations! You logged meals for at least three meal times 7 consecutive days",
+                    fooodJController.dayCount,
                     TImages.heroBadge,
                     7,
                   ),
@@ -131,7 +134,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Champion",
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 30 consecutive days.",
-                    fooodJController.completedDays,
+                    "Congratulations! You logged meals for at least three meal times 30 consecutive days",
+                    fooodJController.dayCount,
                     TImages.championBadge,
                     30,
                   ),
@@ -850,6 +854,7 @@ Widget _buildBadgeCard(
   String badgeName,
   String initialDescription,
   String tappedDescription,
+  String unLockedDescription,
   RxInt mealTypeCount,
   String badgeImageUnlocked,
   int requiredCount,
@@ -911,7 +916,7 @@ Widget _buildBadgeCard(
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        tappedDescription, // Show tapped description in dialog
+                        isUnlocked ? unLockedDescription : tappedDescription,
                         style: TextStyle(
                           fontSize: 16,
                           color: dark
@@ -920,6 +925,7 @@ Widget _buildBadgeCard(
                         ),
                         textAlign: TextAlign.center,
                       ),
+
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -971,7 +977,7 @@ Widget _buildBadgeCard(
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  initialDescription, // Always show initial description on card
+                  initialDescription,
                   style: TextStyle(
                     fontSize: 14,
                     color: dark

@@ -6,6 +6,8 @@ import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repositor
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +31,7 @@ class FoodJournalController extends GetxController {
   RxInt othersCount = 0.obs;
 
   // Day count for completing at least 3 meal types
-  Rx<int> dayCount = 0.obs;
+  var dayCount = 0.obs;
 
   // Last updated date to reset counts
   DateTime lastUpdatedDate = DateTime.now();
@@ -120,7 +122,6 @@ class FoodJournalController extends GetxController {
         colorText: Colors.white,
       );
     }
-    print("Amount of Days Completed : $completedDays");
   }
 
   // Fetch
@@ -394,6 +395,49 @@ class FoodJournalController extends GetxController {
       dayCount.value++;
     }
 
-    return mealTypeCount;
+    print("Amount of completed days : $dayCount");
+    return dayCount;
+  }
+
+  // Badge widget determination logic
+  Widget getBadgeWidget(int completedDays) {
+    if (completedDays >= 30) {
+      return Container(
+        width: 155,
+        height: 155,
+        child: Image.asset(
+          TImages.championBadge,
+        ),
+      );
+      ;
+    } else if (completedDays >= 7) {
+      return Container(
+        width: 155,
+        height: 155,
+        child: Image.asset(
+          TImages.heroBadge,
+        ),
+      );
+      ;
+    } else if (completedDays >= 3) {
+      return Container(
+        width: 155,
+        height: 155,
+        child: Image.asset(
+          TImages.noviceBadge,
+        ),
+      );
+      ;
+    } else if (completedDays >= 1) {
+      return Container(
+        width: 155,
+        height: 155,
+        child: Image.asset(
+          TImages.initiatorBadge,
+        ),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
   }
 }
