@@ -164,18 +164,10 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     ),
                   ),
                   const SizedBox(width: 5),
-                  Obx(
-                    () => Text(
-                      '(${foodJController.todayCalories} cal)',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: dark ? Colors.white : Colors.white,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
+
             // Display Today Items (Cards)
             Obx(() {
               // Get today's date without time (midnight)
@@ -299,6 +291,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                     Center(
                                       child: Text(
                                         item.name,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                         style: const TextStyle(
                                           color:
                                               Colors.white, // Make text white
@@ -319,6 +313,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                         ),
                                         child: Text(
                                           item.cafe,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                           style: TextStyle(
                                             color: dark
                                                 ? Colors.white
@@ -409,15 +405,6 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Obx(
-                    () => Text(
-                      '(${foodJController.yesterdayCalories.value} cal)',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: dark ? Colors.white : Colors.white,
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -524,6 +511,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                   Center(
                                     child: Text(
                                       item.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                       style: const TextStyle(
                                         color: Colors.white, // Make text white
                                         fontSize: 14,
@@ -537,11 +526,13 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 8.0),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: TColors.mustard,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
                                         item.cafe,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                         style: TextStyle(
                                           color: dark
                                               ? Colors.white
@@ -931,7 +922,9 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                         calories: int.tryParse(itemCalories.text.trim()) ?? 0,
                         cafe: itemLocation.text.trim(),
                         imagePath: '',
-                        vendorId: '');
+                        cafeId: '',
+                        vendorId: '',
+                        cafeLocation: '');
 
                     String userId =
                         FoodJournalController.instance.getCurrentUserId();

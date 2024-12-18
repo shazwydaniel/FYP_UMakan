@@ -874,9 +874,8 @@ Widget _buildBadgeCard(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Container(
-                  width: MediaQuery.of(context).size.width *
-                      0.5, // 80% of screen width
-                  height: 400,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  height: 420,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: TColors.cream,
@@ -886,10 +885,11 @@ Widget _buildBadgeCard(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      const SizedBox(height: 20),
                       // Badge Image
                       Container(
-                        width: 180,
-                        height: 180,
+                        width: 230,
+                        height: 230,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isUnlocked ? Colors.transparent : Colors.grey,
@@ -900,12 +900,12 @@ Widget _buildBadgeCard(
                                 fit: BoxFit.cover,
                               )
                             : Icon(
-                                Icons.question_mark,
+                                Icons.lock,
                                 size: 50,
                                 color: Colors.white,
                               ),
                       ),
-                      const SizedBox(height: 20),
+
                       Text(
                         badgeName,
                         style: TextStyle(
@@ -925,8 +925,6 @@ Widget _buildBadgeCard(
                         ),
                         textAlign: TextAlign.center,
                       ),
-
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -947,31 +945,34 @@ Widget _buildBadgeCard(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Badge Image or Locked State
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isUnlocked ? Colors.transparent : Colors.grey,
-                  ),
-                  child: isUnlocked
-                      ? Image.asset(
-                          badgeImageUnlocked,
-                          fit: BoxFit.cover,
-                        )
-                      : Icon(
-                          Icons.question_mark,
-                          size: 50,
+                isUnlocked
+                    ? Image.asset(
+                        badgeImageUnlocked,
+                        width: 130,
+                        height: 130,
+                        fit: BoxFit.cover, // Ensures the image scales properly
+                      )
+                    : Container(
+                        width: 130, // Adjust the circle size here
+                        height: 130,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey,
+                        ),
+                        child: Icon(
+                          Icons.lock,
+                          size: 50, // Adjust the size of the lock icon
                           color: Colors.white,
                         ),
-                ),
+                      ),
+
                 const SizedBox(height: 10),
                 Text(
                   badgeName,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: dark ? Colors.black : Colors.black,
+                    color: Colors.black,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -980,9 +981,7 @@ Widget _buildBadgeCard(
                   initialDescription,
                   style: TextStyle(
                     fontSize: 14,
-                    color: dark
-                        ? const Color.fromARGB(255, 71, 71, 71)
-                        : const Color.fromARGB(255, 71, 71, 71),
+                    color: const Color.fromARGB(255, 71, 71, 71),
                   ),
                   textAlign: TextAlign.center,
                 ),

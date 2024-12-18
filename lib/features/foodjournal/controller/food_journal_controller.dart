@@ -34,6 +34,9 @@ class FoodJournalController extends GetxController {
   // Day count for completing at least 3 meal types
   var dayCount = 0.obs;
 
+  // Calculate meal type count
+  RxInt mealTypeCount = 0.obs;
+
   // Last updated date to reset counts
   DateTime lastUpdatedDate = DateTime.now();
 
@@ -70,6 +73,7 @@ class FoodJournalController extends GetxController {
   void onInit() {
     super.onInit();
     monitorBadgeUnlock();
+    print("MEAL ITEMS $mealItems");
     ever(mealItems, (_) {
       todayCalories.value = calculateTodayCalories();
       yesterdayCalories.value = calculateYesterdayCalories();
@@ -87,6 +91,13 @@ class FoodJournalController extends GetxController {
       updateDailyCalories();
       calculateWeeklyAverages();
     });
+  }
+
+  void testFoodLogAnalysis() async {
+    final userId = userController.user.value.id; // Current user's ID
+    final analysis = await _foodJournalRepo.analyzeFoodLogs(userId);
+    print("Food Frequency: ${analysis['foodFrequency']}");
+    print("Location Frequency: ${analysis['locationFrequency']}");
   }
 
   Future<void> addFoodToJournal(String userId, JournalItem journalItem) async {
@@ -130,6 +141,10 @@ class FoodJournalController extends GetxController {
     try {
       final foodJournalList =
           await _foodJournalRepo.getFoodJournalItem(getCurrentUserId());
+      final userId = getCurrentUserId();
+      print("Fetching Food Journal Items for User ID: $userId");
+
+      print("Raw Food Journal List: $foodJournalList");
 
       if (foodJournalList.isNotEmpty) {
         mealItems.assignAll(foodJournalList);
@@ -147,6 +162,7 @@ class FoodJournalController extends GetxController {
   String getCurrentUserId() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      print("Current User ID: ${user.uid}");
       return user.uid;
     } else {
       throw Exception('No user is currently signed in');
@@ -372,31 +388,36 @@ class FoodJournalController extends GetxController {
       lastUpdatedDate = now;
     }
 
-    // Determine meal type based on timestamp
+    // Determine meal type based on timestamp and mark it as logged
     if (timestamp.hour >= 6 && timestamp.hour < 12) {
-      breakfastCount.value++;
+      breakfastCount.value = 1; // Mark as logged
     } else if (timestamp.hour >= 12 && timestamp.hour < 16) {
-      lunchCount.value++;
+      lunchCount.value = 1; // Mark as logged
     } else if (timestamp.hour >= 19 && timestamp.hour < 21) {
-      dinnerCount.value++;
+      dinnerCount.value = 1; // Mark as logged
     } else {
-      othersCount.value++;
+      othersCount.value = 1; // Mark as logged
     }
 
-    // Calculate meal type count
-    RxInt mealTypeCount = 0.obs; // Create a reactive integer
+    // Count how many distinct meal types have been logged
+    int distinctMealTypes = 0;
+    if (breakfastCount.value > 0) distinctMealTypes++;
+    if (lunchCount.value > 0) distinctMealTypes++;
+    if (dinnerCount.value > 0) distinctMealTypes++;
+    if (othersCount.value > 0) distinctMealTypes++;
 
-    if (breakfastCount.value > 0) mealTypeCount.value++;
-    if (lunchCount.value > 0) mealTypeCount.value++;
-    if (dinnerCount.value > 0) mealTypeCount.value++;
-    if (othersCount.value > 0) mealTypeCount.value++;
-
-    // Increment dayCount if 3 meal types are logged
-    if (mealTypeCount.value >= 3) {
+    // Increment `dayCount` only when at least 3 distinct meal types are logged
+    if (distinctMealTypes >= 3) {
       dayCount.value++;
     }
 
-    print("Amount of completed days : $dayCount");
+    print("Breakfast count: ${breakfastCount.value}");
+    print("Lunch count: ${lunchCount.value}");
+    print("Dinner count: ${dinnerCount.value}");
+    print("Other count: ${othersCount.value}");
+    print("Distinct meal types logged: $distinctMealTypes");
+    print("Amount of completed days: ${dayCount.value}");
+
     return dayCount;
   }
 

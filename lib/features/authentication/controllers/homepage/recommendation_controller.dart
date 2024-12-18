@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
@@ -19,6 +20,7 @@ class RecommendationController extends GetxController {
   final userController = UserController.instance;
   final vendorRepo = VendorRepository.instance;
   final foodJournalController = FoodJournalController.instance;
+  final foodJournalRepo = FoodJournalRepository.instance;
 
   var currentTimeFrameIndex = 3.obs;
 
@@ -37,33 +39,55 @@ class RecommendationController extends GetxController {
 
   Future<List<CafeItem>> getRecommendedList() async {
     final foodMoney = userController.user.value.actualRemainingFoodAllowance;
-
     final BMR = userController.calculateBMR();
 
-    // Calculate daily allowance (divide total by 4 assuming 4 weeks in a month)
     double dailyAllowance = foodMoney / 30;
     double allowancePerMeal = dailyAllowance / 4;
-    print("User's BMR = ${BMR}");
-
-    print("Daily Allowance = ${dailyAllowance}");
-    print("Allowance Per Meal= ${allowancePerMeal}");
 
     double caloriesPerMeal = (BMR / 4);
 
-    print("Recommended Calories Per Meal = ${caloriesPerMeal}");
+    // Analyze food logs
+    String userId = userController.user.value.id;
+    Map<String, dynamic> analysis =
+        await foodJournalRepo.analyzeFoodLogs(userId);
 
-    // Get all items
-    List<CafeItem> items = await vendorRepo.getAllItemsFromAllCafes();
+    Map<String, int> locationFrequency = analysis['locationFrequency'];
+    Map<String, int> foodFrequency = analysis['foodFrequency'];
 
-    // Filter items by calories and price only
-    List<CafeItem> recommendedItems = items.where((item) {
+    // Step 1: Get the top 3 most frequent cafes
+    List<MapEntry<String, int>> sortedEntries =
+        locationFrequency.entries.toList();
+    sortedEntries.sort((a, b) => b.value.compareTo(a.value));
+    List<String> topFrequentCafes =
+        sortedEntries.take(3).map((entry) => entry.key).toList();
+
+    // Step 2: Fetch all items from all cafes
+    List<CafeItem> allItems = await vendorRepo.getAllItemsFromAllCafes();
+
+    // Step 3: Filter items from the top frequent cafes
+    List<CafeItem> itemsFromFrequentCafes = allItems.where((item) {
+      return topFrequentCafes
+          .contains(item.itemLocation); // Include items from the top cafes only
+    }).toList();
+
+    print("Top Frequent Cafes: $topFrequentCafes");
+    print("All Cafe Items: ${allItems.length}");
+    print("Items From Frequent Cafes: ${itemsFromFrequentCafes.length}");
+
+    // Step 4: Filter out frequent foods and apply constraints
+    List<String> frequentlyLoggedFoodIds = foodFrequency.keys.toList();
+
+    List<CafeItem> recommendedItems = itemsFromFrequentCafes.where((item) {
+      bool isNewFood =
+          !frequentlyLoggedFoodIds.contains(item.id); // Exclude frequent foods
       bool withinCalorieLimit = item.itemCalories <= caloriesPerMeal;
       bool withinPriceLimit = item.itemPrice <= allowancePerMeal;
 
-      return withinCalorieLimit && withinPriceLimit;
+      return isNewFood && withinCalorieLimit && withinPriceLimit;
     }).toList();
-
-    return recommendedItems; // Return the list of recommended items
+    print("Final Recommended Items: ${recommendedItems.length}");
+    print("Recommended Items Count: ${recommendedItems.length}");
+    return recommendedItems;
   }
 
   int getCurrentTimeFrameIndex() {

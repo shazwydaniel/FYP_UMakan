@@ -38,7 +38,9 @@ class HomePageScreen extends StatelessWidget {
     final recommendedController = Get.put(RecommendationController());
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
+    print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
     print("AMOUNT of completed days : ${foodJController.dayCount}");
+    print("RECOMMENDED STUFF  : ${recommendedController.getRecommendedList()}");
 
     return Scaffold(
       backgroundColor: dark ? TColors.cream : TColors.cream,
@@ -91,18 +93,20 @@ class HomePageScreen extends StatelessWidget {
                               ),
                             ),
 
-                            Positioned(
+                            /*Positioned(
                               top: 50,
                               right: 30,
-                              child: Obx(() {
-                                final controller =
-                                    FoodJournalController.instance;
+                              child: Container(
+                                child: Obx(() {
+                                  final controller =
+                                      FoodJournalController.instance;
 
-                                // Get the appropriate badge widget
-                                return controller
-                                    .getBadgeWidget(controller.dayCount.value);
-                              }),
-                            ),
+                                  // Get the appropriate badge widget
+                                  return controller.getBadgeWidget(
+                                      controller.dayCount.value);
+                                }),
+                              ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -570,8 +574,7 @@ class HomePageScreen extends StatelessWidget {
                                     CircularProgressIndicator()); // Loading indicator
                           } else if (snapshot.hasError) {
                             return Center(
-                                child: Text(
-                                    'Error: ${snapshot.error}')); // Display any error
+                                child: Text('Error: ${snapshot.error}'));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return Center(
@@ -581,9 +584,9 @@ class HomePageScreen extends StatelessWidget {
                             final recommendedMeals = snapshot.data!;
 
                             return Container(
-                              height: 220,
+                              height: 250,
                               margin: const EdgeInsets.only(
-                                  left: 20, right: 20, bottom: 20),
+                                  left: 20, right: 20, bottom: 5),
                               child: ListView.builder(
                                 itemCount: recommendedMeals.length,
                                 scrollDirection: Axis.horizontal,
@@ -616,8 +619,6 @@ class HomePageScreen extends StatelessWidget {
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  // Image with border
-                                                  // Image with border or Icon fallback
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -753,7 +754,11 @@ class HomePageScreen extends StatelessWidget {
                                                                 cafe: item
                                                                     .itemCafe,
                                                                 vendorId: item
-                                                                    .vendorId);
+                                                                    .vendorId,
+                                                                cafeId:
+                                                                    item.cafeId,
+                                                                cafeLocation: item
+                                                                    .itemLocation);
 
                                                             String userId =
                                                                 FoodJournalController
@@ -892,6 +897,9 @@ class HomePageScreen extends StatelessWidget {
                                                 Center(
                                                   child: Text(
                                                     item.itemName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
                                                     style: const TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 14,
@@ -955,6 +963,13 @@ class HomePageScreen extends StatelessWidget {
                                                     ),
                                                   ],
                                                 ),
+                                                Text(
+                                                  item.itemLocation,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                  ),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -973,7 +988,7 @@ class HomePageScreen extends StatelessWidget {
                     // Journals (Label)
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top: 20),
+                          left: 20, right: 20, bottom: 20),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [

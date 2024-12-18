@@ -264,6 +264,9 @@ class CafePage extends StatelessWidget {
                                                           calories:
                                                               item.itemCalories,
                                                           cafe: cafe.name,
+                                                          cafeId: cafe.id,
+                                                          cafeLocation:
+                                                              cafe.location,
                                                           imagePath:
                                                               item.itemImage,
                                                           vendorId: vendorId);
@@ -438,28 +441,44 @@ void showFeedbackDialog(
               // Dropdown for anonymity
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(),
-                  ),
-                  value: _anonymous, // Current selected value
-                  items: [
-                    DropdownMenuItem(
-                      value: 'Yes',
-                      child: Text('Yes'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Anonymity',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                    DropdownMenuItem(
-                      value: 'No',
-                      child: Text('No'),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(),
+                      ),
+                      value: _anonymous, // Current selected value
+                      items: [
+                        DropdownMenuItem(
+                          value: 'Yes',
+                          child: Text('Yes'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'No',
+                          child: Text('No'),
+                        ),
+                      ],
+                      onChanged: (String? newValue) {
+                        _anonymous =
+                            newValue ?? 'No'; // Update value on selection
+                      },
                     ),
                   ],
-                  onChanged: (String? newValue) {
-                    _anonymous = newValue ?? 'No'; // Update value on selection
-                  },
                 ),
               ),
+
               SizedBox(height: 20),
 
               // Buttons

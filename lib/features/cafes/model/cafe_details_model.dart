@@ -94,6 +94,7 @@ class CafeItem {
   String itemLocation;
   String itemCafe;
   String vendorId;
+  String cafeId;
 
   CafeItem({
     required this.id,
@@ -104,6 +105,7 @@ class CafeItem {
     required this.itemLocation,
     required this.itemCafe,
     required this.vendorId,
+    required this.cafeId,
   });
 
   // Override toString to print a more readable output
@@ -122,6 +124,7 @@ class CafeItem {
       'itemLocation': itemLocation,
       'itemCafe': itemCafe,
       'vendorId': vendorId,
+      'cafeId': cafeId,
     };
   }
 
@@ -134,7 +137,8 @@ class CafeItem {
       itemImage: '',
       itemLocation: '',
       itemCafe: '',
-      vendorId: '');
+      vendorId: '',
+      cafeId: '');
 
   factory CafeItem.fromMap(Map<String, dynamic> map, String documentId) {
     return CafeItem(
@@ -148,6 +152,7 @@ class CafeItem {
       itemLocation: map['itemLocation'] ?? '',
       itemCafe: map['itemCafe'] ?? '',
       vendorId: map['vendorId'] ?? '',
+      cafeId: map['cafeId'] ?? '',
     );
   }
 
@@ -161,6 +166,7 @@ class CafeItem {
       'itemCafe': itemCafe,
       'itemImage': itemImage,
       'vendorId': vendorId,
+      'cafeId': cafeId,
     };
   }
 }

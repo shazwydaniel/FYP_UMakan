@@ -64,15 +64,29 @@ class FoodJournalRepository {
 
   Future<List<JournalItem>> getFoodJournalItem(String userId) async {
     try {
+      // Fetch the food journal collection for the user
       final querySnapshot = await _db
           .collection('Users')
           .doc(userId)
           .collection('food_journal')
           .get();
 
-      return querySnapshot.docs
-          .map((doc) => JournalItem.fromMap(doc.data(), doc.id))
-          .toList();
+      // Parse the data into a list of JournalItem objects
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+
+        // Ensure all numeric fields are properly cast to their expected types
+        if (data['calories'] is double) {
+          data['calories'] =
+              (data['calories'] as double).toInt(); // Cast to int
+        }
+
+        if (data['price'] is double) {
+          data['price'] = (data['price'] as double).toInt(); // Cast to int
+        }
+
+        return JournalItem.fromMap(data, doc.id);
+      }).toList();
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.message}');
       throw TFirebaseAuthException(e.code).message;
@@ -162,8 +176,7 @@ class FoodJournalRepository {
   Future<String> getCafeWithMostFiveStars(String vendorId) async {
     try {
       // Reference to the Vendor document
-      final vendorDoc =
-          FirebaseFirestore.instance.collection('Vendors').doc(vendorId);
+      final vendorDoc = _db.collection('Vendors').doc(vendorId);
 
       // Fetch all cafes under the vendor
       final cafesSnapshot = await vendorDoc.collection('Cafe').get();
@@ -232,8 +245,7 @@ class FoodJournalRepository {
   Future<String> getCafeWithMostOneStars(String vendorId) async {
     try {
       // Reference to the Vendor document
-      final vendorDoc =
-          FirebaseFirestore.instance.collection('Vendors').doc(vendorId);
+      final vendorDoc = _db.collection('Vendors').doc(vendorId);
 
       // Fetch all cafes under the vendor
       final cafesSnapshot = await vendorDoc.collection('Cafe').get();
@@ -296,6 +308,56 @@ class FoodJournalRepository {
     } catch (e) {
       print("Error fetching most 1-star reviews: $e");
       return 'Error';
+    }
+  }
+
+  Future<Map<String, dynamic>> analyzeFoodLogs(String userId) async {
+    // Initialize frequency maps
+    Map<String, int> foodFrequency = {};
+    Map<String, int> locationFrequency = {};
+
+    try {
+      // Reference to the 'food_journal' subcollection under the specific user
+      final foodJournalRef =
+          _db.collection('Users').doc(userId).collection('food_journal');
+
+      // Fetch all logged food documents
+      final snapshot = await foodJournalRef.get();
+
+      if (snapshot.docs.isEmpty) {
+        print("No food logs found for user: $userId");
+        return {'foodFrequency': {}, 'locationFrequency': {}};
+      }
+
+      // Loop through each logged food document
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+
+        // Extract itemId and cafeId
+        String itemId = data['entry_ID'] ?? '';
+        String cafeId = data['cafeLocation'] ?? ''; //or cafe
+
+        if (itemId.isNotEmpty) {
+          // Increment food count
+          foodFrequency[itemId] = (foodFrequency[itemId] ?? 0) + 1;
+        }
+
+        if (cafeId.isNotEmpty) {
+          // Increment location count
+          locationFrequency[cafeId] = (locationFrequency[cafeId] ?? 0) + 1;
+        }
+      }
+
+      print("Food Frequency: $foodFrequency");
+      print("Location Frequency: $locationFrequency");
+
+      return {
+        'foodFrequency': foodFrequency,
+        'locationFrequency': locationFrequency,
+      };
+    } catch (e) {
+      print("Error fetching food logs: $e");
+      return {'foodFrequency': {}, 'locationFrequency': {}};
     }
   }
 }
