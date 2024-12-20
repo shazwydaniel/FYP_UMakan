@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/styles/spacing_styles.dart';
+import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/features/authentication/controllers/login/login_controller.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/password_config/forget_password.dart';
@@ -139,7 +140,9 @@ class LoginScreen extends StatelessWidget {
                                       bool isLogin = await controller
                                           .emailAndPasswordLogIn();
                                       if (isLogin) {
-                                        Get.to(() => NavigationMenu());
+                                        // Call the screenRedirect method to handle navigation
+                                        AuthenticatorRepository.instance
+                                            .screenRedirect();
                                         print(
                                             '-------------SUCCESSFULLY LOGGED IN!--------------');
                                       }
@@ -271,12 +274,14 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Get.to(() => const RegisterScreen()); // Navigate to RegisterScreen
+                      Get.to(() =>
+                          const RegisterScreen()); // Navigate to RegisterScreen
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Iconsax.emoji_happy, color: Colors.black, size: 20),
+                        Icon(Iconsax.emoji_happy,
+                            color: Colors.black, size: 20),
                         SizedBox(width: 10),
                         Text(
                           'Student',
@@ -306,7 +311,8 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Get.to(() => VendorRegisterPage()); // Navigate to VendorRegisterPage
+                      Get.to(() =>
+                          VendorRegisterPage()); // Navigate to VendorRegisterPage
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -341,7 +347,8 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Get.to(() => RegisterScreen()); // Navigate to SupportOrganisationRegisterPage
+                      Get.to(() =>
+                          RegisterScreen()); // Navigate to SupportOrganisationRegisterPage
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

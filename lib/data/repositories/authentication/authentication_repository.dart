@@ -65,10 +65,14 @@ class AuthenticatorRepository extends GetxController {
             // If the user is in the Authority collection, redirect to AuthorityHomePage
             debugPrint('Redirecting to Authority Navigation Menu');
             Get.off(() => AuthorityNavigationMenu());
-          } else {
-            // Otherwise, redirect to the NavigationMenu for regular users
-            debugPrint('Redirecting to Navigation Menu');
+          } else if (role == 'Student') {
+            // If the user is a Student, redirect to the NavigationMenu for students
+            debugPrint('Redirecting to Student Navigation Menu');
             Get.off(() => NavigationMenu());
+          } else {
+            // Handle unknown or undefined roles
+            debugPrint('Unknown role: $role. Redirecting to Login Screen.');
+            Get.offAll(() => const LoginScreen());
           }
         } catch (e) {
           debugPrint("Redirection Error: $e");

@@ -62,6 +62,7 @@ class PersonalDetailsController extends GetxController {
         birthdate: birthdate.text.trim(),
         age: userAge,
         status: userStatus,
+        role: 'Student',
         //role: role.text.trim(),
       );
 

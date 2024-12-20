@@ -26,6 +26,7 @@ class UserModel {
   double actualRemainingFoodAllowance;
   double additionalAllowance;
   double additionalExpense;
+  String role;
 
   UserModel({
     required this.id,
@@ -47,6 +48,7 @@ class UserModel {
     required this.birthdate,
     required this.age,
     required this.status,
+    required this.role,
     this.recommendedCalorieIntake = 0.0,
     this.recommendedMoneyAllowance = 0.0,
     this.actualRemainingFoodAllowance = 0.0,
@@ -75,6 +77,7 @@ class UserModel {
       'weight': weight,
       'birthdate': birthdate,
       'age': age,
+      'Role': role,
       'status': status,
       'recommendedCalorieIntake': recommendedCalorieIntake,
       'recommendedMoneyAllowance': recommendedMoneyAllowance,
@@ -105,6 +108,7 @@ class UserModel {
       weight: map['weight'],
       birthdate: map['birthdate'],
       age: map['age'] ?? 0,
+      role: map['Role'],
       status: map['status'] ?? 0,
       recommendedCalorieIntake:
           map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
@@ -150,6 +154,7 @@ class UserModel {
       'Food Money': actualRemainingFoodAllowance,
       'Additional Allowance': additionalAllowance,
       'Additional Expense': additionalExpense,
+      'Role': role,
     };
   }
 
@@ -179,6 +184,7 @@ class UserModel {
         actualRemainingFoodAllowance: 0.0,
         additionalAllowance: 0.0,
         additionalExpense: 0.0,
+        role: '',
       );
 
   // Create a UserModel from Firebase Document Snapshot
@@ -205,6 +211,7 @@ class UserModel {
           weight: data['Weight'] ?? '',
           birthdate: data['Birthdate'] ?? '',
           age: data['Age'] ?? 0,
+          role: data['Role'] ?? '',
           status: data['Status'] ?? 0,
           recommendedCalorieIntake:
               data['recommendedCalorieIntake']?.toDouble() ?? 0.0,

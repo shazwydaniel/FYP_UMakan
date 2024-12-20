@@ -34,6 +34,7 @@ class RegisterController extends GetxController {
   final weight = TextEditingController();
   final birthdate = TextEditingController();
   GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
+  final role = "Student";
 
   // Store userId after registration
   late String userId;
@@ -102,6 +103,7 @@ class RegisterController extends GetxController {
         birthdate: birthdate.text.trim(),
         age: defaultAge,
         status: defaultStatus,
+        role: role,
       );
 
       //Save User Data in Firestore
