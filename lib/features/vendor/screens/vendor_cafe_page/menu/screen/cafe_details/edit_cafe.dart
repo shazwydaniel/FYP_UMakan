@@ -49,14 +49,42 @@ class EditCafeDetailsPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Cafe Location
-              TextFormField(
-                controller: controller.cafeLocationUpdate,
-                validator: (value) =>
-                    TValidator.validateEmptyText('Cafe Location', value),
+              // Cafe Location (Dropdown)
+              DropdownButtonFormField<String>(
+                value: controller.cafeLocationUpdate.text.isNotEmpty
+                    ? controller.cafeLocationUpdate.text
+                    : null, // Set the initial value
+                onChanged: (value) {
+                  controller.cafeLocationUpdate.text =
+                      value!; // Update the controller
+                },
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please select a cafe location'
+                    : null,
                 decoration: const InputDecoration(
                   labelText: 'Cafe Location',
                   border: OutlineInputBorder(),
                 ),
+                items: [
+                  'KK1',
+                  'KK2',
+                  'KK3',
+                  'KK4',
+                  'KK5',
+                  'KK6',
+                  'KK7',
+                  'KK8',
+                  'KK9',
+                  'KK10',
+                  'KK11',
+                  'KK12',
+                  'Others',
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 16),
 

@@ -74,11 +74,20 @@ class AddCafe extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                TextFormField(
-                  style: TextStyle(color: Colors.white),
-                  controller: controller.cafeLocation,
-                  validator: (value) =>
-                      TValidator.validateEmptyText('Cafe Location', value),
+                // Cafe Location (Dropdown)
+                DropdownButtonFormField<String>(
+                  value: controller.cafeLocation.text.isNotEmpty
+                      ? controller.cafeLocation.text
+                      : null, // Only pass a valid value or null
+                  onChanged: (value) {
+                    if (value != null) {
+                      controller.cafeLocation.text =
+                          value; // Update the controller
+                    }
+                  },
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please select a cafe location'
+                      : null,
                   decoration: const InputDecoration(
                     labelStyle: TextStyle(color: Colors.white),
                     floatingLabelStyle: TextStyle(color: Colors.white),
@@ -97,8 +106,30 @@ class AddCafe extends StatelessWidget {
                           color: Colors.white), // Underline color when focused
                     ),
                   ),
+                  dropdownColor:
+                      Colors.black, // Background color of dropdown menu
+                  style: TextStyle(color: Colors.white), // Dropdown text color
+                  items: [
+                    'KK1',
+                    'KK2',
+                    'KK3',
+                    'KK4',
+                    'KK5',
+                    'KK6',
+                    'KK7',
+                    'KK8',
+                    'KK9',
+                    'KK10',
+                    'KK11',
+                    'KK12',
+                    'Others',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value, style: TextStyle(color: Colors.white)),
+                    );
+                  }).toList(),
                 ),
-                const SizedBox(height: 16),
 
                 // Opening Time Field
                 TextFormField(
@@ -163,14 +194,25 @@ class AddCafe extends StatelessWidget {
                     onPressed: () async {
                       if (controller.cafeFormKey.currentState?.validate() ??
                           false) {
-                        // Add cafe
-                        await controller.addCafe(controller.getCurrentUserId());
+                        try {
+                          // Add cafe
+                          await controller
+                              .addCafe(controller.getCurrentUserId());
 
-                        // Clear the form fields
-                        controller.cafeFormKey.currentState?.reset();
-                        Navigator.pop(context, true);
+                          // Clear the form fields
+                          controller.cafeName.clear();
+                          controller.cafeLocation
+                              .clear(); // Clear the dropdown controller
+                          controller.openingTime.clear();
+                          controller.closingTime.clear();
 
-                        // Fetch updated list of cafes
+                          controller.cafeFormKey.currentState?.reset();
+                          Navigator.pop(context, true);
+
+                          print('Cafe added successfully');
+                        } catch (e) {
+                          print('Error adding cafe: $e');
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
