@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
@@ -7,6 +8,7 @@ import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_main_page.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/student_management/screens/badge_unlock_popup.dart';
+import 'package:fyp_umakan/main.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:get/get.dart';
@@ -14,9 +16,13 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../data/repositories/food_journal/badge_repository.dart';
+
 class FoodJournalController extends GetxController {
   static FoodJournalController get instance => Get.find();
+
   final FoodJournalRepository _foodJournalRepo = FoodJournalRepository.instance;
+  final BadgeRepository badgeRepo = BadgeRepository.instance;
 
   var mealItems = <JournalItem>[].obs;
   var todayCalories = 0.obs;
@@ -30,15 +36,6 @@ class FoodJournalController extends GetxController {
   RxInt lunchCount = 0.obs;
   RxInt dinnerCount = 0.obs;
   RxInt othersCount = 0.obs;
-
-  // Day count for completing at least 3 meal types
-  var dayCount = 0.obs;
-
-  // Calculate meal type count
-  RxInt mealTypeCount = 0.obs;
-
-  // Last updated date to reset counts
-  DateTime lastUpdatedDate = DateTime.now();
 
   // Store daily calories for each meal type
   Map<String, Map<String, int>> dailyCalories = {
@@ -72,7 +69,7 @@ class FoodJournalController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    monitorBadgeUnlock();
+    //monitorBadgeUnlock();
     print("MEAL ITEMS $mealItems");
     ever(mealItems, (_) {
       todayCalories.value = calculateTodayCalories();
@@ -111,9 +108,7 @@ class FoodJournalController extends GetxController {
         updateAndCacheAverageCalories(i);
       }
 
-      // Track meal and day count
-      completedDays.value =
-          trackMealAndDayCount(DateTime.parse(foodData['timestamp'])).value;
+      trackMealAndDayCount(DateTime.parse(foodData['timestamp']));
 
       // Show success message with onTap to navigate
       Get.snackbar(
@@ -374,29 +369,51 @@ class FoodJournalController extends GetxController {
     return mostLoggedCafe.isNotEmpty ? mostLoggedCafe : 'N/A';
   }
 
-  Rx<int> trackMealAndDayCount(DateTime timestamp) {
+  Future<void> trackMealAndDayCount(DateTime timestamp) async {
     final now = DateTime.now();
+    bool hasLoggedMealToday = false; // Local flag for this method
 
-    // Reset counts if it's a new day
-    if (lastUpdatedDate.day != now.day ||
-        lastUpdatedDate.month != now.month ||
-        lastUpdatedDate.year != now.year) {
+    // Check if it's a new day
+    if (PersistentData.lastUpdatedDate.day != now.day ||
+        PersistentData.lastUpdatedDate.month != now.month ||
+        PersistentData.lastUpdatedDate.year != now.year) {
+      //Check if user logged at least 3 meals types yesterday
+      final prefs = await SharedPreferences.getInstance();
+      final hasLoggedYesterday =
+          prefs.getBool('hasLoggedMealYesterday') ?? false;
+
+      //Reset day count if user did not complete previous day
+      if (!hasLoggedYesterday) {
+        PersistentData.dayCount = 0;
+        print("Day count reset due to inactivity.");
+      } else {
+        print("User logged at least 3 meal types yesterday. Streak continues.");
+      }
+
+      // Reset meal counts
+      await prefs.setBool('hasLoggedMealYesterday', false);
       breakfastCount.value = 0;
       lunchCount.value = 0;
       dinnerCount.value = 0;
       othersCount.value = 0;
-      lastUpdatedDate = now;
+      await PersistentData.saveData(PersistentData.dayCount, now);
     }
 
     // Determine meal type based on timestamp and mark it as logged
     if (timestamp.hour >= 6 && timestamp.hour < 12) {
-      breakfastCount.value = 1; // Mark as logged
+      breakfastCount.value = 1;
+      hasLoggedMealToday = true;
     } else if (timestamp.hour >= 12 && timestamp.hour < 16) {
-      lunchCount.value = 1; // Mark as logged
+      lunchCount.value = 1;
+      hasLoggedMealToday = true;
     } else if (timestamp.hour >= 19 && timestamp.hour < 21) {
-      dinnerCount.value = 1; // Mark as logged
-    } else {
-      othersCount.value = 1; // Mark as logged
+      dinnerCount.value = 1;
+      hasLoggedMealToday = true;
+    } else if ((timestamp.hour >= 0 && timestamp.hour < 6) ||
+        (timestamp.hour >= 21) ||
+        (timestamp.hour >= 16 && timestamp.hour < 19)) {
+      othersCount.value = 1;
+      hasLoggedMealToday = true;
     }
 
     // Count how many distinct meal types have been logged
@@ -406,19 +423,37 @@ class FoodJournalController extends GetxController {
     if (dinnerCount.value > 0) distinctMealTypes++;
     if (othersCount.value > 0) distinctMealTypes++;
 
-    // Increment `dayCount` only when at least 3 distinct meal types are logged
-    if (distinctMealTypes >= 3) {
-      dayCount.value++;
-    }
-
     print("Breakfast count: ${breakfastCount.value}");
     print("Lunch count: ${lunchCount.value}");
     print("Dinner count: ${dinnerCount.value}");
     print("Other count: ${othersCount.value}");
-    print("Distinct meal types logged: $distinctMealTypes");
-    print("Amount of completed days: ${dayCount.value}");
 
-    return dayCount;
+    // Increment `dayCount` only when at least 3 distinct meal types are logged
+    if (distinctMealTypes >= 3) {
+      PersistentData.dayCount++;
+      // Update streak and check for badges
+      badgeRepo.updateStreakAndCheckBadges(PersistentData.dayCount);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('hasLoggedMealYesterday', true);
+
+      breakfastCount.value = 0;
+      lunchCount.value = 0;
+      dinnerCount.value = 0;
+      othersCount.value = 0;
+      distinctMealTypes = 0;
+    }
+    await PersistentData.saveData(
+        PersistentData.dayCount, PersistentData.lastUpdatedDate);
+    print("Distinct meal types logged: $distinctMealTypes");
+    print("Amount of completed days: ${PersistentData.dayCount}");
+    print("Meal timestamp: ${timestamp.toString()}");
+    print("Meal hour: ${timestamp.hour}");
+  }
+
+  Future<void> _saveData(int dayCount, DateTime lastUpdatedDate) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('dayCount', dayCount);
+    await prefs.setString('lastUpdatedDate', lastUpdatedDate.toString());
   }
 
   // Badge widget determination logic
@@ -463,7 +498,7 @@ class FoodJournalController extends GetxController {
     }
   }
 
-  void monitorBadgeUnlock() {
+  /*void monitorBadgeUnlock() {
     ever(dayCount, (count) {
       String? unlockedBadge;
       String? badgeImage;
@@ -488,5 +523,5 @@ class FoodJournalController extends GetxController {
         );
       }
     });
-  }
+  }*/
 }

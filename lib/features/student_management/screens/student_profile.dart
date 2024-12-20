@@ -8,6 +8,7 @@ import "package:fyp_umakan/features/student_management/screens/financial_details
 import "package:fyp_umakan/features/student_management/screens/health_details_edit.dart";
 import "package:fyp_umakan/features/student_management/screens/personal_detail_edit.dart";
 import "package:fyp_umakan/features/vendor/screens/vendor_register.dart";
+import "package:fyp_umakan/main.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/constants/image_strings.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
@@ -99,7 +100,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Log meals for at least three meal times on the first day to unlock.",
                     "Congratulations! You logged meals for at least three meal times on the first day",
-                    fooodJController.dayCount,
+                    PersistentData.dayCount,
                     TImages.initiatorBadge,
                     1,
                   ),
@@ -111,7 +112,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 3 consecutive days.",
                     "Congratulations! You logged meals for at least three meal times 3 consecutive days",
-                    fooodJController.dayCount,
+                    PersistentData.dayCount,
                     TImages.noviceBadge,
                     3,
                   ),
@@ -123,7 +124,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 7 consecutive days.",
                     "Congratulations! You logged meals for at least three meal times 7 consecutive days",
-                    fooodJController.dayCount,
+                    PersistentData.dayCount,
                     TImages.heroBadge,
                     7,
                   ),
@@ -135,7 +136,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 30 consecutive days.",
                     "Congratulations! You logged meals for at least three meal times 30 consecutive days",
-                    fooodJController.dayCount,
+                    PersistentData.dayCount,
                     TImages.championBadge,
                     30,
                   ),
@@ -855,141 +856,137 @@ Widget _buildBadgeCard(
   String initialDescription,
   String tappedDescription,
   String unLockedDescription,
-  RxInt mealTypeCount,
+  int dayCount,
   String badgeImageUnlocked,
   int requiredCount,
 ) {
-  return Obx(
-    () {
-      bool isUnlocked = mealTypeCount.value >= requiredCount;
+  bool isUnlocked = dayCount >= requiredCount;
 
-      return GestureDetector(
-        onTap: () {
-          // Show badge details in full view
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return Dialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  height: 420,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: TColors.cream,
-                    borderRadius: BorderRadius.circular(20),
+  return GestureDetector(
+    onTap: () {
+      // Show badge details in full view
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.5,
+              height: 420,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: TColors.cream,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  // Badge Image
+                  Container(
+                    width: 230,
+                    height: 230,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isUnlocked ? Colors.transparent : Colors.grey,
+                    ),
+                    child: isUnlocked
+                        ? Image.asset(
+                            badgeImageUnlocked,
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(
+                            Icons.lock,
+                            size: 50,
+                            color: Colors.white,
+                          ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 20),
-                      // Badge Image
-                      Container(
-                        width: 230,
-                        height: 230,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isUnlocked ? Colors.transparent : Colors.grey,
-                        ),
-                        child: isUnlocked
-                            ? Image.asset(
-                                badgeImageUnlocked,
-                                fit: BoxFit.cover,
-                              )
-                            : Icon(
-                                Icons.lock,
-                                size: 50,
-                                color: Colors.white,
-                              ),
-                      ),
 
-                      Text(
-                        badgeName,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: dark ? Colors.black : Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        isUnlocked ? unLockedDescription : tappedDescription,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: dark
-                              ? const Color.fromARGB(255, 71, 71, 71)
-                              : const Color.fromARGB(255, 71, 71, 71),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  Text(
+                    badgeName,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.black : Colors.black,
+                    ),
                   ),
-                ),
-              );
-            },
+                  const SizedBox(height: 10),
+                  Text(
+                    isUnlocked ? unLockedDescription : tappedDescription,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: dark
+                          ? const Color.fromARGB(255, 71, 71, 71)
+                          : const Color.fromARGB(255, 71, 71, 71),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           );
         },
-        child: Card(
-          elevation: 5,
-          color: TColors.cream,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            width: 150,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Badge Image or Locked State
-                isUnlocked
-                    ? Image.asset(
-                        badgeImageUnlocked,
-                        width: 130,
-                        height: 130,
-                        fit: BoxFit.cover, // Ensures the image scales properly
-                      )
-                    : Container(
-                        width: 130, // Adjust the circle size here
-                        height: 130,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey,
-                        ),
-                        child: Icon(
-                          Icons.lock,
-                          size: 50, // Adjust the size of the lock icon
-                          color: Colors.white,
-                        ),
-                      ),
-
-                const SizedBox(height: 10),
-                Text(
-                  badgeName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  initialDescription,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: const Color.fromARGB(255, 71, 71, 71),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
       );
     },
+    child: Card(
+      elevation: 5,
+      color: TColors.cream,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        width: 150,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Badge Image or Locked State
+            isUnlocked
+                ? Image.asset(
+                    badgeImageUnlocked,
+                    width: 130,
+                    height: 130,
+                    fit: BoxFit.cover, // Ensures the image scales properly
+                  )
+                : Container(
+                    width: 130, // Adjust the circle size here
+                    height: 130,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey,
+                    ),
+                    child: Icon(
+                      Icons.lock,
+                      size: 50, // Adjust the size of the lock icon
+                      color: Colors.white,
+                    ),
+                  ),
+
+            const SizedBox(height: 10),
+            Text(
+              badgeName,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              initialDescription,
+              style: TextStyle(
+                fontSize: 14,
+                color: const Color.fromARGB(255, 71, 71, 71),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }

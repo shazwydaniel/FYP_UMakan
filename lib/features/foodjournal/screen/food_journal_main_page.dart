@@ -205,10 +205,6 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
                     final item = filteredItems[index];
-                    // Format the timestamp into a readable string
-                    // Format the timestamp to display only the time in 12-hour format with AM/PM
-                    String formattedTime =
-                        DateFormat('hh:mm a').format(item.timestamp);
 
                     return GestureDetector(
                       onLongPress: () {
@@ -240,11 +236,11 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                         );
                       },
                       child: SizedBox(
-                        width: 220,
-                        height: 250, // Width of each card
+                        width: 190,
+                        height: 250,
                         child: Card(
-                          elevation: 0, // Optional: Add elevation if you want
-                          color: TColors.amber, // Set card color to transparent
+                          elevation: 0,
+                          color: TColors.amber,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,
                           ),
@@ -460,7 +456,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                         DateFormat('hh:mm a').format(item.timestamp);
 
                     return SizedBox(
-                      width: 220,
+                      width: 190,
                       height: 250,
                       child: Card(
                         elevation: 0,

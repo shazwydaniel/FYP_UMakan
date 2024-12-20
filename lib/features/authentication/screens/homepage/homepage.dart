@@ -8,6 +8,7 @@ import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_
 import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
+import 'package:fyp_umakan/features/foodjournal/controller/badge_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
@@ -34,12 +35,13 @@ class HomePageScreen extends StatelessWidget {
     final controller = Get.put(JournalController());
     final userController = Get.put(UserController());
     final advertController = Get.put(AdvertController());
+    Get.put(BadgeController());
 
     final recommendedController = Get.put(RecommendationController());
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
     print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
-    print("AMOUNT of completed days : ${foodJController.dayCount}");
+    // print("AMOUNT of completed days : ${foodJController.dayCount}");
     print("RECOMMENDED STUFF  : ${recommendedController.getRecommendedList()}");
 
     return Scaffold(
@@ -1134,10 +1136,10 @@ class HomePageScreen extends StatelessWidget {
 
                                 // If both dates are not null, check the range
                                 if (startDate != null && endDate != null) {
-                                  return today.isAfter(startDate) &&
-                                          today.isBefore(endDate) ||
-                                      today.isAtSameMomentAs(startDate) ||
-                                      today.isAtSameMomentAs(endDate);
+                                  return today.isAfter(startDate
+                                          .subtract(const Duration(days: 1))) &&
+                                      today.isBefore(
+                                          endDate.add(const Duration(days: 1)));
                                 }
                                 // If either date is null, exclude the advertisement
                                 return false;

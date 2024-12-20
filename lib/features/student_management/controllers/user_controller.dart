@@ -25,7 +25,8 @@ class UserController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserRecord();
-    print("VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
+    print(
+        "VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
   }
 
   Future<void> refreshUserData() async {
@@ -235,10 +236,13 @@ class UserController extends GetxController {
         getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
 
     // Calculate Food Money
-    double actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + additionalExpense);
+    double actualRemainingFoodAllowance =
+        (monthlyAllowance + additionalAllowance) -
+            (monthlyCommittments + additionalExpense);
     user.update((user) {
       if (user != null) {
-        user.actualRemainingFoodAllowance = actualRemainingFoodAllowance; // Update cumulatively
+        user.actualRemainingFoodAllowance =
+            actualRemainingFoodAllowance; // Update cumulatively
       }
     });
 
@@ -260,7 +264,8 @@ class UserController extends GetxController {
         user.additionalExpense = additionalExpense;
         user.additionalAllowance = additionalAllowance;
 
-        print('Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
+        print(
+            'Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
       }
     });
 
@@ -328,8 +333,11 @@ class UserController extends GetxController {
   // Update Financial Status in Firebase
   Future<void> updateFinancialStatus(String userId, String status) async {
     try {
-      final userRef = _firestore.collection('Users').doc(userId).collection('financial_status');
-      
+      final userRef = _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('financial_status');
+
       // Update the "current" document
       await userRef.doc('current').set({
         'status': status,
@@ -348,10 +356,14 @@ class UserController extends GetxController {
   }
 
   // Update Calorie Intake Status in Firebase
-  Future<void> updateCalorieIntakeStatus(String userId, String status, double totalCalories) async {
+  Future<void> updateCalorieIntakeStatus(
+      String userId, String status, double totalCalories) async {
     try {
-      final userRef = _firestore.collection('Users').doc(userId).collection('calorie_intake_status');
-      
+      final userRef = _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('calorie_intake_status');
+
       // Update the "current" document
       await userRef.doc('current').set({
         'status': status,
@@ -376,7 +388,8 @@ class UserController extends GetxController {
       final userRef = _firestore.collection('Users').doc(userId);
 
       // Fetch financial status from "current"
-      final financialCurrent = await userRef.collection('financial_status').doc('current').get();
+      final financialCurrent =
+          await userRef.collection('financial_status').doc('current').get();
       final financialStatus = financialCurrent.data()?['status'];
 
       if (financialStatus != null) {
@@ -387,7 +400,10 @@ class UserController extends GetxController {
       }
 
       // Fetch calorie intake status from "current"
-      final calorieCurrent = await userRef.collection('calorie_intake_status').doc('current').get();
+      final calorieCurrent = await userRef
+          .collection('calorie_intake_status')
+          .doc('current')
+          .get();
       final calorieStatus = calorieCurrent.data()?['status'];
 
       if (calorieStatus != null) {
@@ -403,7 +419,8 @@ class UserController extends GetxController {
     }
   }
 
-  String calculateFinancialStatus(double actualRemaining, double recommendedAllowance) {
+  String calculateFinancialStatus(
+      double actualRemaining, double recommendedAllowance) {
     if (actualRemaining >= recommendedAllowance * 1.2) {
       return "Surplus";
     } else if (actualRemaining >= recommendedAllowance * 0.9) {
@@ -413,7 +430,8 @@ class UserController extends GetxController {
     }
   }
 
-  String calculateCalorieStatus(double totalCalories, double recommendedIntake) {
+  String calculateCalorieStatus(
+      double totalCalories, double recommendedIntake) {
     if (totalCalories < recommendedIntake * 0.9) {
       return "Deficit";
     } else if (totalCalories <= recommendedIntake * 1.1) {
@@ -427,10 +445,12 @@ class UserController extends GetxController {
     try {
       print('Initializing status subcollections for user: $userId');
 
-      final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
+      final userRef =
+          FirebaseFirestore.instance.collection('Users').doc(userId);
 
       // Financial Status Subcollection
-      final financialStatusDoc = userRef.collection('financial_status').doc('status');
+      final financialStatusDoc =
+          userRef.collection('financial_status').doc('status');
       final financialStatusSnapshot = await financialStatusDoc.get();
 
       if (!financialStatusSnapshot.exists) {
@@ -441,11 +461,13 @@ class UserController extends GetxController {
         });
         print('Financial Status Subcollection initialized for user: $userId');
       } else {
-        print('Financial Status Subcollection already exists for user: $userId');
+        print(
+            'Financial Status Subcollection already exists for user: $userId');
       }
 
       // Calorie Intake Status Subcollection
-      final calorieIntakeDoc = userRef.collection('calorie_intake_status').doc('status');
+      final calorieIntakeDoc =
+          userRef.collection('calorie_intake_status').doc('status');
       final calorieIntakeSnapshot = await calorieIntakeDoc.get();
 
       if (!calorieIntakeSnapshot.exists) {
@@ -454,9 +476,11 @@ class UserController extends GetxController {
           'totalCaloriesLogged': 0.0, // Initialize with 0
           'recommendedCalorieIntake': 0.0, // Initialize with 0
         });
-        print('Calorie Intake Status Subcollection initialized for user: $userId');
+        print(
+            'Calorie Intake Status Subcollection initialized for user: $userId');
       } else {
-        print('Calorie Intake Status Subcollection already exists for user: $userId');
+        print(
+            'Calorie Intake Status Subcollection already exists for user: $userId');
       }
 
       // Money Journal Subcollection
@@ -493,5 +517,4 @@ class UserController extends GetxController {
       print('Error initializing subcollections: $e');
     }
   }
-
 }

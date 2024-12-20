@@ -17,10 +17,52 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'app.dart';
 import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // void main(){
 //   runApp(const App());
 // }
+
+class PersistentData {
+  static int dayCount = 0;
+  static DateTime lastUpdatedDate = DateTime.now();
+  static bool _initialized = false;
+
+  static Future<void> initialize() async {
+    if (!_initialized) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        dayCount = prefs.getInt('dayCount') ?? 0;
+        final lastUpdatedDateString = prefs.getString('lastUpdatedDate');
+        if (lastUpdatedDateString != null) {
+          lastUpdatedDate = DateTime.parse(lastUpdatedDateString);
+        } else {
+          lastUpdatedDate = DateTime.now();
+        }
+      } catch (e) {
+        print('Error loading persistent data: $e');
+        dayCount = 0;
+        lastUpdatedDate = DateTime.now();
+      }
+
+      _initialized = true;
+    }
+  }
+
+  static Future<void> saveData(
+      int newDayCount, DateTime newLastUpdatedDate) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('dayCount', newDayCount);
+      await prefs.setString('lastUpdatedDate', newLastUpdatedDate.toString());
+      dayCount = newDayCount;
+      lastUpdatedDate = newLastUpdatedDate;
+    } catch (e) {
+      print('Error saving persistent data: $e');
+    }
+  }
+}
 
 Future<void> main() async {
   // Widgets Binding

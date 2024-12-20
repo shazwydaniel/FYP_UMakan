@@ -355,9 +355,47 @@ class FoodJournalRepository {
         'foodFrequency': foodFrequency,
         'locationFrequency': locationFrequency,
       };
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
     } catch (e) {
       print("Error fetching food logs: $e");
       return {'foodFrequency': {}, 'locationFrequency': {}};
+    }
+  }
+
+  Future<void> updateBadgeStatus(
+      String userId, String badgeName, bool unlocked) async {
+    final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
+
+    try {
+      // Update the badge in Firebase
+      await userRef.update({
+        'badges': FieldValue.arrayUnion([
+          {
+            'badgeName': badgeName,
+            'unlockedAt': unlocked ? DateTime.now().toIso8601String() : null,
+            'status': unlocked ? "unlocked" : "locked"
+          }
+        ])
+      });
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print("Error updating badge: $e");
     }
   }
 }
