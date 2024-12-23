@@ -11,6 +11,8 @@ class TImages {
   // Organisations
   static const String foodBank = "assets/images/FoodBank.png";
   static const String masjid = "assets/images/Masjid.png";
+  static const String Support = "assets/images/Support.png";
+  static const String default_profile_icon = "assets/images/default_profile_icon.png";
 
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";

@@ -15,6 +15,7 @@ import 'package:fyp_umakan/features/student_management/controllers/user_controll
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
+import 'package:fyp_umakan/support_organisation_navigation_menu.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_auth_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/firebase_exceptions.dart';
 import 'package:fyp_umakan/utils/exceptions/format_exceptions.dart';
@@ -64,11 +65,16 @@ class AuthenticatorRepository extends GetxController {
           } else if (role == 'Authority') {
             // If the user is in the Authority collection, redirect to AuthorityHomePage
             debugPrint('Redirecting to Authority Navigation Menu');
-            Get.off(() => AuthorityNavigationMenu());
-          } else if (role == 'Student') {
+            Get.off(() => const AuthorityNavigationMenu());
+          } else if (role == 'Support Organisation') {
+            // If the user is a Support Organisation, redirect to SupportOrganisationNavigationMenu
+            debugPrint('Redirecting to Support Organisation Navigation Menu');
+            Get.off(() => const SupportOrganisationNavigationMenu());
+          } 
+          else if (role == 'Student') {
             // If the user is a Student, redirect to the NavigationMenu for students
             debugPrint('Redirecting to Student Navigation Menu');
-            Get.off(() => NavigationMenu());
+            Get.off(() => const NavigationMenu());
           } else {
             // Handle unknown or undefined roles
             debugPrint('Unknown role: $role. Redirecting to Login Screen.');

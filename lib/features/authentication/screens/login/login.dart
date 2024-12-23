@@ -7,6 +7,7 @@ import 'package:fyp_umakan/features/authentication/controllers/login/login_contr
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/password_config/forget_password.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
+import 'package:fyp_umakan/features/support_organisation/screens/support_organisation_register.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_register.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -348,7 +349,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                       Get.to(() =>
-                          RegisterScreen()); // Navigate to SupportOrganisationRegisterPage
+                          SupportOrganisationRegisterPage());
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -356,7 +357,7 @@ class LoginScreen extends StatelessWidget {
                         Icon(Iconsax.people, color: TColors.cream, size: 20),
                         SizedBox(width: 10),
                         Text(
-                          'Support Organisations',
+                          'Support Organisation',
                           style: TextStyle(
                             color: TColors.cream,
                             fontSize: 16.0,
