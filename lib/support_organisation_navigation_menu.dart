@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/community/screens/community_main_page.dart';
 import 'package:fyp_umakan/features/support_organisation/screens/support_organisation_home_page.dart';
 import 'package:fyp_umakan/features/support_organisation/screens/support_organisation_profile_page.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,10 @@ class _SupportOrganisationNavigationMenuState
                 label: 'Home',
               ),
               NavigationDestination(
+                icon: Icon(Iconsax.people, color: TColors.textDark),
+                label: 'Community',
+              ),
+              NavigationDestination(
                 icon: Icon(Iconsax.user_octagon, color: TColors.textDark),
                 label: 'Profile',
               ),
@@ -76,6 +81,7 @@ class SupportOrganisationNavigationController extends GetxController {
 
   final List<Widget> screens = [
     const SupportOrganisationHomePage(),
+    const CommunityMainPageScreen(),
     const SupportOrganisationProfilePage(),
   ];
 }

@@ -33,7 +33,7 @@ class SupportOrganisationController extends GetxController {
 
   // Dropdown options
   final List<String> locationOptions = ['In Campus', 'Outside Campus'];
-  final List<String> statusOptions = ['Active', 'On A Break'];
+  final List<String> statusOptions = ['Active', 'Non-operational'];
 
   // Privacy policy agreement
   final privacyPolicy = false.obs;

@@ -8,13 +8,13 @@ Future<void> addAuthorityAccount() async {
 
     // Check if the Authority account already exists
     final existingAuthority = await authorityCollection
-        .where('email', isEqualTo: 'shzwydniel@gmail.com') // Check by email
+        .where('email', isEqualTo: 'u2001270@siswa.um.edu.my') // Check by email
         .get();
 
     if (existingAuthority.docs.isEmpty) {
       // Create the Authority account in Firebase Authentication
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: 'shzwydniel@gmail.com', // Replace with your desired email
+        email: 'u2001270@siswa.um.edu.my', // Replace with your desired email
         password: 'Daniel_2154!', // Replace with a secure password
       );
 
@@ -24,7 +24,7 @@ Future<void> addAuthorityAccount() async {
       await authorityCollection.doc(authUid).set({
         'Id': authUid, // Use auth_uid as the Firestore document ID
         'Username': 'Authority',
-        'Email': 'shzwydniel@gmail.com',
+        'Email': 'u2001270@siswa.um.edu.my',
         'Role': 'Authority',
       });
 
