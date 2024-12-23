@@ -50,11 +50,11 @@ class _SupportOrganisationNavigationMenuState
                 : Colors.white.withOpacity(0.1),
             destinations: const [
               NavigationDestination(
-                icon: Icon(Iconsax.global, color: TColors.textDark),
+                icon: Icon(Iconsax.heart_circle, color: TColors.textDark),
                 label: 'Home',
               ),
               NavigationDestination(
-                icon: Icon(Iconsax.security_user, color: TColors.textDark),
+                icon: Icon(Iconsax.user_octagon, color: TColors.textDark),
                 label: 'Profile',
               ),
             ],

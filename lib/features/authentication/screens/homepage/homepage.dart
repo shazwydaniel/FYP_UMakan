@@ -579,9 +579,12 @@ class HomePageScreen extends StatelessWidget {
                                 child: Text('Error: ${snapshot.error}'));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
-                            return Center(
-                                child: Text(
-                                    'No recommended items available.')); // Empty list case
+                                return Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 20.0),
+                                    child: Text('No recommended items available.'),
+                                  ),
+                                ); // Empty list case
                           } else {
                             final recommendedMeals = snapshot.data!;
 

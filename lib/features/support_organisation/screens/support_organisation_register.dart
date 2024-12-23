@@ -126,6 +126,7 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                     labelText: 'Location',
                     prefixIcon: Icon(Icons.location_on),
                   ),
+                  dropdownColor: TColors.cream,
                   validator: (value) =>
                       value == null || value.isEmpty ? 'Please select a location' : null,
                 ),
@@ -148,6 +149,7 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                     labelText: 'Active Status',
                     prefixIcon: Icon(Icons.work),
                   ),
+                  dropdownColor: TColors.cream,
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
 
