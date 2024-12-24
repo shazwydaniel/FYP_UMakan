@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CafeDetails {
   final String id;
   String name;
-  String logo;
+  String image;
   String location;
   final String vendorId;
   String openingTime;
@@ -12,7 +12,7 @@ class CafeDetails {
   CafeDetails({
     required this.id,
     required this.name,
-    required this.logo,
+    required this.image,
     required this.location,
     required this.vendorId,
     this.openingTime = '',
@@ -22,7 +22,7 @@ class CafeDetails {
   Map<String, dynamic> toMap() {
     return {
       'cafeName': name,
-      'cafeLogo': logo,
+      'cafeImage': image,
       'cafeLocation': location,
       'vendorId': vendorId,
       'openingTime': openingTime,
@@ -34,7 +34,7 @@ class CafeDetails {
   static CafeDetails empty() => CafeDetails(
         id: '',
         name: '',
-        logo: '',
+        image: '',
         location: '',
         vendorId: '',
         openingTime: '',
@@ -46,7 +46,7 @@ class CafeDetails {
     return CafeDetails(
       id: documentId,
       name: data['cafeName'] ?? '',
-      logo: data['cafeLogo'] ?? '',
+      image: data['cafeImage'] ?? '',
       location: data['cafeLocation'] ?? '',
       vendorId: vendorID,
       openingTime: data['openingTime'] ?? '',
@@ -58,7 +58,7 @@ class CafeDetails {
       "Id": id,
       'Cafe Name': name,
       'Cafe Details': location,
-      'Cafe Image': logo,
+      'Cafe Image': image,
       'Vendor ID': vendorId,
       'Opening Time': openingTime,
       'Closing Time': closingTime,
@@ -73,7 +73,7 @@ class CafeDetails {
       return CafeDetails(
         id: document.id,
         name: data['cafeName'] ?? '',
-        logo: data['logoName'] ?? '',
+        image: data['cafeImage'] ?? '',
         vendorId: data['vendorId'] ?? '',
         location: data['cafeLocation'] ?? '',
         openingTime: data['openingTime'] ?? '',

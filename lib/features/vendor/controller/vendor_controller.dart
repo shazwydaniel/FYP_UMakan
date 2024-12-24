@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
@@ -34,14 +37,14 @@ class VendorController extends GetxController {
 
   //Variable for Add Cafe
   final cafeName = TextEditingController();
-  final cafeLogo = TextEditingController();
+  final cafeImage = TextEditingController();
   final cafeLocation = TextEditingController();
   final openingTime = TextEditingController();
   final closingTime = TextEditingController();
 
   //Variable for Update Cafe
   final cafeNameUpdate = TextEditingController();
-  final cafeLogoUpdate = TextEditingController();
+  final cafeImageUpdate = TextEditingController();
   final cafeLocationUpdate = TextEditingController();
   final openingTimeUpdate = TextEditingController();
   final closingTimeUpdate = TextEditingController();
@@ -166,7 +169,7 @@ class VendorController extends GetxController {
   }
 
   //Add Cafe
-  Future<void> addCafe(String vendorId) async {
+  Future<void> addCafe(String vendorId, String? imageUrl) async {
     try {
       // Create a map for the cafe data
       Map<String, dynamic> cafeData = {
@@ -174,6 +177,8 @@ class VendorController extends GetxController {
         'cafeLocation': cafeLocation.text.trim(),
         'openingTime': openingTime.text.trim(),
         'closingTime': closingTime.text.trim(),
+        if (imageUrl != null)
+          'cafeImage': imageUrl, // Add image URL if available
       };
 
       // Add the cafe details to Firestore
@@ -186,11 +191,13 @@ class VendorController extends GetxController {
           cafe.location = cafeLocation.text.trim();
           cafe.openingTime = openingTime.text.trim();
           cafe.closingTime = closingTime.text.trim();
+          cafe.image =
+              imageUrl ?? ''; // Use an empty string if imageUrl is null
         }
       });
 
       // Print confirmation
-      print('Cafe added!');
+      print('Cafe added with image URL: $imageUrl');
     } catch (e) {
       // Handle error
       print('Error adding cafe: $e');
@@ -243,9 +250,9 @@ class VendorController extends GetxController {
     }
   }
 
-  Future<void> updateCafeDetails(String vendorId, String cafeId) async {
+  Future<void> updateCafeDetails(
+      String vendorId, String cafeId, String? imageUrl) async {
     try {
-      // Check internet connection
       final isConnected = await NetworkManager.instance.isConnected();
       if (!isConnected) {
         TLoaders.errorSnackBar(
@@ -254,7 +261,6 @@ class VendorController extends GetxController {
         return;
       }
 
-      // Form Validation
       if (!updateCafeKey.currentState!.validate()) {
         TLoaders.errorSnackBar(
             title: 'Invalid Input',
@@ -262,50 +268,49 @@ class VendorController extends GetxController {
         return;
       }
 
-      // Debug: Log the data being sent to Firestore
-      print('Updating ad with data:');
-      print('Vendor ID: $vendorId');
-      print('Cafe ID: $cafeId');
-
-      // Update data in Firebase Firestore
-      Map<String, dynamic> updateCafeName = {
-        'cafeName': cafeNameUpdate.text.trim()
-      };
-      Map<String, dynamic> updateCafeLocation = {
-        'cafeLocation': cafeLocationUpdate.text.trim()
-      };
-      Map<String, dynamic> updateClosingTime = {
-        'closingTime': closingTimeUpdate.text.trim()
-      };
-      Map<String, dynamic> updateOpeningTime = {
-        'openingTime': openingTimeUpdate.text.trim()
+      Map<String, dynamic> updatedData = {
+        'cafeName': cafeNameUpdate.text.trim(),
+        'cafeLocation': cafeLocationUpdate.text.trim(),
+        'closingTime': closingTimeUpdate.text.trim(),
+        'openingTime': openingTimeUpdate.text.trim(),
       };
 
-      // Use methods in User Repository to transfer to Firebase
-      await vendorRepository.updateSingleFieldCafe(
-          updateCafeName, vendorId, cafeId);
-      await vendorRepository.updateSingleFieldCafe(
-          updateCafeLocation, vendorId, cafeId);
-      await vendorRepository.updateSingleFieldCafe(
-          updateClosingTime, vendorId, cafeId);
-      await vendorRepository.updateSingleFieldCafe(
-          updateOpeningTime, vendorId, cafeId);
+      if (imageUrl != null) {
+        updatedData['cafeImage'] = imageUrl;
+      }
 
-      // Update Rx value safely
+      await vendorRepository.updateSingleFieldCafe(
+          updatedData, vendorId, cafeId);
+
       cafe.value.name = cafeNameUpdate.text.trim();
       cafe.value.location = cafeLocationUpdate.text.trim();
       cafe.value.openingTime = openingTimeUpdate.text.trim();
-      cafe.value.closingTime = closingTime.text.trim();
+      cafe.value.closingTime = closingTimeUpdate.text.trim();
+      cafe.value.image = imageUrl ?? '';
 
-      // Show success Message
       TLoaders.successSnackBar(
           title: 'Success!', message: "Your cafe details have been updated!");
-
       Get.off(() => const VendorNavigationMenu());
     } catch (e) {
-      // Log the error for debugging
-      debugPrint("Error update: $e");
+      debugPrint("Error updating cafe: $e");
       TLoaders.errorSnackBar(title: 'Oops!', message: e.toString());
+    }
+  }
+
+  Future<String> uploadImage(
+      File imageFile, String vendorId, String cafeName) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+            'cafe_images/$vendorId/$cafeName/${DateTime.now().toIso8601String()}',
+          );
+
+      final uploadTask = await storageRef.putFile(imageFile);
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Image upload failed.');
     }
   }
 }

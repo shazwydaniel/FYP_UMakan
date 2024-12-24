@@ -115,7 +115,7 @@ class VendorAdsPage extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  isToday ? 'Active' : 'Ended',
+                                  isToday ? 'Active' : 'Inactive',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,

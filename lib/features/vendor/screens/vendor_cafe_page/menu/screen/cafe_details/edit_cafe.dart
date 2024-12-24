@@ -1,28 +1,52 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
+import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/validators/validation.dart';
-import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-class EditCafeDetailsPage extends StatelessWidget {
+class EditCafeDetailsPage extends StatefulWidget {
   final CafeDetails cafe;
   final VoidCallback onSave;
 
-  EditCafeDetailsPage({required this.cafe, required this.onSave}) {
-    final controller = VendorController.instance;
+  EditCafeDetailsPage({required this.cafe, required this.onSave});
 
+  @override
+  _EditCafeDetailsPageState createState() => _EditCafeDetailsPageState();
+}
+
+class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
+  final VendorController controller = VendorController.instance;
+  final VendorMenuController vendorMenuController =
+      VendorMenuController.instance;
+
+  File? _selectedImage;
+
+  @override
+  void initState() {
+    super.initState();
     // Populate TextEditingControllers with the cafe details
-    controller.cafeNameUpdate.text = cafe.name;
-    controller.cafeLocationUpdate.text = cafe.location;
-    controller.openingTimeUpdate.text = cafe.openingTime;
-    controller.closingTimeUpdate.text = cafe.closingTime;
+    controller.cafeNameUpdate.text = widget.cafe.name;
+    controller.cafeLocationUpdate.text = widget.cafe.location;
+    controller.openingTimeUpdate.text = widget.cafe.openingTime;
+    controller.closingTimeUpdate.text = widget.cafe.closingTime;
+  }
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = VendorController.instance;
-
     return Scaffold(
       backgroundColor: TColors.mustard,
       appBar: AppBar(
@@ -49,14 +73,12 @@ class EditCafeDetailsPage extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Cafe Location
-              // Cafe Location (Dropdown)
               DropdownButtonFormField<String>(
                 value: controller.cafeLocationUpdate.text.isNotEmpty
                     ? controller.cafeLocationUpdate.text
-                    : null, // Set the initial value
+                    : null,
                 onChanged: (value) {
-                  controller.cafeLocationUpdate.text =
-                      value!; // Update the controller
+                  controller.cafeLocationUpdate.text = value!;
                 },
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please select a cafe location'
@@ -128,39 +150,72 @@ class EditCafeDetailsPage extends StatelessWidget {
                   }
                 },
               ),
+              const SizedBox(height: 16),
+
+              // Image Upload
+              Text(
+                'Upload Cafe Image',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 8.0),
+              GestureDetector(
+                onTap: pickImage,
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _selectedImage != null
+                      ? Image.file(
+                          _selectedImage!,
+                          fit: BoxFit.cover,
+                        )
+                      : widget.cafe.image != null &&
+                              widget.cafe.image!.isNotEmpty
+                          ? Image.network(
+                              widget.cafe.image!,
+                              fit: BoxFit.cover,
+                            )
+                          : const Center(child: Icon(Icons.add_a_photo)),
+                ),
+              ),
               const SizedBox(height: 20),
 
               // Save Button
               SizedBox(
                 width: double.infinity,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  margin: const EdgeInsets.only(bottom: 40),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: TColors.mustard, // Black border color
-                      width: 2.0, // Border width
-                    ),
-                    borderRadius: BorderRadius.circular(
-                        15), // Match button's border radius
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (controller.updateCafeKey.currentState?.validate() ??
-                          false) {
-                        // Update the cafe details
-                        await controller.updateCafeDetails(
-                            controller.currentUserId, cafe.id);
-                        onSave();
-                        Navigator.pop(context, true);
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (controller.updateCafeKey.currentState?.validate() ??
+                        false) {
+                      String? imageUrl = widget.cafe.image;
+                      if (_selectedImage != null) {
+                        imageUrl = await controller.uploadImage(
+                          _selectedImage!,
+                          controller.getCurrentUserId(),
+                          widget.cafe.name,
+                        );
                       }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: TColors.mustard,
-                      backgroundColor: TColors.textLight,
-                    ),
-                    child: const Text('Update'),
+
+                      await controller.updateCafeDetails(
+                        controller.currentUserId,
+                        widget.cafe.id,
+                        imageUrl,
+                      );
+                      widget.onSave();
+                      vendorMenuController.fetchItemsForCafe(
+                          VendorController.instance.getCurrentUserId(),
+                          widget.cafe.id);
+                      Navigator.pop(context, true);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: TColors.mustard,
+                    backgroundColor: TColors.textLight,
                   ),
+                  child: const Text('Update'),
                 ),
               ),
             ],

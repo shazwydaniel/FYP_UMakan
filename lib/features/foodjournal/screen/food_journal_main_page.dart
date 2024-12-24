@@ -828,7 +828,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 child: Text("Add Meals",
                     style: TextStyle(
                       color: Colors.black,
@@ -837,63 +837,60 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     )),
               ),
               SizedBox(width: 100),
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: Icon(Icons.close),
-                color: Colors.black,
-              ),
             ],
           ),
 
           backgroundColor: TColors.cream,
           // Title for the dialog
-          content: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: itemName,
-                  decoration: InputDecoration(
-                    labelText: 'Meal Name', // Label for the Meal Name field
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
+          content: SizedBox(
+            height: 350,
+            width: 200,
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: itemName,
+                    decoration: InputDecoration(
+                      labelText: 'Meal Name', // Label for the Meal Name field
+                      border: OutlineInputBorder(),
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
                   ),
-                ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                TextFormField(
-                  controller: itemCalories,
-                  decoration: InputDecoration(
-                    labelText: 'Amount of Calories',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
+                  SizedBox(height: TSizes.spaceBtwSections),
+                  TextFormField(
+                    controller: itemCalories,
+                    decoration: InputDecoration(
+                      labelText: 'Amount of Calories',
+                      border: OutlineInputBorder(),
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
                   ),
-                ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                TextFormField(
-                  controller: itemPrice,
-                  decoration: InputDecoration(
-                    labelText: 'Cost',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
+                  SizedBox(height: TSizes.spaceBtwSections),
+                  TextFormField(
+                    controller: itemPrice,
+                    decoration: InputDecoration(
+                      labelText: 'Cost',
+                      border: OutlineInputBorder(),
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
                   ),
-                ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                TextFormField(
-                  controller: itemLocation,
-                  decoration: InputDecoration(
-                    labelText: 'Location',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
+                  SizedBox(height: TSizes.spaceBtwSections),
+                  TextFormField(
+                    controller: itemLocation,
+                    decoration: InputDecoration(
+                      labelText: 'Location',
+                      border: OutlineInputBorder(),
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           actions: <Widget>[

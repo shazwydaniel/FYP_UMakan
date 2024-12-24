@@ -14,6 +14,12 @@ class ReviewController extends GetxController {
   final RxBool isLoadingReviews = false.obs;
   final foodJRepository = FoodJournalRepository.instance;
 
+  @override
+  void onInit() {
+    super.onInit();
+    // Optional: You can initialize something here if needed
+  }
+
   Future<void> fetchReviews(String vendorId, String cafeId) async {
     try {
       isLoadingReviews.value = true;
