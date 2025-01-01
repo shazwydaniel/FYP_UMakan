@@ -79,7 +79,10 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
           children: [
             // Title
             Container(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 0),
+              padding: const EdgeInsets.only(
+                left: 40,
+                right: 40,
+              ),
               child: Stack(
                 children: [
                   Row(
@@ -198,7 +201,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
               }
 
               return Container(
-                height: 230,
+                height: 260,
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -366,7 +369,84 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                    )
+                                    ),
+                                    SizedBox(
+                                        height: 8), // Space before the circles
+                                    // Preference Circles
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        if (item.isSpicy)
+                                          Container(
+                                            width: 24,
+                                            height: 24,
+                                            margin: EdgeInsets.only(right: 6),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  255, 255, 134, 6),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 2),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'S',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        if (item.isVegetarian)
+                                          Container(
+                                            width: 24,
+                                            height: 24,
+                                            margin: EdgeInsets.only(right: 6),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  255, 70, 215, 75),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 2),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'V',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        if (item.isLowSugar)
+                                          Container(
+                                            width: 24,
+                                            height: 24,
+                                            margin: EdgeInsets.only(right: 6),
+                                            decoration: BoxDecoration(
+                                              color: TColors.blush,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 2),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'LS',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -444,7 +524,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
               }
 
               return Container(
-                height: 230,
+                height: 260,
                 margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -583,6 +663,76 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                         fontSize: 14,
                                       ),
                                     ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (item.isSpicy)
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          margin: EdgeInsets.only(right: 6),
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 255, 134, 6),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.white, width: 2),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'S',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      if (item.isVegetarian)
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          margin: EdgeInsets.only(right: 6),
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 70, 215, 75),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.white, width: 2),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'V',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      if (item.isLowSugar)
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          margin: EdgeInsets.only(right: 6),
+                                          decoration: BoxDecoration(
+                                            color: TColors.blush,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.white, width: 2),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'LS',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   )
                                 ],
                               ),
@@ -910,6 +1060,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                   onPressed: () async {
                     // Add selected item to the food journal
                     final journalItem = JournalItem(
+                        id: 'manual',
                         name: itemName.text.trim(),
                         price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
                         calories: int.tryParse(itemCalories.text.trim()) ?? 0,
