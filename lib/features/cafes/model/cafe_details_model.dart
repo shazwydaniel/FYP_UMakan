@@ -95,6 +95,9 @@ class CafeItem {
   String itemCafe;
   String vendorId;
   String cafeId;
+  bool isSpicy;
+  bool isVegetarian;
+  bool isLowSugar;
 
   CafeItem({
     required this.id,
@@ -106,12 +109,15 @@ class CafeItem {
     required this.itemCafe,
     required this.vendorId,
     required this.cafeId,
+    this.isSpicy = false,
+    this.isVegetarian = false,
+    this.isLowSugar = false,
   });
 
   // Override toString to print a more readable output
   @override
   String toString() {
-    return 'Cafe Item(Name: $itemName,cost: $itemPrice, Cafe: $itemCafe)';
+    return 'Cafe Item(Name: $itemName,cost: $itemPrice, Cafe: $itemCafe , Spicy? $isSpicy, Vegetarian? $isVegetarian, Low Sugar? $isLowSugar)';
   }
 
   Map<String, dynamic> toMap() {
@@ -125,20 +131,27 @@ class CafeItem {
       'itemCafe': itemCafe,
       'vendorId': vendorId,
       'cafeId': cafeId,
+      'isSpicy': isSpicy,
+      'isVegetarian': isVegetarian,
+      'isLowSugar': isLowSugar,
     };
   }
 
   // Static Function to Create an Empty CafeItem Model
   static CafeItem empty() => CafeItem(
-      id: '',
-      itemName: '',
-      itemPrice: 0,
-      itemCalories: 0,
-      itemImage: '',
-      itemLocation: '',
-      itemCafe: '',
-      vendorId: '',
-      cafeId: '');
+        id: '',
+        itemName: '',
+        itemPrice: 0,
+        itemCalories: 0,
+        itemImage: '',
+        itemLocation: '',
+        itemCafe: '',
+        vendorId: '',
+        cafeId: '',
+        isSpicy: false,
+        isVegetarian: false,
+        isLowSugar: false,
+      );
 
   factory CafeItem.fromMap(Map<String, dynamic> map, String documentId) {
     return CafeItem(
@@ -153,6 +166,9 @@ class CafeItem {
       itemCafe: map['itemCafe'] ?? '',
       vendorId: map['vendorId'] ?? '',
       cafeId: map['cafeId'] ?? '',
+      isSpicy: map['isSpicy'] ?? false,
+      isVegetarian: map['isVegetarian'] ?? false,
+      isLowSugar: map['isLowSugar'] ?? false,
     );
   }
 
@@ -167,6 +183,9 @@ class CafeItem {
       'itemImage': itemImage,
       'vendorId': vendorId,
       'cafeId': cafeId,
+      'isSpicy': isSpicy,
+      'isVegetarian': isVegetarian,
+      'isLowSugar': isLowSugar,
     };
   }
 }
