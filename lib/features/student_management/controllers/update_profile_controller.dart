@@ -21,6 +21,11 @@ class UpdateProfileController extends GetxController {
   final weight = TextEditingController();
   final height = TextEditingController();
   final birthDate = TextEditingController();
+
+  RxBool prefSpicy = false.obs;
+  RxBool prefVegetarian = false.obs;
+  RxBool prefLowSugar = false.obs;
+
   final userRepository = Get.put(UserRepository());
   GlobalKey<FormState> updateProfileFormKey = GlobalKey<FormState>();
 
@@ -42,6 +47,11 @@ class UpdateProfileController extends GetxController {
     weight.text = userController.user.value.weight;
     height.text = userController.user.value.height;
     birthDate.text = userController.user.value.birthdate;
+
+    // Initialize preferences
+    prefSpicy.value = userController.user.value.prefSpicy;
+    prefVegetarian.value = userController.user.value.prefVegetarian;
+    prefLowSugar.value = userController.user.value.prefLowSugar;
   }
 
   Future<void> updateProfile() async {
@@ -147,6 +157,45 @@ class UpdateProfileController extends GetxController {
       debugPrint("Error calculating food money: $e");
       TLoaders.errorSnackBar(
           title: 'Error!', message: 'Could not calculate food money.');
+    }
+  }
+
+  Future<void> updatePreferences() async {
+    try {
+      // Fetch the current user ID
+      final String userId = userController.user.value.id ?? '';
+
+      if (userId.isEmpty) {
+        throw Exception("User ID is not available.");
+      }
+
+      // Update preferences in Firebase
+      await userRepository.updateSingleField({
+        'prefSpicy': prefSpicy.value,
+        'prefVegetarian': prefVegetarian.value,
+        'prefLowSugar': prefLowSugar.value,
+      });
+
+      // Update the `controller.user` object to reflect the changes
+      userController.user.update((user) {
+        user?.prefSpicy = prefSpicy.value;
+        user?.prefVegetarian = prefVegetarian.value;
+        user?.prefLowSugar = prefLowSugar.value;
+      });
+
+      // Show success message
+      Get.snackbar(
+        'Preferences Updated',
+        'Your preferences have been successfully updated.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      // Handle error
+      Get.snackbar(
+        'Error',
+        'Failed to update preferences: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 }

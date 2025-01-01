@@ -15,6 +15,16 @@ class VendorMenuController extends GetxController {
   final itemCost = TextEditingController();
   final itemCalories = TextEditingController();
 
+  // Add these properties for preferences
+  RxBool isSpicy = false.obs;
+  RxBool isVegetarian = false.obs;
+  RxBool isLowSugar = false.obs;
+
+  // Add these properties for item preferences
+  RxBool isSpicyUpdate = false.obs;
+  RxBool isVegetarianUpdate = false.obs;
+  RxBool isLowSugarUpdate = false.obs;
+
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
 
   //Update Variable
@@ -22,6 +32,14 @@ class VendorMenuController extends GetxController {
   final TextEditingController itemCostUpdate = TextEditingController();
   final TextEditingController itemCaloriesUpdate = TextEditingController();
   GlobalKey<FormState> menuUpdateKey = GlobalKey<FormState>();
+
+  // Add method to initialize these preferences when editing
+  void initializePreferences(CafeItem menuItem) {
+    isSpicyUpdate.value = menuItem.isSpicy ?? false;
+    isVegetarianUpdate.value = menuItem.isVegetarian ?? false;
+    isLowSugarUpdate.value = menuItem.isLowSugar ?? false;
+  }
+
   Rx<CafeItem> cafeItem = CafeItem.empty().obs;
 
   final VendorRepository vendorRepository = VendorRepository.instance;
@@ -35,6 +53,13 @@ class VendorMenuController extends GetxController {
     initalizeNames();
   }
 
+  // Add method to reset these preferences (useful after adding an item)
+  void resetPreferences() {
+    isSpicy.value = false;
+    isVegetarian.value = false;
+    isLowSugar.value = false;
+  }
+
   //Fetch User Record
   Future<void> initalizeNames() async {
     itemNameUpdate.text = cafeItem.value.itemName;
@@ -42,10 +67,22 @@ class VendorMenuController extends GetxController {
     itemCostUpdate.text = cafeItem.value.itemPrice.toString();
   }
 
+  // Add method to update preferences in Firestore
+  Future<void> updateItemPreferences(
+      String vendorId, String cafeId, String itemId) async {
+    Map<String, dynamic> updatedPreferences = {
+      'isSpicy': isSpicyUpdate.value,
+      'isVegetarian': isVegetarianUpdate.value,
+      'isLowSugar': isLowSugarUpdate.value,
+    };
+
+    await vendorRepository.updateSingleMenuItem(
+        updatedPreferences, vendorId, cafeId, itemId);
+  }
+
   // Add method to handle adding menu items
   Future<void> addItem(String vendorId, String cafeId, String imageUrl) async {
     if (menuFormKey.currentState?.validate() ?? false) {
-      print('Form validated successfully.');
       try {
         CafeDetails cafeDetails =
             await vendorRepository.getCafeById(vendorId, cafeId);
@@ -60,7 +97,10 @@ class VendorMenuController extends GetxController {
           'itemLocation': itemLocation,
           'itemCafe': itemCafe,
           'itemImage': imageUrl,
-          'cafeId': cafeId
+          'cafeId': cafeId,
+          'isSpicy': isSpicy.value,
+          'isVegetarian': isVegetarian.value,
+          'isLowSugar': isLowSugar.value,
         };
 
         print('itemData being sent: $itemData');
@@ -76,6 +116,7 @@ class VendorMenuController extends GetxController {
         itemName.clear();
         itemCost.clear();
         itemCalories.clear();
+        resetPreferences();
 
         // Print confirmation
         print('Menu item added!');
@@ -178,6 +219,37 @@ class VendorMenuController extends GetxController {
     } catch (e) {
       print('Error uploading image: $e');
       throw Exception('Image upload failed.');
+    }
+  }
+
+  Future<void> deleteMenuItem(
+      String vendorId, String cafeId, String itemId) async {
+    try {
+      // Call the repository to delete the menu item from Firestore
+      await vendorRepository.deleteMenuItem(vendorId, cafeId, itemId);
+
+      // Clear the current cafeItem if it matches the deleted item
+      if (cafeItem.value.id == itemId) {
+        cafeItem.value = CafeItem.empty();
+      }
+
+      // Notify listeners of the updated state
+      update();
+      Get.snackbar(
+        'Success',
+        'Menu item deleted successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to delete menu item: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 }

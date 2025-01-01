@@ -517,4 +517,37 @@ class UserController extends GetxController {
       print('Error initializing subcollections: $e');
     }
   }
+
+  // Method to update user preferences in Firebase
+  Future<void> updateUserPreferences() async {
+    try {
+      // Fetch the current user ID
+      final String userId = user.value.id ?? '';
+
+      if (userId.isEmpty) {
+        throw Exception("User ID is not available.");
+      }
+
+      // Update the preferences in the Firestore `users` collection
+      await _firestore.collection('users').doc(userId).update({
+        'prefSpicy': user.value.prefSpicy,
+        'prefVegetarian': user.value.prefVegetarian,
+        'prefLowSugar': user.value.prefLowSugar,
+      });
+
+      // Notify the user of success
+      Get.snackbar(
+        'Preferences Updated',
+        'Your preferences have been successfully updated.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      // Handle any errors and notify the user
+      Get.snackbar(
+        'Error',
+        'Failed to update preferences: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 }

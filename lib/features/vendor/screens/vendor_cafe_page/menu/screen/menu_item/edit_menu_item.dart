@@ -20,7 +20,8 @@ class EditMenuItemPage extends StatefulWidget {
 
 class _EditMenuItemPageState extends State<EditMenuItemPage> {
   final VendorMenuController controller = Get.put(VendorMenuController());
-  final VendorController vendorController = VendorController.instance;
+
+  String vendorId = VendorController.instance.getCurrentUserId();
 
   File? selectedImage;
 
@@ -32,6 +33,9 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
     controller.itemCostUpdate.text = widget.menuItem.itemPrice.toString();
     controller.itemCaloriesUpdate.text =
         widget.menuItem.itemCalories.toString();
+
+    // Initialize the preferences
+    controller.initializePreferences(widget.menuItem);
   }
 
   Future<void> pickImage() async {
@@ -53,14 +57,21 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
       if (selectedImage != null) {
         imageUrl = await controller.uploadImage(
           selectedImage!,
-          vendorController.getCurrentUserId(),
+          vendorId,
           widget.cafeId,
         );
       }
 
       // Update the menu item details
       await controller.updateCafeDetails(
-        vendorController.getCurrentUserId(),
+        vendorId,
+        widget.cafeId,
+        widget.menuItem.id,
+      );
+
+      // Update preferences in Firestore
+      await controller.updateItemPreferences(
+        vendorId,
         widget.cafeId,
         widget.menuItem.id,
       );
@@ -69,13 +80,30 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
       if (imageUrl != null) {
         await controller.vendorRepository.updateSingleMenuItem(
           {'itemImage': imageUrl},
-          vendorController.getCurrentUserId(),
+          vendorId,
           widget.cafeId,
           widget.menuItem.id,
         );
       }
 
       Navigator.pop(context, true);
+    }
+  }
+
+  Future<void> deleteMenuItem() async {
+    try {
+      await controller.deleteMenuItem(
+        vendorId,
+        widget.cafeId,
+        widget.menuItem.id,
+      );
+      print("Item Deleted!");
+      // Navigate back to the menu list after deletion
+      Navigator.pop(context, true);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting menu item: $e')),
+      );
     }
   }
 
@@ -94,13 +122,6 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Edit Menu Item',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-
                 // Item Name Field
                 TextFormField(
                   controller: controller.itemNameUpdate,
@@ -132,6 +153,28 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+
+                Obx(() => CheckboxListTile(
+                      title: const Text('Spicy'),
+                      value: controller.isSpicyUpdate.value,
+                      onChanged: (value) {
+                        controller.isSpicyUpdate.value = value!;
+                      },
+                    )),
+                Obx(() => CheckboxListTile(
+                      title: const Text('Vegetarian'),
+                      value: controller.isVegetarianUpdate.value,
+                      onChanged: (value) {
+                        controller.isVegetarianUpdate.value = value!;
+                      },
+                    )),
+                Obx(() => CheckboxListTile(
+                      title: const Text('Low Sugar'),
+                      value: controller.isLowSugarUpdate.value,
+                      onChanged: (value) {
+                        controller.isLowSugarUpdate.value = value!;
+                      },
+                    )),
 
                 // Image Picker
                 Column(
@@ -191,10 +234,53 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 20),
                         foregroundColor: Colors.white,
-                        backgroundColor: TColors.amber,
+                        backgroundColor: TColors.forest,
                       ),
                       child: const Text('Update Menu Item'),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Delete Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      bool confirm = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Confirm Deletion'),
+                            content: Text(
+                                'Are you sure you want to delete this item?'),
+                            actions: [
+                              TextButton(
+                                child: Text('Cancel'),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                              ),
+                              TextButton(
+                                child: Text('Delete'),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (confirm == true) {
+                        await deleteMenuItem();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text('Delete Menu Item'),
                   ),
                 ),
               ],

@@ -89,7 +89,8 @@ class VendorCafePage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => VendorMenu(
-                                      cafe: cafe), // Pass cafeId here
+                                      cafe: vendorController
+                                          .cafe), // Pass cafeId here
                                 ),
                               );
                             },

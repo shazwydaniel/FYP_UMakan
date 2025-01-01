@@ -7,6 +7,7 @@ import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class VendorsHome extends StatelessWidget {
   const VendorsHome({super.key});
@@ -86,30 +87,6 @@ class VendorsHome extends StatelessWidget {
                     color: dark ? Colors.black : Colors.black,
                   ),
                 ),
-                Spacer(),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: TColors.mustard, // Tag background color
-                    borderRadius: BorderRadius.circular(20), // Rounded corners
-                    border:
-                        Border.all(color: TColors.textDark, width: 1), // Border
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Total Cafes: ${controller.cafes.length} ",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: TColors.textDark, // Text color
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
@@ -156,10 +133,10 @@ class VendorsHome extends StatelessWidget {
                               cafe.location,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: TColors.textDark,
+                                color: TColors.textLight,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 8),
                             Text(
                               '${cafe.openingTime} - ${cafe.closingTime}',
                               style: const TextStyle(
@@ -173,12 +150,14 @@ class VendorsHome extends StatelessWidget {
                           Icons.chevron_right,
                           color: TColors.textDark,
                         ),
-                        isThreeLine: true, // Enables a three-line layout
+                        isThreeLine: true,
                         onTap: () {
+                          final selectedCafe = controller.cafes[index];
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => VendorMenu(cafe: cafe),
+                              builder: (context) =>
+                                  VendorMenu(cafe: selectedCafe.obs),
                             ),
                           );
                         },
@@ -206,8 +185,8 @@ class VendorsHome extends StatelessWidget {
                 },
                 child: const Text('Add Cafe'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.forest,
-                  foregroundColor: Colors.white,
+                  backgroundColor: TColors.mustard,
+                  foregroundColor: Colors.black,
                   side: BorderSide(
                       color: Colors.black, // Border color of the button
                       width: 2.0), // Border width of the button),

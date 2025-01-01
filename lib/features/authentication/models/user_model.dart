@@ -27,6 +27,9 @@ class UserModel {
   double additionalAllowance;
   double additionalExpense;
   String role;
+  bool prefSpicy;
+  bool prefVegetarian;
+  bool prefLowSugar;
 
   UserModel({
     required this.id,
@@ -54,6 +57,9 @@ class UserModel {
     this.actualRemainingFoodAllowance = 0.0,
     this.additionalAllowance = 0.0,
     this.additionalExpense = 0.0,
+    this.prefSpicy = false,
+    this.prefVegetarian = false,
+    this.prefLowSugar = false,
   });
 
   // Convert a UserModel into a Map
@@ -84,6 +90,9 @@ class UserModel {
       'actualRemainingFoodAllowance': actualRemainingFoodAllowance,
       'additionalAllowance': additionalAllowance,
       'additionalExpense': additionalExpense,
+      'prefSpicy': prefSpicy,
+      'prefVegetarian': prefVegetarian,
+      'prefLowSugar': prefLowSugar,
     };
   }
 
@@ -118,6 +127,9 @@ class UserModel {
           map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
       additionalAllowance: map['additionalAllowance']?.toDouble() ?? 0.0,
       additionalExpense: map['additionalExpense']?.toDouble() ?? 0.0,
+      prefSpicy: map['prefSpicy'] ?? false,
+      prefVegetarian: map['prefVegetarian'] ?? false,
+      prefLowSugar: map['prefLowSugar'] ?? false,
     );
   }
 
@@ -155,6 +167,9 @@ class UserModel {
       'Additional Allowance': additionalAllowance,
       'Additional Expense': additionalExpense,
       'Role': role,
+      'prefSpicy': prefSpicy,
+      'prefVegetarian': prefVegetarian,
+      'prefLowSugar': prefLowSugar,
     };
   }
 
@@ -185,6 +200,9 @@ class UserModel {
         additionalAllowance: 0.0,
         additionalExpense: 0.0,
         role: '',
+        prefSpicy: false,
+        prefVegetarian: false,
+        prefLowSugar: false,
       );
 
   // Create a UserModel from Firebase Document Snapshot
@@ -193,34 +211,38 @@ class UserModel {
     if (document.data() != null) {
       final data = document.data()!;
       return UserModel(
-          id: document.id,
-          fullName: data['FullName'] ?? '',
-          username: data['Username'] ?? '',
-          email: data['Email'] ?? '',
-          password: data['Password'] ?? '',
-          phoneNumber: data['PhoneNumber'] ?? '',
-          matricsNumber: data['MatricsNumber'] ?? '',
-          gender: data['Gender'] ?? '',
-          accommodation: data['Accomodation'] ?? '',
-          vehicle: data['Vehicle Ownership'] ?? '',
-          maritalStatus: data['Marital Status'] ?? '',
-          childrenNumber: data['Number of Children'] ?? '',
-          monthlyAllowance: data['Monthly Allowance'] ?? '',
-          monthlyCommittments: data['Monthly Commitments'] ?? '',
-          height: data['Height'] ?? '',
-          weight: data['Weight'] ?? '',
-          birthdate: data['Birthdate'] ?? '',
-          age: data['Age'] ?? 0,
-          role: data['Role'] ?? '',
-          status: data['Status'] ?? 0,
-          recommendedCalorieIntake:
-              data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
-          recommendedMoneyAllowance:
-              data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
-          actualRemainingFoodAllowance:
-              data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
-          additionalAllowance: data['additionalAllowance']?.toDouble() ?? 0.0,
-          additionalExpense: data['additionalExpense']?.toDouble() ?? 0.0);
+        id: document.id,
+        fullName: data['FullName'] ?? '',
+        username: data['Username'] ?? '',
+        email: data['Email'] ?? '',
+        password: data['Password'] ?? '',
+        phoneNumber: data['PhoneNumber'] ?? '',
+        matricsNumber: data['MatricsNumber'] ?? '',
+        gender: data['Gender'] ?? '',
+        accommodation: data['Accomodation'] ?? '',
+        vehicle: data['Vehicle Ownership'] ?? '',
+        maritalStatus: data['Marital Status'] ?? '',
+        childrenNumber: data['Number of Children'] ?? '',
+        monthlyAllowance: data['Monthly Allowance'] ?? '',
+        monthlyCommittments: data['Monthly Commitments'] ?? '',
+        height: data['Height'] ?? '',
+        weight: data['Weight'] ?? '',
+        birthdate: data['Birthdate'] ?? '',
+        age: data['Age'] ?? 0,
+        role: data['Role'] ?? '',
+        status: data['Status'] ?? 0,
+        recommendedCalorieIntake:
+            data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+        recommendedMoneyAllowance:
+            data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+        actualRemainingFoodAllowance:
+            data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+        additionalAllowance: data['additionalAllowance']?.toDouble() ?? 0.0,
+        additionalExpense: data['additionalExpense']?.toDouble() ?? 0.0,
+        prefLowSugar: data['prefLowSugar'] ?? false,
+        prefVegetarian: data['prefVegetarian'] ?? false,
+        prefSpicy: data['prefSpicy'] ?? false,
+      );
     } else {
       return UserModel.empty();
     }

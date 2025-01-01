@@ -3,12 +3,19 @@ import 'package:fyp_umakan/utils/helpers/notification_helper.dart';
 
 import 'meal_checker.dart';
 
+bool _isMealCheckScheduled = false; // Add this flag
+
 void scheduleMealCheck(String userId) {
+  if (_isMealCheckScheduled) {
+    print("scheduleMealCheck is already running.");
+    return;
+  }
+
+  _isMealCheckScheduled = true; // Set the flag
   print("Starting scheduleMealCheck...");
 
   Timer.periodic(Duration(minutes: 1), (timer) async {
     DateTime now = DateTime.now();
-    // print('Current time: ${now.hour}:${now.minute}');
 
     // Initialize the MealChecker
     final mealChecker = MealChecker();
@@ -38,7 +45,7 @@ void scheduleMealCheck(String userId) {
     }
 
     // Dinner notification at 8:00 PM
-    if (now.hour == 20 && now.minute == 0) {
+    if (now.hour == 0 && now.minute == 26) {
       print('Dinner notification scheduled');
       bool mealsLogged = await mealChecker.checkMealsForTimeRange(userId);
       if (!mealsLogged) {

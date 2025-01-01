@@ -579,17 +579,17 @@ class HomePageScreen extends StatelessWidget {
                                 child: Text('Error: ${snapshot.error}'));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
-                                return Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 20.0),
-                                    child: Text('No recommended items available.'),
-                                  ),
-                                ); // Empty list case
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20.0),
+                                child: Text('No recommended items available.'),
+                              ),
+                            ); // Empty list case
                           } else {
                             final recommendedMeals = snapshot.data!;
 
                             return Container(
-                              height: 250,
+                              height: 270,
                               margin: const EdgeInsets.only(
                                   left: 20, right: 20, bottom: 5),
                               child: ListView.builder(
@@ -715,6 +715,105 @@ class HomePageScreen extends StatelessWidget {
                                                       ],
                                                     ),
                                                   ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      if (item.isSpicy)
+                                                        Container(
+                                                          width: 24,
+                                                          height: 24,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 6),
+                                                          decoration: BoxDecoration(
+                                                              color: const Color
+                                                                  .fromARGB(255,
+                                                                  255, 134, 6),
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  width: 2)),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text(
+                                                            'S',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      if (item.isVegetarian)
+                                                        Container(
+                                                          width: 24,
+                                                          height: 24,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 6),
+                                                          decoration: BoxDecoration(
+                                                              color: const Color
+                                                                  .fromARGB(255,
+                                                                  70, 215, 75),
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  width: 2)),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text(
+                                                            'V',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      if (item.isLowSugar)
+                                                        Container(
+                                                          width: 24,
+                                                          height: 24,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 6),
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  TColors.blush,
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  width: 2)),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text(
+                                                            'LS',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 10,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  ),
 
                                                   // Buttons Section
                                                   Padding(
@@ -763,7 +862,13 @@ class HomePageScreen extends StatelessWidget {
                                                                 cafeId:
                                                                     item.cafeId,
                                                                 cafeLocation: item
-                                                                    .itemLocation);
+                                                                    .itemLocation,
+                                                                isLowSugar: item
+                                                                    .isLowSugar,
+                                                                isSpicy: item
+                                                                    .isSpicy,
+                                                                isVegetarian: item
+                                                                    .isVegetarian);
 
                                                             String userId =
                                                                 FoodJournalController
@@ -839,6 +944,7 @@ class HomePageScreen extends StatelessWidget {
                                                       ],
                                                     ),
                                                   ),
+                                                  SizedBox(height: 15),
                                                 ],
                                               ),
                                             ),
@@ -974,7 +1080,91 @@ class HomePageScreen extends StatelessWidget {
                                                     color: Colors.black,
                                                     fontSize: 14,
                                                   ),
-                                                )
+                                                ),
+                                                SizedBox(height: 8),
+                                                // Preference Circles
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    if (item.isSpicy)
+                                                      Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        margin: EdgeInsets.only(
+                                                            right: 6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 255, 134, 6),
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          'S',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if (item.isVegetarian)
+                                                      Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        margin: EdgeInsets.only(
+                                                            right: 6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 70, 215, 75),
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          'V',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    if (item.isLowSugar)
+                                                      Container(
+                                                        width: 24,
+                                                        height: 24,
+                                                        margin: EdgeInsets.only(
+                                                            right: 6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: TColors.blush,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          'LS',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 10,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           ),

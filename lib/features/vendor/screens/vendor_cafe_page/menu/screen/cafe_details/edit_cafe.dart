@@ -6,10 +6,12 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/validators/validation.dart';
+import 'package:fyp_umakan/vendor_navigation_menu.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditCafeDetailsPage extends StatefulWidget {
-  final CafeDetails cafe;
+  final Rx<CafeDetails> cafe;
   final VoidCallback onSave;
 
   EditCafeDetailsPage({required this.cafe, required this.onSave});
@@ -29,10 +31,10 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
   void initState() {
     super.initState();
     // Populate TextEditingControllers with the cafe details
-    controller.cafeNameUpdate.text = widget.cafe.name;
-    controller.cafeLocationUpdate.text = widget.cafe.location;
-    controller.openingTimeUpdate.text = widget.cafe.openingTime;
-    controller.closingTimeUpdate.text = widget.cafe.closingTime;
+    controller.cafeNameUpdate.text = widget.cafe.value.name;
+    controller.cafeLocationUpdate.text = widget.cafe.value.location;
+    controller.openingTimeUpdate.text = widget.cafe.value.openingTime;
+    controller.closingTimeUpdate.text = widget.cafe.value.closingTime;
   }
 
   Future<void> pickImage() async {
@@ -42,6 +44,27 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
       setState(() {
         _selectedImage = File(image.path);
       });
+    }
+  }
+
+  Future<void> deleteCafe() async {
+    try {
+      await controller.deleteCafe(
+          controller.getCurrentUserId(), widget.cafe.value.id);
+      widget.onSave(); // Trigger a callback to refresh the parent view
+
+      // Navigate to VendorNavigationMenu with index 0
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VendorNavigationMenu(),
+        ),
+        (route) => false,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting cafe: $e')),
+      );
     }
   }
 
@@ -172,10 +195,10 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
                           _selectedImage!,
                           fit: BoxFit.cover,
                         )
-                      : widget.cafe.image != null &&
-                              widget.cafe.image!.isNotEmpty
+                      : widget.cafe.value.image != null &&
+                              widget.cafe.value.image!.isNotEmpty
                           ? Image.network(
-                              widget.cafe.image!,
+                              widget.cafe.value.image!,
                               fit: BoxFit.cover,
                             )
                           : const Center(child: Icon(Icons.add_a_photo)),
@@ -190,25 +213,37 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
                   onPressed: () async {
                     if (controller.updateCafeKey.currentState?.validate() ??
                         false) {
-                      String? imageUrl = widget.cafe.image;
+                      String? imageUrl = widget.cafe.value.image;
                       if (_selectedImage != null) {
                         imageUrl = await controller.uploadImage(
                           _selectedImage!,
                           controller.getCurrentUserId(),
-                          widget.cafe.name,
+                          widget.cafe.value.name,
                         );
                       }
 
                       await controller.updateCafeDetails(
                         controller.currentUserId,
-                        widget.cafe.id,
+                        widget.cafe.value.id,
                         imageUrl,
                       );
+                      // Update the reactive CafeDetails object
+                      widget.cafe.update((cafeDetails) {
+                        if (cafeDetails != null) {
+                          cafeDetails.image =
+                              imageUrl!; // Update the image reactively
+                          cafeDetails.name =
+                              controller.cafeNameUpdate.text.trim();
+                          cafeDetails.location =
+                              controller.cafeLocationUpdate.text.trim();
+                          cafeDetails.openingTime =
+                              controller.openingTimeUpdate.text.trim();
+                          cafeDetails.closingTime =
+                              controller.closingTimeUpdate.text.trim();
+                        }
+                      });
                       widget.onSave();
-                      vendorMenuController.fetchItemsForCafe(
-                          VendorController.instance.getCurrentUserId(),
-                          widget.cafe.id);
-                      Navigator.pop(context, true);
+                      Navigator.pop(context);
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -216,6 +251,47 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
                     backgroundColor: TColors.textLight,
                   ),
                   child: const Text('Update'),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Delete Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    bool confirm = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Confirm Deletion'),
+                          content: Text(
+                              'Are you sure you want to delete this cafe?'),
+                          actions: [
+                            TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                            TextButton(
+                              child: Text('Delete'),
+                              onPressed: () => Navigator.of(context).pop(true),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirm == true) {
+                      await deleteCafe();
+                      print("Cafe Deleted!");
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.red,
+                  ),
+                  child: const Text('Delete Cafe'),
                 ),
               ),
             ],

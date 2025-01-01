@@ -8,6 +8,7 @@ import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controll
 import 'package:fyp_umakan/features/foodjournal/meal_notification_scheduler.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
 import 'package:fyp_umakan/utils/scripts/add_authority_account.dart';
 import 'package:fyp_umakan/utils/scripts/add_community_news_sample_data.dart';
@@ -24,6 +25,7 @@ import 'firebase_options.dart';
 //   runApp(const App());
 // }
 
+bool _isMealCheckScheduled = false;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
@@ -46,6 +48,17 @@ Future<void> main() async {
   InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS, // Add iOS settings here
+  );
+
+  // Add onDidReceiveNotificationResponse for navigation on tap
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse:
+        (NotificationResponse notificationResponse) async {
+      if (notificationResponse.payload != null) {
+        handleNotificationTap(notificationResponse.payload!); // Navigate on tap
+      }
+    },
   );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -76,6 +89,7 @@ Future<void> main() async {
   Get.put(NetworkManager());
   // Get.put(VendorController());
   Get.put(FoodJournalController());
+  Get.put(NavigationController());
 
   // addSampleOrganisations();
   // addSampleCommunityNews();
@@ -88,10 +102,25 @@ Future<void> main() async {
 
   // Wait until the user data is loaded
   ever(userController.user, (user) {
-    if (user.id.isNotEmpty) {
-      // Schedule notifications when the user ID becomes available
+    // Check if the user's role is "Student" and the flag is not set
+    if (!_isMealCheckScheduled &&
+        user.id.isNotEmpty &&
+        user.role == 'Student') {
+      _isMealCheckScheduled = true; // Set the flag to prevent re-scheduling
       print("User ID for Notification: ${user.id}");
-      scheduleMealCheck(user.id);
+      print("User Role: ${user.role}");
+      scheduleMealCheck(user.id); // Schedule meal notifications for students
     }
   });
+}
+
+// Handle notification taps
+void handleNotificationTap(String payload) {
+  print('Notification tapped with payload: $payload');
+
+  if (payload == 'discover') {
+    final NavigationController controller = Get.find<NavigationController>();
+    controller.selectedIndex.value = 1; // Navigate to Discover Page (index 1)
+    print('Navigating to Discover Page');
+  }
 }

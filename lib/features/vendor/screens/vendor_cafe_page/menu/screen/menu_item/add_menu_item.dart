@@ -95,6 +95,29 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
               ),
               SizedBox(height: 24.0),
 
+              // Preferences Checkboxes
+              Obx(() => CheckboxListTile(
+                    title: Text('Spicy'),
+                    value: controller.isSpicy.value,
+                    onChanged: (value) {
+                      controller.isSpicy.value = value!;
+                    },
+                  )),
+              Obx(() => CheckboxListTile(
+                    title: Text('Vegetarian'),
+                    value: controller.isVegetarian.value,
+                    onChanged: (value) {
+                      controller.isVegetarian.value = value!;
+                    },
+                  )),
+              Obx(() => CheckboxListTile(
+                    title: Text('Low Sugar'),
+                    value: controller.isLowSugar.value,
+                    onChanged: (value) {
+                      controller.isLowSugar.value = value!;
+                    },
+                  )),
+
               // Image Picker Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
