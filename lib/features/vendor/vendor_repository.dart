@@ -770,4 +770,32 @@ class VendorRepository {
       throw Exception('Failed to fetch review: $e');
     }
   }
+
+  Future<void> deleteMenuItem(
+      String vendorId, String cafeId, String itemId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Items')
+          .doc(itemId)
+          .delete();
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw Exception('Failed to delete menu item: $e');
+    }
+  }
 }

@@ -31,11 +31,19 @@ class BadgeRepository {
         {'badgeName': 'Champion', 'status': 'locked', 'unlockedAt': null},
       ];
 
-      final batch = FirebaseFirestore.instance.batch();
+      final batch = _db.batch();
       for (var badge in badges) {
         final badgeDoc = badgesCollection.doc(badge['badgeName']);
         batch.set(badgeDoc, badge);
       }
+      // Add the mealCounts map
+      final mealCountsDoc = badgesCollection.doc('mealCounts');
+      batch.set(mealCountsDoc, {
+        'breakfast': 0,
+        'lunch': 0,
+        'dinner': 0,
+        'others': 0,
+      });
 
       await batch.commit();
       print('Achievements with streakCount initialized successfully.');
@@ -155,6 +163,69 @@ class BadgeRepository {
       print('PlatformException: ${e.message}');
     } catch (e) {
       print('Error updating streak and checking badges: $e');
+    }
+  }
+
+  Future<Map<String, int>> fetchMealCounts(String userId) async {
+    final userRef = _db.collection('Users').doc(userId);
+    final badgesDoc = userRef.collection('Badges').doc('mealCounts');
+
+    try {
+      final snapshot = await badgesDoc.get();
+      if (snapshot.exists) {
+        return {
+          'breakfast': snapshot.data()?['breakfast'] ?? 0,
+          'lunch': snapshot.data()?['lunch'] ?? 0,
+          'dinner': snapshot.data()?['dinner'] ?? 0,
+          'others': snapshot.data()?['others'] ?? 0,
+        };
+      } else {
+        // Initialize mealCounts if it doesn't exist
+        await badgesDoc.set({
+          'breakfast': 0,
+          'lunch': 0,
+          'dinner': 0,
+          'others': 0,
+        });
+        return {'breakfast': 0, 'lunch': 0, 'dinner': 0, 'others': 0};
+      }
+    } catch (e) {
+      print('Error fetching meal counts: $e');
+      return {'breakfast': 0, 'lunch': 0, 'dinner': 0, 'others': 0};
+    }
+  }
+
+  Future<void> updateMealCounts(String userId, Map<String, int> counts) async {
+    final userRef = _db.collection('Users').doc(userId);
+    final badgesDoc = userRef.collection('Badges').doc('mealCounts');
+
+    try {
+      await badgesDoc.update({
+        'breakfast': counts['breakfast'] ?? 0,
+        'lunch': counts['lunch'] ?? 0,
+        'dinner': counts['dinner'] ?? 0,
+        'others': counts['others'] ?? 0,
+      });
+      print('Meal counts updated successfully.');
+    } catch (e) {
+      print('Error updating meal counts: $e');
+    }
+  }
+
+  Future<void> incrementMealCount(String userId, String mealType) async {
+    final badgesDoc = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .collection('Badges')
+        .doc('mealCounts');
+
+    try {
+      await badgesDoc.update({
+        mealType: FieldValue.increment(1),
+      });
+      print("$mealType count incremented in Firebase.");
+    } catch (e) {
+      print("Error updating $mealType count: $e");
     }
   }
 }

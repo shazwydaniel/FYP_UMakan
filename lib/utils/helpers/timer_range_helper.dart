@@ -15,9 +15,9 @@ TimeRange getCurrentTimeRange() {
   } else if (now.isBefore(today.add(Duration(hours: 16)))) {
     return TimeRange(today.add(Duration(hours: 12)),
         today.add(Duration(hours: 16))); // Lunch
-  } else if (now.isBefore(today.add(Duration(hours: 21)))) {
-    return TimeRange(today.add(Duration(hours: 19)),
-        today.add(Duration(hours: 21))); // Dinner
+  } else if (now.isBefore(today.add(Duration(hours: 1)))) {
+    return TimeRange(
+        today.add(Duration(hours: 0)), today.add(Duration(hours: 1))); // Dinner
   } else {
     return TimeRange(today.add(Duration(hours: 21)),
         today.add(Duration(days: 1))); // No notifications

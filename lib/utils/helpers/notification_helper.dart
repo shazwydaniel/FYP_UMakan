@@ -30,6 +30,7 @@ Future<void> showMealReminderNotification(String title, String body) async {
       title,
       body,
       notificationDetails,
+      payload: 'discover',
     );
 
     print("Notification successfully displayed.");

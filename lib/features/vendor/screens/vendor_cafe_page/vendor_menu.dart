@@ -10,7 +10,7 @@ import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 
 class VendorMenu extends StatefulWidget {
-  final CafeDetails cafe; // Accept the entire CafeDetails object
+  final Rx<CafeDetails> cafe;
 
   VendorMenu({Key? key, required this.cafe}) : super(key: key);
 
@@ -26,7 +26,7 @@ class _VendorMenuState extends State<VendorMenu> {
     super.initState();
 
     controller.fetchItemsForCafe(
-        VendorController.instance.getCurrentUserId(), widget.cafe.id);
+        VendorController.instance.getCurrentUserId(), widget.cafe.value.id);
   }
 
   @override
@@ -45,16 +45,18 @@ class _VendorMenuState extends State<VendorMenu> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.cafe.name,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    overflow: TextOverflow
-                        .ellipsis, // Ensure long names don't overflow
-                  ),
+                  Obx(() {
+                    return Text(
+                      widget.cafe.value.name,
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow
+                          .ellipsis, // Ensure long names don't overflow
+                    );
+                  }),
                   IconButton(
                     icon: const Icon(Icons.edit),
                     color: Colors.black,
@@ -90,34 +92,34 @@ class _VendorMenuState extends State<VendorMenu> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child:
-                      widget.cafe.image != null && widget.cafe.image.isNotEmpty
-                          ? Image.network(
-                              widget.cafe.image,
-                              width: double.infinity,
-                              height: 160, // Adjust the height
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                color: Colors.grey[200],
-                                height: 200,
-                                child: Icon(
-                                  Icons.broken_image,
-                                  size: 80,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              width: double.infinity,
-                              height: 200,
-                              color: Colors.grey[200],
-                              child: Icon(
-                                Icons.photo,
-                                size: 80,
-                                color: Colors.grey,
-                              ),
+                  child: widget.cafe.value.image != null &&
+                          widget.cafe.value.image.isNotEmpty
+                      ? Image.network(
+                          widget.cafe.value.image,
+                          width: double.infinity,
+                          height: 160, // Adjust the height
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey[200],
+                            height: 200,
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey,
                             ),
+                          ),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: 200,
+                          color: Colors.grey[200],
+                          child: Icon(
+                            Icons.photo,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
+                        ),
                 ),
               ),
 
@@ -165,7 +167,7 @@ class _VendorMenuState extends State<VendorMenu> {
                                 MaterialPageRoute(
                                   builder: (context) => EditMenuItemPage(
                                     menuItem: item,
-                                    cafeId: widget.cafe.id,
+                                    cafeId: widget.cafe.value.id,
                                   ),
                                 ),
                               ).then((result) {
@@ -174,7 +176,7 @@ class _VendorMenuState extends State<VendorMenu> {
                                   controller.fetchItemsForCafe(
                                       VendorController.instance
                                           .getCurrentUserId(),
-                                      widget.cafe.id);
+                                      widget.cafe.value.id);
                                 }
                               });
                             },
@@ -277,13 +279,13 @@ class _VendorMenuState extends State<VendorMenu> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            AddMenuItemPage(cafeId: widget.cafe.id),
+                            AddMenuItemPage(cafeId: widget.cafe.value.id),
                       ),
                     );
                     if (result == true) {
                       controller.fetchItemsForCafe(
                           VendorController.instance.getCurrentUserId(),
-                          widget.cafe.id);
+                          widget.cafe.value.id);
                     }
                   },
                   child: const Text('Add Menu Item'),
@@ -310,7 +312,7 @@ class _VendorMenuState extends State<VendorMenu> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            VendorAdverts(cafeId: widget.cafe.id),
+                            VendorAdverts(cafeId: widget.cafe.value.id),
                       ),
                     );
                   },
