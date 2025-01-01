@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+import 'package:fyp_umakan/features/foodjournal/meal_notification_scheduler.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
@@ -17,57 +19,46 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'app.dart';
 import 'firebase_options.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // void main(){
 //   runApp(const App());
 // }
 
-class PersistentData {
-  static int dayCount = 0;
-  static DateTime lastUpdatedDate = DateTime.now();
-  static bool _initialized = false;
-
-  static Future<void> initialize() async {
-    if (!_initialized) {
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        dayCount = prefs.getInt('dayCount') ?? 0;
-        final lastUpdatedDateString = prefs.getString('lastUpdatedDate');
-        if (lastUpdatedDateString != null) {
-          lastUpdatedDate = DateTime.parse(lastUpdatedDateString);
-        } else {
-          lastUpdatedDate = DateTime.now();
-        }
-      } catch (e) {
-        print('Error loading persistent data: $e');
-        dayCount = 0;
-        lastUpdatedDate = DateTime.now();
-      }
-
-      _initialized = true;
-    }
-  }
-
-  static Future<void> saveData(
-      int newDayCount, DateTime newLastUpdatedDate) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('dayCount', newDayCount);
-      await prefs.setString('lastUpdatedDate', newLastUpdatedDate.toString());
-      dayCount = newDayCount;
-      lastUpdatedDate = newLastUpdatedDate;
-    } catch (e) {
-      print('Error saving persistent data: $e');
-    }
-  }
-}
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   // Widgets Binding
   final WidgetsBinding widgetsBinding =
       WidgetsFlutterBinding.ensureInitialized();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  // Add iOS settings
+  final DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
+
+  InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS, // Add iOS settings here
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  // Request notification permissions for iOS
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
   // Initialize Firebase & Authenticate Repository
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
@@ -79,7 +70,7 @@ Future<void> main() async {
   await GetStorage.init();
 
   //Initalise Controllers and User Repository
-  Get.put(UserController());
+  final userController = Get.put(UserController());
   //Get.put(UserRepository());
   // Get.put(MoneyJournalRepository());
   Get.put(NetworkManager());
@@ -94,4 +85,13 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const App());
+
+  // Wait until the user data is loaded
+  ever(userController.user, (user) {
+    if (user.id.isNotEmpty) {
+      // Schedule notifications when the user ID becomes available
+      print("User ID for Notification: ${user.id}");
+      scheduleMealCheck(user.id);
+    }
+  });
 }

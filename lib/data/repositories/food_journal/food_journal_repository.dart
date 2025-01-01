@@ -398,4 +398,42 @@ class FoodJournalRepository {
       print("Error updating badge: $e");
     }
   }
+
+  Future<List<JournalItem>> getMealsForDateRange(
+      String userId, DateTime startDate, DateTime endDate) async {
+    try {
+      // Convert the date range to Firestore-compatible timestamps
+      //Timestamp startTimestamp = Timestamp.fromDate(startDate);
+      //Timestamp endTimestamp = Timestamp.fromDate(endDate);
+
+      // Query Firestore for meals within the specified date range
+      QuerySnapshot querySnapshot = await _db
+          .collection('Users') // Adjust collection name as needed
+          .doc(userId)
+          .collection(
+              'food_journal') // Assuming meals are stored in a subcollection
+          .where('timestamp',
+              isGreaterThanOrEqualTo: startDate.toIso8601String())
+          .where('timestamp', isLessThanOrEqualTo: endDate.toIso8601String())
+          .get();
+
+      // Map each document to a JournalItem
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>; // Explicit cast
+        return JournalItem.fromJson(data);
+      }).toList();
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print('Error fetching meals for date range: $e');
+      return [];
+    }
+  }
 }

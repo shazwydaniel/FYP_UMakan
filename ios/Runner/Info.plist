@@ -49,5 +49,21 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+
+		<!-- Add these keys for notifications -->
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>We use this to send you relevant notifications about your meals.</string>
+		<key>UNUserNotificationAlertStyle</key>
+		<string>banner</string>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
 	</dict>
 </plist>
