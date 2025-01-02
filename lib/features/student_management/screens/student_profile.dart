@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
+import "package:fyp_umakan/features/admin/admin_feedback.dart";
 import "package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
@@ -100,9 +102,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Log meals for at least three meal times on the first day to unlock.",
                     "Congratulations! You logged meals for at least three meal times on the first day",
-                    fooodJController.dayCount,
                     TImages.initiatorBadge,
-                    1,
+                    "initiator",
                   ),
                   const SizedBox(width: 10),
                   _buildBadgeCard(
@@ -112,9 +113,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 3 consecutive days.",
                     "Congratulations! You logged meals for at least three meal times 3 consecutive days",
-                    fooodJController.dayCount,
                     TImages.noviceBadge,
-                    3,
+                    "novice",
                   ),
                   const SizedBox(width: 10),
                   _buildBadgeCard(
@@ -124,11 +124,10 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 7 consecutive days.",
                     "Congratulations! You logged meals for at least three meal times 7 consecutive days",
-                    fooodJController.dayCount,
                     TImages.heroBadge,
-                    7,
+                    "hero",
                   ),
-                  const SizedBox(width: 10), // Space between cards
+                  const SizedBox(width: 10),
                   _buildBadgeCard(
                     context,
                     dark,
@@ -136,11 +135,9 @@ class StudentProfilePageScreen extends StatelessWidget {
                     "Tap to see detail",
                     "Unlock by logging meals for at least three meal times for 30 consecutive days.",
                     "Congratulations! You logged meals for at least three meal times 30 consecutive days",
-                    fooodJController.dayCount,
                     TImages.championBadge,
-                    30,
+                    "champion",
                   ),
-                  const SizedBox(width: 10), // Space between cards
                 ],
               ),
             ),
@@ -906,6 +903,49 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 10),
+              child: Center(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FeedbackPage(),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: TColors.teal),
+                    backgroundColor: TColors.teal,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.feedback,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Help/Feedback",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
             //Logout button (Button)
             Padding(
@@ -968,7 +1008,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                     side: const BorderSide(color: TColors.amber),
                     backgroundColor: TColors.amber,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
+                        horizontal: 62, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -1005,13 +1045,30 @@ Widget _buildBadgeCard(
   String initialDescription,
   String tappedDescription,
   String unLockedDescription,
-  RxInt mealTypeCount,
   String badgeImageUnlocked,
-  int requiredCount,
+  String achievementField,
 ) {
-  return Obx(
-    () {
-      bool isUnlocked = mealTypeCount.value >= requiredCount;
+  final controller = Get.find<UserController>();
+
+  return FutureBuilder<DocumentSnapshot>(
+    future: FirebaseFirestore.instance
+        .collection('Users')
+        .doc(controller.user.value.id)
+        .collection('Achievements')
+        .doc('current')
+        .get(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator(); // Show a loader while fetching
+      }
+
+      if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+        return Text("Error loading achievement data");
+      }
+
+      // Check if the achievement is unlocked
+      final achievementData = snapshot.data!;
+      bool isUnlocked = achievementData[achievementField] ?? false;
 
       return GestureDetector(
         onTap: () {
@@ -1038,8 +1095,8 @@ Widget _buildBadgeCard(
                       const SizedBox(height: 20),
                       // Badge Image
                       Container(
-                        width: 230,
-                        height: 230,
+                        width: 200,
+                        height: 200,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isUnlocked ? Colors.transparent : Colors.grey,
@@ -1055,6 +1112,7 @@ Widget _buildBadgeCard(
                                 color: Colors.white,
                               ),
                       ),
+                      SizedBox(height: 20),
 
                       Text(
                         badgeName,

@@ -166,7 +166,7 @@ class FoodJournalController extends GetxController {
       _updateMealStates(userId);
 
       // Check streaks and achievements
-      await _checkStreakAndAchievements(userId);
+      _checkStreakAndAchievements(userId);
 
       for (int i = 0; i < 4; i++) {
         updateAndCacheAverageCalories(i);
@@ -334,63 +334,91 @@ class FoodJournalController extends GetxController {
   void resetMealStatesAtMidnight(String userId) {
     Timer.periodic(Duration(minutes: 1), (timer) async {
       DateTime now = DateTime.now();
+
       if (now.hour == 0 && now.minute == 0) {
-        // Reset local meal state variables
+        // Fetch streak and carry forward
+        final streakDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .collection('streaks')
+            .doc('current')
+            .get();
+
+        int currentStreak =
+            streakDoc.exists ? streakDoc['streakCount'] ?? 0 : 0;
+
+        print("Streak carried forward: $currentStreak");
+
+        // Reset daily meal states for a new day
         hadBreakfast = false;
         hadLunch = false;
         hadDinner = false;
         hadOthers = false;
 
-        // Fetch today's MealStates from Firebase
-        final mealStatesDoc = await FirebaseFirestore.instance
+        await FirebaseFirestore.instance
             .collection('Users')
             .doc(userId)
             .collection('MealStates')
             .doc('current')
-            .get();
+            .set({
+          'hadBreakfast': false,
+          'hadLunch': false,
+          'hadDinner': false,
+          'hadOthers': false,
+        });
 
-        if (mealStatesDoc.exists) {
-          final data = mealStatesDoc.data()!;
-          int completedMealTimes = [
-            data['hadBreakfast'] ?? false,
-            data['hadLunch'] ?? false,
-            data['hadDinner'] ?? false,
-            data['hadOthers'] ?? false,
-          ].where((logged) => logged == true).length;
-
-          if (completedMealTimes < 3) {
-            // Reset streak if fewer than 3 meal times were logged
-            await FirebaseFirestore.instance
-                .collection('Users')
-                .doc(userId)
-                .collection('streaks')
-                .doc('current')
-                .set({'streakCount': 0});
-
-            print(
-                "Streak reset to 0 at midnight due to insufficient meal logs.");
-          } else {
-            print(
-                "Streak maintained as 3 or more meal times were logged for the day.");
-          }
-
-          // Reset meal states in Firebase
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(userId)
-              .collection('MealStates')
-              .doc('current')
-              .set({
-            'hadBreakfast': false,
-            'hadLunch': false,
-            'hadDinner': false,
-            'hadOthers': false,
-          });
-
-          print("Meal states reset for a new day.");
-        }
+        print("Meal states reset for a new day.");
       }
     });
+  }
+
+  Future<void> evaluateStreakAtEndOfDay(String userId) async {
+    DateTime now = DateTime.now();
+    if (now.hour == 23 && now.minute == 59) {
+      // Fetch today's MealStates from Firebase
+      final mealStatesDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('MealStates')
+          .doc('current')
+          .get();
+
+      if (mealStatesDoc.exists) {
+        final data = mealStatesDoc.data()!;
+        int completedMealTimes = [
+          data['hadBreakfast'] ?? false,
+          data['hadLunch'] ?? false,
+          data['hadDinner'] ?? false,
+          data['hadOthers'] ?? false,
+        ].where((logged) => logged == true).length;
+
+        // Fetch current streak
+        final streakDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .collection('streaks')
+            .doc('current')
+            .get();
+
+        int streak = streakDoc.exists ? streakDoc['streakCount'] ?? 0 : 0;
+
+        // Update streak based on completion
+        if (completedMealTimes >= 3) {
+          streak += 1;
+          print("Streak incremented to $streak.");
+        } else {
+          streak = 0;
+          print("Streak reset to 0 due to insufficient meal logs.");
+        }
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .collection('streaks')
+            .doc('current')
+            .set({'streakCount': streak});
+      }
+    }
   }
 
   //---------------------POP UP NOTIFICATION FOR INDULEGENCE --------------------------//
@@ -721,28 +749,41 @@ class FoodJournalController extends GetxController {
   }
 
   void monitorBadgeUnlock() {
-    ever(dayCount, (count) {
-      String? unlockedBadge;
-      String? badgeImage;
+    // Listen to Firebase achievements in real-time
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userController.user.value.id) // Use the current user's ID
+        .collection('Achievements')
+        .doc('current')
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        final achievements = snapshot.data();
 
-      if (count == 1) {
-        unlockedBadge = "Initiator";
-        badgeImage = TImages.initiatorBadge;
-      } else if (count == 3) {
-        unlockedBadge = "Novice";
-        badgeImage = TImages.noviceBadge;
-      } else if (count == 7) {
-        unlockedBadge = "Hero";
-        badgeImage = TImages.heroBadge;
-      } else if (count == 30) {
-        unlockedBadge = "Champion";
-        badgeImage = TImages.championBadge;
-      }
+        String? unlockedBadge;
+        String? badgeImage;
 
-      if (unlockedBadge != null) {
-        Get.dialog(
-          BadgeUnlockPopup(badgeName: unlockedBadge, badgeImage: badgeImage!),
-        );
+        // Check which badges are unlocked
+        if (achievements?["initiator"] == true) {
+          unlockedBadge = "Initiator";
+          badgeImage = TImages.initiatorBadge;
+        } else if (achievements?["novice"] == true) {
+          unlockedBadge = "Novice";
+          badgeImage = TImages.noviceBadge;
+        } else if (achievements?["hero"] == true) {
+          unlockedBadge = "Hero";
+          badgeImage = TImages.heroBadge;
+        } else if (achievements?["champion"] == true) {
+          unlockedBadge = "Champion";
+          badgeImage = TImages.championBadge;
+        }
+
+        // Show badge dialog if a badge is unlocked
+        if (unlockedBadge != null) {
+          Get.dialog(
+            BadgeUnlockPopup(badgeName: unlockedBadge, badgeImage: badgeImage!),
+          );
+        }
       }
     });
   }

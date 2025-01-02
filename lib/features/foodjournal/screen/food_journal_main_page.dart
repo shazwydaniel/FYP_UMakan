@@ -462,8 +462,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
             }),
             //Meal Yesterday (Text)
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 30, right: 30, bottom: 10, top: 10),
+              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
