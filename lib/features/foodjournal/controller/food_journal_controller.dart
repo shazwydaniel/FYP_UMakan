@@ -84,12 +84,13 @@ class FoodJournalController extends GetxController {
   // A map to store averageCalories for each meal type
   var averageCaloriesMap = <int, RxString>{}.obs;
 
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
   @override
   void onInit() {
     super.onInit();
     initializeMealCounts();
     monitorBadgeUnlock();
-    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     ever(mealItems, (_) {
       todayCalories.value = calculateTodayCalories();
@@ -749,41 +750,44 @@ class FoodJournalController extends GetxController {
   }
 
   void monitorBadgeUnlock() {
-    // Listen to Firebase achievements in real-time
-    FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userController.user.value.id) // Use the current user's ID
-        .collection('Achievements')
-        .doc('current')
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.exists) {
-        final achievements = snapshot.data();
+    // Reference to the Achievements collection
+    final achievementsRef = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(getCurrentUserId())
+        .collection("Achievements")
+        .doc("current");
 
-        String? unlockedBadge;
-        String? badgeImage;
+    achievementsRef.snapshots().listen((snapshot) {
+      if (!snapshot.exists) {
+        print("No achievements found for this user.");
+        return;
+      }
 
-        // Check which badges are unlocked
-        if (achievements?["initiator"] == true) {
-          unlockedBadge = "Initiator";
-          badgeImage = TImages.initiatorBadge;
-        } else if (achievements?["novice"] == true) {
-          unlockedBadge = "Novice";
-          badgeImage = TImages.noviceBadge;
-        } else if (achievements?["hero"] == true) {
-          unlockedBadge = "Hero";
-          badgeImage = TImages.heroBadge;
-        } else if (achievements?["champion"] == true) {
-          unlockedBadge = "Champion";
-          badgeImage = TImages.championBadge;
-        }
+      final achievements = snapshot.data();
+      String? unlockedBadge;
+      String? badgeImage;
 
-        // Show badge dialog if a badge is unlocked
-        if (unlockedBadge != null) {
-          Get.dialog(
-            BadgeUnlockPopup(badgeName: unlockedBadge, badgeImage: badgeImage!),
-          );
-        }
+      if (achievements?["initiator"] == true) {
+        unlockedBadge = "Initiator";
+        badgeImage = TImages.initiatorBadge;
+      } else if (achievements?["novice"] == true) {
+        unlockedBadge = "Novice";
+        badgeImage = TImages.noviceBadge;
+      } else if (achievements?["hero"] == true) {
+        unlockedBadge = "Hero";
+        badgeImage = TImages.heroBadge;
+      } else if (achievements?["champion"] == true) {
+        unlockedBadge = "Champion";
+        badgeImage = TImages.championBadge;
+      }
+
+      if (unlockedBadge != null) {
+        Get.dialog(
+          BadgeUnlockPopup(
+            badgeName: unlockedBadge,
+            badgeImage: badgeImage!,
+          ),
+        );
       }
     });
   }
