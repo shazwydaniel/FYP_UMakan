@@ -145,76 +145,128 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: controller.gender,
-                  validator: (value) =>
-                      TValidator.validateEmptyText('Gender', value),
-                  decoration: const InputDecoration(
-                    labelText: 'Gender (Male/Female)',
-                    prefixIcon: Icon(Iconsax.personalcard),
-                  ),
-                ),
-              ),
-            ],
+          // Gender Dropdown
+          DropdownButtonFormField<String>(
+            value: controller.gender.text.isNotEmpty
+                ? controller.gender.text
+                : null,
+            items: ['Male', 'Female']
+                .map((gender) => DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.gender.text = value;
+              }
+            },
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please select your gender'
+                : null,
+            decoration: const InputDecoration(
+              labelText: 'Gender',
+              prefixIcon: Icon(Iconsax.personalcard),
+            ),
+            dropdownColor: TColors.cream, // Match the dropdown color
           ),
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: controller.accommodation,
-                  validator: (value) =>
-                      TValidator.validateEmptyText('Accommodation', value),
-                  decoration: const InputDecoration(
-                    labelText: 'Accommodation',
-                    prefixIcon: Icon(Iconsax.house),
-                  ),
-                ),
-              ),
-            ],
+// Location Dropdown
+          DropdownButtonFormField<String>(
+            value: controller.accommodation.text.isNotEmpty
+                ? controller.accommodation.text
+                : null,
+            items: [
+              'KK1',
+              'KK2',
+              'KK3',
+              'KK4',
+              'KK5',
+              'KK6',
+              'KK7',
+              'KK8',
+              'KK9',
+              'KK10',
+              'KK11',
+              'KK12',
+              'KK13',
+              'Outside Campus'
+            ]
+                .map((location) => DropdownMenuItem(
+                      value: location,
+                      child: Text(location),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.accommodation.text = value;
+              }
+            },
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please select your accommodation'
+                : null,
+            decoration: const InputDecoration(
+              labelText: 'Accommodation',
+              prefixIcon: Icon(Iconsax.house),
+            ),
+            dropdownColor: TColors.cream,
           ),
-
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: controller.vehicle,
-                  validator: (value) =>
-                      TValidator.validateEmptyText('Vehicle Ownership', value),
-                  decoration: const InputDecoration(
-                    labelText: 'Vehicle Owner (Yes / No)',
-                    prefixIcon: Icon(Iconsax.car),
-                  ),
-                ),
-              ),
-            ],
+// Vehicle Ownership Dropdown
+          DropdownButtonFormField<String>(
+            value: controller.vehicle.text.isNotEmpty
+                ? controller.vehicle.text
+                : null,
+            items: ['Yes', 'No']
+                .map((option) => DropdownMenuItem(
+                      value: option,
+                      child: Text(option),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.vehicle.text = value;
+              }
+            },
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please select vehicle ownership'
+                : null,
+            decoration: const InputDecoration(
+              labelText: 'Vehicle Ownership',
+              prefixIcon: Icon(Iconsax.car),
+            ),
+            dropdownColor: TColors.cream,
           ),
-
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: controller.maritalStatus,
-                  validator: (value) =>
-                      TValidator.validateEmptyText('Marital Status', value),
-                  decoration: const InputDecoration(
-                    labelText: 'Marital Status (Married / Single)',
-                    prefixIcon: Icon(Iconsax.heart),
-                  ),
-                ),
-              ),
-            ],
+// Marital Status Dropdown
+          DropdownButtonFormField<String>(
+            value: controller.maritalStatus.text.isNotEmpty
+                ? controller.maritalStatus.text
+                : null,
+            items: ['Married', 'Single']
+                .map((status) => DropdownMenuItem(
+                      value: status,
+                      child: Text(status),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.maritalStatus.text = value;
+              }
+            },
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please select marital status'
+                : null,
+            decoration: const InputDecoration(
+              labelText: 'Marital Status',
+              prefixIcon: Icon(Iconsax.heart),
+            ),
+            dropdownColor: TColors.cream,
           ),
-
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
           Row(

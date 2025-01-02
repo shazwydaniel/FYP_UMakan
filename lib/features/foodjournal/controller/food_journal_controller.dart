@@ -84,11 +84,16 @@ class FoodJournalController extends GetxController {
   // A map to store averageCalories for each meal type
   var averageCaloriesMap = <int, RxString>{}.obs;
 
-  final userId = FirebaseAuth.instance.currentUser?.uid;
-
   @override
   void onInit() {
     super.onInit();
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      print("User not logged in. Skipping initialization.");
+      return;
+    }
+
     initializeMealCounts();
     monitorBadgeUnlock();
 
