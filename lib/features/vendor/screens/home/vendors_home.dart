@@ -76,7 +76,7 @@ class VendorsHome extends StatelessWidget {
                 Container(
                   width: 4,
                   height: 40,
-                  color: TColors.forest,
+                  color: TColors.amber,
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -113,7 +113,7 @@ class VendorsHome extends StatelessWidget {
                     return Card(
                       elevation: 5,
                       margin: const EdgeInsets.only(bottom: 16.0),
-                      color: TColors.amber,
+                      color: TColors.mustard,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -123,7 +123,7 @@ class VendorsHome extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: TColors.textLight,
+                            color: TColors.textDark,
                           ),
                         ),
                         subtitle: Column(
@@ -133,7 +133,7 @@ class VendorsHome extends StatelessWidget {
                               cafe.location,
                               style: const TextStyle(
                                 fontSize: 14,
-                                color: TColors.textLight,
+                                color: TColors.textDark,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -185,11 +185,9 @@ class VendorsHome extends StatelessWidget {
                 },
                 child: const Text('Add Cafe'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.mustard,
-                  foregroundColor: Colors.black,
-                  side: BorderSide(
-                      color: Colors.black, // Border color of the button
-                      width: 2.0), // Border width of the button),
+                  backgroundColor: TColors.forest,
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.black, width: 2.0),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   minimumSize: const Size(double.infinity, 50),

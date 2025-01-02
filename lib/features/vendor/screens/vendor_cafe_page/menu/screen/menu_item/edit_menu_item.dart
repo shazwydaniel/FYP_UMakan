@@ -5,6 +5,7 @@ import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 
@@ -110,6 +111,7 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.amber,
       appBar: AppBar(
         title: const Text('Edit Menu Item'),
         backgroundColor: TColors.amber,
@@ -124,57 +126,110 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
               children: [
                 // Item Name Field
                 TextFormField(
+                  style: const TextStyle(color: Colors.white),
                   controller: controller.itemNameUpdate,
                   decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Item Name',
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Iconsax.edit, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
 
                 // Item Price Field
                 TextFormField(
+                  style: const TextStyle(color: Colors.white),
                   controller: controller.itemCostUpdate,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Price (RM)',
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Iconsax.money, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
 
                 // Item Calories Field
                 TextFormField(
+                  style: const TextStyle(color: Colors.white),
                   controller: controller.itemCaloriesUpdate,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Calories',
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Iconsax.weight, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
 
+                Text(
+                  "Prefences",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+
                 Obx(() => CheckboxListTile(
-                      title: const Text('Spicy'),
+                      title: const Text(
+                        'Spicy',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       value: controller.isSpicyUpdate.value,
+                      activeColor: Colors.white,
+                      checkColor: TColors.textDark,
                       onChanged: (value) {
                         controller.isSpicyUpdate.value = value!;
                       },
                     )),
                 Obx(() => CheckboxListTile(
-                      title: const Text('Vegetarian'),
+                      title: const Text(
+                        'Vegetarian',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       value: controller.isVegetarianUpdate.value,
+                      activeColor: Colors.white,
+                      checkColor: TColors.textDark,
                       onChanged: (value) {
                         controller.isVegetarianUpdate.value = value!;
                       },
                     )),
                 Obx(() => CheckboxListTile(
-                      title: const Text('Low Sugar'),
+                      title: const Text(
+                        'Low Sugar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       value: controller.isLowSugarUpdate.value,
+                      activeColor: Colors.white,
+                      checkColor: TColors.textDark,
                       onChanged: (value) {
                         controller.isLowSugarUpdate.value = value!;
                       },
                     )),
+
+                SizedBox(height: 20),
 
                 // Image Picker
                 Column(
@@ -183,16 +238,18 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                     Text(
                       'Upload Item Image',
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white),
                     ),
-                    const SizedBox(height: 8.0),
+                    const SizedBox(height: 20),
                     GestureDetector(
                       onTap: pickImage,
                       child: Container(
-                        height: 150,
+                        height: 180,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.white),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: selectedImage != null
@@ -219,23 +276,19 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                 SizedBox(
                   width: double.infinity,
                   child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color:
-                            TColors.textDark, // Set your desired border color
-                        width: 2.0, // Set the border width
-                      ),
-                      borderRadius: BorderRadius.circular(
-                          15), // Match the button's border radius
-                    ),
                     child: ElevatedButton(
                       onPressed: saveChanges,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 20),
-                        foregroundColor: Colors.white,
-                        backgroundColor: TColors.forest,
-                      ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 20),
+                          backgroundColor: TColors.textLight,
+                          foregroundColor: TColors.textDark,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          side: BorderSide(
+                              color: Colors.white, // Border color of the button
+                              width: 2.0)),
                       child: const Text('Update Menu Item'),
                     ),
                   ),
@@ -279,6 +332,9 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                           horizontal: 40, vertical: 20),
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.red,
+                      side: BorderSide(
+                          color: Colors.white, // Border color of the button
+                          width: 2.0),
                     ),
                     child: const Text('Delete Menu Item'),
                   ),

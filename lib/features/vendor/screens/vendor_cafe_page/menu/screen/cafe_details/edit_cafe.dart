@@ -8,6 +8,7 @@ import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/validators/validation.dart';
 import 'package:fyp_umakan/vendor_navigation_menu.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditCafeDetailsPage extends StatefulWidget {
@@ -85,12 +86,21 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
             children: [
               // Cafe Name
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 controller: controller.cafeNameUpdate,
                 validator: (value) =>
                     TValidator.validateEmptyText('Cafe Name', value),
                 decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Cafe Name',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Iconsax.home, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -107,8 +117,22 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
                     ? 'Please select a cafe location'
                     : null,
                 decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Cafe Location',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Iconsax.location, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+                dropdownColor: const Color.fromARGB(255, 195, 167, 6),
+                style: const TextStyle(color: Colors.black),
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.black,
                 ),
                 items: [
                   'KK1',
@@ -135,12 +159,21 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
 
               // Opening Time
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 controller: controller.openingTimeUpdate,
                 readOnly: true,
                 decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Opening Time',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.access_time),
+                  prefixIcon: Icon(Iconsax.clock, color: Colors.black),
+                  suffixIcon: Icon(Icons.access_time, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
                 onTap: () async {
                   final time = await showTimePicker(
@@ -156,12 +189,21 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
 
               // Closing Time
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 controller: controller.closingTimeUpdate,
                 readOnly: true,
                 decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Closing Time',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.access_time),
+                  prefixIcon: Icon(Iconsax.clock, color: Colors.black),
+                  suffixIcon: Icon(Icons.access_time, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
                 onTap: () async {
                   final time = await showTimePicker(
@@ -184,11 +226,12 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
               GestureDetector(
                 onTap: pickImage,
                 child: Container(
-                  height: 150,
+                  height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
+                    color: TColors.mustard,
                   ),
                   child: _selectedImage != null
                       ? Image.file(
@@ -247,8 +290,17 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: TColors.mustard,
+                    foregroundColor: TColors.textDark,
                     backgroundColor: TColors.textLight,
+                    side: BorderSide(
+                        color: Colors.black, // Border color of the button
+                        width: 2.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 20),
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                   child: const Text('Update'),
                 ),
@@ -290,6 +342,15 @@ class _EditCafeDetailsPageState extends State<EditCafeDetailsPage> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.red,
+                    side: BorderSide(
+                        color: Colors.black, // Border color of the button
+                        width: 2.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 20),
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                   child: const Text('Delete Cafe'),
                 ),

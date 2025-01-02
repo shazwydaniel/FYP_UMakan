@@ -4,6 +4,7 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:iconsax/iconsax.dart';
 
 class VendorAdverts extends StatelessWidget {
   VendorAdverts({super.key, required this.cafeId});
@@ -33,8 +34,14 @@ class VendorAdverts extends StatelessWidget {
     return Scaffold(
       backgroundColor: TColors.amber,
       appBar: AppBar(
-        title: Text('Add Advertisment'),
+        title: Text(
+          'Add Advertisment',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: TColors.amber,
+        iconTheme: IconThemeData(
+          color: Colors.white, // Set the color of the back arrow
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,22 +52,41 @@ class VendorAdverts extends StatelessWidget {
             children: [
               // Text Field for Item Name
               TextField(
+                style: const TextStyle(color: Colors.white),
                 controller: controller.adDetail,
                 decoration: InputDecoration(
+                  labelStyle: TextStyle(color: Colors.white),
+                  floatingLabelStyle: TextStyle(color: Colors.white),
                   labelText: 'Advertisment Detail',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Iconsax.edit, color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
               ),
               SizedBox(height: 16.0),
 
               // Text Field for Start Date
               TextField(
+                style: const TextStyle(color: Colors.white),
+
                 controller: controller.startDateController,
                 readOnly: true, // Prevent manual input
                 decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.white),
+                  floatingLabelStyle: TextStyle(color: Colors.white),
                   labelText: 'Start Date',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today), // Calendar icon
+                  prefixIcon: Icon(Iconsax.calendar, color: Colors.white),
+                  suffixIcon: Icon(Icons.calendar_today, color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
                 onTap: () =>
                     _selectDate(context, controller.startDateController),
@@ -69,12 +95,22 @@ class VendorAdverts extends StatelessWidget {
 
               // Text Field for End Date
               TextField(
+                style: const TextStyle(color: Colors.white),
+
                 controller: controller.endDateController,
                 readOnly: true, // Prevent manual input
                 decoration: const InputDecoration(
+                  labelStyle: TextStyle(color: Colors.white),
+                  floatingLabelStyle: TextStyle(color: Colors.white),
                   labelText: 'End Date',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today), // Calendar icon
+                  prefixIcon: Icon(Iconsax.calendar, color: Colors.white),
+                  suffixIcon: Icon(Icons.calendar_today, color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
                 onTap: () => _selectDate(context, controller.endDateController),
               ),
@@ -92,8 +128,14 @@ class VendorAdverts extends StatelessWidget {
                   },
                   child: Text('Add Item'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: TColors.forest,
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    backgroundColor: TColors.textLight,
+                    foregroundColor: TColors.textDark,
+                    side: BorderSide(
+                        color: Colors.white, // Border color of the button
+                        width: 2.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
+                    minimumSize: const Size(double.infinity, 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),

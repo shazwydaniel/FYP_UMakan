@@ -54,10 +54,16 @@ class _AddCafeState extends State<AddCafe> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Cafe'),
-        backgroundColor: TColors.amber,
+        title: const Text(
+          'Add Cafe',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: TColors.forest,
+        iconTheme: IconThemeData(
+          color: Colors.white, // Set the color of the back arrow
+        ),
       ),
-      backgroundColor: TColors.amber,
+      backgroundColor: TColors.forest,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(TSizes.defaultSpace),
@@ -109,8 +115,12 @@ class _AddCafeState extends State<AddCafe> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
-                  dropdownColor: Colors.black,
+                  dropdownColor: const Color.fromARGB(255, 9, 92, 50),
                   style: const TextStyle(color: Colors.white),
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
                   items: [
                     'KK1',
                     'KK2',
@@ -143,7 +153,7 @@ class _AddCafeState extends State<AddCafe> {
                     floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Opening Time',
                     prefixIcon: Icon(Iconsax.clock, color: Colors.white),
-                    suffixIcon: Icon(Icons.calendar_today),
+                    suffixIcon: Icon(Icons.calendar_today, color: Colors.white),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
@@ -163,7 +173,7 @@ class _AddCafeState extends State<AddCafe> {
                     floatingLabelStyle: TextStyle(color: Colors.white),
                     labelText: 'Closing Time',
                     prefixIcon: Icon(Iconsax.clock, color: Colors.white),
-                    suffixIcon: Icon(Icons.calendar_today),
+                    suffixIcon: Icon(Icons.calendar_today, color: Colors.white),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
@@ -173,14 +183,16 @@ class _AddCafeState extends State<AddCafe> {
                   ),
                   onTap: () => _selectTime(context, controller.closingTime),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 25),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'Upload Item Image',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                     ),
                     const SizedBox(height: 8.0),
                     GestureDetector(
@@ -189,7 +201,7 @@ class _AddCafeState extends State<AddCafe> {
                         height: 150,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.white),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: _selectedImage != null
@@ -204,7 +216,7 @@ class _AddCafeState extends State<AddCafe> {
                                 child: Icon(
                                   Icons.add_a_photo,
                                   size: 50,
-                                  color: Colors.grey,
+                                  color: Colors.white,
                                 ),
                               ),
                       ),
@@ -251,7 +263,7 @@ class _AddCafeState extends State<AddCafe> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: TColors.amber,
+                      foregroundColor: TColors.forest,
                       backgroundColor: TColors.textLight,
                     ),
                     child: const Text('Save'),

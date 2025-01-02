@@ -3,6 +3,8 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.d
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/sizes.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 class EditAdPage extends StatelessWidget {
@@ -109,125 +111,154 @@ class EditAdPage extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: TColors.amber,
       appBar: AppBar(
         backgroundColor: TColors.amber,
+        iconTheme: IconThemeData(
+          color: Colors.white, // Set the color of the back arrow
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: advertController.updateForm,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Edit Ad for ${ad.cafeName}',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-
-              // Detail Field
-              TextFormField(
-                controller: advertController.detailUpdateController,
-                decoration: InputDecoration(
-                  labelText: 'Detail',
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.grey[100],
+      backgroundColor: TColors.amber,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(TSizes.defaultSpace),
+          child: Form(
+            key: advertController.updateForm,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Edit Advertisement for ${ad.cafeName}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // Start Date Field
-              TextFormField(
-                controller: advertController.startDateUpdateController,
-                readOnly: true, // Prevent manual input
-                decoration: InputDecoration(
-                  labelText: 'Start Date',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today), // Calendar icon
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
-                onTap: () => _selectDate(
-                    context, advertController.startDateUpdateController),
-              ),
-              SizedBox(height: 20),
-
-              // End Date Field
-              TextFormField(
-                controller: advertController.endDateUpdateController,
-                readOnly: true, // Prevent manual input
-                decoration: InputDecoration(
-                  labelText: 'End Date',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today), // Calendar icon
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
-                onTap: () => _selectDate(
-                    context, advertController.endDateUpdateController),
-              ),
-              SizedBox(height: 30),
-
-              // Inside the body of your Form widget
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Other widgets like the title, TextFormFields, etc.
-
-                  SizedBox(height: 30),
-
-                  // Centering the Save and Delete Buttons
-                  Center(
-                    child: Column(
-                      children: [
-                        // Save Button
-                        ElevatedButton(
-                          onPressed: () async {
-                            await advertController.updateAds(
-                                vendorController.currentUserId,
-                                ad.cafeId,
-                                ad.id);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          child: Text(
-                            'Save Changes',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(height: 20), // Spacing between buttons
-
-                        // Delete Button
-                        ElevatedButton(
-                          onPressed: () =>
-                              _showDeleteConfirmationDialog(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                      ],
+                // Detail Field
+                TextFormField(
+                  style: const TextStyle(color: Colors.white),
+                  controller: advertController.detailUpdateController,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter advertisement details'
+                      : null,
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
+                    labelText: 'Advertisement Details',
+                    prefixIcon: Icon(Iconsax.edit, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
-                ],
-              )
-            ],
+                ),
+                const SizedBox(height: 16),
+
+                // Start Date Field
+                TextFormField(
+                  style: const TextStyle(color: Colors.white),
+                  controller: advertController.startDateUpdateController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
+                    labelText: 'Start Date',
+                    prefixIcon: Icon(Iconsax.calendar, color: Colors.white),
+                    suffixIcon: Icon(Icons.calendar_today, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  onTap: () => _selectDate(
+                      context, advertController.startDateUpdateController),
+                ),
+                const SizedBox(height: 16),
+
+                // End Date Field
+                TextFormField(
+                  style: const TextStyle(color: Colors.white),
+                  controller: advertController.endDateUpdateController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    floatingLabelStyle: TextStyle(color: Colors.white),
+                    labelText: 'End Date',
+                    prefixIcon: Icon(Iconsax.calendar, color: Colors.white),
+                    suffixIcon: Icon(Icons.calendar_today, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  onTap: () => _selectDate(
+                      context, advertController.endDateUpdateController),
+                ),
+                const SizedBox(height: 25),
+
+                Center(
+                  child: Column(
+                    children: [
+                      // Save Button
+                      ElevatedButton(
+                        onPressed: () async {
+                          await advertController.updateAds(
+                              vendorController.currentUserId, ad.cafeId, ad.id);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TColors.textLight,
+                          foregroundColor: TColors.textDark,
+                          side: BorderSide(
+                              color: Colors.white, // Border color of the button
+                              width: 2.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          minimumSize: const Size(double.infinity, 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: const Text(
+                          'Save Changes',
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Delete Button
+                      ElevatedButton(
+                        onPressed: () => _showDeleteConfirmationDialog(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.black,
+                          side: BorderSide(
+                              color: Colors.white, // Border color of the button
+                              width: 2.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          minimumSize: const Size(double.infinity, 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: const Text(
+                          'Delete Advertisement',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

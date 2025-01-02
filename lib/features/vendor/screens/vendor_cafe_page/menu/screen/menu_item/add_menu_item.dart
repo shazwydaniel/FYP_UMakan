@@ -3,6 +3,7 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart'; // Import the package
 import 'dart:io';
 
@@ -34,6 +35,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.mustard,
       appBar: AppBar(
         title: Text('Add Menu Item'),
         backgroundColor: TColors.mustard,
@@ -47,10 +49,19 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
             children: [
               // Text Field for Item Name
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 controller: controller.itemName,
                 decoration: InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Item Name',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Iconsax.edit, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -63,11 +74,20 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
 
               // Text Field for Item Cost
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 controller: controller.itemCost,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Item Cost',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Iconsax.money, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -80,11 +100,20 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
 
               // Text Field for Item Calories
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 controller: controller.itemCalories,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   labelText: 'Item Calories',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Iconsax.weight, color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -93,31 +122,55 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 20.0),
+
+              Text(
+                "Prefences",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
 
               // Preferences Checkboxes
               Obx(() => CheckboxListTile(
-                    title: Text('Spicy'),
+                    title: Text(
+                      'Spicy',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     value: controller.isSpicy.value,
+                    activeColor: Colors.black,
+                    checkColor: TColors.textLight,
                     onChanged: (value) {
                       controller.isSpicy.value = value!;
                     },
                   )),
               Obx(() => CheckboxListTile(
-                    title: Text('Vegetarian'),
+                    title: Text(
+                      'Vegetarian',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     value: controller.isVegetarian.value,
+                    activeColor: Colors.black,
+                    checkColor: TColors.textLight,
                     onChanged: (value) {
                       controller.isVegetarian.value = value!;
                     },
                   )),
               Obx(() => CheckboxListTile(
-                    title: Text('Low Sugar'),
+                    title: Text(
+                      'Low Sugar',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     value: controller.isLowSugar.value,
+                    activeColor: Colors.black,
+                    checkColor: TColors.textLight,
                     onChanged: (value) {
                       controller.isLowSugar.value = value!;
                     },
                   )),
-
+              const SizedBox(height: 20),
               // Image Picker Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,14 +179,14 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                     'Upload Item Image',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  SizedBox(height: 8.0),
+                  SizedBox(height: 20.0),
                   GestureDetector(
                     onTap: pickImage,
                     child: Container(
-                      height: 150,
+                      height: 180,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: Colors.black),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: selectedImage != null
@@ -174,12 +227,17 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                   },
                   child: Text('Add Item'),
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    backgroundColor: TColors.forest,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
+                      backgroundColor: TColors.textLight,
+                      foregroundColor: TColors.textDark,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
+                      side: BorderSide(
+                          color: Colors.white, // Border color of the button
+                          width: 2.0)),
                 ),
               ),
             ],
