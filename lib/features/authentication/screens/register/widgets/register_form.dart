@@ -49,11 +49,15 @@ class TRegisterForm extends StatelessWidget {
               Expanded(
                 child: TextFormField(
                   controller: controller.username,
+                  onChanged: (value) => controller.validateUsername(value),
                   validator: (value) =>
                       TValidator.validateEmptyText('Username', value),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: TTexts.username,
-                    prefixIcon: Icon(Iconsax.verify),
+                    prefixIcon: const Icon(Iconsax.verify),
+                    errorText: controller.usernameError.value.isNotEmpty
+                        ? controller.usernameError.value
+                        : null,
                   ),
                 ),
               ),

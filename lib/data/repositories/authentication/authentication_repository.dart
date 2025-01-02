@@ -70,10 +70,10 @@ class AuthenticatorRepository extends GetxController {
             // If the user is a Support Organisation, redirect to SupportOrganisationNavigationMenu
             debugPrint('Redirecting to Support Organisation Navigation Menu');
             Get.off(() => const SupportOrganisationNavigationMenu());
-          } 
-          else if (role == 'Student') {
+          } else if (role == 'Student') {
             // If the user is a Student, redirect to the NavigationMenu for students
             debugPrint('Redirecting to Student Navigation Menu');
+            Get.put(NavigationController()).selectedIndex.value = 0;
             Get.off(() => const NavigationMenu());
           } else {
             // Handle unknown or undefined roles

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,10 +39,18 @@ class RegisterController extends GetxController {
   GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
   final role = "Student";
 
+  final usernameError = ''.obs;
+
   // Store userId after registration
   late String userId;
   final NetworkManager networkManager = Get.put(NetworkManager());
   final UserRepository userRepository = Get.put(UserRepository());
+
+  @override
+  void onInit() {
+    super.onInit();
+    setupUsernameValidation();
+  }
 
   // Register
   Future<void> register() async {
@@ -70,6 +81,16 @@ class RegisterController extends GetxController {
         TLoaders.errorSnackBar(
             title: 'Privacy Policy',
             message: 'You need to accept the privacy policy to proceed.');
+        return;
+      }
+
+      // Check Username Availability
+      final usernameAvailable = await isUsernameAvailable(username.text.trim());
+      if (!usernameAvailable) {
+        TLoaders.errorSnackBar(
+            title: 'Username Taken',
+            message:
+                'The username is already in use. Please choose another one.');
         return;
       }
 
@@ -130,5 +151,41 @@ class RegisterController extends GetxController {
       debugPrint("Error during registration: $e");
       TLoaders.errorSnackBar(title: 'Yikes!', message: e.toString());
     }
+  }
+
+  Future<bool> isUsernameAvailable(String username) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection(
+            'Users') // Adjust this to your actual Firestore collection name
+        .where('Username', isEqualTo: username.trim())
+        .get();
+
+    return querySnapshot.docs.isEmpty; // Returns true if no match is found
+  }
+
+  void validateUsername(String username) async {
+    if (username.isEmpty) {
+      usernameError.value = 'Username is required';
+      return;
+    }
+
+    final available = await isUsernameAvailable(username);
+    if (!available) {
+      usernameError.value = 'Username is already taken';
+    } else {
+      usernameError.value = '';
+    }
+  }
+
+  // Debounce logic for username validation
+  void setupUsernameValidation() {
+    username.addListener(() {
+      final currentValue = username.text;
+      Future.delayed(Duration(milliseconds: 500), () {
+        if (username.text == currentValue) {
+          validateUsername(currentValue);
+        }
+      });
+    });
   }
 }
