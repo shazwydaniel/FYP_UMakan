@@ -25,7 +25,7 @@ class StudentProfilePageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final controller = UserController.instance;
+    final controller = Get.put(UserController());
     final fooodJController = FoodJournalController.instance;
 
     return Scaffold(

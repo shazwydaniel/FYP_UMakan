@@ -83,12 +83,13 @@ Future<void> main() async {
   await GetStorage.init();
 
   //Initalise Controllers and User Repository
+
   final userController = Get.put(UserController());
   //Get.put(UserRepository());
   // Get.put(MoneyJournalRepository());
   Get.put(NetworkManager());
   // Get.put(VendorController());
-  Get.put(FoodJournalController());
+  final foodJController = Get.put(FoodJournalController());
   Get.put(NavigationController());
 
   // addSampleOrganisations();
@@ -99,6 +100,14 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const App());
+
+  // Schedule the midnight reset
+  ever(userController.user, (user) {
+    if (user.id.isNotEmpty && user.role == 'Student') {
+      foodJController
+          .resetMealStatesAtMidnight(user.id); // Call midnight reset here
+    }
+  });
 
   // Wait until the user data is loaded
   ever(userController.user, (user) {
@@ -120,7 +129,7 @@ void handleNotificationTap(String payload) {
 
   if (payload == 'discover') {
     final NavigationController controller = Get.find<NavigationController>();
-    controller.selectedIndex.value = 1; // Navigate to Discover Page (index 1)
+    controller.selectedIndex.value = 1;
     print('Navigating to Discover Page');
   }
 }

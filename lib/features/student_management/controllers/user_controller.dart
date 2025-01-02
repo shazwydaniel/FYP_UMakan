@@ -189,19 +189,20 @@ class UserController extends GetxController {
 
   // Calculate User's BMR
   double calculateBMR() {
-    final weight = double.tryParse(user.value.weight) ?? 0.0;
-    final height = double.tryParse(user.value.height) ?? 0.0;
-    final age = user.value.age;
-    final gender = user.value.gender;
+    final weight = double.tryParse(user.value.weight) ??
+        0.0; // Default to 0.0 if weight is null
+    final height = double.tryParse(user.value.height) ??
+        0.0; // Default to 0.0 if height is null
+    final age = user.value.age ?? 0; // Default to 0 if age is null
+    final gender = user.value.gender
+        ?.toLowerCase(); // Convert gender to lowercase for consistency
 
+    // Calculate BMR based on gender
     double bmr;
-
-    if (gender == 'Male') {
+    if (gender == 'male') {
       bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-    } else if (gender == 'Female') {
-      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
     } else {
-      throw Exception("Invalid gender"); // Optional: Handle invalid gender
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
     }
 
     return bmr;

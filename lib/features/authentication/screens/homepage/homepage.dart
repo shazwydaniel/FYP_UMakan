@@ -40,9 +40,9 @@ class HomePageScreen extends StatelessWidget {
     final recommendedController = Get.put(RecommendationController());
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
-    print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
+    // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
     // print("AMOUNT of completed days : ${foodJController.dayCount}");
-    print("RECOMMENDED STUFF  : ${recommendedController.getRecommendedList()}");
+    //print("RECOMMENDED STUFF  : ${recommendedController.getRecommendedList()}");
 
     return Scaffold(
       backgroundColor: dark ? TColors.cream : TColors.cream,

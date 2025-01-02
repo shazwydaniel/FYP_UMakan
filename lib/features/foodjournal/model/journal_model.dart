@@ -12,6 +12,7 @@ class JournalItem {
   bool isSpicy;
   bool isVegetarian;
   bool isLowSugar;
+  final bool isUserGenerated;
 
   JournalItem(
       {this.isSpicy = false,
@@ -26,6 +27,7 @@ class JournalItem {
       DateTime? timestamp,
       required this.vendorId,
       required this.cafeId,
+      this.isUserGenerated = false,
       required this.cafeLocation})
       : timestamp = timestamp ?? DateTime.now();
 
@@ -51,6 +53,7 @@ class JournalItem {
       'isSpicy': isSpicy,
       'isVegetarian': isVegetarian,
       'isLowSugar': isLowSugar,
+      'isUserGenerated': isUserGenerated,
     };
   }
 
@@ -77,6 +80,7 @@ class JournalItem {
       isSpicy: json['isSpicy'] ?? false,
       isVegetarian: json['isVegetarian'] ?? false,
       isLowSugar: json['isLowSugar'] ?? false,
+      isUserGenerated: json['isUserGenerated'] ?? false,
     );
   }
 
@@ -105,6 +109,7 @@ class JournalItem {
       isSpicy: data['isSpicy'] ?? false,
       isVegetarian: data['isVegetarian'] ?? false,
       isLowSugar: data['isLowSugar'] ?? false,
+      isUserGenerated: data['isUserGenerated'] ?? false,
     );
   }
 
@@ -124,6 +129,7 @@ class JournalItem {
       'isSpicy': isSpicy,
       'isVegetarian': isVegetarian,
       'isLowSugar': isLowSugar,
+      'isUserGenerated': isUserGenerated,
     };
   }
 
@@ -141,5 +147,6 @@ class JournalItem {
         isSpicy: false,
         isVegetarian: false,
         isLowSugar: false,
+        isUserGenerated: false,
       );
 }

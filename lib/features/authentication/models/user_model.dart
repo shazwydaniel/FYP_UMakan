@@ -72,7 +72,7 @@ class UserModel {
       'password': password,
       'phoneNumber': phoneNumber,
       'matricsNumber': matricsNumber,
-      'gender': matricsNumber,
+      'gender': gender,
       'accommodation': accommodation,
       'vehicle': vehicle,
       'maritalStatus': maritalStatus,

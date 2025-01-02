@@ -106,7 +106,7 @@ class RecommendationController extends GetxController {
       return matchesPreference;
     }).toList();
 
-    print("Final Recommended Items: ${recommendedItems}");
+    //print("Final Recommended Items: ${recommendedItems}");
     return recommendedItems;
   }
 

@@ -15,6 +15,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class FoodJournalMainPage extends StatefulWidget {
   const FoodJournalMainPage({super.key});
@@ -1058,17 +1059,20 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 ),
                 child: TextButton(
                   onPressed: () async {
+                    final uuid = Uuid();
                     // Add selected item to the food journal
                     final journalItem = JournalItem(
-                        id: 'manual',
-                        name: itemName.text.trim(),
-                        price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
-                        calories: int.tryParse(itemCalories.text.trim()) ?? 0,
-                        cafe: itemLocation.text.trim(),
-                        imagePath: '',
-                        cafeId: '',
-                        vendorId: '',
-                        cafeLocation: '');
+                      id: uuid.v4(),
+                      name: itemName.text.trim(),
+                      price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
+                      calories: int.tryParse(itemCalories.text.trim()) ?? 0,
+                      cafe: itemLocation.text.trim(),
+                      imagePath: '',
+                      cafeId: '',
+                      vendorId: '',
+                      cafeLocation: '',
+                      isUserGenerated: true,
+                    );
 
                     String userId =
                         FoodJournalController.instance.getCurrentUserId();
