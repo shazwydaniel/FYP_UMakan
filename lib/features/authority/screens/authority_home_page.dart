@@ -1,9 +1,18 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
 class AuthorityHomePage extends StatelessWidget {
   const AuthorityHomePage({super.key});
@@ -175,9 +184,38 @@ class AuthorityHomePage extends StatelessWidget {
                               ),
                             ),
                             child: TextButton(
-                              onPressed: () {
-                                // Add download PDF logic here
-                                print('Download PDF');
+                              onPressed: () async {
+                                try {
+                                  // Load the UM logo
+                                  final Uint8List logoBytes = await rootBundle
+                                      .load('assets/logos/UM_Logo.png')
+                                      .then((value) => value.buffer.asUint8List());
+
+                                  // Get the current date for the file name
+                                  final DateTime now = DateTime.now();
+                                  final String formattedDate =
+                                      '${now.day.toString().padLeft(2, '0')}${now.month.toString().padLeft(2, '0')}${now.year}';
+
+                                  // Fetch the students data
+                                  final students = await _fetchStrugglingStudents();
+
+                                  // Generate the PDF with the logo
+                                  final pdfData = await _createPDF(students, logoBytes);
+
+                                  // Save the PDF locally
+                                  final tempDir = await getTemporaryDirectory();
+                                  final file = File('${tempDir.path}/Financially_Struggling_Students_$formattedDate.pdf');
+                                  await file.writeAsBytes(pdfData, flush: true);
+
+                                  print('PDF saved at: ${file.path}');
+
+                                  // Open the PDF using the system's default viewer
+                                  final result = await OpenFilex.open(file.path);
+                                  print('Result: $result');
+                                } catch (e) {
+                                  print('Error generating PDF: $e');
+                                  Get.snackbar('Error', 'Failed to generate PDF. Please try again.');
+                                }
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -286,40 +324,16 @@ class AuthorityHomePage extends StatelessWidget {
       if (financialStatus == 'Deficit') {
         final fullName = doc.data()['FullName'] ?? 'Unknown';
         final matricsNumber = doc.data()['MatricsNumber'] ?? 'N/A';
+        final accomodation = doc.data()['Accomodation'] ?? 'Unknown';
         strugglingStudents.add({
           'FullName': fullName,
           'MatricsNumber': matricsNumber,
+          'Accomodation' : accomodation,
         });
       }
     }
 
     return strugglingStudents;
-  }
-
-  // Section Header Widget
-  Widget _sectionHeader(String title, Color color) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 4,
-            height: 40,
-            color: color,
-          ),
-          const SizedBox(width: 10),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   // Statistical Highlight Card Widget
@@ -378,6 +392,134 @@ class AuthorityHomePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Generate PDF - List of Student
+  Future<Uint8List> _createPDF(List<Map<String, String>> students, Uint8List logoBytes) async {
+    // Get the current date
+    final DateTime now = DateTime.now();
+    final String formattedDate =
+        '${now.day.toString().padLeft(2, '0')}${now.month.toString().padLeft(2, '0')}${now.year}';
+    final String displayDate =
+        '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
+
+    // Create a PDF document
+    PdfDocument document = PdfDocument();
+
+    // Add a page
+    final page = document.pages.add();
+
+    // Draw the university logo at the top right
+    if (logoBytes.isNotEmpty) {
+      PdfBitmap logo = PdfBitmap(logoBytes);
+      page.graphics.drawImage(
+        logo,
+        Rect.fromLTWH(
+          page.getClientSize().width - 170, // Adjusted x position to leave some padding
+          10, // Adjusted y position for better alignment
+          160, // Increased width
+          50, // Decreased height
+        ),
+      );
+    }
+
+    // Draw the title
+    page.graphics.drawString(
+      'Financially Struggling Students',
+      PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold),
+      bounds: Rect.fromLTWH(0, 10, page.getClientSize().width, 30),
+    );
+
+    // Draw the generation date under the title
+    page.graphics.drawString(
+      'This list is generated on: $displayDate',
+      PdfStandardFont(PdfFontFamily.helvetica, 12),
+      bounds: Rect.fromLTWH(0, 40, page.getClientSize().width, 20),
+    );
+
+    // Create a PdfGrid for the table
+    PdfGrid pdfGrid = PdfGrid();
+
+    // Add columns to the grid
+    pdfGrid.columns.add(count: 4);
+
+    // Add header row
+    PdfGridRow header = pdfGrid.headers.add(1)[0];
+    header.cells[0].value = 'No.';
+    header.cells[1].value = 'Full Name';
+    header.cells[2].value = 'Student ID';
+    header.cells[3].value = 'Place of Stay';
+
+    // Style the header
+    header.style = PdfGridCellStyle(
+      backgroundBrush: PdfSolidBrush(PdfColor(64, 64, 64)), // Dark grey background
+      textBrush: PdfBrushes.white, // White text
+      font: PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
+    );
+
+    // Add rows for student data
+    for (int i = 0; i < students.length; i++) {
+      PdfGridRow row = pdfGrid.rows.add();
+      row.cells[0].value = (i + 1).toString(); // Index
+      row.cells[1].value = students[i]['FullName'] ?? 'N/A'; // Full Name
+      row.cells[2].value = students[i]['MatricsNumber'] ?? 'N/A'; // Student ID
+      row.cells[3].value = students[i]['Accomodation'] ?? 'N/A'; // Place of Stay
+    }
+
+    // Style rows
+    pdfGrid.style = PdfGridStyle(
+      font: PdfStandardFont(PdfFontFamily.helvetica, 12),
+      cellPadding: PdfPaddings(left: 5, right: 5, top: 5, bottom: 5),
+    );
+
+    // Draw the grid on the page
+    pdfGrid.draw(
+      page: page,
+      bounds: Rect.fromLTWH(0, 100, page.getClientSize().width, page.getClientSize().height - 120),
+    );
+
+    // Add footer text
+    page.graphics.drawString(
+      'Generated Through UMakan Mobile App',
+      PdfStandardFont(PdfFontFamily.helvetica, 10),
+      bounds: Rect.fromLTWH(0, page.getClientSize().height - 20, page.getClientSize().width, 20),
+      format: PdfStringFormat(alignment: PdfTextAlignment.center),
+    );
+
+    // Save the document as a byte array
+    List<int> bytes = await document.save();
+
+    // Dispose the document to free resources
+    document.dispose();
+
+    // Return the byte array as Uint8List
+    return Uint8List.fromList(bytes);
+  }
+
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
