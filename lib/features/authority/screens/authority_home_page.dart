@@ -243,8 +243,8 @@ class AuthorityHomePage extends StatelessWidget {
               },
             ),
 
-            // Statistical Highlights Section
-            _sectionHeader('Statistical Highlights', TColors.teal),
+            // Students Statistics Section
+            _sectionHeader('Student Statistics', TColors.teal),
             // Card #1
             FutureBuilder<int>(
               future: _fetchUserCount(),
@@ -320,38 +320,55 @@ class AuthorityHomePage extends StatelessWidget {
 
             SizedBox(height: 20),
 
-            // Vendor Highlights Section
-            _sectionHeader('Vendor Highlights', TColors.mustard),
-            Container(
-              height: 200,
-              margin: const EdgeInsets.only(
-                left: 30,
-                right: 30,
-                bottom: 20,
-                top: 10,
-              ),
-              decoration: BoxDecoration(
-                color: TColors.mustard,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  'Display Best-Selling Menus Here',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: TColors.marigold,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            // Vendor Statistics Section
+            _sectionHeader('Vendor Statistics', TColors.mustard),
+            // Card #1
+            FutureBuilder<int>(
+              future: _fetchVendorCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading vendor count',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final vendorCount = snapshot.data ?? 0;
+                return _statCard(
+                  title: 'Vendors Registered',
+                  value: vendorCount.toString(),
+                  icon: Iconsax.shop,
+                  color: TColors.coffee,
+                );
+              },
+            ),
+            // Card #2
+            FutureBuilder<int>(
+              future: _fetchCafeCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading cafe count',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final cafeCount = snapshot.data ?? 0;
+                return _statCard(
+                  title: 'Cafes Registered',
+                  value: cafeCount.toString(),
+                  icon: Iconsax.coffee,
+                  color: TColors.bubbleOrange,
+                );
+              },
             ),
 
             SizedBox(height: 35),
@@ -400,6 +417,9 @@ class AuthorityHomePage extends StatelessWidget {
     required String value,
     required IconData icon,
     required Color color,
+    Color? iconColor,
+    Color? titleColor,
+    Color? valueColor,
   }) {
     return Container(
       height: 120,
@@ -422,7 +442,7 @@ class AuthorityHomePage extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.white,
+              color: iconColor ?? Colors.white,
               size: 40,
             ),
             const SizedBox(width: 20),
@@ -433,7 +453,7 @@ class AuthorityHomePage extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: titleColor ?? Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -441,7 +461,7 @@ class AuthorityHomePage extends StatelessWidget {
                 Text(
                   value,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: valueColor ?? Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
@@ -634,5 +654,27 @@ class AuthorityHomePage extends StatelessWidget {
     }
 
     return studentCount > 0 ? totalAllowance / studentCount : 0.0;
+  }
+  // Total Vendors Registered
+  Future<int> _fetchVendorCount() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Vendors').get();
+    return snapshot.docs.length;
+  }
+  // Total Cafes Registered
+  Future<int> _fetchCafeCount() async {
+    final firestore = FirebaseFirestore.instance;
+    int totalCafes = 0;
+
+    // Fetch vendors
+    final vendorsSnapshot = await firestore.collection('Vendors').get();
+
+    for (var vendorDoc in vendorsSnapshot.docs) {
+      // For each vendor, fetch cafes subcollection
+      final cafesSnapshot = await vendorDoc.reference.collection('Cafe').get();
+      totalCafes += cafesSnapshot.docs.length;
+    }
+
+    return totalCafes;
   }
 }

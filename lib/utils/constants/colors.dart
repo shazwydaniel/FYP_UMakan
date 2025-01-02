@@ -49,4 +49,10 @@ class TColors{
   // Oranges
   static const Color marigold = Color(0xFFD38200);
 
+  // Yellows
+  static const Color banana = Color(0xFFfcf6bd);
+
+  // Browns
+  static const Color coffee = Color(0xFF99582a);
+
 }
