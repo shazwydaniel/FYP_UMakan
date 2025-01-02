@@ -73,6 +73,6 @@ class AuthorityNavigationController extends GetxController {
   final List<Widget> screens = [
     const AuthorityHomePage(),
     const CommunityMainPageScreen(),
-    const AuthorityProfilePage(),
+    AuthorityProfilePage(),
   ];
 }
