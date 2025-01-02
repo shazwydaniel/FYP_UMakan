@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:fyp_umakan/utils/helpers/notification_helper.dart';
+import 'package:fyp_umakan/utils/helpers/timer_range_helper.dart';
 
 import 'meal_checker.dart';
 
@@ -18,42 +20,43 @@ void scheduleMealCheck(String userId) {
     DateTime now = DateTime.now();
 
     // Initialize the MealChecker
-    final mealChecker = MealChecker();
+    // final mealChecker = MealChecker();
 
     // Breakfast notification at 11:00 AM
+
     if (now.hour == 11 && now.minute == 0) {
-      print('Breakfast notification scheduled');
-      bool mealsLogged = await mealChecker.checkMealsForTimeRange(userId);
-      if (!mealsLogged) {
-        await showMealReminderNotification(
-          'Log Your Breakfast',
-          "Don't forget to log your breakfast today!",
-        );
-      }
+      TimeRange breakfastRange = getCurrentTimeRange();
+
+      showMealReminderNotification(
+        userId,
+        breakfastRange,
+        'Log Your Breakfast',
+        "Don't forget to log your breakfast today!",
+      );
     }
 
     // Lunch notification at 3:00 PM
     if (now.hour == 15 && now.minute == 0) {
-      print('Lunch notification scheduled');
-      bool mealsLogged = await mealChecker.checkMealsForTimeRange(userId);
-      if (!mealsLogged) {
-        await showMealReminderNotification(
-          'Log Your Lunch',
-          "Don't forget to log your lunch today!",
-        );
-      }
+      TimeRange lunchRange = getCurrentTimeRange();
+
+      showMealReminderNotification(
+        userId,
+        lunchRange,
+        'Log Your Lunch',
+        "Don't forget to log your lunch today!",
+      );
     }
 
     // Dinner notification at 8:00 PM
-    if (now.hour == 0 && now.minute == 26) {
-      print('Dinner notification scheduled');
-      bool mealsLogged = await mealChecker.checkMealsForTimeRange(userId);
-      if (!mealsLogged) {
-        await showMealReminderNotification(
-          'Log Your Dinner',
-          "Don't forget to log your dinner today!",
-        );
-      }
+    if (now.hour == 20 && now.minute == 0) {
+      TimeRange dinnerRange = getCurrentTimeRange();
+
+      showMealReminderNotification(
+        userId,
+        dinnerRange,
+        'Log Your Dinner',
+        "Don't forget to log your dinner today!",
+      );
     }
   });
 }

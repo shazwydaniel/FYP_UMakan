@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -101,11 +103,19 @@ Future<void> main() async {
 
   runApp(const App());
 
-  // Schedule the midnight reset
+  // Schedule the midnight reset and end-of-day streak evaluation
   ever(userController.user, (user) {
     if (user.id.isNotEmpty && user.role == 'Student') {
-      foodJController
-          .resetMealStatesAtMidnight(user.id); // Call midnight reset here
+      // Reset meal states at midnight
+      foodJController.resetMealStatesAtMidnight(user.id);
+
+      // Evaluate streak at the end of the day
+      Timer.periodic(Duration(minutes: 1), (timer) {
+        DateTime now = DateTime.now();
+        if (now.hour == 23 && now.minute == 59) {
+          foodJController.evaluateStreakAtEndOfDay(user.id);
+        }
+      });
     }
   });
 
