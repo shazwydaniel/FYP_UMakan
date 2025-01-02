@@ -147,35 +147,6 @@ class CafePage extends StatelessWidget {
                   ),
                   SizedBox(width: 165),
                   // Add View All Button
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 10,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => ViewAllReviewsPage(
-                                vendorId: vendorId,
-                                cafeId: cafe.id,
-                                cafeName: cafe.name,
-                              ),
-                            ));
-                          },
-                          icon: Icon(Icons.arrow_forward, color: Colors.black),
-                          label: Text(
-                            'View All',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -189,8 +160,10 @@ class CafePage extends StatelessWidget {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Text('No reviews yet',
-                        style: TextStyle(color: Colors.black)),
+                    child: Text(
+                      'No reviews yet',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 );
               }
@@ -203,10 +176,49 @@ class CafePage extends StatelessWidget {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: reviewController.review.length > 5
-                          ? 5
-                          : reviewController
-                              .review.length, // Limit to 5 reviews
+                          ? 6 // Show 5 reviews + 1 circular button
+                          : reviewController.review.length +
+                              1, // Reviews + circular button
                       itemBuilder: (context, index) {
+                        if (index == reviewController.review.length ||
+                            index == 5) {
+                          // Circular Button
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => ViewAllReviewsPage(
+                                  vendorId: vendorId,
+                                  cafeId: cafe.id,
+                                  cafeName: cafe.name,
+                                ),
+                              ));
+                            },
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 20),
+                              decoration: BoxDecoration(
+                                color: TColors.cream,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.arrow_forward,
+                                color: Colors.black,
+                                size: 30,
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Review Card
                         final review = reviewController.review[index];
                         return Container(
                           width: 250,

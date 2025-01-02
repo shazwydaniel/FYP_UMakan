@@ -16,6 +16,7 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.d
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
+import 'package:fyp_umakan/features/vendor/screens/advertisement/all_advertisments.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 
@@ -1317,30 +1318,49 @@ class HomePageScreen extends StatelessWidget {
 
                     // Cafe's Ads (Cards) (Horizontally Scrollable)
                     Obx(
-                      () => SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: advertController.allAdvertisements
-                              .where((advertisement) {
-                                // Filter logic: check if today is within the range of startDate and endDate
-                                DateTime today = DateTime.now();
-                                DateTime? startDate = advertisement.startDate;
-                                DateTime? endDate = advertisement.endDate;
+                      () {
+                        final advertisements = advertController
+                            .allAdvertisements
+                            .where((advertisement) {
+                          // Filter logic: check if today is within the range of startDate and endDate
+                          DateTime today = DateTime.now();
+                          DateTime? startDate = advertisement.startDate;
+                          DateTime? endDate = advertisement.endDate;
 
-                                // If both dates are not null, check the range
-                                if (startDate != null && endDate != null) {
-                                  return today.isAfter(startDate
-                                          .subtract(const Duration(days: 1))) &&
-                                      today.isBefore(
-                                          endDate.add(const Duration(days: 1)));
-                                }
-                                // If either date is null, exclude the advertisement
-                                return false;
-                              })
-                              .toList()
-                              .asMap()
-                              .entries
-                              .map((entry) {
+                          // If both dates are not null, check the range
+                          if (startDate != null && endDate != null) {
+                            return today.isAfter(startDate
+                                    .subtract(const Duration(days: 1))) &&
+                                today.isBefore(
+                                    endDate.add(const Duration(days: 1)));
+                          }
+                          // If either date is null, exclude the advertisement
+                          return false;
+                        }).toList();
+
+                        if (advertisements.isEmpty) {
+                          // Show a message if there are no advertisements
+                          return Center(
+                            child: Text(
+                              "No advertisements currently available.",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        }
+
+                        // Limit advertisements to 5
+                        final displayedAds = advertisements.take(5).toList();
+
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              // Display advertisements
+                              ...displayedAds.asMap().entries.map((entry) {
                                 int index = entry.key; // Get the index
                                 Advertisement advertisement =
                                     entry.value; // Get the advertisement
@@ -1361,19 +1381,15 @@ class HomePageScreen extends StatelessWidget {
                                   width: 300,
                                   height: 170,
                                   margin: const EdgeInsets.only(
-                                    left: 20,
-                                    right: 10,
-                                  ),
+                                      left: 20, right: 10),
                                   decoration: BoxDecoration(
                                     color: index.isEven
                                         ? TColors.tangerine
                                         : TColors.cobalt,
-                                    borderRadius: BorderRadius.circular(
-                                        20), // Increased border radius for a softer look
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(
-                                        20.0), // Added padding for better content spacing
+                                    padding: const EdgeInsets.all(20.0),
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
@@ -1389,8 +1405,7 @@ class HomePageScreen extends StatelessWidget {
                                                 advertisement.detail,
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize:
-                                                      20, // Adjusted font size
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -1399,8 +1414,7 @@ class HomePageScreen extends StatelessWidget {
                                                 '${advertisement.cafeName} (${advertisement.location})',
                                                 style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize:
-                                                      18, // Adjusted font size
+                                                  fontSize: 18,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -1434,11 +1448,44 @@ class HomePageScreen extends StatelessWidget {
                                     ),
                                   ),
                                 );
-                              })
-                              .toList(), // Convert Iterable to List
-                        ),
-                      ),
+                              }).toList(),
+
+                              // Add the circular card with an arrow at the end
+                              GestureDetector(
+                                onTap: () {
+                                  // Navigate to a page showing all advertisements
+                                  Get.to(() => AllAdvertisementsPage());
+                                },
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  margin: const EdgeInsets.only(
+                                      left: 20, right: 10),
+                                  decoration: BoxDecoration(
+                                    color: TColors.teal,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        spreadRadius: 2,
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_forward,
+                                    size: 40,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
+
                     SizedBox(height: 20),
                   ],
                 ),
