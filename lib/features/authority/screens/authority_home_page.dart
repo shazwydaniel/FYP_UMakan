@@ -624,8 +624,8 @@ class AuthorityHomePage extends StatelessWidget {
     for (var doc in snapshot.docs) {
       final role = doc.data()['Role'] ?? '';
       if (role == 'Student') {
-        // Safely parse monthlyAllowance as a double
-        final monthlyAllowanceStr = doc.data()['monthlyAllowance'] ?? '0';
+        final monthlyAllowanceStr = doc.data()['Monthly Allowance'] ?? '0';
+          print('monthlyAllowance: $monthlyAllowanceStr');
         final double monthlyAllowance = double.tryParse(monthlyAllowanceStr.trim()) ?? 0.0;
 
         totalAllowance += monthlyAllowance;
