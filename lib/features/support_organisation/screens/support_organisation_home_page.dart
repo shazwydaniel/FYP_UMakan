@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
@@ -135,25 +136,79 @@ class SupportOrganisationHomePage extends StatelessWidget {
             //   ),
             // ),
 
-            // Key Highlights Section
-            _sectionHeader('Key Highlights', TColors.teal),
-            _statCard(
-              title: 'Support Provided',
-              value: '75%',
-              icon: Iconsax.people,
-              color: TColors.forest,
+            // UM Highlights Section
+            _sectionHeader('UM Highlights', TColors.teal),
+            // Card #1
+            FutureBuilder<int>(
+              future: _fetchCafeCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading cafe count',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final cafeCount = snapshot.data ?? 0;
+                return _statCard(
+                  title: 'Cafes In Campus',
+                  value: cafeCount.toString(),
+                  icon: Iconsax.coffee,
+                  color: TColors.forest,
+                );
+              },
             ),
-            _statCard(
-              title: 'Active Campaigns',
-              value: '12',
-              icon: Iconsax.star,
-              color: TColors.teal,
+            // Card #2
+            FutureBuilder<int>(
+              future: _fetchFinanciallyStrugglingCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading financially struggling count',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final strugglingCount = snapshot.data ?? 0;
+                return _statCard(
+                  title: 'Struggling Students',
+                  value: strugglingCount.toString(),
+                  icon: Iconsax.warning_2,
+                  color: TColors.teal,
+                );
+              },
             ),
-            _statCard(
-              title: 'Funds Raised',
-              value: 'RM 12,000',
-              icon: Iconsax.wallet_2,
-              color: TColors.olive,
+            // Card #3
+            FutureBuilder<double>(
+              future: _fetchAverageMonthlyAllowance(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading average monthly expenses',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final averageAllowance = snapshot.data ?? 0.0;
+                return _statCard(
+                  title: 'Average Monthly Expenses',
+                  value: 'RM ${averageAllowance.toStringAsFixed(2)}',
+                  icon: Iconsax.wallet_2,
+                  color: TColors.olive,
+                );
+              },
             ),
             SizedBox(height: 35),
           ],
@@ -246,5 +301,67 @@ class SupportOrganisationHomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+  // Total Cafes Registered
+  Future<int> _fetchCafeCount() async {
+    final firestore = FirebaseFirestore.instance;
+    int totalCafes = 0;
+
+    // Fetch vendors
+    final vendorsSnapshot = await firestore.collection('Vendors').get();
+
+    for (var vendorDoc in vendorsSnapshot.docs) {
+      // For each vendor, fetch cafes subcollection
+      final cafesSnapshot = await vendorDoc.reference.collection('Cafe').get();
+      totalCafes += cafesSnapshot.docs.length;
+    }
+
+    return totalCafes;
+  }
+  // Financially Struggling Total
+  Future<int> _fetchFinanciallyStrugglingCount() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Users').get();
+
+    int strugglingCount = 0;
+
+    for (var doc in snapshot.docs) {
+      final role = doc.data()['Role'] ?? '';
+      if (role != 'Student') continue;
+
+      final financialStatusSnapshot = await doc.reference
+          .collection('financial_status')
+          .doc('current')
+          .get();
+
+      final financialStatus = financialStatusSnapshot.data()?['status'] ?? '';
+      if (financialStatus == 'Deficit') {
+        strugglingCount++;
+      }
+    }
+
+    return strugglingCount;
+  }
+  // Average Monthly Expenses
+  Future<double> _fetchAverageMonthlyAllowance() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Users').get();
+
+    double totalAllowance = 0.0;
+    int studentCount = 0;
+
+    for (var doc in snapshot.docs) {
+      final role = doc.data()['Role'] ?? '';
+      if (role == 'Student') {
+        final monthlyAllowanceStr = doc.data()['Monthly Allowance'] ?? '0';
+          print('monthlyAllowance: $monthlyAllowanceStr');
+        final double monthlyAllowance = double.tryParse(monthlyAllowanceStr.trim()) ?? 0.0;
+
+        totalAllowance += monthlyAllowance;
+        studentCount++;
+      }
+    }
+
+    return studentCount > 0 ? totalAllowance / studentCount : 0.0;
   }
 }
