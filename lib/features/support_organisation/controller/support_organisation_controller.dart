@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,22 @@ class SupportOrganisationController extends GetxController {
       }
     } catch (e) {
       print('Error fetching organisation: $e');
+      rethrow;
+    }
+  }
+
+  // Method to fetch all Support Organisations
+  Future<List<SupportOrganisationModel>> fetchAllOrganisations() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('SupportOrganisation')
+          .get();
+
+      return querySnapshot.docs.map((doc) {
+        return SupportOrganisationModel.fromMap(doc.id, doc.data());
+      }).toList();
+    } catch (e) {
+      print('Error fetching all organisations: $e');
       rethrow;
     }
   }

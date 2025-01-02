@@ -3,6 +3,8 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
+import "package:fyp_umakan/features/support_organisation/controller/support_organisation_controller.dart";
+import "package:fyp_umakan/features/support_organisation/model/support_organisation_model.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:get/get.dart";
@@ -17,7 +19,7 @@ class CommunityMainPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    HelpingOrganisationController orgController = HelpingOrganisationController();
+    final supportOrganisationController = Get.put(SupportOrganisationController());
 
     return Scaffold(
       backgroundColor: TColors.cobalt,
@@ -73,9 +75,9 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Fetch and display Helping Organisations (Firebase)
-            FutureBuilder<List<HelpingOrganisation>>(
-              future: orgController.fetchOrganisations(),
+            // Fetch and display Supporting Organisations (Firebase)
+            FutureBuilder<List<SupportOrganisationModel>>(
+              future: supportOrganisationController.fetchAllOrganisations(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -87,6 +89,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
                     child: Column(
                       children: organisations.map((org) {
+                        // Determine the style based on the active status
+                        final isActive = org.activeStatus == 'Active';
+                        final activeStatusColor = isActive ? TColors.forest.withOpacity(0.5) : TColors.amber.withOpacity(0.5);
+                        final activeStatusIcon = isActive ? Iconsax.tick_circle : Iconsax.warning_2;
+
+                        // Determine the style based on the location
+                        final isInCampus = org.location == 'In Campus';
+                        final locationColor = isInCampus ? TColors.stark_blue.withOpacity(0.5) : TColors.blush.withOpacity(0.5);
+                        final locationIcon = isInCampus ? Iconsax.location : Iconsax.location_add;
+
                         return Container(
                           height: 150,
                           margin: const EdgeInsets.only(bottom: 20),
@@ -115,7 +127,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        org.name,
+                                        org.organisationName,
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 22,
@@ -125,13 +137,13 @@ class CommunityMainPageScreen extends StatelessWidget {
                                       Row(
                                         children: [
                                           Icon(
-                                            Icons.phone, // Add phone icon
-                                            color: TColors.bubbleOlive, // Match the color of the contact text
-                                            size: 16, // Adjust size as needed
+                                            Icons.phone,
+                                            color: TColors.bubbleOlive,
+                                            size: 16,
                                           ),
-                                          SizedBox(width: 5), // Add some spacing between the icon and the text
+                                          SizedBox(width: 5),
                                           Text(
-                                            org.contact,
+                                            org.contactNumber,
                                             style: TextStyle(
                                               color: TColors.bubbleOlive,
                                               fontSize: 15,
@@ -141,29 +153,61 @@ class CommunityMainPageScreen extends StatelessWidget {
                                         ],
                                       ),
                                       const SizedBox(height: 15),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                        decoration: BoxDecoration(
-                                          color: TColors.bubbleOrange.withOpacity(0.3),
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        child: Text(
-                                          org.location,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
+                                      Row(
+                                        children: [
+                                          // Active Status Tag with Icon
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: activeStatusColor,
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(activeStatusIcon, size: 16, color: Colors.black), // Dynamic icon
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  org.activeStatus,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                          SizedBox(width: 10),
+                                          // Location Tag with Icon
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: locationColor,
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(locationIcon, size: 16, color: Colors.black), // Dynamic location icon
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  org.location,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ),
                                 Positioned(
-                                  bottom: 0.0,
                                   right: 0,
                                   child: CircleAvatar(
-                                    radius: 45,
-                                    backgroundImage: AssetImage(org.imagePath),
+                                    radius: 30,
+                                    backgroundImage: NetworkImage(org.profilePicture),
                                   ),
                                 ),
                               ],
@@ -174,7 +218,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Container(); // Display nothing if no data is found
+                  return Center(child: Text('No Supporting Organisations found.'));
                 }
               },
             ),
@@ -467,10 +511,11 @@ class CommunityMainPageScreen extends StatelessWidget {
                 child: TextButton(
                   onPressed: () => _showPostMessageModal(context),
                   style: TextButton.styleFrom(
-                    backgroundColor: TColors.mustard, // Set background color to TColors.mustard
+                    backgroundColor: TColors.mustard,
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: Colors.black, width: 2.0), // Added black border
                     ),
                   ),
                   child: const Row(
