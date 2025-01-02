@@ -243,6 +243,83 @@ class AuthorityHomePage extends StatelessWidget {
               },
             ),
 
+            // Statistical Highlights Section
+            _sectionHeader('Statistical Highlights', TColors.teal),
+            // Card #1
+            FutureBuilder<int>(
+              future: _fetchUserCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading user count',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final userCount = snapshot.data ?? 0;
+                return _statCard(
+                  title: 'Students Registered',
+                  value: userCount.toString(),
+                  icon: Iconsax.people,
+                  color: TColors.blush,
+                );
+              },
+            ),
+            // Card #2
+            FutureBuilder<int>(
+              future: _fetchFinanciallyStrugglingCount(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading financially struggling count',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final strugglingCount = snapshot.data ?? 0;
+                return _statCard(
+                  title: 'Financially Struggling',
+                  value: strugglingCount.toString(),
+                  icon: Iconsax.warning_2,
+                  color: TColors.vermillion,
+                );
+              },
+            ),
+            // Card #3
+            FutureBuilder<double>(
+              future: _fetchAverageMonthlyAllowance(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error loading average monthly expenses',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                final averageAllowance = snapshot.data ?? 0.0;
+                return _statCard(
+                  title: 'Average Monthly Expenses',
+                  value: 'RM ${averageAllowance.toStringAsFixed(2)}',
+                  icon: Iconsax.wallet_2,
+                  color: TColors.forest,
+                );
+              },
+            ),
+
+            SizedBox(height: 20),
+
             // Vendor Highlights Section
             _sectionHeader('Vendor Highlights', TColors.mustard),
             Container(
@@ -277,27 +354,8 @@ class AuthorityHomePage extends StatelessWidget {
               ),
             ),
 
-            // Statistical Highlights Section
-            _sectionHeader('Statistical Highlights', TColors.teal),
-            _statCard(
-              title: 'Financially Struggling',
-              value: '37%',
-              icon: Iconsax.trend_up,
-              color: TColors.forest,
-            ),
-            _statCard(
-              title: 'Nutritionally Struggling',
-              value: '21%',
-              icon: Iconsax.flash_1,
-              color: TColors.blush,
-            ),
-            _statCard(
-              title: 'Average Monthly Expenses',
-              value: 'RM 450',
-              icon: Iconsax.wallet_2,
-              color: TColors.vermillion,
-            ),
             SizedBox(height: 35),
+
           ],
         ),
       ),
@@ -522,5 +580,59 @@ class AuthorityHomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // News Cards Data Fetching
+  // Total Students Registered
+  Future<int> _fetchUserCount() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Users').get();
+    return snapshot.docs.length;
+  }
+  // Financially Struggling Total
+  Future<int> _fetchFinanciallyStrugglingCount() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Users').get();
+
+    int strugglingCount = 0;
+
+    for (var doc in snapshot.docs) {
+      final role = doc.data()['Role'] ?? '';
+      if (role != 'Student') continue;
+
+      final financialStatusSnapshot = await doc.reference
+          .collection('financial_status')
+          .doc('current')
+          .get();
+
+      final financialStatus = financialStatusSnapshot.data()?['status'] ?? '';
+      if (financialStatus == 'Deficit') {
+        strugglingCount++;
+      }
+    }
+
+    return strugglingCount;
+  }
+  // Average Monthly Expenses
+  Future<double> _fetchAverageMonthlyAllowance() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Users').get();
+
+    double totalAllowance = 0.0;
+    int studentCount = 0;
+
+    for (var doc in snapshot.docs) {
+      final role = doc.data()['Role'] ?? '';
+      if (role == 'Student') {
+        // Safely parse monthlyAllowance as a double
+        final monthlyAllowanceStr = doc.data()['monthlyAllowance'] ?? '0';
+        final double monthlyAllowance = double.tryParse(monthlyAllowanceStr.trim()) ?? 0.0;
+
+        totalAllowance += monthlyAllowance;
+        studentCount++;
+      }
+    }
+
+    return studentCount > 0 ? totalAllowance / studentCount : 0.0;
   }
 }
