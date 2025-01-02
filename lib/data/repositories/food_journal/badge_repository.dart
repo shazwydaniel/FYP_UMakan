@@ -13,53 +13,6 @@ class BadgeRepository {
   static BadgeRepository get instance => BadgeRepository();
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final userController = UserController.instance;
-
-  Future<void> initializeAchievements(String userId) async {
-    final userRef = _db.collection('Users').doc(userId);
-    final badgesCollection = userRef.collection('Badges');
-
-    try {
-      // Initialize the streakCount
-      await badgesCollection.doc('streakCount').set({'value': 0});
-
-      // Initialize the badges
-      final badges = [
-        {'badgeName': 'Initiator', 'status': 'locked', 'unlockedAt': null},
-        {'badgeName': 'Novice', 'status': 'locked', 'unlockedAt': null},
-        {'badgeName': 'Hero', 'status': 'locked', 'unlockedAt': null},
-        {'badgeName': 'Champion', 'status': 'locked', 'unlockedAt': null},
-      ];
-
-      final batch = _db.batch();
-      for (var badge in badges) {
-        final badgeDoc = badgesCollection.doc(badge['badgeName']);
-        batch.set(badgeDoc, badge);
-      }
-      // Add the mealCounts map
-      final mealCountsDoc = badgesCollection.doc('mealCounts');
-      batch.set(mealCountsDoc, {
-        'breakfast': 0,
-        'lunch': 0,
-        'dinner': 0,
-        'others': 0,
-      });
-
-      await batch.commit();
-      print('Achievements with streakCount initialized successfully.');
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw TFirebaseException(e.code);
-    } on FormatException catch (_) {
-      print('FormatException occurred');
-      throw const TFormatException();
-    } on PlatformException catch (e) {
-      print('PlatformException: ${e.message}');
-      throw TPlatformException(e.code).message;
-    } catch (e) {
-      print('Error initializing achievements: $e');
-    }
-  }
 
   Future<void> updateStreakCount(String userId, int dayCount) async {
     final streakDocRef = _db
@@ -136,36 +89,6 @@ class BadgeRepository {
     }
   }
 
-  Future<void> updateStreakAndCheckBadges(int completedDays) async {
-    final userId = userController.user.value.id; // Get the current user ID
-
-    try {
-      // Update the streak count in Firebase
-      await updateStreakCount(userId, completedDays);
-
-      // Check and unlock badges based on streak milestones
-      if (completedDays == 1) {
-        await checkAndUnlockBadgeBasedOnStreak(userId, 'Initiator', 1);
-      } else if (completedDays == 3) {
-        await checkAndUnlockBadgeBasedOnStreak(userId, 'Novice', 3);
-      } else if (completedDays == 7) {
-        await checkAndUnlockBadgeBasedOnStreak(userId, 'Hero', 7);
-      } else if (completedDays == 30) {
-        await checkAndUnlockBadgeBasedOnStreak(userId, 'Champion', 30);
-      }
-    } on FirebaseException catch (e) {
-      print('FirebaseException: ${e.message}');
-      throw TFirebaseException(e.code);
-    } on FormatException catch (_) {
-      print('FormatException occurred');
-      throw const TFormatException();
-    } on PlatformException catch (e) {
-      print('PlatformException: ${e.message}');
-    } catch (e) {
-      print('Error updating streak and checking badges: $e');
-    }
-  }
-
   Future<Map<String, int>> fetchMealCounts(String userId) async {
     final userRef = _db.collection('Users').doc(userId);
     final badgesDoc = userRef.collection('Badges').doc('mealCounts');
@@ -226,6 +149,78 @@ class BadgeRepository {
       print("$mealType count incremented in Firebase.");
     } catch (e) {
       print("Error updating $mealType count: $e");
+    }
+  }
+
+  //----------------LATEST-------------------//
+
+  Future<void> initializeAchievements(String userId) async {
+    final achievementsDoc = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .collection('Achievements')
+        .doc('current');
+
+    try {
+      final snapshot = await achievementsDoc.get();
+      if (!snapshot.exists) {
+        // Initialize default achievements
+        await achievementsDoc.set({
+          "initiator": false,
+          "novice": false,
+          "hero": false,
+          "champion": false,
+        });
+        print("Achievements document initialized.");
+      } else {
+        print("Achievements document already exists.");
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print("Error initializing achievements: $e");
+    }
+  }
+
+  Future<void> initializeMealStates(String userId) async {
+    final mealStatesDoc = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .collection('MealStates')
+        .doc('current');
+
+    try {
+      final snapshot = await mealStatesDoc.get();
+      if (!snapshot.exists) {
+        // Initialize default meal states
+        await mealStatesDoc.set({
+          "hadBreakfast": false,
+          "hadLunch": false,
+          "hadDinner": false,
+          "hadOthers": false,
+        });
+        print("MealStates document initialized.");
+      } else {
+        print("MealStates document already exists.");
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code);
+    } on FormatException catch (_) {
+      print('FormatException occurred');
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      print('PlatformException: ${e.message}');
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      print("Error initializing meal states: $e");
     }
   }
 }

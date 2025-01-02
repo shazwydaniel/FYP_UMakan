@@ -17,7 +17,7 @@ import 'package:get_storage/get_storage.dart';
 class RecommendationController extends GetxController {
   static RecommendationController get instance => Get.find();
 
-  final userController = UserController.instance;
+  final userController = Get.find<UserController>();
   final vendorRepo = VendorRepository.instance;
   final foodJournalController = FoodJournalController.instance;
   final foodJournalRepo = FoodJournalRepository.instance;
@@ -29,6 +29,7 @@ class RecommendationController extends GetxController {
     super.onInit();
     // Set the initial time frame index
     currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
+    getRecommendedList();
 
     // Update the time frame index every minute
     Timer.periodic(Duration(minutes: 1), (_) {
@@ -60,8 +61,14 @@ class RecommendationController extends GetxController {
     Map<String, dynamic> analysis =
         await foodJournalRepo.analyzeFoodLogs(userId);
 
-    Map<String, int> locationFrequency = analysis['locationFrequency'];
-    Map<String, int> foodFrequency = analysis['foodFrequency'];
+    // Safely cast or transform `locationFrequency` and `foodFrequency`
+    Map<String, int> locationFrequency =
+        Map<String, int>.from(analysis['locationFrequency'] ?? {});
+    Map<String, int> foodFrequency =
+        Map<String, int>.from(analysis['foodFrequency'] ?? {});
+
+    print('Location Frequency: ${analysis['locationFrequency']}');
+    print('Food Frequency: ${analysis['foodFrequency']}');
 
     // Step 3: Get the top 3 most frequent cafes
     List<MapEntry<String, int>> sortedEntries =

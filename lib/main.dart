@@ -6,6 +6,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/meal_notification_scheduler.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
@@ -81,27 +82,25 @@ Future<void> main() async {
     (FirebaseApp value) => Get.put(AuthenticatorRepository()),
   );
 
+  Get.put(UserController());
+
   // GetX Local Storage
   await GetStorage.init();
 
   //Initalise Controllers and User Repository
-
-  final userController = Get.put(UserController());
-  //Get.put(UserRepository());
-  // Get.put(MoneyJournalRepository());
-  Get.put(NetworkManager());
-  // Get.put(VendorController());
+  Get.lazyPut(() => RecommendationController());
+  debugPrint("UserController initialized in main");
+  Get.put(AuthenticatorRepository());
+  Get.put(NetworkManager()); // Get.put(VendorController());
   final foodJController = Get.put(FoodJournalController());
   Get.put(NavigationController());
-
-  // addSampleOrganisations();
-  // addSampleCommunityNews();
-  // addAuthorityAccount();
 
   // Await Splash Until Other Items Load
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const App());
+
+  final userController = UserController.instance;
 
   // Schedule the midnight reset and end-of-day streak evaluation
   ever(userController.user, (user) {

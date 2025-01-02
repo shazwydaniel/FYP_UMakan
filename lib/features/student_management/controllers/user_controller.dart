@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
+import 'package:fyp_umakan/data/repositories/food_journal/badge_repository.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authority/screens/authority_home_page.dart';
@@ -18,13 +20,19 @@ class UserController extends GetxController {
   Rx<UserModel> user = UserModel.empty().obs;
   final userRepository = Get.put(UserRepository());
   final moneyJournalRepository = Get.put(MoneyJournalRepository());
+  final BadgeRepository badgeRepo = Get.put(BadgeRepository());
 
   String get currentUserId => user.value.id;
+
+  UserController() {
+    debugPrint("UserController constructor called");
+  }
 
   @override
   void onInit() {
     super.onInit();
     fetchUserRecord();
+
     print(
         "VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
   }
@@ -58,6 +66,13 @@ class UserController extends GetxController {
         await syncStatuses(userFromDb.id);
 
         await setupUser(userFromDb.id);
+
+        badgeRepo.initializeAchievements(currentUserId);
+        badgeRepo.initializeMealStates(currentUserId);
+
+        // Access RecommendationController lazily if needed
+        final recommendationController = Get.find<RecommendationController>();
+        recommendationController; // Call only if needed
       } else {
         this.user(UserModel.empty());
         print('No user document found.');

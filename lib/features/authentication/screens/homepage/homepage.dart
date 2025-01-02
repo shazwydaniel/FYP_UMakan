@@ -34,11 +34,12 @@ class HomePageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = Get.put(JournalController());
-    final userController = Get.put(UserController());
+    final userController = Get.find<UserController>();
+
     final advertController = Get.put(AdvertController());
     Get.put(BadgeController());
 
-    final recommendedController = Get.put(RecommendationController());
+    final recommendedController = Get.find<RecommendationController>();
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
@@ -558,14 +559,7 @@ class HomePageScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    /*ElevatedButton(
-                        onPressed: () {
-                          foodJController.getStoredAverageCalories(0);
-                          final recommendedMeals = recommendedController.getRecommendedList(
-                              foodJController.getStoredAverageCalories(0));
-                        },
-                        child: Text("see recommended")),*/
-                    // Meal Recommendations Section (Scrollable)
+
                     Obx(() {
                       return FutureBuilder<List<CafeItem>>(
                         future: recommendedController.getRecommendedList(),
@@ -583,7 +577,10 @@ class HomePageScreen extends StatelessWidget {
                             return Center(
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 20.0),
-                                child: Text('No recommended items available.'),
+                                child: Text(
+                                  'Add items to food journal or change preferences to view!',
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ); // Empty list case
                           } else {

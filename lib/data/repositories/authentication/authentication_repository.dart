@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/authority_navigation_menu.dart';
+import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
@@ -72,6 +73,8 @@ class AuthenticatorRepository extends GetxController {
             Get.off(() => const SupportOrganisationNavigationMenu());
           } else if (role == 'Student') {
             // If the user is a Student, redirect to the NavigationMenu for students
+            Get.put(UserController());
+            Get.put(RecommendationController());
             debugPrint('Redirecting to Student Navigation Menu');
             Get.put(NavigationController()).selectedIndex.value = 0;
             Get.off(() => const NavigationMenu());
