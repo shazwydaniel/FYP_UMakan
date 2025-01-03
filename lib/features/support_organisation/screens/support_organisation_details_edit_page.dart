@@ -70,15 +70,25 @@ class _SupportOrganisationDetailsEditPageState
           'Active Status': _controller.activeStatus.value,
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Details updated successfully')),
+        // Show success notification using Get.snackbar
+        Get.snackbar(
+          "Success",
+          "Details updated successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
-        Navigator.pop(context);
+
+        Navigator.pop(context, true);
       }
     } catch (e) {
       print("Error updating details: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update details. Try again.')),
+      Get.snackbar(
+        "Error",
+        "Failed to update details. Try again.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }
