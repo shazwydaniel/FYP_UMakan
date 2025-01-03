@@ -565,7 +565,7 @@ class HomePageScreen extends StatelessWidget {
                               snapshot.data!.isEmpty) {
                             return Center(
                               child: Padding(
-                                padding: const EdgeInsets.only(bottom: 20.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                                 child: Text(
                                   'Add items to food journal or change preferences to view!',
                                   textAlign: TextAlign.center,
@@ -1170,7 +1170,7 @@ class HomePageScreen extends StatelessWidget {
                     // Journals (Label)
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20),
+                          left: 20, right: 20, bottom: 20, top:10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
