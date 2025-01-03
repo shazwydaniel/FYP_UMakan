@@ -246,83 +246,72 @@ class HomePageScreen extends StatelessWidget {
                                         bottom: 0,
                                         right: 0,
                                         child: Obx(() {
-                                          return FutureBuilder<
-                                              DocumentSnapshot>(
-                                            future: FirebaseFirestore.instance
+                                          return 
+                                          StreamBuilder<DocumentSnapshot>(
+                                            stream: FirebaseFirestore.instance
                                                 .collection('Users')
-                                                .doc(userController
-                                                    .currentUserId)
+                                                .doc(userController.currentUserId)
                                                 .collection('financial_status')
                                                 .doc('current')
-                                                .get(),
+                                                .snapshots(),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
                                                 return CircularProgressIndicator(); // Loading indicator
-                                              } else if (snapshot.hasError ||
-                                                  !snapshot.hasData ||
-                                                  !snapshot.data!.exists) {
+                                              } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
                                                 return Text(
                                                   'Error or No Data',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12),
+                                                  style: TextStyle(color: Colors.white, fontSize: 12),
                                                 ); // Handle error or missing data
                                               } else {
-                                                final financialStatus = snapshot
-                                                    .data!
-                                                    .get('status');
+                                                final financialStatus = snapshot.data!.get('status');
 
                                                 Color statusColor;
                                                 IconData statusIcon;
                                                 String statusText;
 
-                                                if (financialStatus ==
-                                                    "Surplus") {
-                                                  statusColor = TColors.teal
-                                                      .withOpacity(0.7);
-                                                  statusIcon =
-                                                      Iconsax.emoji_happy;
+                                                if (financialStatus == "Surplus") {
+                                                  statusColor = TColors.teal.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_happy;
                                                   statusText = "Surplus";
-                                                } else if (financialStatus ==
-                                                    "Moderate") {
-                                                  statusColor = TColors.marigold
-                                                      .withOpacity(0.7);
-                                                  statusIcon =
-                                                      Iconsax.emoji_normal;
+                                                } else if (financialStatus == "Moderate") {
+                                                  statusColor = TColors.marigold.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_normal;
                                                   statusText = "Moderate";
                                                 } else {
-                                                  statusColor = TColors.amber
-                                                      .withOpacity(0.7);
-                                                  statusIcon =
-                                                      Iconsax.emoji_sad;
+                                                  statusColor = TColors.amber.withOpacity(0.7);
+                                                  statusIcon = Iconsax.emoji_sad;
                                                   statusText = "Deficit";
                                                 }
 
+                                                // Show notification on status change
+                                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                  Get.snackbar(
+                                                    "Financial Status Update",
+                                                    "You now have $statusText Food Allowance",
+                                                    snackPosition: SnackPosition.TOP,
+                                                    backgroundColor: statusColor,
+                                                    colorText: Colors.white,
+                                                    icon: Icon(statusIcon, color: Colors.white),
+                                                    duration: Duration(seconds: 3),
+                                                  );
+                                                });
+
                                                 return Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
+                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                                   decoration: BoxDecoration(
                                                     color: statusColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
+                                                    borderRadius: BorderRadius.circular(20),
                                                   ),
                                                   child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: [
-                                                      Icon(statusIcon,
-                                                          color: Colors.white,
-                                                          size: 16),
+                                                      Icon(statusIcon, color: Colors.white, size: 16),
                                                       const SizedBox(width: 5),
                                                       Text(
                                                         statusText,
                                                         style: TextStyle(
                                                           color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                          fontWeight: FontWeight.bold,
                                                           fontSize: 12,
                                                         ),
                                                       ),
