@@ -30,6 +30,7 @@ class UserModel {
   bool prefSpicy;
   bool prefVegetarian;
   bool prefLowSugar;
+  String telegramHandle;
 
   UserModel({
     required this.id,
@@ -60,6 +61,7 @@ class UserModel {
     this.prefSpicy = false,
     this.prefVegetarian = false,
     this.prefLowSugar = false,
+    this.telegramHandle = '',
   });
 
   // Convert a UserModel into a Map
@@ -93,6 +95,7 @@ class UserModel {
       'prefSpicy': prefSpicy,
       'prefVegetarian': prefVegetarian,
       'prefLowSugar': prefLowSugar,
+      'telegramHandle': telegramHandle,
     };
   }
 
@@ -130,6 +133,7 @@ class UserModel {
       prefSpicy: map['prefSpicy'] ?? false,
       prefVegetarian: map['prefVegetarian'] ?? false,
       prefLowSugar: map['prefLowSugar'] ?? false,
+      telegramHandle: map['telegramHandle'] ?? '',
     );
   }
 
@@ -170,6 +174,7 @@ class UserModel {
       'prefSpicy': prefSpicy,
       'prefVegetarian': prefVegetarian,
       'prefLowSugar': prefLowSugar,
+      'telegramHandle': telegramHandle,
     };
   }
 
@@ -203,6 +208,7 @@ class UserModel {
         prefSpicy: false,
         prefVegetarian: false,
         prefLowSugar: false,
+        telegramHandle: '',
       );
 
   // Create a UserModel from Firebase Document Snapshot
@@ -242,6 +248,7 @@ class UserModel {
         prefLowSugar: data['prefLowSugar'] ?? false,
         prefVegetarian: data['prefVegetarian'] ?? false,
         prefSpicy: data['prefSpicy'] ?? false,
+        telegramHandle: data['telegramHandle'] ?? '',
       );
     } else {
       return UserModel.empty();

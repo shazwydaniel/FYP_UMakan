@@ -293,6 +293,185 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
+            // Social Media (Label)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4,
+                    height: 40,
+                    color: TColors.blush,
+                  ),
+                  const SizedBox(width: 10),
+
+                  Text(
+                    'Link Your Socials',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.white : Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 180),
+                ],
+              ),
+            ),
+
+            // Telegram Handle Section (Card)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: TColors.cream,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Title
+                            Text(
+                              "Edit",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // Telegram Handle Input
+                            Obx(
+                              () => TextFormField(
+                                initialValue: controller.user.value.telegramHandle ?? '',
+                                decoration: InputDecoration(
+                                  labelText: "Telegram Handle",
+                                  hintText: "@yourhandle",
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                onChanged: (value) {
+                                  controller.updateTelegramHandle(value);
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // Save Button
+                            Center(
+                              child: TextButton(
+                                onPressed: () async {
+                                  try {
+                                    await controller.saveTelegramHandle();
+                                    Get.snackbar(
+                                      "Success",
+                                      "Telegram handle updated successfully!",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.green,
+                                      colorText: Colors.white,
+                                    );
+                                    Navigator.pop(context); // Close the modal
+                                  } catch (e) {
+                                    Get.snackbar(
+                                      "Error",
+                                      "Failed to update Telegram handle: $e",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                  }
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: TColors.teal,
+                                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: const BorderSide(color: Colors.black, width: 2.0),
+                                  ),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Save',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  color: TColors.cream,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/icons/telegram.png',
+                          height: 30,
+                          width: 30,
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Label
+                              Text(
+                                "Telegram Handle",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              // Value
+                              Obx(
+                                () => Text(
+                                  controller.user.value.telegramHandle?.isNotEmpty == true
+                                      ? controller.user.value.telegramHandle!
+                                      : "No Telegram handle set",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             // Financial Details (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
@@ -582,6 +761,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Health Details (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
@@ -782,6 +962,7 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
+            // Preference Details (Card)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Column(
@@ -903,8 +1084,10 @@ class StudentProfilePageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Help/Feedback Button
             Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 10),
+              padding: const EdgeInsets.only(top: 40, bottom: 10),
               child: Center(
                 child: OutlinedButton(
                   onPressed: () {
@@ -916,12 +1099,11 @@ class StudentProfilePageScreen extends StatelessWidget {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: TColors.teal),
+                    side: const BorderSide(color: Colors.black, width: 2.0),
                     backgroundColor: TColors.teal,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: const Row(
@@ -947,7 +1129,7 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
-            //Logout button (Button)
+            // Logout Button
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 40),
               child: Center(
@@ -979,8 +1161,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                               onPressed: () async {
                                 Navigator.of(context).pop(); // Close the dialog
                                 try {
-                                  await AuthenticatorRepository.instance
-                                      .logout();
+                                  await AuthenticatorRepository.instance.logout();
                                 } catch (e) {
                                   Get.snackbar(
                                     'Logout Error',
@@ -1005,12 +1186,11 @@ class StudentProfilePageScreen extends StatelessWidget {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: TColors.amber),
+                    side: const BorderSide(color: Colors.black, width: 2.0),
                     backgroundColor: TColors.amber,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 62, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: const Row(

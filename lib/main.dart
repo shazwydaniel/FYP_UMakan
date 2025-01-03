@@ -15,6 +15,7 @@ import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
 import 'package:fyp_umakan/utils/scripts/add_authority_account.dart';
 import 'package:fyp_umakan/utils/scripts/add_community_news_sample_data.dart';
+import 'package:fyp_umakan/utils/scripts/add_include_telegram.dart';
 import 'package:fyp_umakan/utils/scripts/add_sample_data.dart';
 import 'package:fyp_umakan/utils/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -94,6 +95,11 @@ Future<void> main() async {
   Get.put(NetworkManager()); // Get.put(VendorController());
   final foodJController = Get.put(FoodJournalController());
   Get.put(NavigationController());
+
+  // addSampleOrganisations();
+  // addSampleCommunityNews();
+  // addAuthorityAccount();
+  // addMissingFieldToDocuments();
 
   // Await Splash Until Other Items Load
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);

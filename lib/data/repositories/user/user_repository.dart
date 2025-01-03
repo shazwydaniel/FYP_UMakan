@@ -243,4 +243,37 @@ class UserRepository extends GetxController {
       rethrow; // Re-throw the error for further handling
     }
   }
+
+  // Method to update the telegramHandle field for a specific user
+  Future<void> updateTelegramHandle(String userId, String telegramHandle) async {
+    try {
+      await _db.collection("Users").doc(userId).update({'telegramHandle': telegramHandle});
+      print("Telegram handle updated successfully for user $userId");
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } catch (e) {
+      print('Unknown error updating telegram handle: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Method to fetch the telegramHandle for a specific user
+  Future<String?> getTelegramHandle(String userId) async {
+    try {
+      final doc = await _db.collection("Users").doc(userId).get();
+      if (doc.exists) {
+        final data = doc.data();
+        return data?['telegramHandle'] ?? ''; // Return empty string if not set
+      } else {
+        throw 'User document does not exist';
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } catch (e) {
+      print('Unknown error fetching telegram handle: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
 }

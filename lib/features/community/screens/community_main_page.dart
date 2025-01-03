@@ -9,6 +9,7 @@ import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:get/get.dart";
 import "package:get/get_core/src/get_main.dart";
+import "package:url_launcher/url_launcher.dart";
 import "../controllers/helping_organisation_controller.dart";
 import "../models/helping_organisation_model.dart";
 import "package:iconsax/iconsax.dart";
@@ -203,13 +204,13 @@ class CommunityMainPageScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                Positioned(
-                                  right: 0,
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: NetworkImage(org.profilePicture),
-                                  ),
-                                ),
+                                // Positioned(
+                                //   right: 0,
+                                //   child: CircleAvatar(
+                                //     radius: 30,
+                                //     backgroundImage: NetworkImage(org.profilePicture),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -247,9 +248,7 @@ class CommunityMainPageScreen extends StatelessWidget {
             ),
             // Fetch and display Community News (Firebase)
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('community_news')
-                  .snapshots(),
+              stream: FirebaseFirestore.instance.collection('community_news').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -312,6 +311,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                     final newsId = doc.id; // Document ID
                                     final postedUserId = doc['user_id'];
                                     final anonymityStatus = doc['anonymity_status'] ?? 'Public';
+                                    final includeTelegram = doc['include_telegram'] ?? 'Yes';
 
                                     return FutureBuilder<DocumentSnapshot>(
                                       future: FirebaseFirestore.instance.collection('Users').doc(postedUserId).get(),
@@ -325,6 +325,7 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                         final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
                                         final username = userData?['Username'] ?? 'Unknown User';
+                                        final userRole = userData?['Role'] ?? 'Unknown';
 
                                         return Dismissible(
                                           key: Key(newsId),
@@ -417,8 +418,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                   SizedBox(height: 15),
                                                   Text(
                                                     anonymityStatus == 'Anonymous'
-                                                      ? 'Posted by: Anonymous'
-                                                      : 'Posted by: $username',
+                                                        ? 'Posted by: Anonymous'
+                                                        : 'Posted by: $username',
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 15,
@@ -431,28 +432,34 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                     child: Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            // Add desired action here (currently empty)
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.circular(10),
-                                                              boxShadow: [
-                                                                BoxShadow(
-                                                                  color: Colors.black.withOpacity(0.03),
-                                                                  blurRadius: 5,
-                                                                  spreadRadius: 1,
-                                                                  offset: Offset(0, 3),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                        // Telegram Icon (Only if include_telegram is 'Yes')
+                                                        if ((doc.data() as Map<String, dynamic>).containsKey('include_telegram') &&
+                                                            doc['include_telegram'] == 'Yes')
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              if (userData != null) {
+                                                                final telegramHandle = userData['telegramHandle'];
+                                                                if (telegramHandle != null) {
+                                                                  final url = "https://t.me/$telegramHandle";
+                                                                  await launchUrl(Uri.parse(url));
+                                                                } else {
+                                                                  Get.snackbar(
+                                                                    'Error',
+                                                                    'Telegram handle not found',
+                                                                    snackPosition: SnackPosition.BOTTOM,
+                                                                  );
+                                                                }
+                                                              }
+                                                            },
                                                             child: Image.asset(
                                                               'assets/icons/telegram.png',
                                                               height: 20,
                                                             ),
-                                                          ),
-                                                        ),
+                                                          )
+                                                        else
+                                                          SizedBox(width: 20),
+
+                                                        // Tag (Always displayed)
                                                         Container(
                                                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                                           decoration: BoxDecoration(
@@ -546,8 +553,9 @@ class CommunityMainPageScreen extends StatelessWidget {
     final TextEditingController messageController = TextEditingController();
     String selectedType = 'Offer Help';
     String selectedDuration = '1 Day';
-    String anonymityStatus = 'Public'; // Default value
-    final String? userId = AuthenticatorRepository.instance.authUser?.uid; // Get the current user ID
+    String anonymityStatus = 'Public';
+    String includeTelegram = 'Yes';
+    final String? userId = AuthenticatorRepository.instance.authUser?.uid;
 
     showDialog(
       context: context,
@@ -641,6 +649,22 @@ class CommunityMainPageScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                  value: includeTelegram,
+                  items: [
+                    DropdownMenuItem(value: 'Yes', child: Text('Yes')),
+                    DropdownMenuItem(value: 'No', child: Text('No')),
+                  ],
+                  onChanged: (String? newValue) {
+                    includeTelegram = newValue!;
+                  },
+                ),
+                SizedBox(height: 20),
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -651,13 +675,24 @@ class CommunityMainPageScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () async {
                       try {
+                        // Fetch the current user's role
+                        final userDoc = await FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(userId)
+                            .get();
+                        final userRole = userDoc['Role'] ?? 'Unknown';
+                        print('User Role: $userRole'); // Debug log
+
+                        // Add the news message to the community_news collection
                         await FirebaseFirestore.instance.collection('community_news').add({
                           'news_message': messageController.text,
                           'type_of_news_message': selectedType,
                           'news_duration': selectedDuration,
                           'timestamp': Timestamp.now(),
                           'user_id': userId,
-                          'anonymity_status': anonymityStatus, // Add anonymity status to Firebase
+                          'anonymity_status': anonymityStatus,
+                          'user_role': userRole,
+                          'include_telegram': includeTelegram,
                         });
 
                         Get.snackbar('Success', 'Your message has been posted!',

@@ -32,9 +32,7 @@ class UserController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUserRecord();
-
-    print(
-        "VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
+    print("VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
   }
 
   Future<void> refreshUserData() async {
@@ -564,6 +562,31 @@ class UserController extends GetxController {
         'Failed to update preferences: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+
+  // Update Telegram Handle Locally
+  void updateTelegramHandle(String handle) {
+    user.update((user) {
+      if (user != null) {
+        user.telegramHandle = handle;
+      }
+    });
+  }
+
+  // Save Telegram Handle to Firestore
+  Future<void> saveTelegramHandle() async {
+    try {
+      if (user.value.id.isEmpty) {
+        throw Exception("User ID is empty. Cannot save Telegram handle.");
+      }
+      await userRepository.updateSingleField({
+        'telegramHandle': user.value.telegramHandle ?? '',
+      });
+      print("Telegram handle updated successfully.");
+    } catch (e) {
+      print("Error saving Telegram handle: $e");
+      throw Exception("Failed to save Telegram handle.");
     }
   }
 }
