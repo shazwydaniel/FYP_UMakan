@@ -7,6 +7,7 @@ class SupportOrganisationModel {
   final String location;
   final String activeStatus;
   final String role;
+  final String? telegramHandle;
 
   SupportOrganisationModel({
     required this.id,
@@ -17,6 +18,8 @@ class SupportOrganisationModel {
     required this.location,
     required this.activeStatus,
     this.role = 'Support Organisation',
+    this.telegramHandle,
+
   });
 
   // Convert to Map
@@ -30,6 +33,7 @@ class SupportOrganisationModel {
       'Location': location,
       'Active Status': activeStatus,
       'Role': role,
+      'Telegram Handle': telegramHandle,
     };
   }
 
@@ -44,6 +48,7 @@ class SupportOrganisationModel {
       location: map['Location'] ?? '',
       activeStatus: map['Active Status'] ?? 'Active',
       role: map['Role'] ?? 'Support Organisation',
+      telegramHandle: map['Telegram Handle'],
     );
   }
 
@@ -57,6 +62,7 @@ class SupportOrganisationModel {
     String? location,
     String? activeStatus,
     String? role,
+    String? telegramHandle,
   }) {
     return SupportOrganisationModel(
       id: id ?? this.id,
@@ -67,6 +73,7 @@ class SupportOrganisationModel {
       location: location ?? this.location,
       activeStatus: activeStatus ?? this.activeStatus,
       role: role ?? this.role,
+      telegramHandle: telegramHandle ?? this.telegramHandle,
     );
   }
 }

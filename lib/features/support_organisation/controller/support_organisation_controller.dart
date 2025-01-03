@@ -25,6 +25,7 @@ class SupportOrganisationController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController contactNumberController = TextEditingController();
+  final TextEditingController telegramHandleController = TextEditingController();
 
   // Reactive dropdown values
   final location = 'In Campus'.obs; // Default to "In Campus"
@@ -38,6 +39,21 @@ class SupportOrganisationController extends GetxController {
 
   // Privacy policy agreement
   final privacyPolicy = false.obs;
+
+  // Method to update Telegram Handle
+  Future<void> updateTelegramHandle(String telegramHandle) async {
+    try {
+      if (organisation.value != null) {
+        await _repository.updateTelegramHandle(organisation.value!.id, telegramHandle);
+        // Update the organisation object locally
+        organisation.value = organisation.value!.copyWith(telegramHandle: telegramHandle);
+        Get.snackbar('Success', 'Telegram Handle updated successfully!');
+      }
+    } catch (e) {
+      print('Error updating Telegram Handle: $e');
+      Get.snackbar('Error', 'Failed to update Telegram Handle.');
+    }
+  }
 
   // Method to register a new Support Organisation
   Future<void> registerOrganisation(SupportOrganisationModel org) async {
@@ -56,6 +72,10 @@ class SupportOrganisationController extends GetxController {
       final fetchedOrg = await _repository.getSupportOrganisation(id);
       if (fetchedOrg != null) {
         organisation.value = fetchedOrg;
+        organisationNameController.text = fetchedOrg.organisationName;
+        emailController.text = fetchedOrg.email;
+        contactNumberController.text = fetchedOrg.contactNumber;
+        telegramHandleController.text = fetchedOrg.telegramHandle ?? '';
       }
     } catch (e) {
       print('Error fetching organisation: $e');
@@ -171,6 +191,7 @@ class SupportOrganisationController extends GetxController {
     emailController.dispose();
     passwordController.dispose();
     contactNumberController.dispose();
+    telegramHandleController.dispose(); 
     super.onClose();
   }
 }

@@ -76,6 +76,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Fetch and display Supporting Organisations (Firebase)
             FutureBuilder<List<SupportOrganisationModel>>(
               future: supportOrganisationController.fetchAllOrganisations(),
@@ -101,7 +102,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                         final locationIcon = isInCampus ? Iconsax.location : Iconsax.location_add;
 
                         return Container(
-                          height: 150,
+                          height: 180,
                           margin: const EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
                             color: TColors.cream,
@@ -153,7 +154,43 @@ class CommunityMainPageScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 15),
+                                      const SizedBox(height: 10),
+                                      if (org.telegramHandle?.isNotEmpty == true)
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final url = "https://t.me/${org.telegramHandle}";
+                                            if (await canLaunch(url)) {
+                                              await launch(url);
+                                            } else {
+                                              Get.snackbar(
+                                                'Error',
+                                                'Failed to open Telegram link.',
+                                                snackPosition: SnackPosition.BOTTOM,
+                                                backgroundColor: Colors.red,
+                                                colorText: Colors.white,
+                                              );
+                                            }
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Image.asset(
+                                                'assets/icons/telegram.png',
+                                                height: 20,
+                                                width: 20,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                'Contact via Telegram',
+                                                style: TextStyle(
+                                                  color: TColors.bubbleOlive,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      const SizedBox(height: 20),
                                       Row(
                                         children: [
                                           // Active Status Tag with Icon
@@ -204,13 +241,6 @@ class CommunityMainPageScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                // Positioned(
-                                //   right: 0,
-                                //   child: CircleAvatar(
-                                //     radius: 30,
-                                //     backgroundImage: NetworkImage(org.profilePicture),
-                                //   ),
-                                // ),
                               ],
                             ),
                           ),
@@ -223,6 +253,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 }
               },
             ),
+
             // Community News (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),

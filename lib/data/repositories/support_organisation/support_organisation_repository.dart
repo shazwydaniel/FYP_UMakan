@@ -28,4 +28,18 @@ class SupportOrganisationRepository {
       throw Exception('Error fetching Support Organisation: $e');
     }
   }
+
+  // Add this method to update the Telegram Handle
+  Future<void> updateTelegramHandle(String id, String telegramHandle) async {
+    try {
+      await _firestore
+          .collection('SupportOrganisation')
+          .doc(id)
+          .update({'Telegram Handle': telegramHandle});
+      print('Telegram Handle updated successfully for ID: $id');
+    } catch (e) {
+      print('Error updating Telegram Handle: $e');
+      rethrow; // Rethrow the error to propagate it
+    }
+  }
 }

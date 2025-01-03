@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/support_organisation/controller/support_organisation_controller.dart';
 import 'package:fyp_umakan/features/support_organisation/screens/support_organisation_details_edit_page.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,8 +15,7 @@ class SupportOrganisationProfilePage extends StatefulWidget {
   const SupportOrganisationProfilePage({super.key});
 
   @override
-  State<SupportOrganisationProfilePage> createState() =>
-      _SupportOrganisationProfilePageState();
+  State<SupportOrganisationProfilePage> createState() => _SupportOrganisationProfilePageState();
 }
 
 class _SupportOrganisationProfilePageState
@@ -220,6 +222,188 @@ class _SupportOrganisationProfilePageState
                       ),
                     ),
                   ),
+                  
+                  // Social Media (Label)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 40,
+                          color: TColors.forest,
+                        ),
+                        const SizedBox(width: 10),
+
+                        Text(
+                          'Link Your Socials',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: dark ? Colors.black : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 180),
+                      ],
+                    ),
+                  ),
+
+                  // Telegram Handle Section (Frosted Glass Card)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    child: GestureDetector(
+                      onTap: () {
+                        // Show Modal to Edit Telegram Handle
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: TColors.cream,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Title
+                                  Text(
+                                    "Edit Telegram Handle",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  // Telegram Handle Input
+                                  TextFormField(
+                                    initialValue: userData?['Telegram Handle'] ?? '',
+                                    decoration: const InputDecoration(
+                                      labelText: "Telegram Handle",
+                                      hintText: "@yourhandle",
+                                      border: OutlineInputBorder(),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                    ),
+                                    onChanged: (value) {
+                                      // Update local value
+                                      userData?['Telegram Handle'] = value.trim();
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
+                                  // Save Button
+                                  TextButton(
+                                    onPressed: () async {
+                                      try {
+                                        final userId = FirebaseAuth.instance.currentUser?.uid;
+                                        if (userId != null) {
+                                          await FirebaseFirestore.instance
+                                              .collection('SupportOrganisation')
+                                              .doc(userId)
+                                              .update({'Telegram Handle': userData?['Telegram Handle']});
+                                        }
+                                        Navigator.pop(context); // Close modal
+                                        Get.snackbar(
+                                          "Success",
+                                          "Telegram handle updated successfully!",
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: Colors.green,
+                                          colorText: Colors.white,
+                                        );
+                                        setState(() {}); // Refresh UI
+                                      } catch (e) {
+                                        Get.snackbar(
+                                          "Error",
+                                          "Failed to update Telegram handle: $e",
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: Colors.red,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: TColors.teal,
+                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: const BorderSide(color: Colors.black, width: 2.0),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      "Save",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.4),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/telegram.png',
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Telegram Handle",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          userData?['Telegram Handle'] ?? "No Telegram handle set",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   const SizedBox(height: 20),
 
                   // Logout Button
