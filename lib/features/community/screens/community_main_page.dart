@@ -680,6 +680,19 @@ class CommunityMainPageScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 20),
+                // Label for Include Telegram Dropdown
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Want to Link Your Telegram?",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: TColors.textDark,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
