@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/discover/screens/discover.dart';
@@ -14,6 +17,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -928,6 +932,105 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 ),
               );
             }),
+
+// Inside your widget tree after the Summary Section
+            Obx(() {
+              final mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Others'];
+              final barData = List.generate(4, (index) {
+                final filteredItems =
+                    foodJController.filterMealsTypesToday(index);
+                final totalCalories =
+                    foodJController.totalCalories(filteredItems);
+                return totalCalories
+                    .toDouble(); // Bar chart needs double values
+              });
+
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 10.0),
+                    child: Text(
+                      'Calorie Breakdown by Meal Type',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 300, // Adjust the height of the chart
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: BarChart(
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: barData.reduce((a, b) => a > b ? a : b) +
+                            100, // Set maxY slightly above the highest value
+                        barTouchData: BarTouchData(
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipBgColor: Colors.black,
+                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                              final mealType = mealTypes[group.x.toInt()];
+                              return BarTooltipItem(
+                                '$mealType\n',
+                                TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                children: [
+                                  TextSpan(
+                                    text: '${rod.y.toStringAsFixed(0)} cal',
+                                    style: TextStyle(color: Colors.amber),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        titlesData: FlTitlesData(
+                          leftTitles: SideTitles(showTitles: true),
+                          bottomTitles: SideTitles(
+                            showTitles: true,
+                            getTextStyles: (context, value) => TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            getTitles: (value) {
+                              switch (value.toInt()) {
+                                case 0:
+                                  return 'Breakfast';
+                                case 1:
+                                  return 'Lunch';
+                                case 2:
+                                  return 'Dinner';
+                                case 3:
+                                  return 'Others';
+                                default:
+                                  return '';
+                              }
+                            },
+                          ),
+                        ),
+                        borderData: FlBorderData(show: false),
+                        barGroups: List.generate(4, (index) {
+                          return BarChartGroupData(
+                            x: index,
+                            barRods: [
+                              BarChartRodData(
+                                y: barData[index],
+                                colors: [Colors.amber],
+                                width: 16,
+                              ),
+                            ],
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
           ],
         ),
       ),
@@ -967,7 +1070,75 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
     final TextEditingController itemPrice = TextEditingController();
     final TextEditingController itemLocation = TextEditingController();
 
+    File? selectedImage; // To store the picked image
     final foodJController2 = FoodJournalController.instance;
+
+    Future<void> pickImage(BuildContext context) async {
+      final picker = ImagePicker();
+
+      // Show a dialog to choose between gallery or camera
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor:
+                TColors.cream, // Set background color to TColors.cream
+            title: Text(
+              "Choose Image Source",
+              style: TextStyle(
+                  color: Colors.black), // Set title text color to black
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.camera_alt,
+                    color: Colors.black, // Set icon color to black
+                  ),
+                  title: Text(
+                    "Camera",
+                    style: TextStyle(
+                        color: Colors.black), // Set text color to black
+                  ),
+                  onTap: () async {
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.camera);
+                    if (pickedFile != null) {
+                      setState(() {
+                        selectedImage = File(pickedFile.path);
+                      });
+                    }
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.photo,
+                    color: Colors.black, // Set icon color to black
+                  ),
+                  title: Text(
+                    "Gallery",
+                    style: TextStyle(
+                        color: Colors.black), // Set text color to black
+                  ),
+                  onTap: () async {
+                    final pickedFile =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (pickedFile != null) {
+                      setState(() {
+                        selectedImage = File(pickedFile.path);
+                      });
+                    }
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
 
     showDialog(
       context: context,
@@ -989,58 +1160,73 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
               SizedBox(width: 100),
             ],
           ),
-
           backgroundColor: TColors.cream,
-          // Title for the dialog
           content: SizedBox(
-            height: 350,
+            height: 450, // Increased height to accommodate image picker
             width: 200,
-            child: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 10),
-                  TextFormField(
-                    controller: itemName,
-                    decoration: InputDecoration(
-                      labelText: 'Meal Name', // Label for the Meal Name field
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: itemName,
+                  decoration: InputDecoration(
+                    labelText: 'Meal Name',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  SizedBox(height: TSizes.spaceBtwSections),
-                  TextFormField(
-                    controller: itemCalories,
-                    decoration: InputDecoration(
-                      labelText: 'Amount of Calories',
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                TextFormField(
+                  controller: itemCalories,
+                  decoration: InputDecoration(
+                    labelText: 'Amount of Calories',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  SizedBox(height: TSizes.spaceBtwSections),
-                  TextFormField(
-                    controller: itemPrice,
-                    decoration: InputDecoration(
-                      labelText: 'Cost',
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                TextFormField(
+                  controller: itemPrice,
+                  decoration: InputDecoration(
+                    labelText: 'Cost',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  SizedBox(height: TSizes.spaceBtwSections),
-                  TextFormField(
-                    controller: itemLocation,
-                    decoration: InputDecoration(
-                      labelText: 'Location',
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                TextFormField(
+                  controller: itemLocation,
+                  decoration: InputDecoration(
+                    labelText: 'Location',
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: TSizes.spaceBtwSections),
+                // Image Picker Section
+                GestureDetector(
+                  onTap: () => pickImage(context),
+                  child: Container(
+                    height: 100,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: selectedImage != null
+                        ? Image.file(
+                            selectedImage!,
+                            fit: BoxFit.cover,
+                          )
+                        : Center(child: Icon(Icons.add_a_photo)),
+                  ),
+                ),
+              ],
             ),
           ),
           actions: <Widget>[
@@ -1059,14 +1245,24 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                 child: TextButton(
                   onPressed: () async {
                     final uuid = Uuid();
+                    final journalManualId = uuid.v4();
+                    String? imageUrl;
+
+                    if (selectedImage != null) {
+                      imageUrl = await foodJController2.uploadImage(
+                        selectedImage!,
+                        foodJController2.getCurrentUserId(),
+                        journalManualId,
+                      );
+                    }
                     // Add selected item to the food journal
                     final journalItem = JournalItem(
-                      id: uuid.v4(),
+                      id: journalManualId,
                       name: itemName.text.trim(),
                       price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
                       calories: int.tryParse(itemCalories.text.trim()) ?? 0,
                       cafe: itemLocation.text.trim(),
-                      imagePath: '',
+                      imagePath: imageUrl ?? '', // Save the image path
                       cafeId: '',
                       vendorId: '',
                       cafeLocation: '',
@@ -1076,7 +1272,6 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     String userId =
                         FoodJournalController.instance.getCurrentUserId();
 
-                    // Optionally, add the item to the local lunch list
                     foodJController2.addFoodToJournal(userId, journalItem);
 
                     // Prepare expense data for the Money Journal
@@ -1093,9 +1288,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
 
                     try {
                       print('Meal added to food and money journal!');
-
-                      // Close the dialog
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(); // Close the dialog
                     } catch (e) {
                       print('Error adding meal to journal: $e');
                     }

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
@@ -331,35 +333,67 @@ class FoodJournalController extends GetxController {
   }
 
   Future<void> _updateAchievements(String userId, int streak) async {
-    final achievementsDoc = await FirebaseFirestore.instance
+    // Reference to the Achievements document
+    final achievementsRef = FirebaseFirestore.instance
         .collection('Users')
         .doc(userId)
         .collection('Achievements')
-        .doc('current')
-        .get();
+        .doc('current');
 
-    Map<String, bool> achievements = achievementsDoc.exists
-        ? Map<String, bool>.from(achievementsDoc.data() ?? {})
+    // Fetch existing achievements data
+    final achievementsDoc = await achievementsRef.get();
+
+    Map<String, dynamic> achievements = achievementsDoc.exists
+        ? achievementsDoc.data() ?? {}
         : {
             "initiator": false,
             "novice": false,
             "hero": false,
-            "champion": false
+            "champion": false,
+            "lastUnlocked": {
+              "initiator": null,
+              "novice": null,
+              "hero": null,
+              "champion": null,
+            },
           };
 
-    if (streak == 1) achievements["initiator"] = true;
-    if (streak == 3) achievements["novice"] = true;
-    if (streak == 7) achievements["hero"] = true;
-    if (streak == 30) achievements["champion"] = true;
+    // Initialize lastUnlocked if it doesn't exist
+    achievements["lastUnlocked"] ??= {
+      "initiator": null,
+      "novice": null,
+      "hero": null,
+      "champion": null,
+    };
 
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .collection('Achievements')
-        .doc('current')
-        .set(achievements);
+    Map<String, dynamic> lastUnlocked =
+        Map<String, dynamic>.from(achievements["lastUnlocked"]);
 
-    print("Achievements updated: $achievements");
+    // Update achievements and their lastUnlocked timestamps
+    if (streak == 1 && achievements["initiator"] == false) {
+      achievements["initiator"] = true;
+      lastUnlocked["initiator"] = DateTime.now().toIso8601String();
+    }
+    if (streak == 3 && achievements["novice"] == false) {
+      achievements["novice"] = true;
+      lastUnlocked["novice"] = DateTime.now().toIso8601String();
+    }
+    if (streak == 7 && achievements["hero"] == false) {
+      achievements["hero"] = true;
+      lastUnlocked["hero"] = DateTime.now().toIso8601String();
+    }
+    if (streak == 30 && achievements["champion"] == false) {
+      achievements["champion"] = true;
+      lastUnlocked["champion"] = DateTime.now().toIso8601String();
+    }
+
+    // Add lastUnlocked back to the achievements map
+    achievements["lastUnlocked"] = lastUnlocked;
+
+    // Update the document in Firestore
+    await achievementsRef.set(achievements);
+
+    print("Achievements updated with lastUnlocked: $achievements");
   }
 
   void resetMealStatesAtMidnight(String userId) {
@@ -808,7 +842,7 @@ class FoodJournalController extends GetxController {
         .collection("Achievements")
         .doc("current");
 
-    achievementsRef.snapshots().listen((snapshot) {
+    achievementsRef.snapshots().listen((snapshot) async {
       if (!snapshot.exists) {
         print("No achievements found for this user.");
         return;
@@ -816,75 +850,35 @@ class FoodJournalController extends GetxController {
 
       final achievements = snapshot.data();
       final lastUnlocked =
-          achievements?["lastUnlocked"] as Map<String, dynamic>?;
+          achievements?["lastUnlocked"] as Map<String, dynamic>? ?? {};
 
       String? unlockedBadge;
       String? badgeImage;
 
-      DateTime now = DateTime.now();
-      bool showPopup = false;
+      Future<void> unlockBadge(
+          String key, String badgeName, String badgeImagePath) async {
+        if (achievements?[key] == true && (lastUnlocked[key] == null)) {
+          unlockedBadge = badgeName;
+          badgeImage = badgeImagePath;
 
-      if (achievements?["initiator"] == true) {
-        DateTime? lastUnlockedDate = lastUnlocked?["initiator"] != null
-            ? DateTime.parse(lastUnlocked!["initiator"])
-            : null;
-
-        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
-          unlockedBadge = "Initiator";
-          badgeImage = TImages.initiatorBadge;
-          showPopup = true;
-
-          // Update lastUnlocked field for "initiator"
-          _updateLastUnlocked("initiator");
-        }
-      }
-      if (achievements?["novice"] == true && !showPopup) {
-        DateTime? lastUnlockedDate = lastUnlocked?["novice"] != null
-            ? DateTime.parse(lastUnlocked!["novice"])
-            : null;
-
-        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
-          unlockedBadge = "Novice";
-          badgeImage = TImages.noviceBadge;
-          showPopup = true;
-
-          // Update lastUnlocked field for "novice"
-          _updateLastUnlocked("novice");
-        }
-      }
-      if (achievements?["hero"] == true && !showPopup) {
-        DateTime? lastUnlockedDate = lastUnlocked?["hero"] != null
-            ? DateTime.parse(lastUnlocked!["hero"])
-            : null;
-
-        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
-          unlockedBadge = "Hero";
-          badgeImage = TImages.heroBadge;
-          showPopup = true;
-
-          // Update lastUnlocked field for "hero"
-          _updateLastUnlocked("hero");
-        }
-      }
-      if (achievements?["champion"] == true && !showPopup) {
-        DateTime? lastUnlockedDate = lastUnlocked?["champion"] != null
-            ? DateTime.parse(lastUnlocked!["champion"])
-            : null;
-
-        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
-          unlockedBadge = "Champion";
-          badgeImage = TImages.championBadge;
-          showPopup = true;
-
-          // Update lastUnlocked field for "champion"
-          _updateLastUnlocked("champion");
+          // Update the lastUnlocked field in Firestore
+          await achievementsRef.update({
+            "lastUnlocked.$key": DateTime.now().toIso8601String(),
+          });
         }
       }
 
-      if (showPopup && unlockedBadge != null) {
+      // Check and unlock badges
+      await unlockBadge("initiator", "Initiator", TImages.initiatorBadge);
+      await unlockBadge("novice", "Novice", TImages.noviceBadge);
+      await unlockBadge("hero", "Hero", TImages.heroBadge);
+      await unlockBadge("champion", "Champion", TImages.championBadge);
+
+      // Show popup only if a badge was unlocked
+      if (unlockedBadge != null) {
         Get.dialog(
           BadgeUnlockPopup(
-            badgeName: unlockedBadge,
+            badgeName: unlockedBadge!,
             badgeImage: badgeImage!,
           ),
         );
@@ -892,23 +886,20 @@ class FoodJournalController extends GetxController {
     });
   }
 
-// Helper method to update the lastUnlocked field
-  Future<void> _updateLastUnlocked(String achievement) async {
-    final achievementsRef = FirebaseFirestore.instance
-        .collection("Users")
-        .doc(getCurrentUserId())
-        .collection("Achievements")
-        .doc("current");
+  Future<String> uploadImage(
+      File imageFile, String userId, String fJournalId) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+            'manual_journal_images/$userId/$fJournalId/${DateTime.now().toIso8601String()}',
+          );
 
-    await achievementsRef.update({
-      "lastUnlocked.$achievement": DateTime.now().toIso8601String(),
-    });
-  }
+      final uploadTask = await storageRef.putFile(imageFile);
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
 
-// Helper method to check if two dates are on the same day
-  bool isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Image upload failed.');
+    }
   }
 }

@@ -24,15 +24,12 @@ class UserController extends GetxController {
 
   String get currentUserId => user.value.id;
 
-  UserController() {
-    debugPrint("UserController constructor called");
-  }
-
   @override
   void onInit() {
     super.onInit();
     fetchUserRecord();
-    print("VendorController initialized for user ID: ${FirebaseAuth.instance.currentUser?.uid}");
+    print('UserController initialized');
+    print('Firebase Auth User ID: ${FirebaseAuth.instance.currentUser?.uid}');
   }
 
   Future<void> refreshUserData() async {
@@ -69,7 +66,7 @@ class UserController extends GetxController {
         badgeRepo.initializeMealStates(currentUserId);
 
         // Access RecommendationController lazily if needed
-        final recommendationController = Get.find<RecommendationController>();
+        final recommendationController = Get.put(RecommendationController());
         recommendationController; // Call only if needed
       } else {
         this.user(UserModel.empty());

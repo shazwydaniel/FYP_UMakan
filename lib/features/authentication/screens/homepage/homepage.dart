@@ -34,12 +34,11 @@ class HomePageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = Get.put(JournalController());
-    final userController = Get.find<UserController>();
-
+    final userController = Get.put(UserController());
     final advertController = Get.put(AdvertController());
     Get.put(BadgeController());
 
-    final recommendedController = Get.find<RecommendationController>();
+    final recommendedController = Get.put(RecommendationController());
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
@@ -246,72 +245,101 @@ class HomePageScreen extends StatelessWidget {
                                         bottom: 0,
                                         right: 0,
                                         child: Obx(() {
-                                          return 
-                                          StreamBuilder<DocumentSnapshot>(
+                                          return StreamBuilder<
+                                              DocumentSnapshot>(
                                             stream: FirebaseFirestore.instance
                                                 .collection('Users')
-                                                .doc(userController.currentUserId)
+                                                .doc(userController
+                                                    .currentUserId)
                                                 .collection('financial_status')
                                                 .doc('current')
                                                 .snapshots(),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
                                                 return CircularProgressIndicator(); // Loading indicator
-                                              } else if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                                              } else if (snapshot.hasError ||
+                                                  !snapshot.hasData ||
+                                                  !snapshot.data!.exists) {
                                                 return Text(
                                                   'Error or No Data',
-                                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
                                                 ); // Handle error or missing data
                                               } else {
-                                                final financialStatus = snapshot.data!.get('status');
+                                                final financialStatus = snapshot
+                                                    .data!
+                                                    .get('status');
 
                                                 Color statusColor;
                                                 IconData statusIcon;
                                                 String statusText;
 
-                                                if (financialStatus == "Surplus") {
-                                                  statusColor = TColors.teal.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_happy;
+                                                if (financialStatus ==
+                                                    "Surplus") {
+                                                  statusColor = TColors.teal
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_happy;
                                                   statusText = "Surplus";
-                                                } else if (financialStatus == "Moderate") {
-                                                  statusColor = TColors.marigold.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_normal;
+                                                } else if (financialStatus ==
+                                                    "Moderate") {
+                                                  statusColor = TColors.marigold
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_normal;
                                                   statusText = "Moderate";
                                                 } else {
-                                                  statusColor = TColors.amber.withOpacity(0.7);
-                                                  statusIcon = Iconsax.emoji_sad;
+                                                  statusColor = TColors.amber
+                                                      .withOpacity(0.7);
+                                                  statusIcon =
+                                                      Iconsax.emoji_sad;
                                                   statusText = "Deficit";
                                                 }
 
                                                 // Show notification on status change
-                                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                WidgetsBinding.instance
+                                                    .addPostFrameCallback((_) {
                                                   Get.snackbar(
                                                     "Financial Status Update",
                                                     "You now have $statusText Food Allowance",
-                                                    snackPosition: SnackPosition.TOP,
-                                                    backgroundColor: statusColor,
+                                                    snackPosition:
+                                                        SnackPosition.TOP,
+                                                    backgroundColor:
+                                                        statusColor,
                                                     colorText: Colors.white,
-                                                    icon: Icon(statusIcon, color: Colors.white),
-                                                    duration: Duration(seconds: 3),
+                                                    icon: Icon(statusIcon,
+                                                        color: Colors.white),
+                                                    duration:
+                                                        Duration(seconds: 3),
                                                   );
                                                 });
 
                                                 return Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                                   decoration: BoxDecoration(
                                                     color: statusColor,
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      Icon(statusIcon, color: Colors.white, size: 16),
+                                                      Icon(statusIcon,
+                                                          color: Colors.white,
+                                                          size: 16),
                                                       const SizedBox(width: 5),
                                                       Text(
                                                         statusText,
                                                         style: TextStyle(
                                                           color: Colors.white,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontSize: 12,
                                                         ),
                                                       ),
@@ -548,7 +576,14 @@ class HomePageScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
+                    /*ElevatedButton(
+                        onPressed: () {
+                          foodJController.getStoredAverageCalories(0);
+                          final recommendedMeals = recommendedController.getRecommendedList(
+                              foodJController.getStoredAverageCalories(0));
+                        },
+                        child: Text("see recommended")),*/
+                    // Meal Recommendations Section (Scrollable)
                     Obx(() {
                       return FutureBuilder<List<CafeItem>>(
                         future: recommendedController.getRecommendedList(),
@@ -565,7 +600,8 @@ class HomePageScreen extends StatelessWidget {
                               snapshot.data!.isEmpty) {
                             return Center(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 10.0),
                                 child: Text(
                                   'Add items to food journal or change preferences to view!',
                                   textAlign: TextAlign.center,
@@ -1170,7 +1206,7 @@ class HomePageScreen extends StatelessWidget {
                     // Journals (Label)
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top:10),
+                          left: 20, right: 20, bottom: 20, top: 10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -1195,7 +1231,7 @@ class HomePageScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () => controller.navigateToJournal('Food Journal'),
                       child: Container(
-                        height: 150,
+                        height: 180,
                         margin: const EdgeInsets.only(
                             left: 20, right: 20, bottom: 20),
                         decoration: BoxDecoration(
@@ -1211,21 +1247,72 @@ class HomePageScreen extends StatelessWidget {
                           ],
                         ),
                         child: Center(
-                          child: Row(
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Iconsax.shop_add,
-                                color: dark ? Colors.white : Colors.white,
-                                size: 20,
+                              // Icon and "Food Journal"
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Iconsax.shop_add,
+                                    color: dark ? Colors.white : Colors.white,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Food Journal',
+                                    style: TextStyle(
+                                      color: dark ? Colors.white : Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                'Food Journal',
-                                style: TextStyle(
-                                  color: dark ? Colors.white : Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                              const SizedBox(height: 10),
+                              // White tag container for "Your Streaks"
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: TColors.bubbleRed,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: FutureBuilder<int>(
+                                  future: foodJController.fetchStreakCount(
+                                      userController.currentUserId),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Text(
+                                        'Loading streak...',
+                                        style: TextStyle(
+                                          color: TColors.textLight,
+                                          fontSize: 13,
+                                        ),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        'Error loading streak',
+                                        style: TextStyle(
+                                          color: TColors.textLight,
+                                          fontSize: 13,
+                                        ),
+                                      );
+                                    } else {
+                                      final streakCount = snapshot.data ?? 0;
+                                      final dayLabel =
+                                          (streakCount == 1) ? 'day' : 'days';
+                                      return Text(
+                                        'Your Streaks: $streakCount $dayLabel',
+                                        style: TextStyle(
+                                          color: TColors.textLight,
+                                          fontSize: 13,
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                             ],
@@ -1233,6 +1320,7 @@ class HomePageScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     // Money Journal Button
                     GestureDetector(
                       onTap: () =>

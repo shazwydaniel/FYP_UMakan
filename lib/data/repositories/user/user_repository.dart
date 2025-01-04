@@ -209,8 +209,10 @@ class UserRepository extends GetxController {
       }
 
       // Check the "Authority" collection
-      DocumentSnapshot authorityDocSnapshot =
-          await FirebaseFirestore.instance.collection('Authority').doc(uid).get();
+      DocumentSnapshot authorityDocSnapshot = await FirebaseFirestore.instance
+          .collection('Authority')
+          .doc(uid)
+          .get();
 
       if (authorityDocSnapshot.exists) {
         debugPrint("User document found in 'Authority' collection");
@@ -227,8 +229,10 @@ class UserRepository extends GetxController {
       }
 
       // Check the "SupportOrganisation" collection
-      DocumentSnapshot supportOrgDocSnapshot =
-          await FirebaseFirestore.instance.collection('SupportOrganisation').doc(uid).get();
+      DocumentSnapshot supportOrgDocSnapshot = await FirebaseFirestore.instance
+          .collection('SupportOrganisation')
+          .doc(uid)
+          .get();
 
       if (supportOrgDocSnapshot.exists) {
         debugPrint("User document found in 'Support Organisation' collection");
@@ -236,7 +240,8 @@ class UserRepository extends GetxController {
       }
 
       // If the document does not exist in any collection
-      debugPrint("No user document found in 'Users', 'Authority', or 'Vendors'");
+      debugPrint(
+          "No user document found in 'Users', 'Authority', or 'Vendors'");
       throw Exception("User not found in any collection");
     } catch (e) {
       debugPrint("Error fetching user role: $e");
@@ -245,9 +250,13 @@ class UserRepository extends GetxController {
   }
 
   // Method to update the telegramHandle field for a specific user
-  Future<void> updateTelegramHandle(String userId, String telegramHandle) async {
+  Future<void> updateTelegramHandle(
+      String userId, String telegramHandle) async {
     try {
-      await _db.collection("Users").doc(userId).update({'telegramHandle': telegramHandle});
+      await _db
+          .collection("Users")
+          .doc(userId)
+          .update({'telegramHandle': telegramHandle});
       print("Telegram handle updated successfully for user $userId");
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
