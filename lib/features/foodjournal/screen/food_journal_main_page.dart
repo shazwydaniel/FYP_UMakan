@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:fyp_umakan/data/repositories/food_journal/food_journal_repository.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/journal_controller.dart';
 import 'package:fyp_umakan/features/discover/screens/discover.dart';
@@ -10,15 +9,18 @@ import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_history.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
+import 'package:fyp_umakan/radio_bar_chart.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:uuid/uuid.dart';
 
 class FoodJournalMainPage extends StatefulWidget {
@@ -45,6 +47,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final foodJController = Get.put(FoodJournalController());
+    final userControlller = UserController.instance;
 
     foodJController.fetchFoodJournalItems();
     String userId = foodJController.getCurrentUserId();
@@ -57,6 +60,13 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
       var dayOfYear = date.difference(firstDayOfYear).inDays + 1;
       return ((dayOfYear - date.weekday + 10) / 7).floor();
     }
+
+    final Map<String, Color> _Labels = {
+      'Breakast': TColors.amber,
+      'Lunch': TColors.cobalt,
+      'Dinner': TColors.blush,
+      'Others': TColors.banana,
+    };
 
     return Scaffold(
       backgroundColor: TColors.amber,
@@ -775,6 +785,185 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
               ),
             ),
 
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Card(
+                elevation: 0,
+                color: TColors.amber,
+                surfaceTintColor: TColors.amber,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Obx(() {
+                  // Fetch data dynamically from foodJController
+                  final breakfastCalories = foodJController
+                      .totalCalories(foodJController.filterMealsTypesToday(0));
+                  final lunchCalories = foodJController
+                      .totalCalories(foodJController.filterMealsTypesToday(1));
+                  final dinnerCalories = foodJController
+                      .totalCalories(foodJController.filterMealsTypesToday(2));
+                  final othersCalories = foodJController
+                      .totalCalories(foodJController.filterMealsTypesToday(3));
+                  final totalCaloriesToday = breakfastCalories +
+                      lunchCalories +
+                      dinnerCalories +
+                      othersCalories;
+
+                  // Set total daily calorie goal (example: 2000 calories)
+                  var totalDailyCalories =
+                      userControlller.user.value.recommendedCalorieIntake;
+
+                  // Calculate percentage for each meal type
+                  final breakfastPercentage =
+                      (breakfastCalories / totalDailyCalories) * 100;
+                  final lunchPercentage =
+                      (lunchCalories / totalDailyCalories) * 100;
+                  final dinnerPercentage =
+                      (dinnerCalories / totalDailyCalories) * 100;
+                  final othersPercentage =
+                      (othersCalories / totalDailyCalories) * 100;
+                  final usedPercentage =
+                      (totalCaloriesToday / totalDailyCalories) * 100;
+
+                  double breakfastAngle = (breakfastPercentage / 100) * 360;
+                  double lunchAngle = (lunchPercentage / 100) * 360;
+                  double dinnerAngle = (dinnerPercentage / 100) * 360;
+                  double othersAngle = (othersPercentage / 100) * 360;
+
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 250,
+                                child: SfRadialGauge(
+                                  axes: [
+                                    RadialAxis(
+                                      labelOffset: 0,
+                                      pointers: [
+                                        RangePointer(
+                                          value: usedPercentage,
+                                          cornerStyle: CornerStyle.bothCurve,
+                                          color: TColors.mustard,
+                                          width: 30,
+                                        )
+                                      ],
+                                      axisLineStyle:
+                                          AxisLineStyle(thickness: 30),
+                                      startAngle: 0,
+                                      endAngle: 360,
+                                      showLabels: false,
+                                      showTicks: false,
+                                      annotations: [
+                                        GaugeAnnotation(
+                                          widget: Text(
+                                            '${usedPercentage.toStringAsFixed(1)}%',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 25,
+                                              color: TColors.textLight,
+                                            ),
+                                          ),
+                                          positionFactor: 0.2,
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Percentage of Total Calories Consumed',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: TColors.textLight),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          'Over Daily Required Calories(%)',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: TColors.textLight),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Two rectangular tags
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            // Total Calories Consumed Tag
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: TColors.teal,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Total: ${totalCaloriesToday.toStringAsFixed(0)} cal',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: TColors.textLight,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Icon(
+                                    Iconsax.chart_2,
+                                    size: 18,
+                                    color: TColors.textLight,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Total Required Calories (BMR) Tag
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: TColors.mustard,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Required: ${totalDailyCalories.toStringAsFixed(0)} cal',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: TColors.textDark,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Icon(
+                                    Icons.track_changes,
+                                    size: 18,
+                                    color: TColors.textDark,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ),
+
             //Summary Section
             Obx(() {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -930,105 +1119,6 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                     );
                   }),
                 ),
-              );
-            }),
-
-// Inside your widget tree after the Summary Section
-            Obx(() {
-              final mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Others'];
-              final barData = List.generate(4, (index) {
-                final filteredItems =
-                    foodJController.filterMealsTypesToday(index);
-                final totalCalories =
-                    foodJController.totalCalories(filteredItems);
-                return totalCalories
-                    .toDouble(); // Bar chart needs double values
-              });
-
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0, vertical: 10.0),
-                    child: Text(
-                      'Calorie Breakdown by Meal Type',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 300, // Adjust the height of the chart
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: BarChart(
-                      BarChartData(
-                        alignment: BarChartAlignment.spaceAround,
-                        maxY: barData.reduce((a, b) => a > b ? a : b) +
-                            100, // Set maxY slightly above the highest value
-                        barTouchData: BarTouchData(
-                          touchTooltipData: BarTouchTooltipData(
-                            tooltipBgColor: Colors.black,
-                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                              final mealType = mealTypes[group.x.toInt()];
-                              return BarTooltipItem(
-                                '$mealType\n',
-                                TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                                children: [
-                                  TextSpan(
-                                    text: '${rod.y.toStringAsFixed(0)} cal',
-                                    style: TextStyle(color: Colors.amber),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                        titlesData: FlTitlesData(
-                          leftTitles: SideTitles(showTitles: true),
-                          bottomTitles: SideTitles(
-                            showTitles: true,
-                            getTextStyles: (context, value) => TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            getTitles: (value) {
-                              switch (value.toInt()) {
-                                case 0:
-                                  return 'Breakfast';
-                                case 1:
-                                  return 'Lunch';
-                                case 2:
-                                  return 'Dinner';
-                                case 3:
-                                  return 'Others';
-                                default:
-                                  return '';
-                              }
-                            },
-                          ),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        barGroups: List.generate(4, (index) {
-                          return BarChartGroupData(
-                            x: index,
-                            barRods: [
-                              BarChartRodData(
-                                y: barData[index],
-                                colors: [Colors.amber],
-                                width: 16,
-                              ),
-                            ],
-                          );
-                        }),
-                      ),
-                    ),
-                  ),
-                ],
               );
             }),
           ],
