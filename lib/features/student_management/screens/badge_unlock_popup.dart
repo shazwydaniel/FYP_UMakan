@@ -19,6 +19,7 @@ class BadgeUnlockPopup extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Container(
+        height: 460,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: TColors.cream,
@@ -52,30 +53,33 @@ class BadgeUnlockPopup extends StatelessWidget {
             Text(
               "You unlocked the $badgeName badge!",
               style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "The badge will be displayed in your home page!",
-              style: TextStyle(
-                fontSize: 12,
+                fontSize: 20,
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
+            Text(
+              "You can find your badges in your profile!",
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 25),
             ElevatedButton(
               onPressed: () {
                 Get.back(); // Close the dialog
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
+                side: const BorderSide(color: Colors.black, width: 2.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                minimumSize:
+                    const Size(200, 20), // Set width to 200 and height to 40
               ),
               child: const Text(
                 "Close",

@@ -49,7 +49,7 @@ class PreferenceEditPage extends StatelessWidget {
                       // Prefer Spicy
                       SwitchListTile(
                         title: const Text(
-                          'Prefer Spicy Food',
+                          'Show Spicy Food',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -67,7 +67,7 @@ class PreferenceEditPage extends StatelessWidget {
                       // Prefer Vegetarian
                       SwitchListTile(
                         title: const Text(
-                          'Prefer Vegetarian Food',
+                          'Show Vegetarian Food',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -85,7 +85,7 @@ class PreferenceEditPage extends StatelessWidget {
                       // Prefer Low Sugar
                       SwitchListTile(
                         title: const Text(
-                          'Prefer Low Sugar Food',
+                          'Show Low Sugar Food',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -120,7 +120,10 @@ class PreferenceEditPage extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
-                  backgroundColor: TColors.mustard, // Text color
+                  backgroundColor: TColors.mustard,
+                  side: BorderSide(
+                      color: Colors.black, // Border color of the button
+                      width: 2.0),
                 ),
                 child: const Text('Save'),
               ),

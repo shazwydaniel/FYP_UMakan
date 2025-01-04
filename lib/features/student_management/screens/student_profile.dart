@@ -305,7 +305,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                     color: TColors.blush,
                   ),
                   const SizedBox(width: 10),
-
                   Text(
                     'Link Your Socials',
                     style: TextStyle(
@@ -352,7 +351,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                             // Telegram Handle Input
                             Obx(
                               () => TextFormField(
-                                initialValue: controller.user.value.telegramHandle ?? '',
+                                initialValue:
+                                    controller.user.value.telegramHandle ?? '',
                                 decoration: InputDecoration(
                                   labelText: "Telegram Handle",
                                   hintText: "@yourhandle",
@@ -392,10 +392,12 @@ class StudentProfilePageScreen extends StatelessWidget {
                                 },
                                 style: TextButton.styleFrom(
                                   backgroundColor: TColors.teal,
-                                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 15),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
-                                    side: const BorderSide(color: Colors.black, width: 2.0),
+                                    side: const BorderSide(
+                                        color: Colors.black, width: 2.0),
                                   ),
                                 ),
                                 child: const Row(
@@ -453,7 +455,9 @@ class StudentProfilePageScreen extends StatelessWidget {
                               // Value
                               Obx(
                                 () => Text(
-                                  controller.user.value.telegramHandle?.isNotEmpty == true
+                                  controller.user.value.telegramHandle
+                                              ?.isNotEmpty ==
+                                          true
                                       ? controller.user.value.telegramHandle!
                                       : "No Telegram handle set",
                                   style: TextStyle(
@@ -1101,7 +1105,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.black, width: 2.0),
                     backgroundColor: TColors.teal,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -1161,7 +1166,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                               onPressed: () async {
                                 Navigator.of(context).pop(); // Close the dialog
                                 try {
-                                  await AuthenticatorRepository.instance.logout();
+                                  await AuthenticatorRepository.instance
+                                      .logout();
                                 } catch (e) {
                                   Get.snackbar(
                                     'Logout Error',
@@ -1188,7 +1194,8 @@ class StudentProfilePageScreen extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.black, width: 2.0),
                     backgroundColor: TColors.amber,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -1263,7 +1270,7 @@ Widget _buildBadgeCard(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.5,
                   height: 420,
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(30),
                   decoration: BoxDecoration(
                     color: TColors.cream,
                     borderRadius: BorderRadius.circular(20),
@@ -1272,7 +1279,6 @@ Widget _buildBadgeCard(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 20),
                       // Badge Image
                       Container(
                         width: 200,
@@ -1292,7 +1298,7 @@ Widget _buildBadgeCard(
                                 color: Colors.white,
                               ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
 
                       Text(
                         badgeName,

@@ -259,49 +259,74 @@ class FoodJournalController extends GetxController {
   }
 
   Future<void> _checkStreakAndAchievements(String userId) async {
-    // Fetch meal states from Firebase
-    final mealStatesDoc = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .collection('MealStates')
-        .doc('current')
-        .get();
-
-    if (!mealStatesDoc.exists) return;
-
-    final data = mealStatesDoc.data()!;
-    int completedMealTimes = [
-      data['hadBreakfast'] ?? false,
-      data['hadLunch'] ?? false,
-      data['hadDinner'] ?? false,
-      data['hadOthers'] ?? false,
-    ].where((logged) => logged == true).length;
-
-    if (completedMealTimes >= 3) {
-      // Increment streak
-      final streakDoc = await FirebaseFirestore.instance
+    try {
+      // Fetch meal states from Firebase
+      final mealStatesDoc = await FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
-          .collection('streaks')
+          .collection('MealStates')
           .doc('current')
           .get();
 
-      int streak = streakDoc.exists ? streakDoc['streakCount'] : 0;
-      streak += 1;
+      if (!mealStatesDoc.exists) return;
 
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userId)
-          .collection('streaks')
-          .doc('current')
-          .set({'streakCount': streak});
+      final data = mealStatesDoc.data()!;
+      int completedMealTimes = [
+        data['hadBreakfast'] ?? false,
+        data['hadLunch'] ?? false,
+        data['hadDinner'] ?? false,
+        data['hadOthers'] ?? false,
+      ].where((logged) => logged == true).length;
 
-      print("Streak incremented to $streak.");
+      if (completedMealTimes >= 3) {
+        // Fetch streak document
+        final streakDoc = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .collection('streaks')
+            .doc('current')
+            .get();
 
-      // Update achievements
-      await _updateAchievements(userId, streak);
-    } else {
-      print("Fewer than 3 meal times logged. Streak not incremented.");
+        int streak = streakDoc.exists ? streakDoc['streakCount'] : 0;
+        DateTime? lastUpdated;
+
+        if (streakDoc.exists && streakDoc.data()!.containsKey('lastUpdated')) {
+          lastUpdated = (streakDoc['lastUpdated'] as Timestamp).toDate();
+        }
+
+        // Check if the streak was already updated today
+        DateTime now = DateTime.now();
+        if (lastUpdated != null &&
+            lastUpdated.year == now.year &&
+            lastUpdated.month == now.month &&
+            lastUpdated.day == now.day) {
+          print("Streak already updated for today. No action taken.");
+          return;
+        }
+
+        // Increment streak and update Firestore
+        streak += 1;
+
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .collection('streaks')
+            .doc('current')
+            .set({
+          'streakCount': streak,
+          'lastUpdated':
+              Timestamp.fromDate(now), // Add/update last updated date
+        });
+
+        print("Streak incremented to $streak.");
+
+        // Update achievements
+        await _updateAchievements(userId, streak);
+      } else {
+        print("Fewer than 3 meal times logged. Streak not incremented.");
+      }
+    } catch (e) {
+      print("Error checking and updating streaks: $e");
     }
   }
 
@@ -340,27 +365,17 @@ class FoodJournalController extends GetxController {
   void resetMealStatesAtMidnight(String userId) {
     Timer.periodic(Duration(minutes: 1), (timer) async {
       DateTime now = DateTime.now();
-
       if (now.hour == 0 && now.minute == 0) {
-        // Fetch streak and carry forward
-        final streakDoc = await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userId)
-            .collection('streaks')
-            .doc('current')
-            .get();
+        // Call the streak checking method
+        await checkAndResetStreak(userId);
 
-        int currentStreak =
-            streakDoc.exists ? streakDoc['streakCount'] ?? 0 : 0;
-
-        print("Streak carried forward: $currentStreak");
-
-        // Reset daily meal states for a new day
+        // Reset local meal state variables
         hadBreakfast = false;
         hadLunch = false;
         hadDinner = false;
         hadOthers = false;
 
+        // Reset meal states in Firebase
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(userId)
@@ -378,52 +393,83 @@ class FoodJournalController extends GetxController {
     });
   }
 
-  Future<void> evaluateStreakAtEndOfDay(String userId) async {
+  Future<void> checkAndResetStreak(String userId) async {
+    // Get the current time and calculate the previous day
     DateTime now = DateTime.now();
-    if (now.hour == 23 && now.minute == 59) {
-      // Fetch today's MealStates from Firebase
-      final mealStatesDoc = await FirebaseFirestore.instance
+    DateTime startOfDay = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+    DateTime endOfDay = DateTime(now.year, now.month, now.day - 1, 23, 59, 59);
+
+    try {
+      // Fetch meal logs for the previous day
+      final mealLogs = await FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
-          .collection('MealStates')
-          .doc('current')
+          .collection('FoodJournal')
+          .where('timestamp', isGreaterThanOrEqualTo: startOfDay)
+          .where('timestamp', isLessThanOrEqualTo: endOfDay)
           .get();
 
-      if (mealStatesDoc.exists) {
-        final data = mealStatesDoc.data()!;
-        int completedMealTimes = [
-          data['hadBreakfast'] ?? false,
-          data['hadLunch'] ?? false,
-          data['hadDinner'] ?? false,
-          data['hadOthers'] ?? false,
-        ].where((logged) => logged == true).length;
+      // Categorize logs by meal time
+      List<DateTime> timestamps = mealLogs.docs
+          .map((doc) => (doc['timestamp'] as Timestamp).toDate())
+          .toList();
 
-        // Fetch current streak
-        final streakDoc = await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userId)
-            .collection('streaks')
-            .doc('current')
-            .get();
+      bool loggedBreakfast = timestamps
+          .any((time) => time.hour >= 6 && time.hour < 12); // 6 AM - 12 PM
+      bool loggedLunch = timestamps
+          .any((time) => time.hour >= 12 && time.hour < 16); // 12 PM - 4 PM
+      bool loggedDinner = timestamps
+          .any((time) => time.hour >= 19 && time.hour < 21); // 7 PM - 9 PM
+      bool loggedOthers = timestamps.any((time) =>
+          !(time.hour >= 6 && time.hour < 12) &&
+          !(time.hour >= 12 && time.hour < 16) &&
+          !(time.hour >= 19 && time.hour < 21)); // Any other time
 
-        int streak = streakDoc.exists ? streakDoc['streakCount'] ?? 0 : 0;
+      int completedMealTimes = [
+        loggedBreakfast,
+        loggedLunch,
+        loggedDinner,
+        loggedOthers,
+      ].where((logged) => logged).length;
 
-        // Update streak based on completion
-        if (completedMealTimes >= 3) {
-          streak += 1;
-          print("Streak incremented to $streak.");
-        } else {
-          streak = 0;
-          print("Streak reset to 0 due to insufficient meal logs.");
-        }
-
+      // Reset streak if fewer than 3 meal times were logged
+      if (completedMealTimes < 3) {
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(userId)
             .collection('streaks')
             .doc('current')
-            .set({'streakCount': streak});
+            .set({'streakCount': 0});
+
+        print("Streak reset to 0 due to insufficient meal logs for the day.");
+      } else {
+        print("Streak maintained: 3 or more meal times logged.");
       }
+    } catch (e) {
+      print("Error checking and resetting streak: $e");
+    }
+  }
+
+  Future<int> fetchStreakCount(String userId) async {
+    try {
+      final streakDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('streaks')
+          .doc('current')
+          .get();
+
+      if (streakDoc.exists) {
+        final data = streakDoc.data();
+        print("Streak count = $data .");
+        return data?['streakCount'] ?? 0; // Default to 0 if streakCount is null
+      } else {
+        print("Streak document does not exist.");
+        return 0; // Default streak count if the document doesn't exist
+      }
+    } catch (e) {
+      print("Error fetching streak count: $e");
+      return 0; // Return 0 in case of an error
     }
   }
 
@@ -769,24 +815,73 @@ class FoodJournalController extends GetxController {
       }
 
       final achievements = snapshot.data();
+      final lastUnlocked =
+          achievements?["lastUnlocked"] as Map<String, dynamic>?;
+
       String? unlockedBadge;
       String? badgeImage;
 
+      DateTime now = DateTime.now();
+      bool showPopup = false;
+
       if (achievements?["initiator"] == true) {
-        unlockedBadge = "Initiator";
-        badgeImage = TImages.initiatorBadge;
-      } else if (achievements?["novice"] == true) {
-        unlockedBadge = "Novice";
-        badgeImage = TImages.noviceBadge;
-      } else if (achievements?["hero"] == true) {
-        unlockedBadge = "Hero";
-        badgeImage = TImages.heroBadge;
-      } else if (achievements?["champion"] == true) {
-        unlockedBadge = "Champion";
-        badgeImage = TImages.championBadge;
+        DateTime? lastUnlockedDate = lastUnlocked?["initiator"] != null
+            ? DateTime.parse(lastUnlocked!["initiator"])
+            : null;
+
+        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
+          unlockedBadge = "Initiator";
+          badgeImage = TImages.initiatorBadge;
+          showPopup = true;
+
+          // Update lastUnlocked field for "initiator"
+          _updateLastUnlocked("initiator");
+        }
+      }
+      if (achievements?["novice"] == true && !showPopup) {
+        DateTime? lastUnlockedDate = lastUnlocked?["novice"] != null
+            ? DateTime.parse(lastUnlocked!["novice"])
+            : null;
+
+        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
+          unlockedBadge = "Novice";
+          badgeImage = TImages.noviceBadge;
+          showPopup = true;
+
+          // Update lastUnlocked field for "novice"
+          _updateLastUnlocked("novice");
+        }
+      }
+      if (achievements?["hero"] == true && !showPopup) {
+        DateTime? lastUnlockedDate = lastUnlocked?["hero"] != null
+            ? DateTime.parse(lastUnlocked!["hero"])
+            : null;
+
+        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
+          unlockedBadge = "Hero";
+          badgeImage = TImages.heroBadge;
+          showPopup = true;
+
+          // Update lastUnlocked field for "hero"
+          _updateLastUnlocked("hero");
+        }
+      }
+      if (achievements?["champion"] == true && !showPopup) {
+        DateTime? lastUnlockedDate = lastUnlocked?["champion"] != null
+            ? DateTime.parse(lastUnlocked!["champion"])
+            : null;
+
+        if (lastUnlockedDate == null || !isSameDay(lastUnlockedDate, now)) {
+          unlockedBadge = "Champion";
+          badgeImage = TImages.championBadge;
+          showPopup = true;
+
+          // Update lastUnlocked field for "champion"
+          _updateLastUnlocked("champion");
+        }
       }
 
-      if (unlockedBadge != null) {
+      if (showPopup && unlockedBadge != null) {
         Get.dialog(
           BadgeUnlockPopup(
             badgeName: unlockedBadge,
@@ -795,5 +890,25 @@ class FoodJournalController extends GetxController {
         );
       }
     });
+  }
+
+// Helper method to update the lastUnlocked field
+  Future<void> _updateLastUnlocked(String achievement) async {
+    final achievementsRef = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(getCurrentUserId())
+        .collection("Achievements")
+        .doc("current");
+
+    await achievementsRef.update({
+      "lastUnlocked.$achievement": DateTime.now().toIso8601String(),
+    });
+  }
+
+// Helper method to check if two dates are on the same day
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 }

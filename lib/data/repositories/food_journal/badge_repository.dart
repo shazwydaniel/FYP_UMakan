@@ -164,16 +164,65 @@ class BadgeRepository {
     try {
       final snapshot = await achievementsDoc.get();
       if (!snapshot.exists) {
-        // Initialize default achievements
+        // Initialize default achievements and lastUnlocked fields
         await achievementsDoc.set({
           "initiator": false,
           "novice": false,
           "hero": false,
           "champion": false,
+          "lastUnlocked": {
+            "initiator": null,
+            "novice": null,
+            "hero": null,
+            "champion": null,
+          },
         });
         print("Achievements document initialized.");
       } else {
-        print("Achievements document already exists.");
+        // Check for missing fields and add them if necessary
+        final data = snapshot.data()!;
+        final Map<String, Object?> updates =
+            {}; // Declare as Map<String, Object?>
+
+        // Check if achievements fields are missing
+        if (!data.containsKey("initiator")) updates["initiator"] = false;
+        if (!data.containsKey("novice")) updates["novice"] = false;
+        if (!data.containsKey("hero")) updates["hero"] = false;
+        if (!data.containsKey("champion")) updates["champion"] = false;
+
+        // Check if lastUnlocked field is missing or incomplete
+        if (!data.containsKey("lastUnlocked")) {
+          updates["lastUnlocked"] = {
+            "initiator": null,
+            "novice": null,
+            "hero": null,
+            "champion": null,
+          };
+        } else {
+          final Map<String, dynamic> lastUnlocked =
+              Map<String, dynamic>.from(data["lastUnlocked"]);
+          if (!lastUnlocked.containsKey("initiator")) {
+            lastUnlocked["initiator"] = null;
+          }
+          if (!lastUnlocked.containsKey("novice")) {
+            lastUnlocked["novice"] = null;
+          }
+          if (!lastUnlocked.containsKey("hero")) {
+            lastUnlocked["hero"] = null;
+          }
+          if (!lastUnlocked.containsKey("champion")) {
+            lastUnlocked["champion"] = null;
+          }
+          updates["lastUnlocked"] = lastUnlocked;
+        }
+
+        // Update the document if there are missing fields
+        if (updates.isNotEmpty) {
+          await achievementsDoc.update(updates);
+          print("Achievements document updated with missing fields.");
+        } else {
+          print("Achievements document already exists and is complete.");
+        }
       }
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');

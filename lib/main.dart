@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/data/repositories/money_journal/money_journal_repository.dart';
 import 'package:fyp_umakan/data/repositories/user/user_repository.dart';
-import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/meal_notification_scheduler.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
@@ -15,7 +12,6 @@ import 'package:fyp_umakan/navigation_menu.dart';
 import 'package:fyp_umakan/utils/helpers/network_manager.dart';
 import 'package:fyp_umakan/utils/scripts/add_authority_account.dart';
 import 'package:fyp_umakan/utils/scripts/add_community_news_sample_data.dart';
-import 'package:fyp_umakan/utils/scripts/add_include_telegram.dart';
 import 'package:fyp_umakan/utils/scripts/add_sample_data.dart';
 import 'package:fyp_umakan/utils/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -83,44 +79,29 @@ Future<void> main() async {
     (FirebaseApp value) => Get.put(AuthenticatorRepository()),
   );
 
-  Get.put(UserController());
-
   // GetX Local Storage
   await GetStorage.init();
 
   //Initalise Controllers and User Repository
-  Get.lazyPut(() => RecommendationController());
-  debugPrint("UserController initialized in main");
-  Get.put(AuthenticatorRepository());
-  Get.put(NetworkManager()); // Get.put(VendorController());
+
+  final userController = Get.put(UserController());
+  Get.put(UserRepository());
+
+  Get.put(NetworkManager());
+  // Get.put(VendorController());
   final foodJController = Get.put(FoodJournalController());
   Get.put(NavigationController());
-
-  // addSampleOrganisations();
-  // addSampleCommunityNews();
-  // addAuthorityAccount();
-  // addMissingFieldToDocuments();
 
   // Await Splash Until Other Items Load
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(const App());
 
-  final userController = UserController.instance;
-
-  // Schedule the midnight reset and end-of-day streak evaluation
+  // Schedule the midnight reset
   ever(userController.user, (user) {
     if (user.id.isNotEmpty && user.role == 'Student') {
-      // Reset meal states at midnight
-      foodJController.resetMealStatesAtMidnight(user.id);
-
-      // Evaluate streak at the end of the day
-      Timer.periodic(Duration(minutes: 1), (timer) {
-        DateTime now = DateTime.now();
-        if (now.hour == 23 && now.minute == 59) {
-          foodJController.evaluateStreakAtEndOfDay(user.id);
-        }
-      });
+      foodJController
+          .resetMealStatesAtMidnight(user.id); // Call midnight reset here
     }
   });
 
