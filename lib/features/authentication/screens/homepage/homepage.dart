@@ -43,7 +43,7 @@ class HomePageScreen extends StatelessWidget {
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
     // print("AMOUNT of completed days : ${foodJController.dayCount}");
-    //print("RECOMMENDED STUFF  : ${recommendedController.getRecommendedList()}");
+    // print("RECOMMENDED STUFF  : ${recommendedController.getRecommendedList()}");
 
     return Scaffold(
       backgroundColor: dark ? TColors.cream : TColors.cream,
@@ -117,7 +117,7 @@ class HomePageScreen extends StatelessWidget {
                       // Stats Highlights (Label)
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 30, right: 30, bottom: 20, top: 10),
+                            left: 30, right: 30, bottom: 5, top: 10),
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
@@ -147,6 +147,19 @@ class HomePageScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
+
+                              const SizedBox(height: 5),
+
+                              // Current Date Line
+                              Text(
+                                'As per ${DateFormat('EEEE, d MMMM yyyy').format(DateTime.now())}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white.withOpacity(0.8),
+                                ),
+                              ),
+                              
                               const SizedBox(height: 10),
 
                               // Recommended Food Allowance - Monthly (Value)
@@ -222,7 +235,7 @@ class HomePageScreen extends StatelessWidget {
                                                             .format(userController
                                                                 .user
                                                                 .value
-                                                                .recommendedMoneyAllowance);
+                                                                .updatedRecommendedAllowance);
 
                                                     return Text(
                                                       "$formattedAllowance",
@@ -299,22 +312,22 @@ class HomePageScreen extends StatelessWidget {
                                                 }
 
                                                 // Show notification on status change
-                                                WidgetsBinding.instance
-                                                    .addPostFrameCallback((_) {
-                                                  Get.snackbar(
-                                                    "Financial Status Update",
-                                                    "You now have $statusText Food Allowance",
-                                                    snackPosition:
-                                                        SnackPosition.TOP,
-                                                    backgroundColor:
-                                                        statusColor,
-                                                    colorText: Colors.white,
-                                                    icon: Icon(statusIcon,
-                                                        color: Colors.white),
-                                                    duration:
-                                                        Duration(seconds: 3),
-                                                  );
-                                                });
+                                                // WidgetsBinding.instance
+                                                //     .addPostFrameCallback((_) {
+                                                //   Get.snackbar(
+                                                //     "Financial Status Update",
+                                                //     "You now have $statusText Food Allowance",
+                                                //     snackPosition:
+                                                //         SnackPosition.TOP,
+                                                //     backgroundColor:
+                                                //         statusColor,
+                                                //     colorText: Colors.white,
+                                                //     icon: Icon(statusIcon,
+                                                //         color: Colors.white),
+                                                //     duration:
+                                                //         Duration(seconds: 3),
+                                                //   );
+                                                // });
 
                                                 return Container(
                                                   padding: EdgeInsets.symmetric(

@@ -26,6 +26,7 @@ class UserModel {
   double actualRemainingFoodAllowance;
   double additionalAllowance;
   double additionalExpense;
+  double updatedRecommendedAllowance;
   String role;
   bool prefSpicy;
   bool prefVegetarian;
@@ -58,6 +59,7 @@ class UserModel {
     this.actualRemainingFoodAllowance = 0.0,
     this.additionalAllowance = 0.0,
     this.additionalExpense = 0.0,
+    this.updatedRecommendedAllowance = 0.0,
     this.prefSpicy = false,
     this.prefVegetarian = false,
     this.prefLowSugar = false,
@@ -92,6 +94,7 @@ class UserModel {
       'actualRemainingFoodAllowance': actualRemainingFoodAllowance,
       'additionalAllowance': additionalAllowance,
       'additionalExpense': additionalExpense,
+      'updatedRecommendedAllowance': updatedRecommendedAllowance,
       'prefSpicy': prefSpicy,
       'prefVegetarian': prefVegetarian,
       'prefLowSugar': prefLowSugar,
@@ -122,14 +125,12 @@ class UserModel {
       age: map['age'] ?? 0,
       role: map['Role'],
       status: map['status'] ?? 0,
-      recommendedCalorieIntake:
-          map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
-      recommendedMoneyAllowance:
-          map['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
-      actualRemainingFoodAllowance:
-          map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+      recommendedCalorieIntake: map['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+      recommendedMoneyAllowance: map['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+      actualRemainingFoodAllowance: map['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
       additionalAllowance: map['additionalAllowance']?.toDouble() ?? 0.0,
       additionalExpense: map['additionalExpense']?.toDouble() ?? 0.0,
+      updatedRecommendedAllowance: map['updatedRecommendedAllowance']?.toDouble() ?? 0.0,
       prefSpicy: map['prefSpicy'] ?? false,
       prefVegetarian: map['prefVegetarian'] ?? false,
       prefLowSugar: map['prefLowSugar'] ?? false,
@@ -170,6 +171,7 @@ class UserModel {
       'Food Money': actualRemainingFoodAllowance,
       'Additional Allowance': additionalAllowance,
       'Additional Expense': additionalExpense,
+      'Updated Recommended Allowance': updatedRecommendedAllowance,
       'Role': role,
       'prefSpicy': prefSpicy,
       'prefVegetarian': prefVegetarian,
@@ -204,6 +206,7 @@ class UserModel {
         actualRemainingFoodAllowance: 0.0,
         additionalAllowance: 0.0,
         additionalExpense: 0.0,
+        updatedRecommendedAllowance: 0.0,
         role: '',
         prefSpicy: false,
         prefVegetarian: false,
@@ -237,14 +240,12 @@ class UserModel {
         age: data['Age'] ?? 0,
         role: data['Role'] ?? '',
         status: data['Status'] ?? 0,
-        recommendedCalorieIntake:
-            data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
-        recommendedMoneyAllowance:
-            data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
-        actualRemainingFoodAllowance:
-            data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
+        recommendedCalorieIntake: data['recommendedCalorieIntake']?.toDouble() ?? 0.0,
+        recommendedMoneyAllowance: data['recommendedMoneyAllowance']?.toDouble() ?? 0.0,
+        actualRemainingFoodAllowance: data['actualRemainingFoodAllowance']?.toDouble() ?? 0.0,
         additionalAllowance: data['additionalAllowance']?.toDouble() ?? 0.0,
         additionalExpense: data['additionalExpense']?.toDouble() ?? 0.0,
+        updatedRecommendedAllowance: data['updatedRecommendedAllowance']?.toDouble() ?? 0.0,
         prefLowSugar: data['prefLowSugar'] ?? false,
         prefVegetarian: data['prefVegetarian'] ?? false,
         prefSpicy: data['prefSpicy'] ?? false,
@@ -292,5 +293,15 @@ class UserModel {
     }
 
     return status;
+  }
+
+  // Method to calculate the remaining recommended allowance based on the elapsed days
+  double calculateUpdatedAllowance() {
+    final today = DateTime.now();
+    final totalDays = DateTime(today.year, today.month + 1, 0).day; 
+    final elapsedDays = today.day;
+    final dailyAllowance = recommendedMoneyAllowance / totalDays;
+
+    return recommendedMoneyAllowance - (elapsedDays * dailyAllowance);
   }
 }

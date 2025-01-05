@@ -36,6 +36,7 @@ class UserController extends GetxController {
     try {
       await fetchUserRecord();
       await updateCalculatedFields();
+      await calculateAndUpdateRecommendedAllowance();
       print('------- Page is refreshed! -------');
     } catch (e) {
       print('Error refreshing user data: $e');
@@ -53,6 +54,7 @@ class UserController extends GetxController {
         updateAge();
         updateStatus();
         await updateCalculatedFields();
+        await calculateAndUpdateRecommendedAllowance();
 
         // Ensure subcollections are initialized
         await initializeStatusSubcollections(userFromDb.id);
@@ -226,44 +228,34 @@ class UserController extends GetxController {
     // await fetchCalorieStatus(currentUser.id);
 
     // Convert String fields to double
-    double monthlyAllowance =
-        double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
-    double monthlyCommittments =
-        double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
+    double monthlyAllowance = double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
+    double monthlyCommittments = double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
 
     // Ensure additionalAllowance and additionalExpense are not null
     double additionalAllowance = currentUser.additionalAllowance ?? 0.0;
     double additionalExpense = currentUser.additionalExpense ?? 0.0;
 
-    /*Calculate Recommended Daily Calories Intake (OLD)
-    double recommendedCalorieIntake =
-        getDailyCaloriesIntake(currentUser.gender, currentUser.age);*/
-
     // Calculate Recommended Daily Calories Intake
     double recommendedCalorieIntake = calculateBMR();
 
     // Calculate Recommended Monthly Budget Allocation for Food
-    double recommendedMoneyAllowance =
-        getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
+    double recommendedMoneyAllowance = getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
 
     // Calculate Food Money
-    double actualRemainingFoodAllowance =
-        (monthlyAllowance + additionalAllowance) -
-            (monthlyCommittments + additionalExpense);
-    user.update((user) {
-      if (user != null) {
-        user.actualRemainingFoodAllowance =
-            actualRemainingFoodAllowance; // Update cumulatively
-      }
-    });
+    double actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + additionalExpense);
 
-    // Calculate financial status
-    String financialStatus = calculateFinancialStatus(
-      actualRemainingFoodAllowance,
-      recommendedMoneyAllowance,
-    );
+    // Calculate Updated Recommended Allowance
+    DateTime now = DateTime.now();
+    int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+    double dailyAllowance = recommendedMoneyAllowance / daysInMonth;
+    int daysElapsed = now.day - 1;
+    double updatedRecommendedAllowance = recommendedMoneyAllowance - (daysElapsed * dailyAllowance);
 
-    // Update in Firebase
+    // Ensure allowance does not go below zero
+    updatedRecommendedAllowance = updatedRecommendedAllowance < 0 ? 0 : updatedRecommendedAllowance;
+
+    // Calculate financial status using updatedRecommendedAllowance
+    String financialStatus = calculateFinancialStatus(actualRemainingFoodAllowance,updatedRecommendedAllowance);
     await updateFinancialStatus(currentUser.id, financialStatus);
 
     // Update the user model with the calculated values
@@ -272,11 +264,11 @@ class UserController extends GetxController {
         user.recommendedCalorieIntake = recommendedCalorieIntake;
         user.recommendedMoneyAllowance = recommendedMoneyAllowance;
         user.actualRemainingFoodAllowance = actualRemainingFoodAllowance;
+        user.updatedRecommendedAllowance = updatedRecommendedAllowance;
         user.additionalExpense = additionalExpense;
         user.additionalAllowance = additionalAllowance;
 
-        print(
-            'Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
+        print('Updated actualRemainingFoodAllowance with new formula: ${user.actualRemainingFoodAllowance}');
       }
     });
 
@@ -584,6 +576,47 @@ class UserController extends GetxController {
     } catch (e) {
       print("Error saving Telegram handle: $e");
       throw Exception("Failed to save Telegram handle.");
+    }
+  }
+
+    // Method to calculate and update updatedRecommendedAllowance
+  Future<void> calculateAndUpdateRecommendedAllowance() async {
+    try {
+      final currentUser = user.value;
+
+      if (currentUser.recommendedMoneyAllowance <= 0.0) {
+        print("Recommended Money Allowance is not set or is zero.");
+        return;
+      }
+
+      DateTime now = DateTime.now();
+      int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+
+      // Calculate daily allowance and the days elapsed in the current month
+      double dailyAllowance = currentUser.recommendedMoneyAllowance / daysInMonth;
+      int daysElapsed = now.day - 1;
+
+      // Calculate the updated recommended allowance
+      double updatedAllowance = currentUser.recommendedMoneyAllowance - (daysElapsed * dailyAllowance);
+
+      // Ensure the allowance doesn't go below zero
+      updatedAllowance = updatedAllowance < 0 ? 0 : updatedAllowance;
+
+      // Update the user model locally
+      user.update((user) {
+        if (user != null) {
+          user.updatedRecommendedAllowance = updatedAllowance;
+        }
+      });
+
+      // Save the updated value to Firestore
+      await userRepository.updateSingleField({
+        'updatedRecommendedAllowance': updatedAllowance,
+      });
+
+      print("Updated Recommended Allowance: $updatedAllowance");
+    } catch (e) {
+      print("Error calculating updated recommended allowance: $e");
     }
   }
 }

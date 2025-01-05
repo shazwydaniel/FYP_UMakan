@@ -52,6 +52,7 @@ class UserRepository extends GetxController {
   // Update User Record ------------------------------------
   Future<void> updateUserRecord(UserModel user) async {
     try {
+      await calculateAndUpdateAllowance(user.id);
       await _db.collection('Users').doc(user.id).update(user.toJson());
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.message}');
@@ -94,10 +95,15 @@ class UserRepository extends GetxController {
   // Fetch User Details Based on User ID ------------------------------------
   Future<UserModel> fetchUserDetails() async {
     try {
-      final documentSnapshot = await _db
-          .collection('Users')
-          .doc(AuthenticatorRepository.instance.authUser?.uid)
-          .get();
+      final userId = AuthenticatorRepository.instance.authUser?.uid;
+
+      if (userId == null) {
+        throw 'No authenticated user found';
+      }
+
+      await calculateAndUpdateAllowance(userId);
+
+      final documentSnapshot = await _db.collection('Users').doc(userId).get();
       if (documentSnapshot.exists) {
         return UserModel.fromSnapshot(documentSnapshot);
       } else {
@@ -107,7 +113,7 @@ class UserRepository extends GetxController {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code);
     } catch (e) {
-      print('Unknown error: $e');
+      print('Error fetching user details: $e');
       throw 'Something went wrong. Please try again';
     }
   }
@@ -160,7 +166,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Remoce All User Data from Firestore ------------------------------------
+  // Remove All User Data from Firestore ------------------------------------
   Future<void> removeUserRecord(String userId) async {
     try {
       await _db.collection("Users").doc(userId).delete();
@@ -173,7 +179,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Method to add or update a field in a document
+  // Method to add or update a field in a document ------------------------------------
   Future<void> addFieldToUser(
       String userId, Map<String, dynamic> newField) async {
     try {
@@ -184,7 +190,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Method to fetch the user's role
+  // Method to fetch the user's role ------------------------------------
   Future<String?> fetchUserRole(String uid) async {
     try {
       debugPrint("Fetching role for UID: $uid");
@@ -249,7 +255,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Method to update the telegramHandle field for a specific user
+  // Method to update the telegramHandle field for a specific user ------------------------------------
   Future<void> updateTelegramHandle(
       String userId, String telegramHandle) async {
     try {
@@ -267,7 +273,7 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Method to fetch the telegramHandle for a specific user
+  // Method to fetch the telegramHandle for a specific user ------------------------------------
   Future<String?> getTelegramHandle(String userId) async {
     try {
       final doc = await _db.collection("Users").doc(userId).get();
@@ -285,4 +291,42 @@ class UserRepository extends GetxController {
       throw 'Something went wrong. Please try again';
     }
   }
+
+  // Method to calculate and update updatedRecommendedAllowance
+  Future<void> calculateAndUpdateAllowance(String userId) async {
+    try {
+      // Fetch the user data
+      final doc = await _db.collection('Users').doc(userId).get();
+      final userData = doc.data();
+
+      if (userData == null) {
+        throw 'User not found';
+      }
+
+      // Extract relevant fields
+      double recommendedMoneyAllowance = userData['recommendedMoneyAllowance']?.toDouble() ?? 0.0;
+      DateTime now = DateTime.now();
+      int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+
+      // Calculate allowance left based on days passed in the current month
+      int daysElapsed = now.day - 1;
+      double dailyAllowance = recommendedMoneyAllowance / daysInMonth;
+      double updatedAllowance = recommendedMoneyAllowance - (daysElapsed * dailyAllowance);
+
+      // Ensure the allowance doesn't go below zero
+      updatedAllowance = updatedAllowance < 0 ? 0 : updatedAllowance;
+
+      // Update the field in Firebase
+      await _db.collection('Users').doc(userId).update({
+        'updatedRecommendedAllowance': updatedAllowance,
+      });
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } catch (e) {
+      print('Error calculating updatedRecommendedAllowance: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
 }
