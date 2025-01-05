@@ -293,7 +293,7 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
-            // Social Media (Label)
+            // Telegram (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
@@ -313,7 +313,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 180),
                 ],
               ),
             ),
@@ -497,7 +496,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 180),
                 ],
               ),
             ),
@@ -960,8 +958,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 180),
-                  //Edit button (Button)
                 ],
               ),
             ),
