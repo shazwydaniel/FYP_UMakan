@@ -1,12 +1,58 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/common/widgets/custom_shapes/curved_edges/curved_edges.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
 
-class SupportOrganisationHomePage extends StatelessWidget {
+class SupportOrganisationHomePage extends StatefulWidget {
   const SupportOrganisationHomePage({super.key});
+
+  @override
+  State<SupportOrganisationHomePage> createState() => _SupportOrganisationHomePageState();
+}
+
+class _SupportOrganisationHomePageState extends State<SupportOrganisationHomePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String? organisationName;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrganisationName();
+  }
+
+  Future<void> _fetchOrganisationName() async {
+    try {
+      final userId = _auth.currentUser?.uid;
+
+      if (userId != null) {
+        final doc = await _firestore.collection('SupportOrganisation').doc(userId).get();
+
+        if (doc.exists) {
+          setState(() {
+            organisationName = doc.data()?['Organisation Name'] ?? 'Support Organisation';
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            organisationName = 'Support Organisation';
+            isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching organisation name: $e");
+      setState(() {
+        organisationName = 'Support Organisation';
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,206 +60,136 @@ class SupportOrganisationHomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: dark ? TColors.darkGreen : TColors.cream,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Top Header with Curved Edges
-            ClipPath(
-              clipper: TCustomCurvedEdges(),
-              child: Container(
-                color: TColors.blush,
-                padding: const EdgeInsets.all(0),
-                child: SizedBox(
-                  height: 270,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Stack(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Top Header with Curved Edges
+                  ClipPath(
+                    clipper: TCustomCurvedEdges(),
+                    child: Container(
+                      color: TColors.blush,
+                      padding: const EdgeInsets.all(0),
+                      child: SizedBox(
+                        height: 270,
+                        child: Column(
                           children: [
-                            // Welcome Message
-                            Positioned(
-                              top: 110,
-                              left: 40,
-                              child: Text(
-                                'Welcome,',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 160,
-                              left: 40,
-                              child: Text(
-                                "SZA!",
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  // Welcome Message
+                                  Positioned(
+                                    top: 110,
+                                    left: 40,
+                                    child: Text(
+                                      'Welcome,',
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 160,
+                                    left: 40,
+                                    child: Text(
+                                      organisationName ?? 'Support Organisation',
+                                      style: TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+
+                  // UM Highlights Section
+                  _sectionHeader('UM Highlights', TColors.teal),
+                  // Card #1
+                  FutureBuilder<int>(
+                    future: _fetchCafeCount(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error loading cafe count',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+
+                      final cafeCount = snapshot.data ?? 0;
+                      return _statCard(
+                        title: 'Cafes In Campus',
+                        value: cafeCount.toString(),
+                        icon: Iconsax.coffee,
+                        color: TColors.forest,
+                      );
+                    },
+                  ),
+                  // Card #2
+                  FutureBuilder<int>(
+                    future: _fetchFinanciallyStrugglingCount(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error loading financially struggling count',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+
+                      final strugglingCount = snapshot.data ?? 0;
+                      return _statCard(
+                        title: 'Struggling Students',
+                        value: strugglingCount.toString(),
+                        icon: Iconsax.warning_2,
+                        color: TColors.teal,
+                      );
+                    },
+                  ),
+                  // Card #3
+                  FutureBuilder<double>(
+                    future: _fetchAverageMonthlyAllowance(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error loading average monthly allowances',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+
+                      final averageAllowance = snapshot.data ?? 0.0;
+                      return _statCard(
+                        title: 'Average Allowances',
+                        value: 'RM ${averageAllowance.toStringAsFixed(2)}',
+                        icon: Iconsax.wallet_2,
+                        color: TColors.olive,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 35),
+                ],
               ),
             ),
-
-            // // Pending Requests Section
-            // _sectionHeader('Pending Requests', TColors.amber),
-            // Container(
-            //   margin: const EdgeInsets.all(20),
-            //   decoration: BoxDecoration(
-            //     color: TColors.cobalt,
-            //     borderRadius: BorderRadius.circular(20),
-            //     boxShadow: [
-            //       BoxShadow(
-            //         color: Colors.black.withOpacity(0.2),
-            //         spreadRadius: 2,
-            //         blurRadius: 10,
-            //         offset: Offset(0, 8),
-            //       ),
-            //     ],
-            //   ),
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(20.0),
-            //     child: Column(
-            //       children: [
-            //         // Placeholder Text for Requests
-            //         Text(
-            //           'No pending requests at the moment.',
-            //           style: TextStyle(
-            //             color: Colors.white,
-            //             fontSize: 16,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //         const SizedBox(height: 20),
-            //         // Button for Viewing Requests
-            //         Align(
-            //           alignment: Alignment.center,
-            //           child: Container(
-            //             width: 200,
-            //             height: 50,
-            //             decoration: BoxDecoration(
-            //               color: TColors.bubbleBlue,
-            //               borderRadius: BorderRadius.circular(20.0),
-            //               border: Border.all(
-            //                 color: Colors.black,
-            //                 width: 2.0,
-            //               ),
-            //             ),
-            //             child: TextButton(
-            //               onPressed: () {
-            //                 // Add logic for viewing requests
-            //                 print('View Requests');
-            //               },
-            //               child: Row(
-            //                 mainAxisAlignment: MainAxisAlignment.center,
-            //                 children: [
-            //                   Icon(Iconsax.document, color: Colors.black, size: 20),
-            //                   SizedBox(width: 10),
-            //                   Text(
-            //                     'View Requests',
-            //                     style: TextStyle(
-            //                       color: Colors.black,
-            //                       fontSize: 16.0,
-            //                       fontWeight: FontWeight.bold,
-            //                     ),
-            //                   ),
-            //                 ],
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-
-            // UM Highlights Section
-            _sectionHeader('UM Highlights', TColors.teal),
-            // Card #1
-            FutureBuilder<int>(
-              future: _fetchCafeCount(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error loading cafe count',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-
-                final cafeCount = snapshot.data ?? 0;
-                return _statCard(
-                  title: 'Cafes In Campus',
-                  value: cafeCount.toString(),
-                  icon: Iconsax.coffee,
-                  color: TColors.forest,
-                );
-              },
-            ),
-            // Card #2
-            FutureBuilder<int>(
-              future: _fetchFinanciallyStrugglingCount(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error loading financially struggling count',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-
-                final strugglingCount = snapshot.data ?? 0;
-                return _statCard(
-                  title: 'Struggling Students',
-                  value: strugglingCount.toString(),
-                  icon: Iconsax.warning_2,
-                  color: TColors.teal,
-                );
-              },
-            ),
-            // Card #3
-            FutureBuilder<double>(
-              future: _fetchAverageMonthlyAllowance(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error loading average monthly expenses',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-
-                final averageAllowance = snapshot.data ?? 0.0;
-                return _statCard(
-                  title: 'Average Monthly Expenses',
-                  value: 'RM ${averageAllowance.toStringAsFixed(2)}',
-                  icon: Iconsax.wallet_2,
-                  color: TColors.olive,
-                );
-              },
-            ),
-            SizedBox(height: 35),
-          ],
-        ),
-      ),
     );
   }
 
@@ -302,6 +278,7 @@ class SupportOrganisationHomePage extends StatelessWidget {
       ),
     );
   }
+
   // Total Cafes Registered
   Future<int> _fetchCafeCount() async {
     final firestore = FirebaseFirestore.instance;
@@ -318,6 +295,7 @@ class SupportOrganisationHomePage extends StatelessWidget {
 
     return totalCafes;
   }
+
   // Financially Struggling Total
   Future<int> _fetchFinanciallyStrugglingCount() async {
     final firestore = FirebaseFirestore.instance;
@@ -342,6 +320,7 @@ class SupportOrganisationHomePage extends StatelessWidget {
 
     return strugglingCount;
   }
+
   // Average Monthly Expenses
   Future<double> _fetchAverageMonthlyAllowance() async {
     final firestore = FirebaseFirestore.instance;
@@ -354,7 +333,6 @@ class SupportOrganisationHomePage extends StatelessWidget {
       final role = doc.data()['Role'] ?? '';
       if (role == 'Student') {
         final monthlyAllowanceStr = doc.data()['Monthly Allowance'] ?? '0';
-          print('monthlyAllowance: $monthlyAllowanceStr');
         final double monthlyAllowance = double.tryParse(monthlyAllowanceStr.trim()) ?? 0.0;
 
         totalAllowance += monthlyAllowance;

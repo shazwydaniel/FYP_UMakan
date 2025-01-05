@@ -18,8 +18,7 @@ class SupportOrganisationProfilePage extends StatefulWidget {
   State<SupportOrganisationProfilePage> createState() => _SupportOrganisationProfilePageState();
 }
 
-class _SupportOrganisationProfilePageState
-    extends State<SupportOrganisationProfilePage> {
+class _SupportOrganisationProfilePageState extends State<SupportOrganisationProfilePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -244,7 +243,6 @@ class _SupportOrganisationProfilePageState
                             color: dark ? Colors.black : Colors.black,
                           ),
                         ),
-                        const SizedBox(width: 180),
                       ],
                     ),
                   ),
