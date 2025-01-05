@@ -99,9 +99,13 @@ Future<void> main() async {
 
   // Schedule the midnight reset
   ever(userController.user, (user) {
+    print("User state changed: ${user.toJson()}");
     if (user.id.isNotEmpty && user.role == 'Student') {
+      print('MealStates Updated from Main Dart, id : ${user.id}');
       foodJController
           .resetMealStatesAtMidnight(user.id); // Call midnight reset here
+    } else {
+      print('MealStates NOT Updated from Main Dart');
     }
   });
 

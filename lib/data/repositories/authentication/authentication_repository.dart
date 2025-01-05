@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:fyp_umakan/admin_navigation_menu.dart';
 import 'package:fyp_umakan/authority_navigation_menu.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
@@ -78,6 +79,9 @@ class AuthenticatorRepository extends GetxController {
             debugPrint('Redirecting to Student Navigation Menu');
             Get.put(NavigationController()).selectedIndex.value = 0;
             Get.off(() => const NavigationMenu());
+          } else if (role == 'Admin') {
+            debugPrint('Redirecting to Admin Navigation Menu');
+            Get.off(() => const AdminNavigationMenu());
           } else {
             // Handle unknown or undefined roles
             debugPrint('Unknown role: $role. Redirecting to Login Screen.');

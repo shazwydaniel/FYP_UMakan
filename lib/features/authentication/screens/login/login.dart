@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/styles/spacing_styles.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
+import 'package:fyp_umakan/features/admin/admin_register.dart';
 import 'package:fyp_umakan/features/authentication/controllers/login/login_controller.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/password_config/forget_password.dart';
@@ -348,8 +349,7 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Get.to(() =>
-                          SupportOrganisationRegisterPage());
+                      Get.to(() => SupportOrganisationRegisterPage());
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -360,6 +360,39 @@ class LoginScreen extends StatelessWidget {
                           'Support Organisation',
                           style: TextStyle(
                             color: TColors.cream,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: TColors.stark_blue,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Get.to(() => AdminRegisterPage());
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Iconsax.people, color: TColors.cream, size: 20),
+                        SizedBox(width: 10),
+                        Text(
+                          'Admin',
+                          style: TextStyle(
+                            color: TColors.darkGreen,
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
                           ),

@@ -36,6 +36,7 @@ class FoodJournalController extends GetxController {
   var isLoading = false.obs;
   final userController = UserController.instance;
   var completedDays = 0.obs;
+  bool isTimerRunning = false;
 
   // Meal type counts
   RxInt breakfastCount = RxInt(0);
@@ -397,9 +398,17 @@ class FoodJournalController extends GetxController {
   }
 
   void resetMealStatesAtMidnight(String userId) {
+    if (isTimerRunning) return;
+    isTimerRunning = true;
+
     Timer.periodic(Duration(minutes: 1), (timer) async {
       DateTime now = DateTime.now();
+      print("Timer triggered at ${now.toIso8601String()}");
+
       if (now.hour == 0 && now.minute == 0) {
+        timer.cancel(); // Cancel the timer after execution
+        isTimerRunning = false; // Reset the flag
+
         // Call the streak checking method
         await checkAndResetStreak(userId);
 
@@ -410,17 +419,22 @@ class FoodJournalController extends GetxController {
         hadOthers = false;
 
         // Reset meal states in Firebase
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userId)
-            .collection('MealStates')
-            .doc('current')
-            .set({
-          'hadBreakfast': false,
-          'hadLunch': false,
-          'hadDinner': false,
-          'hadOthers': false,
-        });
+        try {
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(userId)
+              .collection('MealStates')
+              .doc('current')
+              .set({
+            'hadBreakfast': false,
+            'hadLunch': false,
+            'hadDinner': false,
+            'hadOthers': false,
+          });
+          print("Meal states reset in Firebase for user $userId.");
+        } catch (e) {
+          print("Failed to reset meal states in Firebase: $e");
+        }
 
         print("Meal states reset for a new day.");
       }

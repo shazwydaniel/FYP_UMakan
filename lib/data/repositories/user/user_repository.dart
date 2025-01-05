@@ -239,6 +239,15 @@ class UserRepository extends GetxController {
         return 'Support Organisation'; // Assume all users in "Support Organisation" are Support Organisation
       }
 
+      // Check the "Admin" collection
+      DocumentSnapshot adminDocSnapshot =
+          await FirebaseFirestore.instance.collection('Admins').doc(uid).get();
+
+      if (adminDocSnapshot.exists) {
+        debugPrint("User document found in 'Admin' collection");
+        return 'Admin'; // Assume all users in "Vendors" are vendors
+      }
+
       // If the document does not exist in any collection
       debugPrint(
           "No user document found in 'Users', 'Authority', or 'Vendors'");

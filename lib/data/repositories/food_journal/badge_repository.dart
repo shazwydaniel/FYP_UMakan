@@ -219,9 +219,11 @@ class BadgeRepository {
         // Update the document if there are missing fields
         if (updates.isNotEmpty) {
           await achievementsDoc.update(updates);
-          print("Achievements document updated with missing fields.");
+          print(
+              "Achievements document updated with missing fields from Badge Repo.");
         } else {
-          print("Achievements document already exists and is complete.");
+          print(
+              "Achievements document already exists and is complete from Badge Repo.");
         }
       }
     } on FirebaseException catch (e) {
@@ -255,9 +257,9 @@ class BadgeRepository {
           "hadDinner": false,
           "hadOthers": false,
         });
-        print("MealStates document initialized.");
+        print("MealStates document initialized from Badge Repo.");
       } else {
-        print("MealStates document already exists.");
+        print("MealStates document already exists from Badge Repo.");
       }
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
