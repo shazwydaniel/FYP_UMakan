@@ -707,10 +707,10 @@ class VendorRepository {
   Future<void> submitFeedback({
     required String vendorId,
     required String cafeId,
-    required ReviewModel feedback,
+    required Map<String, dynamic> feedback,
   }) async {
     try {
-      final feedbackCollection = await _db
+      final feedbackDocRef = _db
           .collection('Vendors')
           .doc(vendorId)
           .collection('Cafe')
@@ -718,9 +718,29 @@ class VendorRepository {
           .collection('Reviews')
           .doc();
 
-      await feedbackCollection.set(feedback.toMap());
-      print(" added to $cafeId");
-      print("Added to Firebase!!!");
+      // Add the feedback along with the generated entry ID
+      await feedbackDocRef.set({
+        'entry_ID': feedbackDocRef.id,
+        ...feedback,
+      });
+// Also add the feedback under the User's collection
+      final userId =
+          feedback['userId']; // Assuming 'userId' is part of feedback
+      final userFeedbackRef = _db
+          .collection('Users')
+          .doc(userId)
+          .collection('UserReviews')
+          .doc(feedbackDocRef.id);
+
+      await userFeedbackRef.set({
+        'entry_ID': feedbackDocRef.id,
+        'vendorId': vendorId,
+        'cafeId': cafeId,
+        ...feedback,
+      });
+
+      print("Feedback added to $cafeId and UserReviews");
+      print("Added to Firebase with entry_ID: ${feedbackDocRef.id}");
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.message}');
       throw TFirebaseAuthException(e.code).message;
@@ -750,9 +770,27 @@ class VendorRepository {
           .orderBy('timestamp', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => ReviewModel.fromJson(doc.data()))
-          .toList();
+      // Log raw data for debugging
+      snapshot.docs.forEach((doc) => print('Fetched review: ${doc.data()}'));
+
+      // Map Firestore data to ReviewModel, with error handling for nulls
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+
+        return ReviewModel(
+          entryId: data['entry_ID'] ?? '', // Default to empty string
+          userId: data['userId'] ?? '',
+          userName: data['userName'] ?? 'Anonymous',
+          feedback: data['feedback'] ?? '',
+          rating: (data['rating'] ?? 0).toDouble(),
+          timestamp:
+              (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+          cafeId: data['cafeId'] ?? '',
+          cafeName: data['cafeName'] ?? '',
+          anonymous: data['anonymous'] ?? 'No',
+          vendorId: vendorId, // Include vendorId explicitly
+        );
+      }).toList();
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException: ${e.message}');
       throw TFirebaseAuthException(e.code).message;

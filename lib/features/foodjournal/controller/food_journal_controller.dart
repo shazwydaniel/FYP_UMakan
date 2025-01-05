@@ -496,7 +496,9 @@ class FoodJournalController extends GetxController {
       if (streakDoc.exists) {
         final data = streakDoc.data();
         print("Streak count = $data .");
-        return data?['streakCount'] ?? 0; // Default to 0 if streakCount is null
+        print("Raw data from Firestore: ${streakDoc.data()}");
+
+        return data?['streakCount'] ?? 0;
       } else {
         print("Streak document does not exist.");
         return 0; // Default streak count if the document doesn't exist

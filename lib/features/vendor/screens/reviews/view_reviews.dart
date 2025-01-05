@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/review_controller.dart';
+import 'package:fyp_umakan/features/vendor/model/feedback/review_model.dart';
+import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +20,8 @@ class ViewReviewPage extends StatelessWidget {
   });
 
   final ReviewController reviewController = Get.put(ReviewController());
+  final DiscoverController discoverController =
+      Get.put(DiscoverController(VendorRepository()));
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class ViewReviewPage extends StatelessWidget {
         ),
         backgroundColor: TColors.mustard,
         iconTheme: IconThemeData(
-          color: Colors.black, // Sets the color of the back icon to white
+          color: Colors.black, // Sets the color of the back icon to black
         ),
       ),
       body: Obx(() {
@@ -67,36 +73,42 @@ class ViewReviewPage extends StatelessWidget {
                             Icon(Icons.star, color: Colors.black, size: 16),
                       ),
                     ),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: TColors.cream, // Tag background color
-                            borderRadius:
-                                BorderRadius.circular(20), // Rounded corners
-                            border: Border.all(
-                                color: TColors.textDark, width: 1), // Border
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.person,
-                                  color: TColors.textDark,
-                                  size: 16), // Icon inside tag
-                              const SizedBox(width: 4),
-                              Text(
-                                review.anonymous == 'Yes'
-                                    ? 'Anonymous'
-                                    : review.userName,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: TColors.textDark, // Text color
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: TColors.cream, // Tag background color
+                                borderRadius: BorderRadius.circular(
+                                    20), // Rounded corners
+                                border: Border.all(
+                                    color: TColors.textDark,
+                                    width: 1), // Border
                               ),
-                            ],
-                          ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person,
+                                      color: TColors.textDark,
+                                      size: 16), // Icon inside tag
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    review.anonymous == 'Yes'
+                                        ? 'Anonymous'
+                                        : review.userName,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: TColors.textDark, // Text color
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -116,12 +128,28 @@ class ViewReviewPage extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // Timestamp
-                Text(
-                  DateFormat('dd MMM yyyy, hh:mm a').format(review.timestamp),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: TColors.textDark.withOpacity(0.8),
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      DateFormat('dd MMM yyyy, hh:mm a')
+                          .format(review.timestamp),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: TColors.textDark.withOpacity(0.8),
+                      ),
+                    ),
+                    SizedBox(width: 230),
+                    GestureDetector(
+                      onTap: () {
+                        _showDeleteDialog(context, review);
+                      },
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
 
@@ -130,11 +158,63 @@ class ViewReviewPage extends StatelessWidget {
                   color: TColors.textDark.withOpacity(0.5),
                   thickness: 1,
                 ),
+                const SizedBox(height: 4), // Space between username and icon
               ],
             );
           },
         );
+        ;
       }),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, ReviewModel review) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TColors.cream, // Set background color
+        title: Text(
+          'Delete Review',
+          style: TextStyle(
+            color: Colors.black, // Title color
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete this review?',
+          style: TextStyle(color: Colors.black, fontSize: 16), // Content color
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop(); // Close the dialog
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.black, // Cancel button color
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop(); // Close the dialog
+              await discoverController.deleteReview(review);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Review deleted successfully!'),
+              ));
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.black,
+                side: BorderSide(
+                    color: Colors.black, // Border color of the button
+                    width: 2.0)),
+            child: Text('Delete'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -71,6 +71,7 @@ class CafePage extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       showFeedbackDialog(context, vendorId, cafe);
+                      // Trigger DiscoverController refresh after feedback submission
                     },
                     icon: Icon(
                       Icons.feedback,
@@ -927,21 +928,17 @@ void showFeedbackDialog(
                       ElevatedButton(
                         onPressed: () async {
                           // Create feedback model
-                          final feedback = ReviewModel(
+
+                          reviewController.addReview(
+                            vendorId: vendorId,
+                            cafeId: cafe.id,
                             userId: userController.currentUserId,
                             userName: userController.user.value.username,
                             feedback: _feedbackController.text.trim(),
                             rating: _rating,
                             timestamp: DateTime.now(),
-                            cafeId: cafe.id,
                             cafeName: cafe.name,
                             anonymous: _anonymous,
-                          );
-
-                          await vendorRepo.submitFeedback(
-                            vendorId: vendorId,
-                            cafeId: cafe.id,
-                            feedback: feedback,
                           );
 
                           // Re-fetch the reviews after submission

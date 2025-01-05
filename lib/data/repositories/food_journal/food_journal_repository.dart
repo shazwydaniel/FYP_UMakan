@@ -312,7 +312,6 @@ class FoodJournalRepository {
   }
 
   Future<Map<String, dynamic>> analyzeFoodLogs(String userId) async {
-    // Initialize frequency maps
     Map<String, int> foodFrequency = {};
     Map<String, int> locationFrequency = {};
 
@@ -335,7 +334,7 @@ class FoodJournalRepository {
 
         // Extract itemId and cafeId
         String itemId = data['entry_ID'] ?? '';
-        String cafeId = data['cafeLocation'] ?? ''; //or cafe
+        String cafeId = data['cafeLocation'] ?? '';
 
         if (itemId.isNotEmpty) {
           // Increment food count

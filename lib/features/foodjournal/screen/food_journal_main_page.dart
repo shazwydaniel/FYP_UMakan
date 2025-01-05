@@ -9,7 +9,6 @@ import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/foodjournal/screen/food_journal_history.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/navigation_menu.dart';
-import 'package:fyp_umakan/radio_bar_chart.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
@@ -1163,6 +1162,11 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
     File? selectedImage; // To store the picked image
     final foodJController2 = FoodJournalController.instance;
 
+    // State variables for checkboxes
+    bool isSpicy = false;
+    bool isVegetarian = false;
+    bool isLowSugar = false;
+
     Future<void> pickImage(BuildContext context) async {
       final picker = ImagePicker();
 
@@ -1171,54 +1175,34 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor:
-                TColors.cream, // Set background color to TColors.cream
+            backgroundColor: TColors.cream,
             title: Text(
               "Choose Image Source",
-              style: TextStyle(
-                  color: Colors.black), // Set title text color to black
+              style: TextStyle(color: Colors.black),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: Icon(
-                    Icons.camera_alt,
-                    color: Colors.black, // Set icon color to black
-                  ),
-                  title: Text(
-                    "Camera",
-                    style: TextStyle(
-                        color: Colors.black), // Set text color to black
-                  ),
+                  leading: Icon(Icons.camera_alt, color: Colors.black),
+                  title: Text("Camera", style: TextStyle(color: Colors.black)),
                   onTap: () async {
                     final pickedFile =
                         await picker.pickImage(source: ImageSource.camera);
                     if (pickedFile != null) {
-                      setState(() {
-                        selectedImage = File(pickedFile.path);
-                      });
+                      selectedImage = File(pickedFile.path);
                     }
                     Navigator.of(context).pop(); // Close the dialog
                   },
                 ),
                 ListTile(
-                  leading: Icon(
-                    Icons.photo,
-                    color: Colors.black, // Set icon color to black
-                  ),
-                  title: Text(
-                    "Gallery",
-                    style: TextStyle(
-                        color: Colors.black), // Set text color to black
-                  ),
+                  leading: Icon(Icons.photo, color: Colors.black),
+                  title: Text("Gallery", style: TextStyle(color: Colors.black)),
                   onTap: () async {
                     final pickedFile =
                         await picker.pickImage(source: ImageSource.gallery);
                     if (pickedFile != null) {
-                      setState(() {
-                        selectedImage = File(pickedFile.path);
-                      });
+                      selectedImage = File(pickedFile.path);
                     }
                     Navigator.of(context).pop(); // Close the dialog
                   },
@@ -1234,167 +1218,226 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text("Add Meals",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    )),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Center(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text("Add Meals",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 100),
-            ],
-          ),
-          backgroundColor: TColors.cream,
-          content: SizedBox(
-            height: 450, // Increased height to accommodate image picker
-            width: 200,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: itemName,
-                  decoration: InputDecoration(
-                    labelText: 'Meal Name',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
+              backgroundColor: TColors.cream,
+              content: SizedBox(
+                height: 550, // Increased height to accommodate image picker
+                width: 300,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: itemName,
+                      decoration: InputDecoration(
+                        labelText: 'Meal Name',
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: itemCalories,
+                      decoration: InputDecoration(
+                        labelText: 'Amount of Calories',
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: itemPrice,
+                      decoration: InputDecoration(
+                        labelText: 'Cost',
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: itemLocation,
+                      decoration: InputDecoration(
+                        labelText: 'Location',
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    // Image Picker Section
+                    GestureDetector(
+                      onTap: () => pickImage(context),
+                      child: Container(
+                        height: 100,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: selectedImage != null
+                            ? Image.file(
+                                selectedImage!,
+                                fit: BoxFit.cover,
+                              )
+                            : Center(child: Icon(Icons.add_a_photo)),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text("More Details",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    // Checkboxes
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Is Spicy'),
+                        Checkbox(
+                          value: isSpicy,
+                          onChanged: (value) {
+                            setState(() {
+                              isSpicy = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Is Vegetarian'),
+                        Checkbox(
+                          value: isVegetarian,
+                          onChanged: (value) {
+                            setState(() {
+                              isVegetarian = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Is Low Sugar'),
+                        Checkbox(
+                          value: isLowSugar,
+                          onChanged: (value) {
+                            setState(() {
+                              isLowSugar = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                TextFormField(
-                  controller: itemCalories,
-                  decoration: InputDecoration(
-                    labelText: 'Amount of Calories',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                TextFormField(
-                  controller: itemPrice,
-                  decoration: InputDecoration(
-                    labelText: 'Cost',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                TextFormField(
-                  controller: itemLocation,
-                  decoration: InputDecoration(
-                    labelText: 'Location',
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                ),
-                SizedBox(height: TSizes.spaceBtwSections),
-                // Image Picker Section
-                GestureDetector(
-                  onTap: () => pickImage(context),
+              ),
+              actions: <Widget>[
+                Center(
                   child: Container(
-                    height: 100,
-                    width: double.infinity,
+                    width: 120,
+                    height: 50,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(10),
+                      color: TColors.mustard,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
                     ),
-                    child: selectedImage != null
-                        ? Image.file(
+                    child: TextButton(
+                      onPressed: () async {
+                        final uuid = Uuid();
+                        final journalManualId = uuid.v4();
+                        String? imageUrl;
+
+                        if (selectedImage != null) {
+                          imageUrl = await foodJController2.uploadImage(
                             selectedImage!,
-                            fit: BoxFit.cover,
-                          )
-                        : Center(child: Icon(Icons.add_a_photo)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Center(
-              child: Container(
-                width: 120,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: TColors.mustard,
-                  borderRadius: BorderRadius.circular(20.0),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: () async {
-                    final uuid = Uuid();
-                    final journalManualId = uuid.v4();
-                    String? imageUrl;
+                            foodJController2.getCurrentUserId(),
+                            journalManualId,
+                          );
+                        }
+                        // Add selected item to the food journal
+                        final journalItem = JournalItem(
+                          id: journalManualId,
+                          name: itemName.text.trim(),
+                          price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
+                          calories: int.tryParse(itemCalories.text.trim()) ?? 0,
+                          cafe: itemLocation.text.trim(),
+                          imagePath: imageUrl ?? '',
+                          cafeId: '',
+                          vendorId: '',
+                          cafeLocation: '',
+                          isUserGenerated: true,
+                          isSpicy: isSpicy,
+                          isVegetarian: isVegetarian,
+                          isLowSugar: isLowSugar,
+                        );
 
-                    if (selectedImage != null) {
-                      imageUrl = await foodJController2.uploadImage(
-                        selectedImage!,
-                        foodJController2.getCurrentUserId(),
-                        journalManualId,
-                      );
-                    }
-                    // Add selected item to the food journal
-                    final journalItem = JournalItem(
-                      id: journalManualId,
-                      name: itemName.text.trim(),
-                      price: double.tryParse(itemPrice.text.trim()) ?? 0.0,
-                      calories: int.tryParse(itemCalories.text.trim()) ?? 0,
-                      cafe: itemLocation.text.trim(),
-                      imagePath: imageUrl ?? '', // Save the image path
-                      cafeId: '',
-                      vendorId: '',
-                      cafeLocation: '',
-                      isUserGenerated: true,
-                    );
+                        String userId =
+                            FoodJournalController.instance.getCurrentUserId();
 
-                    String userId =
-                        FoodJournalController.instance.getCurrentUserId();
+                        foodJController2.addFoodToJournal(userId, journalItem);
 
-                    foodJController2.addFoodToJournal(userId, journalItem);
+                        // Prepare expense data for the Money Journal
+                        final expenseData = {
+                          'itemName': itemName.text.trim(),
+                          'price':
+                              double.tryParse(itemPrice.text.trim()) ?? 0.0,
+                          'date': DateTime.now().toIso8601String(),
+                          'type': 'Food',
+                        };
 
-                    // Prepare expense data for the Money Journal
-                    final expenseData = {
-                      'itemName': itemName.text.trim(),
-                      'price': double.tryParse(itemPrice.text.trim()) ?? 0.0,
-                      'date': DateTime.now().toIso8601String(),
-                      'type': 'Food',
-                    };
+                        // Access UserController and add the expense
+                        final userController = UserController.instance;
+                        userController.addExpense(userId, 'Food', expenseData);
 
-                    // Access UserController and add the expense
-                    final userController = UserController.instance;
-                    userController.addExpense(userId, 'Food', expenseData);
-
-                    try {
-                      print('Meal added to food and money journal!');
-                      Navigator.of(context).pop(); // Close the dialog
-                    } catch (e) {
-                      print('Error adding meal to journal: $e');
-                    }
-                  },
-                  child: Text(
-                    'ADD MEAL',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+                        try {
+                          print('Meal added to food and money journal!');
+                          Navigator.of(context).pop(); // Close the dialog
+                        } catch (e) {
+                          print('Error adding meal to journal: $e');
+                        }
+                      },
+                      child: Text(
+                        'ADD MEAL',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            )
-          ],
+                )
+              ],
+            );
+          },
         );
       },
     );
