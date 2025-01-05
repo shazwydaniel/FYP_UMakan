@@ -106,7 +106,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                         final locationIcon = isInCampus ? Iconsax.location : Iconsax.location_add;
 
                         return Container(
-                          height: 180,
+                          height: 220,
                           margin: const EdgeInsets.only(bottom: 20),
                           decoration: BoxDecoration(
                             color: TColors.cream,
@@ -195,7 +195,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                                           ),
                                         ),
                                       const SizedBox(height: 20),
-                                      Row(
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           // Active Status Tag with Icon
                                           Container(
@@ -206,7 +207,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(activeStatusIcon, size: 16, color: Colors.black), // Dynamic icon
+                                                Icon(activeStatusIcon, size: 16, color: Colors.black),
                                                 const SizedBox(width: 5),
                                                 Text(
                                                   org.activeStatus,
@@ -218,7 +219,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          const SizedBox(height: 10),
+
                                           // Location Tag with Icon
                                           Container(
                                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -228,7 +230,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(locationIcon, size: 16, color: Colors.black), // Dynamic location icon
+                                                Icon(locationIcon, size: 16, color: Colors.black),
                                                 const SizedBox(width: 5),
                                                 Text(
                                                   org.location,
