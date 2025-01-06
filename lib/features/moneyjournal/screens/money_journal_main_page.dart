@@ -969,24 +969,24 @@ class MoneyJournalMainPage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        PopupMenuItem(
-                          value: 'Expense Type',
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Iconsax.money_2, color: TColors.bubbleOlive, size: 18),
-                              SizedBox(width: 8),
-                              Text(
-                                'Expense Type',
-                                style: TextStyle(
-                                  color: TColors.bubbleOlive,
-                                  fontWeight: FontWeight.bold, 
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // PopupMenuItem(
+                        //   value: 'Expense Type',
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.start,
+                        //     children: [
+                        //       Icon(Iconsax.money_2, color: TColors.bubbleOlive, size: 18),
+                        //       SizedBox(width: 8),
+                        //       Text(
+                        //         'Expense Type',
+                        //         style: TextStyle(
+                        //           color: TColors.bubbleOlive,
+                        //           fontWeight: FontWeight.bold, 
+                        //           fontSize: 16,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -1085,18 +1085,18 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  // Row(
-                                  //   children: [
-                                  //     Text(
-                                  //       'RM ${totalMonthlySpending.toStringAsFixed(2)}',
-                                  //       style: TextStyle(
-                                  //         fontSize: 18,
-                                  //         fontWeight: FontWeight.bold,
-                                  //         color: TColors.cream,
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'RM ${totalMonthlySpending.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: TColors.blush,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -1474,10 +1474,10 @@ class MoneyJournalMainPage extends StatelessWidget {
                     ),
                     value: selectedCategory, // Default value
                     items: [
-                      DropdownMenuItem(
-                        value: 'Food',
-                        child: Text('Food'),
-                      ),
+                      // DropdownMenuItem(
+                      //   value: 'Food',
+                      //   child: Text('Food'),
+                      // ),
                       DropdownMenuItem(
                         value: 'Non-Food',
                         child: Text('Non-Food'),
