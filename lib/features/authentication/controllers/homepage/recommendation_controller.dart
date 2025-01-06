@@ -17,7 +17,7 @@ import 'package:get_storage/get_storage.dart';
 class RecommendationController extends GetxController {
   static RecommendationController get instance => Get.find();
 
-  final userController = Get.find<UserController>();
+  final userController = UserController.instance;
   final vendorRepo = VendorRepository.instance;
   final foodJournalController = FoodJournalController.instance;
   final foodJournalRepo = FoodJournalRepository.instance;
@@ -29,7 +29,6 @@ class RecommendationController extends GetxController {
     super.onInit();
     // Set the initial time frame index
     currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
-    getRecommendedList();
 
     // Update the time frame index every minute
     Timer.periodic(Duration(minutes: 1), (_) {
@@ -38,7 +37,7 @@ class RecommendationController extends GetxController {
     print(getCurrentTimeFrameIndex());
   }
 
-  Future<List<CafeItem>> getRecommendedList() async {
+  Future<List<CafeItem>> getRecommendedList(String userId) async {
     final foodMoney = userController.user.value.actualRemainingFoodAllowance;
     final BMR = userController.calculateBMR();
 
@@ -55,9 +54,12 @@ class RecommendationController extends GetxController {
     print('Prefer Spicy? $prefSpicy');
     print('Prefer Vegetarian? $prefVegetarian');
     print('Prefer Low Sugar? $prefLowSugar');
+    print('Allowance Per Meal $allowancePerMeal');
+    print('Calories Per Meal $caloriesPerMeal');
 
     // Step 2: Analyze food logs
-    String userId = userController.user.value.id;
+
+    print('Current user from Recommendation Controller: $userId');
     Map<String, dynamic> analysis =
         await foodJournalRepo.analyzeFoodLogs(userId);
 
