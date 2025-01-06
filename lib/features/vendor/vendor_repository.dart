@@ -836,4 +836,28 @@ class VendorRepository {
       throw Exception('Failed to delete menu item: $e');
     }
   }
+
+  Future<List<Advertisement>> getAdvertisementsForCafe(
+      String vendorId, String cafeId) async {
+    try {
+      // Get the Firestore collection path for the specific cafe's advertisements
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection(
+              'Vendors') // Adjust this if your root collection is different
+          .doc(vendorId)
+          .collection('Cafes')
+          .doc(cafeId)
+          .collection('Advertisements')
+          .get();
+
+      // Map the query results to a list of Advertisement objects
+      return querySnapshot.docs.map((doc) {
+        return Advertisement.fromMap(doc.data() as Map<String, dynamic>,
+            doc.id); // Pass document ID here
+      }).toList();
+    } catch (e) {
+      print('Error fetching advertisements for cafe: $e');
+      throw Exception('Error fetching advertisements for cafe');
+    }
+  }
 }

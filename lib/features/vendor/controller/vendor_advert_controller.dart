@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
@@ -221,6 +222,37 @@ class AdvertController extends GetxController {
       );
     } catch (e) {
       TLoaders.errorSnackBar(title: 'Error', message: e.toString());
+    }
+  }
+
+  void fetchAdvertisementsByCafe(String vendorId, String cafeId) async {
+    try {
+      // Clear the current advertisements
+      allAdvertisements.clear();
+
+      // Fetch advertisements from Firestore
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Vendors')
+          .doc(vendorId)
+          .collection('Cafe')
+          .doc(cafeId)
+          .collection('Advertisements')
+          .get();
+
+      // Map the query results to Advertisement objects
+      final ads = querySnapshot.docs.map((doc) {
+        return Advertisement.fromMap(
+            doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+
+      // Update the observable list
+      allAdvertisements.assignAll(ads);
+    } catch (e) {
+      print('Error fetching advertisements: $e');
+      TLoaders.errorSnackBar(
+        title: 'Error',
+        message: 'Failed to fetch advertisements',
+      );
     }
   }
 }

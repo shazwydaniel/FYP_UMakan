@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_umakan/features/admin/user_management_page.dart';
+import 'package:fyp_umakan/features/admin/user_pages/admin_authority.dart';
+import 'package:fyp_umakan/features/admin/user_pages/admin_student.dart';
+import 'package:fyp_umakan/features/admin/user_pages/admin_supportOrg.dart';
+import 'package:fyp_umakan/features/admin/user_pages/admin_vendor.dart';
 
 class AdminHomePage extends StatelessWidget {
   @override
@@ -12,67 +14,32 @@ class AdminHomePage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<Map<String, int>>(
-          future: _fetchUserCounts(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              final userCounts = snapshot.data!;
-              return GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  _buildCard(context, 'Students', Icons.school, Colors.green,
-                      'students', userCounts['students']),
-                  _buildCard(context, 'Vendors', Icons.store, Colors.orange,
-                      'vendors', userCounts['vendors']),
-                  _buildCard(
-                      context,
-                      'Support Organizations',
-                      Icons.support,
-                      Colors.purple,
-                      'supportOrganizations',
-                      userCounts['supportOrganizations']),
-                  _buildCard(context, 'Authorities', Icons.security, Colors.red,
-                      'authorities', userCounts['authorities']),
-                ],
-              );
-            }
-          },
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          children: [
+            _buildCard(context, 'Students', Icons.school, Colors.green,
+                AdminStudent()),
+            _buildCard(
+                context, 'Vendors', Icons.store, Colors.orange, AdminVendor()),
+            _buildCard(context, 'Support Organizations', Icons.support,
+                Colors.purple, AdminSupportorg()),
+            _buildCard(context, 'Authorities', Icons.security, Colors.red,
+                AdminAuthority()),
+          ],
         ),
       ),
     );
   }
 
-  Future<Map<String, int>> _fetchUserCounts() async {
-    final firestore = FirebaseFirestore.instance;
-
-    final studentsCount = await firestore.collection('Users').get();
-    final vendorsCount = await firestore.collection('Vendors').get();
-    final supportOrganizationsCount =
-        await firestore.collection('SupportOrganisation').get();
-    final authoritiesCount = await firestore.collection('Authority').get();
-
-    return {
-      'students': studentsCount.docs.length,
-      'vendors': vendorsCount.docs.length,
-      'supportOrganizations': supportOrganizationsCount.docs.length,
-      'authorities': authoritiesCount.docs.length,
-    };
-  }
-
   Widget _buildCard(BuildContext context, String title, IconData icon,
-      Color color, String userType, int? count) {
+      Color color, Widget targetPage) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (_) => UserManagementPage(userType: userType)),
+          MaterialPageRoute(builder: (_) => targetPage),
         );
       },
       child: Card(
@@ -88,11 +55,6 @@ class AdminHomePage extends StatelessWidget {
                 title,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                '$count Users',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 
 class AdminProfilePage extends StatelessWidget {
@@ -116,7 +118,33 @@ class AdminProfilePage extends StatelessWidget {
               // Logout Button
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: () => _logout(context),
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: TColors.cream,
+                          title: const Text('Confirm Logout'),
+                          content:
+                              const Text('Are you sure you want to log out?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text('Log Out'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirm == true) {
+                      await AuthenticatorRepository.instance.logout();
+                    }
+                  },
                   icon: Icon(Icons.logout),
                   label: Text('Logout'),
                   style: ElevatedButton.styleFrom(
