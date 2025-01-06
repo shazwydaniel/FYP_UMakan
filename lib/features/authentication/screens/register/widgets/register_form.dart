@@ -377,7 +377,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwSections),
 
-          Row(
+          /*Row(
             children: [
               SizedBox(
                 width: 24,
@@ -415,7 +415,7 @@ class TRegisterForm extends StatelessWidget {
                 ]),
               ),
             ],
-          ),
+          ),*/
 
           const SizedBox(height: TSizes.spaceBtwSections),
 
@@ -430,7 +430,7 @@ class TRegisterForm extends StatelessWidget {
                 //print('-------------SUCCESSFULLY REGISTERED!--------------');
                 //}
                 // },
-                child: const Text('Next')),
+                child: const Text('Register')),
           ),
 
           const SizedBox(height: TSizes.spaceBtwSections),
@@ -459,7 +459,7 @@ class TRegisterForm extends StatelessWidget {
           const SizedBox(height: TSizes.spaceBtwSections),
 
           // Footer
-          const Row(
+          /* const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               /* Google Button
@@ -476,7 +476,7 @@ class TRegisterForm extends StatelessWidget {
                     )),
               ),*/
 
-              SizedBox(width: TSizes.spaceBtwItems),
+              // SizedBox(width: TSizes.spaceBtwItems),
 
               /* Facebook Button
               Container(
@@ -492,7 +492,7 @@ class TRegisterForm extends StatelessWidget {
                     )),
               ),*/
             ],
-          ),
+          ),*/
         ],
       ),
     );

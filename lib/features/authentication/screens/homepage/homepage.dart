@@ -159,7 +159,7 @@ class HomePageScreen extends StatelessWidget {
                                   color: Colors.white.withOpacity(0.8),
                                 ),
                               ),
-                              
+
                               const SizedBox(height: 10),
 
                               // Recommended Food Allowance - Monthly (Value)
@@ -260,13 +260,17 @@ class HomePageScreen extends StatelessWidget {
                                         child: Obx(() {
                                           return StreamBuilder<
                                               DocumentSnapshot>(
-                                            stream: FirebaseFirestore.instance
-                                                .collection('Users')
-                                                .doc(userController
-                                                    .currentUserId)
-                                                .collection('financial_status')
-                                                .doc('current')
-                                                .snapshots(),
+                                            stream: userController
+                                                    .currentUserId.isEmpty
+                                                ? null // Prevent Firestore query if ID is empty
+                                                : FirebaseFirestore.instance
+                                                    .collection('Users')
+                                                    .doc(userController
+                                                        .user.value.id)
+                                                    .collection(
+                                                        'financial_status')
+                                                    .doc('current')
+                                                    .snapshots(),
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.waiting) {
@@ -275,7 +279,7 @@ class HomePageScreen extends StatelessWidget {
                                                   !snapshot.hasData ||
                                                   !snapshot.data!.exists) {
                                                 return Text(
-                                                  'Error or No Data',
+                                                  ' No Data',
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12),
@@ -453,7 +457,7 @@ class HomePageScreen extends StatelessWidget {
                                         ),
                                       ),
                                       // User's Calorie Intake Status (Tag)
-                                      Positioned(
+                                      /*Positioned(
                                         bottom: 0,
                                         right: 0,
                                         child: Obx(() {
@@ -462,7 +466,7 @@ class HomePageScreen extends StatelessWidget {
                                             future: FirebaseFirestore.instance
                                                 .collection('Users')
                                                 .doc(userController
-                                                    .currentUserId)
+                                                    .user.value.id)
                                                 .collection(
                                                     'calorie_intake_status')
                                                 .doc('current')
@@ -475,7 +479,7 @@ class HomePageScreen extends StatelessWidget {
                                                   !snapshot.hasData ||
                                                   !snapshot.data!.exists) {
                                                 return Text(
-                                                  'Error or No Data',
+                                                  'No Data',
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12),
@@ -545,7 +549,7 @@ class HomePageScreen extends StatelessWidget {
                                             },
                                           );
                                         }),
-                                      ),
+                                      ),*/
                                     ],
                                   ),
                                 ),
@@ -599,7 +603,8 @@ class HomePageScreen extends StatelessWidget {
                     // Meal Recommendations Section (Scrollable)
                     Obx(() {
                       return FutureBuilder<List<CafeItem>>(
-                        future: recommendedController.getRecommendedList(),
+                        future: recommendedController
+                            .getRecommendedList(userController.user.value.id),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -1292,40 +1297,42 @@ class HomePageScreen extends StatelessWidget {
                                   color: TColors.bubbleRed,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: FutureBuilder<int>(
-                                  future: foodJController.fetchStreakCount(
-                                      userController.currentUserId),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Text(
-                                        'Loading streak...',
-                                        style: TextStyle(
-                                          color: TColors.textLight,
-                                          fontSize: 13,
-                                        ),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text(
-                                        'Error loading streak',
-                                        style: TextStyle(
-                                          color: TColors.textLight,
-                                          fontSize: 13,
-                                        ),
-                                      );
-                                    } else {
-                                      final streakCount = snapshot.data ?? 0;
-                                      final dayLabel =
-                                          (streakCount == 1) ? 'day' : 'days';
-                                      return Text(
-                                        'Your Streaks: $streakCount $dayLabel',
-                                        style: TextStyle(
-                                          color: TColors.textLight,
-                                          fontSize: 13,
-                                        ),
-                                      );
-                                    }
-                                  },
+                                child: Obx(
+                                  () => FutureBuilder<int>(
+                                    future: foodJController.fetchStreakCount(
+                                        userController.user.value.id),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Text(
+                                          'Loading streak...',
+                                          style: TextStyle(
+                                            color: TColors.textLight,
+                                            fontSize: 13,
+                                          ),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text(
+                                          'Error loading streak',
+                                          style: TextStyle(
+                                            color: TColors.textLight,
+                                            fontSize: 13,
+                                          ),
+                                        );
+                                      } else {
+                                        final streakCount = snapshot.data ?? 0;
+                                        final dayLabel =
+                                            (streakCount == 1) ? 'day' : 'days';
+                                        return Text(
+                                          'Your Streaks: $streakCount $dayLabel',
+                                          style: TextStyle(
+                                            color: TColors.textLight,
+                                            fontSize: 13,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
                               ),
                             ],

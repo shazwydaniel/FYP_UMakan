@@ -24,6 +24,7 @@ class VendorController extends GetxController {
   Rx<Vendor> vendor = Vendor.empty().obs;
   Rx<CafeDetails> cafe = CafeDetails.empty().obs;
   final cafes = <CafeDetails>[].obs; // Observable list of cafes
+  final hidePassword = true.obs;
 
   //String get currentVendorId => vendor.value.id;
 

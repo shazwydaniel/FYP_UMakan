@@ -19,7 +19,7 @@ class RegisterController extends GetxController {
 
   // Variables
   final hidePassword = true.obs;
-  final privacyPolicy = true.obs;
+  //final privacyPolicy = true.obs;
   final fullName = TextEditingController();
   final username = TextEditingController();
   final email = TextEditingController();
@@ -77,12 +77,12 @@ class RegisterController extends GetxController {
       }
 
       // Privacy Policy Check
-      if (!privacyPolicy.value) {
+      /* if (!privacyPolicy.value) {
         TLoaders.errorSnackBar(
             title: 'Privacy Policy',
             message: 'You need to accept the privacy policy to proceed.');
         return;
-      }
+      }*/
 
       // Check Username Availability
       final usernameAvailable = await isUsernameAvailable(username.text.trim());

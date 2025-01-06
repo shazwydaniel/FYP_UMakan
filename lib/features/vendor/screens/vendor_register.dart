@@ -5,7 +5,9 @@ import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
 import 'package:fyp_umakan/utils/constants/text_strings.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
+import 'package:fyp_umakan/utils/validators/validation.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 
 class VendorRegisterPage extends StatelessWidget {
   const VendorRegisterPage({super.key});
@@ -59,23 +61,24 @@ class VendorRegisterPage extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: TSizes.spaceBtwInputFields),
-                TextFormField(
-                  controller: vendorController.vendorPassword,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.visibility_off),
-                      onPressed: () {}, // Add password toggle logic if needed
+                Obx(
+                  () => TextFormField(
+                    controller: vendorController.vendorPassword,
+                    validator: (value) => TValidator.validatePassword(value),
+                    obscureText: vendorController.hidePassword.value,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        onPressed: () => vendorController.hidePassword.value =
+                            !vendorController.hidePassword.value,
+                        icon: Icon(vendorController.hidePassword.value
+                            ? Iconsax.eye_slash
+                            : Iconsax
+                                .eye), // Add password toggle logic if needed
+                      ),
                     ),
                   ),
-                  obscureText: true,
                 ),
                 const SizedBox(height: TSizes.spaceBtwInputFields),
                 TextFormField(
@@ -107,7 +110,7 @@ class VendorRegisterPage extends StatelessWidget {
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: TSizes.spaceBtwSections),
-                Row(
+                /*  Row(
                   children: [
                     SizedBox(
                       width: 24,
@@ -149,7 +152,7 @@ class VendorRegisterPage extends StatelessWidget {
                       ]),
                     ),
                   ],
-                ),
+                ),*/
                 const SizedBox(height: TSizes.spaceBtwSections),
                 SizedBox(
                   width: double.infinity,

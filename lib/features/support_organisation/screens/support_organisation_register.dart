@@ -50,8 +50,9 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                 // Organisation Name
                 TextFormField(
                   controller: _controller.organisationNameController,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter organisation name' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter organisation name'
+                      : null,
                   decoration: const InputDecoration(
                     labelText: 'Organisation Name',
                     prefixIcon: Icon(Icons.business),
@@ -62,8 +63,9 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                 // Email
                 TextFormField(
                   controller: _controller.emailController,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter email' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter email'
+                      : null,
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.email),
@@ -76,8 +78,9 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                 Obx(
                   () => TextFormField(
                     controller: _controller.passwordController,
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Please enter your password' : null,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Please enter your password'
+                        : null,
                     obscureText: _controller.hidePassword.value,
                     decoration: InputDecoration(
                       labelText: 'Password',
@@ -99,8 +102,9 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                 // Contact Number
                 TextFormField(
                   controller: _controller.contactNumberController,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter contact number' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please enter contact number'
+                      : null,
                   decoration: const InputDecoration(
                     labelText: 'Contact Number',
                     prefixIcon: Icon(Icons.phone),
@@ -127,8 +131,9 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                     prefixIcon: Icon(Icons.location_on),
                   ),
                   dropdownColor: TColors.cream,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please select a location' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Please select a location'
+                      : null,
                 ),
                 const SizedBox(height: TSizes.spaceBtwInputFields),
 
@@ -154,7 +159,7 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                 const SizedBox(height: TSizes.spaceBtwSections),
 
                 // Agree to Privacy Policy
-                Row(
+                /* Row(
                   children: [
                     SizedBox(
                       width: 24,
@@ -190,7 +195,7 @@ class SupportOrganisationRegisterPage extends StatelessWidget {
                       ]),
                     ),
                   ],
-                ),
+                ),*/
                 const SizedBox(height: TSizes.spaceBtwSections),
 
                 // Register Button

@@ -368,7 +368,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
+                /* Container(
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
@@ -400,7 +400,7 @@ class LoginScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
