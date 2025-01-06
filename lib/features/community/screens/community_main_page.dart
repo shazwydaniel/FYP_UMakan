@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import "dart:convert";
 import "dart:io";
 
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:dart_sentiment/dart_sentiment.dart";
 import "package:file_picker/file_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/support_organisation/controller/support_organisation_controller.dart";
 import "package:fyp_umakan/features/support_organisation/model/support_organisation_model.dart";
@@ -15,6 +18,7 @@ import "package:get/get.dart";
 import "package:get/get_core/src/get_main.dart";
 import "package:url_launcher/url_launcher.dart";
 import "package:iconsax/iconsax.dart";
+import 'package:http/http.dart' as http;
 
 class CommunityMainPageScreen extends StatelessWidget {
   const CommunityMainPageScreen({super.key});
@@ -840,6 +844,23 @@ class CommunityMainPageScreen extends StatelessWidget {
                       child: TextButton(
                         onPressed: () async {
                           try {
+                            // === Sensitive Sentiment Detection Integration ===
+                            final message = messageController.text;
+
+                            // Call the backup method for sentiment detection
+                            final isSensitive = await isMessageSensitiveWithDartSentiment(message);
+
+                            if (isSensitive) {
+                              Get.snackbar(
+                                'Warning',
+                                'Your message contains inappropriate content and cannot be posted.',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                              return; // Prevent further execution
+                            }
+                            // === End of Sensitive Sentiment Detection Integration ===
+
                             // Fetch the current user's role from all collections
                             String? userRole;
 
@@ -862,7 +883,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                     .doc(userId)
                                     .get();
                                 if (supportOrgDoc.exists) {
-                                  userRole = 'SupportOrganisation';
+                                  userRole = 'Support Organisation';
                                 }
                               }
                             }
@@ -951,5 +972,63 @@ class CommunityMainPageScreen extends StatelessWidget {
       // Throw an exception if necessary or handle it appropriately
       throw Exception('Error fetching user role');
     }
+  }
+
+  // Sensitive Sentiment Detection Model using Moderation Endpoint
+  // Future<bool> isMessageSensitive(String message) async {
+  //   final apiKey = dotenv.env['OPENAI_API_KEY']; // Load API Key from .env
+  //   final url = Uri.parse("https://api.openai.com/v1/moderations");
+
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $apiKey',
+  //       },
+  //       body: jsonEncode({
+  //         "model": "omni-moderation-latest", // Updated model for moderation
+  //         "input": message,
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final result = jsonDecode(response.body);
+
+  //       // Extract the 'flagged' field
+  //       final flagged = result['results'][0]['flagged'];
+        
+  //       // Log the response for debugging
+  //       print('Moderation API Response: $result');
+
+  //       return flagged; // Return if content is flagged
+  //     } else {
+  //       // Log API errors for debugging
+  //       print('OpenAI API error: ${response.statusCode} - ${response.body}');
+  //       return false; // Default to false on API failure
+  //     }
+  //   } catch (e) {
+  //     // Log exceptions for debugging
+  //     print('Error during OpenAI API call: $e');
+  //     return false; // Default to false on exception
+  //   }
+  // }
+
+  // Backup Sensitive Sentiment Detection using Dart Sentiment Package
+  Future<bool> isMessageSensitiveWithDartSentiment(String message) async {
+    final sentiment = Sentiment();
+    final analysis = sentiment.analysis(message);
+
+    // Example threshold for detecting sensitivity based on sentiment score
+    final negativityThreshold = -0.5;
+
+    print('Sentiment Analysis: $analysis'); // Log sentiment analysis details
+
+    // Check if sentiment score is below the negativity threshold
+    if (analysis['score'] <= negativityThreshold) {
+      return true; // Mark the message as sensitive
+    }
+
+    return false; // Message is not sensitive
   }
 }
