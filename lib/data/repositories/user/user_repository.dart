@@ -121,6 +121,8 @@ class UserRepository extends GetxController {
   // Update User Data in Firestore ------------------------------------
   Future<void> updateUserDetails(UserModel updatedUser) async {
     try {
+      print('Updating additionalAllowance: ${updatedUser.additionalAllowance}');
+      print('Updating additionalExpense: ${updatedUser.additionalExpense}');
       await _db
           .collection("Users")
           .doc(updatedUser.id)
@@ -196,8 +198,10 @@ class UserRepository extends GetxController {
       debugPrint("Fetching role for UID: $uid");
 
       // Check the "Users" collection
-      DocumentSnapshot userDocSnapshot =
-          await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+      DocumentSnapshot userDocSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(uid)
+          .get();
 
       if (userDocSnapshot.exists) {
         debugPrint("User document found in 'Users' collection");

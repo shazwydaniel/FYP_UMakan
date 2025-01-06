@@ -14,8 +14,6 @@ import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:get/get.dart";
 import "package:get/get_core/src/get_main.dart";
 import "package:url_launcher/url_launcher.dart";
-import "../controllers/helping_organisation_controller.dart";
-import "../models/helping_organisation_model.dart";
 import "package:iconsax/iconsax.dart";
 
 class CommunityMainPageScreen extends StatelessWidget {
@@ -283,6 +281,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Fetch and display Community News (Firebase)
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance.collection('community_news').snapshots(),
@@ -350,8 +349,9 @@ class CommunityMainPageScreen extends StatelessWidget {
                                     final anonymityStatus = doc['anonymity_status'] ?? 'Public';
                                     final includeTelegram = doc['include_telegram'] ?? 'Yes';
 
+                                    // Cross Reference
                                     return FutureBuilder<DocumentSnapshot>(
-                                      future: FirebaseFirestore.instance.collection('Users').doc(postedUserId).get(),
+                                      future: _fetchUserRole(postedUserId),
                                       builder: (context, userSnapshot) {
                                         if (userSnapshot.connectionState == ConnectionState.waiting) {
                                           return Center(child: CircularProgressIndicator());
@@ -429,6 +429,12 @@ class CommunityMainPageScreen extends StatelessWidget {
                                             decoration: BoxDecoration(
                                               color: TColors.cream,
                                               borderRadius: BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: userRole == 'Support Organisation'
+                                                    ? TColors.teal
+                                                    : (userRole == 'Authority' ? TColors.stark_blue : Colors.transparent),
+                                                width: 4.0,
+                                              ),
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.black.withOpacity(0.07),
@@ -453,7 +459,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                     ),
                                                     softWrap: true,
                                                   ),
-                                                  SizedBox(height: 15),
+                                                  SizedBox(height: 10),
                                                   
                                                   // Display Attached Image (if exists)
                                                   if ((doc.data() as Map<String, dynamic>).containsKey('attached_image') &&
@@ -483,20 +489,28 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                       ),
                                                     ),
 
-                                                  SizedBox(height: 15),
+                                                  SizedBox(height: 5),
 
                                                   // Username/Anonymity Information
                                                   Text(
                                                     anonymityStatus == 'Anonymous'
                                                         ? 'Posted by: Anonymous'
-                                                        : 'Posted by: $username',
+                                                        : (() {
+                                                            if (userRole == 'Support Organisation') {
+                                                              // Fetch organisation name
+                                                              final organisationName = userData?['Organisation Name'] ?? 'Unknown Organisation';
+                                                              return 'Posted by: $organisationName';
+                                                            } else {
+                                                              return 'Posted by: $username';
+                                                            }
+                                                          })(),
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 15,
                                                       fontWeight: FontWeight.normal,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 10),
+                                                  SizedBox(height: 20),
 
                                                   // Bottom Action Row
                                                   Align(
@@ -510,8 +524,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                           GestureDetector(
                                                             onTap: () async {
                                                               if (userData != null) {
-                                                                final telegramHandle = userData['telegramHandle'];
-                                                                if (telegramHandle != null) {
+                                                                // Check for Telegram Handle across all collections
+                                                                final telegramHandle = userData['telegramHandle'] ?? 
+                                                                                      userData['Telegram Handle']; // Handles different key naming conventions
+                                                                if (telegramHandle != null && telegramHandle.toString().isNotEmpty) {
                                                                   final url = "https://t.me/$telegramHandle";
                                                                   await launchUrl(Uri.parse(url));
                                                                 } else {
@@ -531,21 +547,48 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                         else
                                                           SizedBox(width: 20),
 
-                                                        // Tag (Always displayed)
-                                                        Container(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                          decoration: BoxDecoration(
-                                                            color: tagColor,
-                                                            borderRadius: BorderRadius.circular(15),
-                                                          ),
-                                                          child: Text(
-                                                            newsType,
-                                                            style: TextStyle(
-                                                              color: Colors.white,
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 12,
+                                                        // Tags Row
+                                                        Row(
+                                                          children: [
+                                                            // Role Tag
+                                                            if (userRole == 'Support Organisation' || userRole == 'Authority')
+                                                              Container(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                decoration: BoxDecoration(
+                                                                  color: userRole == 'Support Organisation'
+                                                                      ? TColors.blush
+                                                                      : TColors.stark_blue,
+                                                                  borderRadius: BorderRadius.circular(15),
+                                                                ),
+                                                                child: Text(
+                                                                  userRole, // Display the role
+                                                                  style: TextStyle(
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                            const SizedBox(width: 5), // Spacing between tags
+
+                                                            // Primary Tag (Offer Help/Need Help)
+                                                            Container(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                              decoration: BoxDecoration(
+                                                                color: tagColor,
+                                                                borderRadius: BorderRadius.circular(15),
+                                                              ),
+                                                              child: Text(
+                                                                newsType,
+                                                                style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
@@ -621,227 +664,254 @@ class CommunityMainPageScreen extends StatelessWidget {
     );
   }
   
-void _showPostMessageModal(BuildContext context) {
-  final TextEditingController messageController = TextEditingController();
-  String selectedType = 'Offer Help';
-  String selectedDuration = '1 Day';
-  String anonymityStatus = 'Public';
-  String includeTelegram = 'Yes';
-  final String? userId = AuthenticatorRepository.instance.authUser?.uid;
-  String? attachedImageUrl;
+  void _showPostMessageModal(BuildContext context) {
+    final TextEditingController messageController = TextEditingController();
+    String selectedType = 'Offer Help';
+    String selectedDuration = '1 Day';
+    String anonymityStatus = 'Public';
+    String includeTelegram = 'Yes';
+    final String? userId = AuthenticatorRepository.instance.authUser?.uid;
+    String? attachedImageUrl;
 
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: Container(
-          padding: EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            color: TColors.cream,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.black),
-                      onPressed: () {
-                        Navigator.pop(context);
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: TColors.cream,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.close, color: Colors.black),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    Text(
+                      'Post a Message',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    TextField(
+                      controller: messageController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your message',
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                      value: selectedType,
+                      items: [
+                        DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
+                        DropdownMenuItem(value: 'Need Help', child: Text('Need Help')),
+                      ],
+                      onChanged: (String? newValue) {
+                        selectedType = newValue!;
                       },
                     ),
-                  ),
-                  Text(
-                    'Post a Message',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                      value: selectedDuration,
+                      items: [
+                        DropdownMenuItem(value: '1 Day', child: Text('1 Day')),
+                        DropdownMenuItem(value: '3 Days', child: Text('3 Days')),
+                        DropdownMenuItem(value: '1 Week', child: Text('1 Week')),
+                      ],
+                      onChanged: (String? newValue) {
+                        selectedDuration = newValue!;
+                      },
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: messageController,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your message',
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
+                    SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                      value: anonymityStatus,
+                      items: [
+                        DropdownMenuItem(value: 'Public', child: Text('Public')),
+                        DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
+                      ],
+                      onChanged: (String? newValue) {
+                        anonymityStatus = newValue!;
+                      },
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                    value: selectedType,
-                    items: [
-                      DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
-                      DropdownMenuItem(value: 'Need Help', child: Text('Need Help')),
-                    ],
-                    onChanged: (String? newValue) {
-                      selectedType = newValue!;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                    value: selectedDuration,
-                    items: [
-                      DropdownMenuItem(value: '1 Day', child: Text('1 Day')),
-                      DropdownMenuItem(value: '3 Days', child: Text('3 Days')),
-                      DropdownMenuItem(value: '1 Week', child: Text('1 Week')),
-                    ],
-                    onChanged: (String? newValue) {
-                      selectedDuration = newValue!;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                    value: anonymityStatus,
-                    items: [
-                      DropdownMenuItem(value: 'Public', child: Text('Public')),
-                      DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
-                    ],
-                    onChanged: (String? newValue) {
-                      anonymityStatus = newValue!;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  // Label for Include Telegram Dropdown
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Want to Link Your Telegram?",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: TColors.textDark,
+                    SizedBox(height: 20),
+                    // Label for Include Telegram Dropdown
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Want to Link Your Telegram?",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: TColors.textDark,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                    value: includeTelegram,
-                    items: [
-                      DropdownMenuItem(value: 'Yes', child: Text('Yes')),
-                      DropdownMenuItem(value: 'No', child: Text('No')),
-                    ],
-                    onChanged: (String? newValue) {
-                      includeTelegram = newValue!;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  // Attach Image Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        attachedImageUrl != null ? 'Image Selected' : 'Attach an Image',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
                       ),
-                      TextButton(
-                        onPressed: () async {
-                          final result = await FilePicker.platform.pickFiles(type: FileType.image);
-                          if (result != null && result.files.isNotEmpty) {
-                            final path = result.files.first.path!;
-                            try {
-                              final imageUrl = await _uploadImageToFirebase(path);
-                              setState(() {
-                                attachedImageUrl = imageUrl;
-                              });
-                              Get.snackbar('Success', 'Image uploaded successfully!',
-                                  snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
-                            } catch (e) {
-                              Get.snackbar('Error', 'Failed to upload image.',
-                                  snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+                      value: includeTelegram,
+                      items: [
+                        DropdownMenuItem(value: 'Yes', child: Text('Yes')),
+                        DropdownMenuItem(value: 'No', child: Text('No')),
+                      ],
+                      onChanged: (String? newValue) {
+                        includeTelegram = newValue!;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    // Attach Image Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          attachedImageUrl != null ? 'Image Selected' : 'Attach an Image',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(type: FileType.image);
+                            if (result != null && result.files.isNotEmpty) {
+                              final path = result.files.first.path!;
+                              try {
+                                final imageUrl = await _uploadImageToFirebase(path);
+                                setState(() {
+                                  attachedImageUrl = imageUrl;
+                                });
+                                Get.snackbar('Success', 'Image uploaded successfully!',
+                                    snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+                              } catch (e) {
+                                Get.snackbar('Error', 'Failed to upload image.',
+                                    snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+                              }
                             }
+                          },
+                          child: Text(
+                            attachedImageUrl != null ? 'Change' : 'Attach',
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: TColors.forest),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: TColors.bubbleOrange,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
+                      child: TextButton(
+                        onPressed: () async {
+                          try {
+                            // Fetch the current user's role from all collections
+                            String? userRole;
+
+                            final userDoc = await FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(userId)
+                                .get();
+                            if (userDoc.exists) {
+                              userRole = userDoc.data()?['Role'];
+                            } else {
+                              final authorityDoc = await FirebaseFirestore.instance
+                                  .collection('Authority')
+                                  .doc(userId)
+                                  .get();
+                              if (authorityDoc.exists) {
+                                userRole = 'Authority';
+                              } else {
+                                final supportOrgDoc = await FirebaseFirestore.instance
+                                    .collection('SupportOrganisation')
+                                    .doc(userId)
+                                    .get();
+                                if (supportOrgDoc.exists) {
+                                  userRole = 'SupportOrganisation';
+                                }
+                              }
+                            }
+
+                            if (userRole == null) {
+                              throw Exception('User role not found');
+                            }
+
+                            // Add the news message to the community_news collection
+                            await FirebaseFirestore.instance.collection('community_news').add({
+                              'news_message': messageController.text,
+                              'type_of_news_message': selectedType,
+                              'news_duration': selectedDuration,
+                              'timestamp': Timestamp.now(),
+                              'user_id': userId,
+                              'anonymity_status': anonymityStatus,
+                              'user_role': userRole,
+                              'include_telegram': includeTelegram,
+                              'attached_image': attachedImageUrl, // Add image URL
+                            });
+
+                            Get.snackbar('Success', 'Your message has been posted!',
+                                backgroundColor: Colors.green, colorText: Colors.white);
+
+                            Navigator.pop(context);
+                          } catch (e) {
+                            Get.snackbar('Error', 'Failed to post the message',
+                                backgroundColor: Colors.red, colorText: Colors.white);
                           }
                         },
                         child: Text(
-                          attachedImageUrl != null ? 'Change' : 'Attach',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: TColors.forest),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: TColors.bubbleOrange,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.black, width: 2),
-                    ),
-                    child: TextButton(
-                      onPressed: () async {
-                        try {
-                          // Fetch the current user's role
-                          final userDoc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-                          final userRole = userDoc['Role'] ?? 'Unknown';
-
-                          // Add the news message to the community_news collection
-                          await FirebaseFirestore.instance.collection('community_news').add({
-                            'news_message': messageController.text,
-                            'type_of_news_message': selectedType,
-                            'news_duration': selectedDuration,
-                            'timestamp': Timestamp.now(),
-                            'user_id': userId,
-                            'anonymity_status': anonymityStatus,
-                            'user_role': userRole,
-                            'include_telegram': includeTelegram,
-                            'attached_image': attachedImageUrl, // Add image URL
-                          });
-
-                          Get.snackbar('Success', 'Your message has been posted!',
-                              backgroundColor: Colors.green, colorText: Colors.white);
-
-                          Navigator.pop(context);
-                        } catch (e) {
-                          Get.snackbar('Error', 'Failed to post the message',
-                              backgroundColor: Colors.red, colorText: Colors.white);
-                        }
-                      },
-                      child: Text(
-                        'Post',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
+                          'Post',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   // Function to Upload Image to Firebase Storage
   Future<String> _uploadImageToFirebase(String filePath) async {
@@ -849,5 +919,37 @@ void _showPostMessageModal(BuildContext context) {
     final firebaseStorageRef = FirebaseStorage.instance.ref().child('community_news_images/$fileName');
     await firebaseStorageRef.putFile(File(filePath));
     return await firebaseStorageRef.getDownloadURL();
+  }
+
+  // Helper Method to Fetch User Role
+  Future<DocumentSnapshot<Object?>> _fetchUserRole(String userId) async {
+    try {
+      // Check "Users" collection
+      DocumentSnapshot<Object?> userDoc =
+          await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+      if (userDoc.exists) return userDoc;
+
+      // Check "Authority" collection
+      DocumentSnapshot<Object?> authorityDoc =
+          await FirebaseFirestore.instance.collection('Authority').doc(userId).get();
+      if (authorityDoc.exists) return authorityDoc;
+
+      // Check "SupportOrganisation" collection
+      DocumentSnapshot<Object?> supportOrgDoc = await FirebaseFirestore.instance
+          .collection('SupportOrganisation')
+          .doc(userId)
+          .get();
+      if (supportOrgDoc.exists) return supportOrgDoc;
+
+      // Return an empty DocumentSnapshot if no match is found
+      return FirebaseFirestore.instance
+          .collection('Users') // Or any default collection path
+          .doc()
+          .get(); // Return an empty document snapshot
+    } catch (e) {
+      print('Error fetching user role: $e');
+      // Throw an exception if necessary or handle it appropriately
+      throw Exception('Error fetching user role');
+    }
   }
 }

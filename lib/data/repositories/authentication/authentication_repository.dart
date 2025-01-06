@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fyp_umakan/admin_navigation_menu.dart';
 import 'package:fyp_umakan/authority_navigation_menu.dart';
+import 'package:fyp_umakan/data/repositories/authority/authority_repository.dart';
+import 'package:fyp_umakan/data/repositories/support_organisation/support_organisation_repository.dart';
 import 'package:fyp_umakan/features/authentication/controllers/homepage/recommendation_controller.dart';
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
@@ -34,6 +36,8 @@ class AuthenticatorRepository extends GetxController {
   final _auth = FirebaseAuth.instance;
   final UserRepository userRepository = Get.put(UserRepository());
   final VendorRepository vendorRepository = Get.put(VendorRepository());
+  final SupportOrganisationRepository supportOrganisationRepository = Get.put(SupportOrganisationRepository());
+  final AuthorityRepository authorityRepository = Get.put(AuthorityRepository());
 
   // Get Authenticated User
   User? get authUser => _auth.currentUser;
