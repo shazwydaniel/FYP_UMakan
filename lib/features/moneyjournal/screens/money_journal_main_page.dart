@@ -920,7 +920,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "View Your Spending",
+                      "Spending History",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -943,7 +943,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                           color: TColors.bubbleOlive,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(Iconsax.menu_board, color: Colors.white, size: 20),
+                        child: Icon(Iconsax.category, color: Colors.white, size: 20),
                       ),
                       onSelected: (value) {
                         selectedFilter.value = value; // Update filter state
@@ -1324,7 +1324,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Donut Chart with Month Tabs
+                          // Donut Chart with Month Tabs and Filtered Expense Items
                           DefaultTabController(
                             length: _calculateMonthlyTotals(expenses).keys.length, // Number of months
                             initialIndex: _calculateMonthlyTotals(expenses).keys.toList().indexOf(
@@ -1340,7 +1340,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                   indicatorColor: Colors.orangeAccent,
                                   labelStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: 18,
                                   ),
                                   tabs: _calculateMonthlyTotals(expenses)
                                       .keys
@@ -1348,67 +1348,311 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       .toList(),
                                 ),
 
-                                // Tab Bar View for Donut Charts
+                                // Tab Bar View for Donut Charts and Filtered Items
                                 Container(
-                                  height: 300, // Increased height for larger chart
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  height: 1000,
                                   child: TabBarView(
                                     children: _calculateMonthlyTotals(expenses).keys.map((month) {
-                                      final foodTotal = _calculateMonthlyTotals(foodExpenses)[month] ?? 0.0;
+                                      // Filter expenses for the selected month
+                                      final filteredFoodExpenses = foodExpenses.where((expense) {
+                                        final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                                        return createdAt != null &&
+                                            DateFormat('MMM yyyy').format(createdAt) == month;
+                                      }).toList();
+
+                                      final filteredNonFoodExpenses = nonFoodExpenses.where((expense) {
+                                        final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                                        return createdAt != null &&
+                                            DateFormat('MMM yyyy').format(createdAt) == month;
+                                      }).toList();
+
+                                      final foodTotal = _calculateMonthlyTotals(filteredFoodExpenses)[month] ?? 0.0;
                                       final nonFoodTotal =
-                                          _calculateMonthlyTotals(nonFoodExpenses)[month] ?? 0.0;
+                                          _calculateMonthlyTotals(filteredNonFoodExpenses)[month] ?? 0.0;
                                       final totalSpent = foodTotal + nonFoodTotal;
 
-                                      return SfCircularChart(
-                                        title: ChartTitle(
-                                          text: 'Expense Breakdown for $month',
-                                          textStyle: TextStyle(
-                                            color: TColors.cream,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        legend: Legend(
-                                          isVisible: true,
-                                          position: LegendPosition.bottom,
-                                          textStyle: TextStyle(
-                                            color: TColors.cream,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        annotations: <CircularChartAnnotation>[
-                                          CircularChartAnnotation(
-                                            widget: Text(
-                                              'RM ${totalSpent.toStringAsFixed(2)}',
-                                              style: TextStyle(
-                                                color: TColors.cream,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                        series: <CircularSeries>[
-                                          DoughnutSeries<MapEntry<String, double>, String>(
-                                            radius: '100%', // Increased size of the chart
-                                            innerRadius: '60%', // Donut style with wider cut-out
-                                            dataSource: [
-                                              MapEntry('Food', foodTotal),
-                                              MapEntry('Non-Food', nonFoodTotal),
-                                            ],
-                                            xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
-                                            yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
-                                            dataLabelSettings: DataLabelSettings(
-                                              isVisible: true,
+                                      return Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Donut Chart
+                                          SfCircularChart(
+                                            title: ChartTitle(
+                                              text: 'Expense Breakdown for $month',
                                               textStyle: TextStyle(
-                                                color: Colors.white,
+                                                color: TColors.cream,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            legend: Legend(
+                                              isVisible: true,
+                                              position: LegendPosition.bottom,
+                                              textStyle: TextStyle(
+                                                color: TColors.cream,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            pointColorMapper: (MapEntry<String, double> entry, _) {
-                                              return entry.key == 'Food' ? TColors.blush : TColors.bubbleOrange;
-                                            },
+                                            annotations: <CircularChartAnnotation>[
+                                              CircularChartAnnotation(
+                                                widget: Text(
+                                                  'RM ${totalSpent.toStringAsFixed(2)}',
+                                                  style: TextStyle(
+                                                    color: TColors.cream,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                            series: <CircularSeries>[
+                                              DoughnutSeries<MapEntry<String, double>, String>(
+                                                radius: '100%',
+                                                innerRadius: '60%',
+                                                dataSource: [
+                                                  MapEntry('Food', foodTotal),
+                                                  MapEntry('Non-Food', nonFoodTotal),
+                                                ],
+                                                xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
+                                                yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
+                                                dataLabelSettings: DataLabelSettings(
+                                                  isVisible: true,
+                                                  textStyle: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                pointColorMapper: (MapEntry<String, double> entry, _) {
+                                                  return entry.key == 'Food' ? TColors.blush : TColors.bubbleOrange;
+                                                },
+                                              ),
+                                            ],
                                           ),
+
+                                          // Food Expenses Section
+                                          if (filteredFoodExpenses.isNotEmpty) ...[
+                                            Container(
+                                              margin: const EdgeInsets.only(bottom: 20, top: 20),
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: TColors.bubbleOlive.withOpacity(0.3),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Iconsax.quote_down,
+                                                    size: 22,
+                                                    color: TColors.blush,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    'Food Expenses',
+                                                    style: TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: TColors.cream,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Food Expense - Items Cards
+                                            ...filteredFoodExpenses.map((expense) {
+                                              final itemName = expense['itemName'] ?? 'No item name';
+                                              final price = (expense['price'] ?? '0').toString();
+
+                                              return Container(
+                                                height: 100,
+                                                margin: const EdgeInsets.only(bottom: 10),
+                                                decoration: BoxDecoration(
+                                                  color: TColors.cream,
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black.withOpacity(0.2),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 10,
+                                                      offset: Offset(0, 8),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(20.0),
+                                                  child: Stack(
+                                                    children: [
+                                                      Positioned(
+                                                        left: 0,
+                                                        top: 0,
+                                                        bottom: 0,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Text(
+                                                              itemName,
+                                                              style: TextStyle(
+                                                                color: Colors.black,
+                                                                fontSize: 20,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Food',
+                                                              style: TextStyle(
+                                                                color: TColors.darkGreen,
+                                                                fontSize: 12,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Positioned(
+                                                        bottom: -16.0,
+                                                        right: 0,
+                                                        child: Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 22.0),
+                                                              child: Text(
+                                                                'RM',
+                                                                style: TextStyle(
+                                                                  color: TColors.darkGreen,
+                                                                  fontSize: 15,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              price,
+                                                              style: TextStyle(
+                                                                color: Colors.black,
+                                                                fontSize: 50,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ],
+
+                                          // Non-Food Expenses Section
+                                          if (filteredNonFoodExpenses.isNotEmpty) ...[
+                                            Container(
+                                              margin: const EdgeInsets.only(bottom: 20, top: 20),
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: TColors.bubbleOlive.withOpacity(0.3),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Iconsax.quote_down,
+                                                    size: 22,
+                                                    color: TColors.blush,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    'Non-Food Expenses',
+                                                    style: TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: TColors.cream,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Non-Food Expense - Items Cards
+                                            ...filteredNonFoodExpenses.map((expense) {
+                                              final itemName = expense['itemName'] ?? 'No item name';
+                                              final price = (expense['price'] ?? '0').toString();
+
+                                              return Container(
+                                                height: 100,
+                                                margin: const EdgeInsets.only(bottom: 10),
+                                                decoration: BoxDecoration(
+                                                  color: TColors.cream,
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black.withOpacity(0.2),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 10,
+                                                      offset: Offset(0, 8),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(20.0),
+                                                  child: Stack(
+                                                    children: [
+                                                      Positioned(
+                                                        left: 0,
+                                                        top: 0,
+                                                        bottom: 0,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Text(
+                                                              itemName,
+                                                              style: TextStyle(
+                                                                color: Colors.black,
+                                                                fontSize: 20,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Non-Food',
+                                                              style: TextStyle(
+                                                                color: TColors.darkGreen,
+                                                                fontSize: 12,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Positioned(
+                                                        bottom: -16.0,
+                                                        right: 0,
+                                                        child: Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 22.0),
+                                                              child: Text(
+                                                                'RM',
+                                                                style: TextStyle(
+                                                                  color: TColors.darkGreen,
+                                                                  fontSize: 15,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              price,
+                                                              style: TextStyle(
+                                                                color: Colors.black,
+                                                                fontSize: 50,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ],
                                         ],
                                       );
                                     }).toList(),
@@ -1417,231 +1661,6 @@ class MoneyJournalMainPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Food Expenses Section
-                          if (foodExpenses.isNotEmpty) ...[
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 20, top: 20),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: TColors.bubbleOlive.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Iconsax.quote_down,
-                                    size: 22,
-                                    color: TColors.blush,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Food Expenses',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: TColors.cream,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Food Expense - Items Cards
-                            ...foodExpenses.map((expense) {
-                              final itemName = expense['itemName'] ?? 'No item name';
-                              final price = (expense['price'] ?? '0').toString();
-
-                              return Container(
-                                height: 100,
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                  color: TColors.cream,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      spreadRadius: 2,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        left: 0,
-                                        top: 0,
-                                        bottom: 0,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              itemName,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Food',
-                                              style: TextStyle(
-                                                color: TColors.darkGreen,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: -16.0,
-                                        right: 0,
-                                        child: Row(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 22.0),
-                                              child: Text(
-                                                'RM',
-                                                style: TextStyle(
-                                                  color: TColors.darkGreen,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              price,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 50,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ],
-
-                          // Non-Food Expenses Section
-                          if (nonFoodExpenses.isNotEmpty) ...[
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 20, top: 20),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: TColors.bubbleOlive.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Iconsax.quote_down,
-                                    size: 22,
-                                    color: TColors.blush,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Non-Food Expenses',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: TColors.cream,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Non-Food Expense - Items Cards
-                            ...nonFoodExpenses.map((expense) {
-                              final itemName = expense['itemName'] ?? 'No item name';
-                              final price = (expense['price'] ?? '0').toString();
-
-                              return Container(
-                                height: 100,
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                  color: TColors.cream,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      spreadRadius: 2,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        left: 0,
-                                        top: 0,
-                                        bottom: 0,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              itemName,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Non-Food',
-                                              style: TextStyle(
-                                                color: TColors.darkGreen,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: -16.0,
-                                        right: 0,
-                                        child: Row(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(top: 22.0),
-                                              child: Text(
-                                                'RM',
-                                                style: TextStyle(
-                                                  color: TColors.darkGreen,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              price,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 50,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ],
                         ],
                       );
                     },
