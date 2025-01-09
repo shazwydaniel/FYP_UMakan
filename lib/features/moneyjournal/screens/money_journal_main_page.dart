@@ -14,7 +14,10 @@ import 'package:fyp_umakan/features/moneyjournal/controllers/money_journal_contr
 import "package:intl/intl.dart";
 
 class MoneyJournalMainPage extends StatelessWidget {
-  const MoneyJournalMainPage({super.key});
+  MoneyJournalMainPage({super.key});
+
+  // State for tracking selected filter
+  final RxString selectedFilter = 'Date'.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -942,13 +945,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                         child: Icon(Iconsax.menu_board, color: Colors.white, size: 20),
                       ),
                       onSelected: (value) {
-                        if (value == 'Date') {
-                          print('Filter by Date selected');
-                          // Add your logic to filter by date here
-                        } else if (value == 'Expense Type') {
-                          print('Filter by Expense Type selected');
-                          // Add your logic to filter by expense type here
-                        }
+                        selectedFilter.value = value; // Update filter state
                       },
                       itemBuilder: (BuildContext context) => [
                         PopupMenuItem(
@@ -962,327 +959,353 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 'Date',
                                 style: TextStyle(
                                   color: TColors.bubbleOlive,
-                                  fontWeight: FontWeight.bold, 
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        // PopupMenuItem(
-                        //   value: 'Expense Type',
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.start,
-                        //     children: [
-                        //       Icon(Iconsax.money_2, color: TColors.bubbleOlive, size: 18),
-                        //       SizedBox(width: 8),
-                        //       Text(
-                        //         'Expense Type',
-                        //         style: TextStyle(
-                        //           color: TColors.bubbleOlive,
-                        //           fontWeight: FontWeight.bold, 
-                        //           fontSize: 16,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        PopupMenuItem(
+                          value: 'Expense Type',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Iconsax.money_2, color: TColors.bubbleOlive, size: 18),
+                              SizedBox(width: 8),
+                              Text(
+                                'Expense Type',
+                                style: TextStyle(
+                                  color: TColors.bubbleOlive,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-            // Grouping and Displaying Expenses by Date from Firebase - Spending History (Cards)
+            // Spending History Section
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 0, bottom: 20),
               child: Obx(() {
-                if (controller.profileLoading.value) {
-                  return Center(child: CircularProgressIndicator());
-                }
+                if (selectedFilter.value == 'Date') {
+                  // "Date" Filter Section
+                  if (controller.profileLoading.value) {
+                    return Center(child: CircularProgressIndicator());
+                  }
 
-                return FutureBuilder<List<Map<String, dynamic>>>(
-                  future: controller.getExpenses(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No expenses found in history.'));
-                    }
+                  return FutureBuilder<List<Map<String, dynamic>>>(
+                    future: controller.getExpenses(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No expenses found in history.'));
+                      }
 
-                    final expenses = snapshot.data!;
-                    final groupedExpenses = _groupExpensesByDate(
-                      expenses.where((expense) {
-                        final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                        final yesterday = DateTime.now().subtract(const Duration(days: 1));
-                        return createdAt == null ||
-                            createdAt.year != yesterday.year ||
-                            createdAt.month != yesterday.month ||
-                            createdAt.day != yesterday.day;
-                      }).toList(),
-                    );
+                      final expenses = snapshot.data!;
+                      final groupedExpenses = _groupExpensesByDate(
+                        expenses.where((expense) {
+                          final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                          final yesterday = DateTime.now().subtract(const Duration(days: 1));
+                          return createdAt == null ||
+                              createdAt.year != yesterday.year ||
+                              createdAt.month != yesterday.month ||
+                              createdAt.day != yesterday.day;
+                        }).toList(),
+                      );
 
-                    DateTime? lastMonth;
+                      DateTime? lastMonth;
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: groupedExpenses.entries.map((entry) {
-                        final date = entry.key;
-                        final items = entry.value;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: groupedExpenses.entries.map((entry) {
+                          final date = entry.key;
+                          final items = entry.value;
 
-                        // Calculate total spending for the day
-                        final totalSpending = items.fold<double>(
-                          0.0,
-                          (sum, item) => sum + (item['price'] ?? 0.0),
-                        );
+                          // Calculate total spending for the day
+                          final totalSpending = items.fold<double>(
+                            0.0,
+                            (sum, item) => sum + (item['price'] ?? 0.0),
+                          );
 
-                        // Check if we need to display a new month section
-                        final currentMonth = DateTime(date.year, date.month);
-                        final showMonthLabel = lastMonth == null || currentMonth != lastMonth;
-                        if (showMonthLabel) lastMonth = currentMonth;
+                          // Check if we need to display a new month section
+                          final currentMonth = DateTime(date.year, date.month);
+                          final showMonthLabel = lastMonth == null || currentMonth != lastMonth;
+                          if (showMonthLabel) lastMonth = currentMonth;
 
-                        // Calculate total spending for the month
-                        final totalMonthlySpending = groupedExpenses.entries
-                            .where((e) =>
-                                DateTime(e.key.year, e.key.month) == currentMonth)
-                            .expand((e) => e.value)
-                            .fold<double>(
-                              0.0,
-                              (sum, item) => sum + (item['price'] ?? 0.0),
-                            );
+                          // Calculate total spending for the month
+                          final totalMonthlySpending = groupedExpenses.entries
+                              .where((e) =>
+                                  DateTime(e.key.year, e.key.month) == currentMonth)
+                              .expand((e) => e.value)
+                              .fold<double>(
+                                0.0,
+                                (sum, item) => sum + (item['price'] ?? 0.0),
+                              );
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (showMonthLabel)
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 20, top: 20),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: TColors.bubbleOlive.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (showMonthLabel)
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 20, top: 20),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: TColors.bubbleOlive.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(
-                                        Iconsax.quote_down,
-                                        size: 22,
-                                        color: TColors.blush,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        DateFormat('MMMM yyyy').format(currentMonth),
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: TColors.cream,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'RM ${totalMonthlySpending.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: TColors.blush,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Date and Total Spending Row
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    DateFormat('EEE, MMM d, yyyy').format(date),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: TColors.cream,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'RM ${totalSpending.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: TColors.cream,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Icon(
-                                        Iconsax.money_send,
-                                        size: 18,
-                                        color: TColors.cream,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Expense Cards
-                            ...items.map((expense) {
-                              final itemName = expense['itemName'] ?? 'No item name';
-                              final price = (expense['price'] ?? '0').toString();
-                              final type = expense['type'] ?? 'Unknown';
-                              final expenseID = expense['expense_ID'] ?? 'Unknown';
-
-                              return Dismissible(
-                                key: Key(expenseID),
-                                direction: DismissDirection.endToStart,
-                                background: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.only(right: 20.0),
-                                    color: TColors.amber,
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                confirmDismiss: (direction) async {
-                                  return await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        backgroundColor: TColors.cream,
-                                        title: Text(
-                                          "Delete Confirmation",
-                                          style: TextStyle(color: Colors.black, fontSize: 20),
-                                        ),
-                                        content: Text(
-                                          "Are you sure you want to delete this expense?",
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(false),
-                                            child: Text(
-                                              "Cancel",
-                                              style: TextStyle(color: TColors.textDark),
-                                            ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Iconsax.quote_down,
+                                            size: 22,
+                                            color: TColors.blush,
                                           ),
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(true),
-                                            child: Text(
-                                              "Delete",
-                                              style: TextStyle(color: TColors.amber),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            DateFormat('MMMM yyyy').format(currentMonth),
+                                            style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: TColors.cream,
                                             ),
                                           ),
                                         ],
-                                      );
-                                    },
-                                  );
-                                },
-                                onDismissed: (direction) async {
-                                  await controller.removeExpense(expenseID);
-                                  TLoaders.errorSnackBar(
-                                    title: 'Expense Deleted',
-                                    message: "Selected expense has been deleted!",
-                                  );
-                                },
-                                child: Container(
-                                  height: 100,
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  decoration: BoxDecoration(
-                                    color: TColors.cream,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        spreadRadius: 2,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 8),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'RM ${totalMonthlySpending.toStringAsFixed(2)}',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: TColors.blush,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Stack(
+                                ),
+                              // Date and Total Spending Row
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      DateFormat('EEE, MMM d, yyyy').format(date),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: TColors.cream,
+                                      ),
+                                    ),
+                                    Row(
                                       children: [
-                                        Positioned(
-                                          left: 0,
-                                          top: 0,
-                                          bottom: 0,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                itemName,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(
-                                                type,
-                                                style: TextStyle(
-                                                  color: TColors.darkGreen,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
+                                        Text(
+                                          'RM ${totalSpending.toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: TColors.cream,
                                           ),
                                         ),
-                                        Positioned(
-                                          bottom: -16.0,
-                                          right: 0,
-                                          child: Row(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 22.0),
-                                                child: Text(
-                                                  'RM',
-                                                  style: TextStyle(
-                                                    color: TColors.darkGreen,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                price,
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 50,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                        const SizedBox(width: 5),
+                                        Icon(
+                                          Iconsax.money_send,
+                                          size: 18,
+                                          color: TColors.cream,
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              );
-                            }).toList(),
-                          ],
-                        );
-                      }).toList(),
-                    );
-                  },
-                );
+                              ),
+                              // Expense Cards
+                              ...items.map((expense) {
+                                final itemName = expense['itemName'] ?? 'No item name';
+                                final price = (expense['price'] ?? '0').toString();
+                                final type = expense['type'] ?? 'Unknown';
+                                final expenseID = expense['expense_ID'] ?? 'Unknown';
+
+                                return Dismissible(
+                                  key: Key(expenseID),
+                                  direction: DismissDirection.endToStart,
+                                  background: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.only(right: 20.0),
+                                      color: TColors.amber,
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  confirmDismiss: (direction) async {
+                                    return await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          backgroundColor: TColors.cream,
+                                          title: Text(
+                                            "Delete Confirmation",
+                                            style: TextStyle(color: Colors.black, fontSize: 20),
+                                          ),
+                                          content: Text(
+                                            "Are you sure you want to delete this expense?",
+                                            style: TextStyle(color: Colors.black),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: Text(
+                                                "Cancel",
+                                                style: TextStyle(color: TColors.textDark),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(true),
+                                              child: Text(
+                                                "Delete",
+                                                style: TextStyle(color: TColors.amber),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  onDismissed: (direction) async {
+                                    await controller.removeExpense(expenseID);
+                                    TLoaders.errorSnackBar(
+                                      title: 'Expense Deleted',
+                                      message: "Selected expense has been deleted!",
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 100,
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    decoration: BoxDecoration(
+                                      color: TColors.cream,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          spreadRadius: 2,
+                                          blurRadius: 10,
+                                          offset: Offset(0, 8),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                            left: 0,
+                                            top: 0,
+                                            bottom: 0,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  itemName,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  type,
+                                                  style: TextStyle(
+                                                    color: TColors.darkGreen,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: -16.0,
+                                            right: 0,
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 22.0),
+                                                  child: Text(
+                                                    'RM',
+                                                    style: TextStyle(
+                                                      color: TColors.darkGreen,
+                                                      fontSize: 15,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  price,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 50,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                          );
+                        }).toList(),
+                      );
+                    },
+                  );
+                } else if (selectedFilter.value == 'Expense Type') {
+                  // "Expense Type" Filter Section
+                  return Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20.0),
+                      margin: const EdgeInsets.only(top: 20.0),
+                      decoration: BoxDecoration(
+                        color: TColors.bubbleOlive.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'This is the Expense Type filter section.',
+                        style: TextStyle(
+                          color: TColors.cream,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
               }),
             ),
           ],
@@ -1520,16 +1543,13 @@ class MoneyJournalMainPage extends StatelessWidget {
                         );
 
                         // Close the modal
-                        // Navigator.pop(context);
+                        Navigator.pop(context);
 
                         // Success Message
                         TLoaders.successSnackBar( title: 'Expense Logged', message: "Your spending for today has been updated!.");
 
                         priceController.clear();
-                        itemNameController.clear();
-
-                        // Refresh the page
-                        Get.off(() => const MoneyJournalMainPage(), preventDuplicates: false);
+                        itemNameController.clear();                    
                       } catch (e) {
                         print('Error logging expense: $e');
                         TLoaders.errorSnackBar( title: 'Error Logging Expense', message: "Invalid Input");

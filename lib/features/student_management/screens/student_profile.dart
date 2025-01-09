@@ -766,7 +766,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Health Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -939,7 +939,7 @@ class StudentProfilePageScreen extends StatelessWidget {
 
             // Preference Details (Label)
             Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
