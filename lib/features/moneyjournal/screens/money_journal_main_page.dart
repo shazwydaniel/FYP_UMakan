@@ -906,7 +906,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                 );
               }),
             ),
-            // Spending History Section (Label)
+            // View Your Spending (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
@@ -920,7 +920,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      "Spending History",
+                      "View Your Spending",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -954,10 +954,10 @@ class MoneyJournalMainPage extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(Iconsax.calendar_1, color: TColors.bubbleOlive, size: 18),
+                              Icon(Iconsax.pen_add, color: TColors.bubbleOlive, size: 18),
                               SizedBox(width: 8),
                               Text(
-                                'Date',
+                                'Complete Log',
                                 style: TextStyle(
                                   color: TColors.bubbleOlive,
                                   fontWeight: FontWeight.bold,
@@ -972,10 +972,10 @@ class MoneyJournalMainPage extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(Iconsax.money_2, color: TColors.bubbleOlive, size: 18),
+                              Icon(Iconsax.calendar_1, color: TColors.bubbleOlive, size: 18),
                               SizedBox(width: 8),
                               Text(
-                                'Expense Type',
+                                'Monthly Chart',
                                 style: TextStyle(
                                   color: TColors.bubbleOlive,
                                   fontWeight: FontWeight.bold,
@@ -1324,6 +1324,99 @@ class MoneyJournalMainPage extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Donut Chart with Month Tabs
+                          DefaultTabController(
+                            length: _calculateMonthlyTotals(expenses).keys.length, // Number of months
+                            initialIndex: _calculateMonthlyTotals(expenses).keys.toList().indexOf(
+                              DateFormat('MMM yyyy').format(DateTime.now()), // Default to current month
+                            ),
+                            child: Column(
+                              children: [
+                                // Tab Bar for Months
+                                TabBar(
+                                  isScrollable: true,
+                                  labelColor: TColors.blush,
+                                  unselectedLabelColor: TColors.cream,
+                                  indicatorColor: Colors.orangeAccent,
+                                  labelStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  tabs: _calculateMonthlyTotals(expenses)
+                                      .keys
+                                      .map((month) => Tab(text: month))
+                                      .toList(),
+                                ),
+
+                                // Tab Bar View for Donut Charts
+                                Container(
+                                  height: 300, // Increased height for larger chart
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child: TabBarView(
+                                    children: _calculateMonthlyTotals(expenses).keys.map((month) {
+                                      final foodTotal = _calculateMonthlyTotals(foodExpenses)[month] ?? 0.0;
+                                      final nonFoodTotal =
+                                          _calculateMonthlyTotals(nonFoodExpenses)[month] ?? 0.0;
+                                      final totalSpent = foodTotal + nonFoodTotal;
+
+                                      return SfCircularChart(
+                                        title: ChartTitle(
+                                          text: 'Expense Breakdown for $month',
+                                          textStyle: TextStyle(
+                                            color: TColors.cream,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        legend: Legend(
+                                          isVisible: true,
+                                          position: LegendPosition.bottom,
+                                          textStyle: TextStyle(
+                                            color: TColors.cream,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        annotations: <CircularChartAnnotation>[
+                                          CircularChartAnnotation(
+                                            widget: Text(
+                                              'RM ${totalSpent.toStringAsFixed(2)}',
+                                              style: TextStyle(
+                                                color: TColors.cream,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        series: <CircularSeries>[
+                                          DoughnutSeries<MapEntry<String, double>, String>(
+                                            radius: '100%', // Increased size of the chart
+                                            innerRadius: '60%', // Donut style with wider cut-out
+                                            dataSource: [
+                                              MapEntry('Food', foodTotal),
+                                              MapEntry('Non-Food', nonFoodTotal),
+                                            ],
+                                            xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
+                                            yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
+                                            dataLabelSettings: DataLabelSettings(
+                                              isVisible: true,
+                                              textStyle: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            pointColorMapper: (MapEntry<String, double> entry, _) {
+                                              return entry.key == 'Food' ? TColors.blush : TColors.bubbleOrange;
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           // Food Expenses Section
                           if (foodExpenses.isNotEmpty) ...[
                             Container(
@@ -1348,33 +1441,6 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       color: TColors.cream,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Horizontal Bar Chart for Food Expenses
-                            Container(
-                              height: 200,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: SfCartesianChart(
-                                primaryXAxis: CategoryAxis(
-                                  labelStyle: TextStyle(
-                                    color: TColors.cream, // Brighter color for labels
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                primaryYAxis: NumericAxis(
-                                  labelStyle: TextStyle(
-                                    color: TColors.cream, // Brighter color for labels
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                series: <ChartSeries>[
-                                  BarSeries<MapEntry<String, double>, String>(
-                                    dataSource: foodMonthlyTotals.entries.toList(),
-                                    xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
-                                    yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
-                                    color: Colors.orangeAccent, // Brighter bar color
                                   ),
                                 ],
                               ),
@@ -1488,33 +1554,6 @@ class MoneyJournalMainPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       color: TColors.cream,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Horizontal Bar Chart for Non-Food Expenses
-                            Container(
-                              height: 200,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: SfCartesianChart(
-                                primaryXAxis: CategoryAxis(
-                                  labelStyle: TextStyle(
-                                    color: TColors.cream, // Brighter color for labels
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                primaryYAxis: NumericAxis(
-                                  labelStyle: TextStyle(
-                                    color: TColors.cream, // Brighter color for labels
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                series: <ChartSeries>[
-                                  BarSeries<MapEntry<String, double>, String>(
-                                    dataSource: nonFoodMonthlyTotals.entries.toList(),
-                                    xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
-                                    yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
-                                    color: Colors.orangeAccent, // Brighter bar color
                                   ),
                                 ],
                               ),
