@@ -1335,7 +1335,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 // Tab Bar for Months
                                 TabBar(
                                   isScrollable: true,
-                                  labelColor: TColors.blush,
+                                  labelColor: TColors.cream,
                                   unselectedLabelColor: TColors.cream,
                                   indicatorColor: Colors.orangeAccent,
                                   labelStyle: TextStyle(
@@ -1467,14 +1467,6 @@ class MoneyJournalMainPage extends StatelessWidget {
                                                 decoration: BoxDecoration(
                                                   color: TColors.cream,
                                                   borderRadius: BorderRadius.circular(20),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black.withOpacity(0.2),
-                                                      spreadRadius: 2,
-                                                      blurRadius: 10,
-                                                      offset: Offset(0, 8),
-                                                    ),
-                                                  ],
                                                 ),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(20.0),
@@ -1580,14 +1572,6 @@ class MoneyJournalMainPage extends StatelessWidget {
                                                 decoration: BoxDecoration(
                                                   color: TColors.cream,
                                                   borderRadius: BorderRadius.circular(20),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black.withOpacity(0.2),
-                                                      spreadRadius: 2,
-                                                      blurRadius: 10,
-                                                      offset: Offset(0, 8),
-                                                    ),
-                                                  ],
                                                 ),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(20.0),
