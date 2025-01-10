@@ -55,4 +55,9 @@ class TColors{
   // Browns
   static const Color coffee = Color(0xFF99582a);
 
+  // GReys
+  static const Color charcoal = Color(0xFF3C4142);
+  static const Color gunmetal = Color(0xFF818589);
+
+
 }

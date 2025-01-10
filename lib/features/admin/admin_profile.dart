@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -7,151 +9,242 @@ class AdminProfilePage extends StatelessWidget {
   const AdminProfilePage({Key? key}) : super(key: key);
 
   void _logout(BuildContext context) {
-    // Handle logout logic here
-    Get.offAllNamed('/login'); // Example: Redirect to login page
+    Get.offAllNamed('/login');
   }
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Admin Profile',
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-      ),
+      backgroundColor: TColors.cream,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Section
-              Center(
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage(
-                          'assets/admin_avatar.png'), // Placeholder image
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Admin Name',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      'admin@example.com',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
+              // Title Section
+              const SizedBox(height: 60),
+              Text(
+                'Admin',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: dark ? Colors.black : Colors.black,
                 ),
               ),
+              Text(
+                'Profile Page',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: dark ? Colors.black : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 30),
 
+              // Account Details Label
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4,
+                    height: 40,
+                    color: TColors.forest,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Account Details',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.black : Colors.black,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
 
               // Account Details Section
-              Text(
-                'Account Details',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              SizedBox(
+                width: double.infinity, // Takes the full width of the parent
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.4),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _profileDetail(title: 'Name', value: 'Admin Name', dark: dark),
+                      const SizedBox(height: 15),
+                      _profileDetail(title: 'Email', value: 'admin@example.com', dark: dark),
+                      const SizedBox(height: 15),
+                      _profileDetail(title: 'Role', value: 'Administrator', dark: dark),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              ListTile(
-                leading: Icon(Icons.person, color: Colors.blue),
-                title: Text('Name'),
-                subtitle: Text('Admin Name'),
-              ),
-              ListTile(
-                leading: Icon(Icons.email, color: Colors.blue),
-                title: Text('Email'),
-                subtitle: Text('admin@example.com'),
-              ),
-              ListTile(
-                leading: Icon(Icons.settings, color: Colors.blue),
-                title: Text('Role'),
-                subtitle: Text('Administrator'),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Statistics or Management Options (Optional)
-              Text(
-                'Quick Actions',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 10),
-              ListTile(
-                leading: Icon(Icons.dashboard, color: Colors.green),
-                title: Text('View Dashboard'),
-                onTap: () {
-                  Get.toNamed('/dashboard'); // Navigate to dashboard
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.group, color: Colors.orange),
-                title: Text('Manage Users'),
-                onTap: () {
-                  Get.toNamed('/manage-users'); // Navigate to user management
-                },
               ),
 
               const SizedBox(height: 30),
 
+              // Quick Actions Label
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4,
+                    height: 40,
+                    color: Colors.orange,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Quick Actions',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.black : Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Quick Actions Section with Individual Frosted Glass Cards
+              Column(
+                children: [
+                  // View Dashboard - Frosted Glass Card
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.4),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.dashboard, color: Colors.green),
+                      title: Text(
+                        'View Dashboard',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: dark ? Colors.black : Colors.black,
+                        ),
+                      ),
+                      onTap: () {
+                        Get.toNamed('/dashboard');
+                      },
+                    ),
+                  ),
+
+                  // Manage Users - Frosted Glass Card
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.4),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.group, color: Colors.orange),
+                      title: Text(
+                        'Manage Users',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: dark ? Colors.black : Colors.black,
+                        ),
+                      ),
+                      onTap: () {
+                        Get.toNamed('/manage-users');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 40),
+
               // Logout Button
               Center(
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: TColors.cream,
-                          title: const Text('Confirm Logout'),
-                          content:
-                              const Text('Are you sure you want to log out?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              child: const Text('Log Out'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                child: Container(
+                  width: 200,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: TColors.amber,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 2.0,
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: TColors.cream,
+                            title: const Text('Confirm Logout'),
+                            content: const Text('Are you sure you want to log out?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(false),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: TColors.amber,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(true),
+                                child: Text(
+                                  'Log Out',
+                                  style: TextStyle(
+                                    color: TColors.amber,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
 
-                    if (confirm == true) {
-                      await AuthenticatorRepository.instance.logout();
-                    }
-                  },
-                  icon: Icon(Icons.logout),
-                  label: Text('Logout'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      if (confirm == true) {
+                        await AuthenticatorRepository.instance.logout();
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.logout, color: Colors.white, size: 20),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -160,6 +253,32 @@ class AdminProfilePage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Widget Profile Detail
+  Widget _profileDetail({required String title, required String value, required bool dark}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: dark ? Colors.black54 : Colors.black54,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: TextStyle(
+            color: dark ? Colors.black : Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

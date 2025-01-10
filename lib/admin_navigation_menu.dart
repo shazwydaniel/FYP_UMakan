@@ -38,7 +38,7 @@ class AdminNavigationMenu extends StatelessWidget {
                 controller.selectedIndex.value = index;
               }
             },
-            backgroundColor: darkMode ? TColors.stark_blue : TColors.stark_blue,
+            backgroundColor: darkMode ? TColors.charcoal : TColors.charcoal,
             indicatorColor: darkMode
                 ? Colors.white.withOpacity(0.1)
                 : Colors.white.withOpacity(0.1),
