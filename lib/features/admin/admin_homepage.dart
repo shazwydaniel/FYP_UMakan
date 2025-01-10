@@ -178,7 +178,7 @@ class AdminHomePage extends StatelessWidget {
                   const SizedBox(height: 14),
                   _buildCard(
                     context,
-                    'Support Organizations',
+                    'Support Organisations',
                     Iconsax.heart_circle,
                     TColors.blush,
                     TColors.cream,
