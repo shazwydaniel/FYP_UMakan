@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp_umakan/features/admin/detailsPage/Vendors/SubPages/admin_cafe_sub.dart';
 import 'package:fyp_umakan/features/admin/detailsPage/Vendors/admin_vendor_cafe_edit.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:get/get.dart';
@@ -34,16 +37,17 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: TColors.cream,
         title: const Text('Delete Cafe'),
         content: const Text('Are you sure you want to delete this cafe?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: Colors.green)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: const Text('Delete', style: TextStyle(color: TColors.amber)),
           ),
         ],
       ),
@@ -72,149 +76,125 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
   void _addCafePopup(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Cafe'),
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: _vendorController.cafeName,
-                decoration: const InputDecoration(labelText: 'Cafe Name'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Name is required' : null,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: TColors.cream,
+          title: const Text('Add Cafe'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  TextField(
+                    controller: _vendorController.cafeName,
+                    decoration: const InputDecoration(labelText: 'Cafe Name'),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _vendorController.cafeLocation,
+                    decoration:
+                        const InputDecoration(labelText: 'Cafe Location'),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _vendorController.openingTime,
+                    decoration:
+                        const InputDecoration(labelText: 'Opening Time'),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _vendorController.closingTime,
+                    decoration:
+                        const InputDecoration(labelText: 'Closing Time'),
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: _vendorController.cafeLocation,
-                decoration: const InputDecoration(labelText: 'Cafe Location'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Location is required'
-                    : null,
-              ),
-              TextFormField(
-                controller: _vendorController.openingTime,
-                decoration: const InputDecoration(labelText: 'Opening Time'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Opening time is required'
-                    : null,
-              ),
-              TextFormField(
-                controller: _vendorController.closingTime,
-                decoration: const InputDecoration(labelText: 'Closing Time'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Closing time is required'
-                    : null,
-              ),
-            ],
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                try {
-                  final cafeData = {
-                    'cafeName': _vendorController.cafeName.text.trim(),
-                    'cafeLocation': _vendorController.cafeLocation.text.trim(),
-                    'openingTime': _vendorController.openingTime.text.trim(),
-                    'closingTime': _vendorController.closingTime.text.trim(),
-                    // Add more fields as needed
-                  };
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child:
+                  const Text('Cancel', style: TextStyle(color: TColors.amber)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    final cafeData = {
+                      'cafeName': _vendorController.cafeName.text.trim(),
+                      'cafeLocation':
+                          _vendorController.cafeLocation.text.trim(),
+                      'openingTime': _vendorController.openingTime.text.trim(),
+                      'closingTime': _vendorController.closingTime.text.trim(),
+                    };
 
-                  await _vendorController.addCafe(
-                      widget.vendorData['Id'], null); // Pass imageUrl if needed
+                    await _vendorController.addCafe(widget.vendorData['Id'],
+                        null); // Add imageUrl if needed
 
-                  Navigator.pop(context); // Close the popup on success
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cafe added successfully')),
-                  );
-                } catch (e) {
-                  Navigator.pop(context); // Close the popup on error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to add cafe: $e')),
-                  );
+                    Navigator.pop(context); // Close the popup on success
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Cafe added successfully')),
+                    );
+                  } catch (e) {
+                    Navigator.pop(context); // Close the popup on error
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to add cafe: $e')),
+                    );
+                  }
                 }
-              }
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
+              },
+              child: const Text('Add', style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.cream,
       appBar: AppBar(
-        title: Text(widget.vendorData['Vendor Name'] ?? 'Vendor Details'),
-        backgroundColor: Colors.orange,
+        backgroundColor: TColors.cream,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Cafes',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.vendorData['Vendor Name'] ?? 'Vendor Details',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _cafeStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+            const SizedBox(height: 16),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _cafeStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('No cafes found.'));
-                }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No cafes found.'));
+                  }
 
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    final cafeDoc = snapshot.data!.docs[index];
-                    final cafeData = cafeDoc.data() as Map<String, dynamic>;
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final cafeDoc = snapshot.data!.docs[index];
+                      final cafeData = cafeDoc.data() as Map<String, dynamic>;
 
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
-                      child: ListTile(
-                        title: Text(cafeData['cafeName'] ?? 'No Name'),
-                        subtitle:
-                            Text(cafeData['cafeLocation'] ?? 'No Location'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () {
-                                // Navigate to Edit Cafe page
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AdminVendorCafeEdit(
-                                      cafeData: cafeData,
-                                      vendorId: widget
-                                          .vendorData['Id'], // Pass vendorId
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteCafe(cafeDoc.id),
-                            ),
-                          ],
-                        ),
+                      return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -227,14 +207,92 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                             ),
                           );
                         },
-                      ),
-                    );
-                  },
-                );
-              },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.4),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            cafeData['cafeName'] ?? 'No Name',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          Text(
+                                            cafeData['cafeLocation'] ??
+                                                'No Location',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuButton<String>(
+                                      color: TColors.cream,
+                                      onSelected: (value) {
+                                        if (value == 'Edit') {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AdminVendorCafeEdit(
+                                                cafeData: cafeData,
+                                                vendorId:
+                                                    widget.vendorData['Id'],
+                                              ),
+                                            ),
+                                          );
+                                        } else if (value == 'Delete') {
+                                          _deleteCafe(cafeDoc.id);
+                                        }
+                                      },
+                                      itemBuilder: (context) => [
+                                        const PopupMenuItem(
+                                          value: 'Edit',
+                                          child: Text('Edit'),
+                                        ),
+                                        const PopupMenuItem(
+                                          value: 'Delete',
+                                          child: Text('Delete'),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.orange,
@@ -246,7 +304,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: Icon(Iconsax.add_circle, color: Colors.white, size: 40),
+                icon: const Icon(Iconsax.add_circle,
+                    color: Colors.white, size: 40),
                 onPressed: () => _addCafePopup(context),
               ),
             ],

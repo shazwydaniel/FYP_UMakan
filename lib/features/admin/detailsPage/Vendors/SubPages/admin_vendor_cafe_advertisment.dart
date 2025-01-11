@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
@@ -5,6 +7,7 @@ import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_mod
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:iconsax/iconsax.dart';
 
 class AdminAdvertisementsPage extends StatelessWidget {
   final String vendorId;
@@ -13,67 +16,132 @@ class AdminAdvertisementsPage extends StatelessWidget {
   AdminAdvertisementsPage({required this.vendorId, required this.cafeId});
 
   final AdvertController advertController = Get.put(AdvertController());
-  final DateFormat dateFormat = DateFormat('dd MMM yyyy'); // Date formatter
+  final DateFormat dateFormat = DateFormat('dd MMM yyyy');
 
   @override
   Widget build(BuildContext context) {
-    // Fetch advertisements for the specific cafe when the page loads
     advertController.fetchAdvertisementsByCafe(vendorId, cafeId);
 
     return Scaffold(
-      backgroundColor: TColors.textLight,
+      backgroundColor: TColors.cream,
       appBar: AppBar(
+        backgroundColor: TColors.cream,
         title: const Text('Advertisements'),
-        backgroundColor: TColors.amber,
       ),
       body: Obx(() {
         if (advertController.allAdvertisements.isEmpty) {
           return const Center(
-            child: Text(
-              'No advertisements available.',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
+            child: Text('No advertisements available.',
+                style: TextStyle(fontSize: 16, color: Colors.black54)),
           );
         }
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          itemCount: advertController.allAdvertisements.length,
-          itemBuilder: (context, index) {
-            final ad = advertController.allAdvertisements[index];
-            return Card(
-              color: Colors.white,
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              child: ListTile(
-                title: Text(
-                  ad.detail,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: ListView.builder(
+            itemCount: advertController.allAdvertisements.length,
+            itemBuilder: (context, index) {
+              final ad = advertController.allAdvertisements[index];
+              return GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.4),
+                            width: 1.5,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ad.detail,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "From: ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Until: ${ad.endDate != null ? dateFormat.format(ad.endDate!) : 'N/A'}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            PopupMenuButton<String>(
+                              color: TColors.cream,
+                              onSelected: (value) {
+                                if (value == 'Delete') {
+                                  _showDeleteConfirmationDialog(context, ad.id);
+                                } else if (value == 'Edit') {
+                                  _showUpdateAdDialog(context, ad);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 'Edit',
+                                  child: Row(
+                                    children: [
+                                      Text('Edit'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'Delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                subtitle: Text(
-                  "From: ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'}\n"
-                  "Until: ${ad.endDate != null ? dateFormat.format(ad.endDate!) : 'N/A'}",
-                  style: const TextStyle(fontSize: 14),
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context, ad.id);
-                  },
-                ),
-                onTap: () => _showUpdateAdDialog(context, ad),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       }),
       bottomNavigationBar: BottomAppBar(
-        color: TColors.amber,
+        color: Colors.red,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        child: IconButton(
-          icon: const Icon(Icons.add, size: 40, color: Colors.white),
-          onPressed: () => _showAddAdDialog(context),
-          tooltip: 'Add Advertisement',
+        notchMargin: 0.0,
+        child: Container(
+          height: 60.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Iconsax.add_circle,
+                    color: Colors.white, size: 40),
+                onPressed: () => _showAddAdDialog(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -84,20 +152,22 @@ class AdminAdvertisementsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: TColors.cream,
           title: const Text('Delete Advertisement'),
           content: const Text(
               'Are you sure you want to delete this advertisement? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child:
+                  const Text('Cancel', style: TextStyle(color: Colors.green)),
             ),
             TextButton(
               onPressed: () async {
                 await advertController.deleteAd(vendorId, cafeId, adId);
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
@@ -116,6 +186,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: TColors.cream,
           title: const Text('Add Advertisement'),
           content: Form(
             key: advertController.menuFormKey,
@@ -129,6 +200,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
                       ? 'Detail is required'
                       : null,
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: advertController.startDateController,
                   readOnly: true,
@@ -139,6 +211,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
                   onTap: () => _selectDate(
                       context, advertController.startDateController),
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: advertController.endDateController,
                   readOnly: true,
@@ -149,13 +222,14 @@ class AdminAdvertisementsPage extends StatelessWidget {
                   onTap: () =>
                       _selectDate(context, advertController.endDateController),
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () async {
@@ -165,7 +239,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
                   Navigator.pop(context);
                 }
               },
-              child: const Text('Add'),
+              child: const Text('Add', style: TextStyle(color: Colors.green)),
             ),
           ],
         );
@@ -184,6 +258,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: TColors.cream,
           title: const Text('Update Advertisement'),
           content: Form(
             key: advertController.updateForm,
@@ -223,7 +298,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () async {
@@ -233,7 +308,8 @@ class AdminAdvertisementsPage extends StatelessWidget {
                   Navigator.pop(context);
                 }
               },
-              child: const Text('Update'),
+              child:
+                  const Text('Update', style: TextStyle(color: Colors.green)),
             ),
           ],
         );

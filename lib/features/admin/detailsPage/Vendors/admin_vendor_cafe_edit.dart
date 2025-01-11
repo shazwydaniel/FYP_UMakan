@@ -1,7 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:get/get.dart';
+import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 
 class AdminVendorCafeEdit extends StatefulWidget {
   final Map<String, dynamic> cafeData;
@@ -25,7 +27,6 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with existing data
     _cafeNameController =
         TextEditingController(text: widget.cafeData['cafeName']);
     _cafeLocationController =
@@ -55,7 +56,6 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
           'closingTime': _closingTimeController.text.trim(),
         };
 
-        // Call the update method from the repository
         await _vendorController.vendorRepository.updateSingleFieldCafe(
           updatedData,
           widget.vendorId,
@@ -65,7 +65,7 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Cafe details updated successfully')),
         );
-        Navigator.pop(context); // Close the edit page
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update cafe: $e')),
@@ -77,68 +77,83 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.cream,
       appBar: AppBar(
+        backgroundColor: TColors.cream,
         title: Text(widget.cafeData['cafeName'] ?? 'Edit Cafe Details'),
-        backgroundColor: Colors.orange,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
-              const Text(
-                'Edit Cafe Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cafeNameController,
-                decoration: const InputDecoration(labelText: 'Cafe Name'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Name is required' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cafeLocationController,
-                decoration: const InputDecoration(labelText: 'Cafe Location'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Location is required'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _openingTimeController,
-                decoration: const InputDecoration(labelText: 'Opening Time'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Opening Time is required'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _closingTimeController,
-                decoration: const InputDecoration(labelText: 'Closing Time'),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Closing Time is required'
-                    : null,
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton.icon(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 15),
+                Text(
+                  'Edit Cafe Details',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _cafeNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Cafe Name',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _cafeLocationController,
+                  decoration: const InputDecoration(
+                    labelText: 'Cafe Location',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _openingTimeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Opening Time',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _closingTimeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Closing Time',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
                   onPressed: _saveCafeDetails,
                   icon: const Icon(Icons.save),
                   label: const Text('Save Changes'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                        horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -66,7 +66,7 @@ class IndulgencePopup extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              "You've logged $mealName multiple times today.",
+              "You've logged $mealName multiple times this week.",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black,

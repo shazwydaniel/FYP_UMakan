@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/feedback/review_model.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/features/vendor/controller/review_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:iconsax/iconsax.dart';
 
 class AdminReviewsPage extends StatelessWidget {
   final String vendorId;
@@ -20,39 +24,124 @@ class AdminReviewsPage extends StatelessWidget {
     _reviewController.fetchReviews(vendorId, cafeId);
 
     return Scaffold(
+      backgroundColor: TColors.cream,
       appBar: AppBar(
+        backgroundColor: TColors.cream,
         title: const Text('Reviews'),
-        backgroundColor: Colors.green,
       ),
       body: Obx(
         () {
           if (_reviewController.review.isEmpty) {
-            return const Center(child: Text('No reviews available.'));
+            return const Center(
+              child: Text('No reviews available.',
+                  style: TextStyle(fontSize: 16, color: Colors.black54)),
+            );
           }
 
-          return ListView.builder(
-            itemCount: _reviewController.review.length,
-            itemBuilder: (context, index) {
-              final review = _reviewController.review[index];
-
-              return Card(
-                child: ListTile(
-                  title: Text('Rating: ${review.rating}'),
-                  subtitle: Text(review.feedback),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _discController.deleteReview(review);
-                    },
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: ListView.builder(
+              itemCount: _reviewController.review.length,
+              itemBuilder: (context, index) {
+                final review = _reviewController.review[index];
+                return GestureDetector(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.4),
+                              width: 1.5,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      review.feedback,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: List.generate(
+                                        review.rating.toInt(),
+                                        (index) => const Icon(Icons.star,
+                                            color: Colors.grey, size: 16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuButton<String>(
+                                color: TColors.cream,
+                                onSelected: (value) {
+                                  if (value == 'Delete') {
+                                    _discController.deleteReview(review);
+                                  } else if (value == 'Edit') {
+                                    _showUpdateReviewDialog(
+                                        context, review, vendorId, cafeId);
+                                  }
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: 'Edit',
+                                    child: Row(
+                                      children: [
+                                        Text('Edit'),
+                                      ],
+                                    ),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 'Delete',
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  onTap: () => _showUpdateReviewDialog(
-                      context, review, vendorId, cafeId),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
+      /* bottomNavigationBar: BottomAppBar(
+        color: Colors.green,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 0.0,
+        child: Container(
+          height: 60.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Iconsax.add_circle,
+                    color: Colors.white, size: 40),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),*/
     );
   }
 
@@ -66,24 +155,34 @@ class AdminReviewsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: TColors.cream,
           title: const Text('Update Review'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: feedbackController,
-                decoration: const InputDecoration(labelText: 'Feedback'),
-              ),
-              TextFormField(
-                controller: ratingController,
-                decoration: const InputDecoration(labelText: 'Rating'),
-              ),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: feedbackController,
+                  decoration: const InputDecoration(
+                    labelText: 'Feedback',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: ratingController,
+                  decoration: const InputDecoration(
+                    labelText: 'Rating',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () async {
@@ -99,7 +198,8 @@ class AdminReviewsPage extends StatelessWidget {
                 );
                 Navigator.pop(context);
               },
-              child: const Text('Update'),
+              child:
+                  const Text('Update', style: TextStyle(color: Colors.green)),
             ),
           ],
         );
