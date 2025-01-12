@@ -251,25 +251,37 @@ class AdminSupportorg extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                // Firebase Authentication handles password securely
-                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: emailController.text.trim(),
-                  password: passwordController.text.trim(),
-                );
+                try {
+                  // Create the user in Firebase Authentication
+                  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
+                  );
 
-                await FirebaseFirestore.instance.collection('SupportOrganisation').add({
-                  'Id': userCredential.user!.uid,
-                  'Organisation Name': organisationNameController.text.trim(),
-                  'Email': emailController.text.trim(),
-                  'Contact Number': contactNumberController.text.trim(),
-                  'Location': locationController.text.trim(),
-                  'Telegram Handle': telegramHandleController.text.trim(),
-                  'Role': 'Support Organisation',
-                  'Active Status': 'Active',
-                  'Profile Picture': '',
-                });
+                  // Use the UID as the Firestore document ID
+                  final userId = userCredential.user!.uid;
 
-                Navigator.of(context).pop();
+                  // Add the user data to Firestore with the UID as the document ID
+                  await FirebaseFirestore.instance
+                      .collection('SupportOrganisation')
+                      .doc(userId) // Explicitly set the document ID
+                      .set({
+                    'Id': userId, // Save the UID in the document
+                    'Organisation Name': organisationNameController.text.trim(),
+                    'Email': emailController.text.trim(),
+                    'Contact Number': contactNumberController.text.trim(),
+                    'Location': locationController.text.trim(),
+                    'Telegram Handle': telegramHandleController.text.trim(),
+                    'Role': 'Support Organisation',
+                    'Active Status': 'Active',
+                    'Profile Picture': '', // Initialize as empty
+                  });
+
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  // Handle errors (e.g., show a snackbar or alert)
+                  print('Error adding user: $e');
+                }
               },
               child: Text('Add', style: TextStyle(color: Colors.green)),
             ),

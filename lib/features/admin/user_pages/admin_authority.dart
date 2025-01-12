@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
@@ -200,7 +201,7 @@ class AdminAuthority extends StatelessWidget {
   void _showAddUserDialog(BuildContext context) {
     final usernameController = TextEditingController();
     final emailController = TextEditingController();
-    // final passwordController = TextEditingController();
+    final passwordController = TextEditingController();
 
     showDialog(
       context: context,
@@ -221,12 +222,11 @@ class AdminAuthority extends StatelessWidget {
                   controller: emailController,
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
-                // const SizedBox(height: 10),
-                // TextField(
-                //   controller: passwordController,
-                //   decoration: InputDecoration(labelText: 'Password'),
-                //   obscureText: true,
-                // ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(labelText: 'Password'),
+                ),
               ],
             ),
           ),
@@ -239,13 +239,29 @@ class AdminAuthority extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                await FirebaseFirestore.instance.collection('Authority').add({
-                  'Username': usernameController.text,
-                  'Email': emailController.text,
-                  // 'Password': passwordController.text,
-                  'Role': 'Authority',
-                });
-                Navigator.of(context).pop();
+                try {
+                  // Create the user in Firebase Authentication
+                  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
+                  );
+
+                  // Use the UID as the Firestore document ID
+                  final userId = userCredential.user!.uid;
+
+                  // Add the user data to Firestore with the UID as the document ID
+                  await FirebaseFirestore.instance.collection('Authority').doc(userId).set({
+                    'Id': userId, // Save the UID in the document
+                    'Username': usernameController.text.trim(),
+                    'Email': emailController.text.trim(),
+                    'Role': 'Authority',
+                  });
+
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  // Handle errors
+                  print('Error adding authority: $e');
+                }
               },
               child: Text('Add', style: TextStyle(color: Colors.green)),
             ),
