@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'dart:ui';
 
 import 'package:iconsax/iconsax.dart';
@@ -40,6 +42,8 @@ class AdminSupportorg extends StatelessWidget {
             ),
 
             const SizedBox(height: 22),
+
+            _sectionHeader('Users List', TColors.blush),
 
             // User List
             Expanded(
@@ -277,10 +281,25 @@ class AdminSupportorg extends StatelessWidget {
                     'Profile Picture': '', // Initialize as empty
                   });
 
+                  Get.snackbar(
+                    "Success",
+                    "User is Successfully Registered!",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                  );
+
                   Navigator.of(context).pop();
                 } catch (e) {
-                  // Handle errors (e.g., show a snackbar or alert)
-                  print('Error adding user: $e');
+                  // Handle errors
+                  Get.snackbar(
+                    "Failed",
+                    "User Registeration Failed!",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                  );
+                  print('Error adding Support Organisation: $e');
                 }
               },
               child: Text('Add', style: TextStyle(color: Colors.green)),
@@ -358,6 +377,13 @@ class AdminSupportorg extends StatelessWidget {
                   'Location': locationController.text,
                   'Telegram Handle': telegramHandleController.text,
                 });
+                Get.snackbar(
+                  "Success",
+                  "User's Details Are Updated Successfully!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
                 Navigator.of(context).pop();
               },
               child: Text('Save', style: TextStyle(color: Colors.green)),
@@ -386,10 +412,14 @@ class AdminSupportorg extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                await FirebaseFirestore.instance
-                    .collection('SupportOrganisation')
-                    .doc(userId)
-                    .delete();
+                await FirebaseFirestore.instance.collection('SupportOrganisation').doc(userId).delete();
+                Get.snackbar(
+                  "Success",
+                  "Account Successfully Deleted!",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
                 Navigator.of(context).pop();
               },
               child: Text('Delete', style: TextStyle(color: TColors.amber)),
@@ -397,6 +427,32 @@ class AdminSupportorg extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
