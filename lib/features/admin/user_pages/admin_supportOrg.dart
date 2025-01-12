@@ -22,7 +22,7 @@ class AdminSupportorg extends StatelessWidget {
           children: [
             // Page Title
             Text(
-              'Lets Manage',
+              'Let\'s Manage',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -158,38 +158,35 @@ class AdminSupportorg extends StatelessWidget {
           ],
         ),
       ),
+      // Bottom Navbar 
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        notchMargin: 8.0,
         color: TColors.blush,
-        child: Container(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6.0,
+        child: SizedBox(
           height: 80.0,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    _showAddUserDialog(context);
-                  },
-                  backgroundColor: TColors.cream,
-                  child: const Icon(Icons.add, color: TColors.gunmetal),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Add New User',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: TColors.cream,
-                  ),
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Iconsax.add_circle, color: Colors.white, size: 40),
+                onPressed: () {
+                  _showAddUserDialog(context);
+                },
+              ),
+              // Text(
+              //   'Add New User',
+              //   style: TextStyle(
+              //     fontSize: 12,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.white,
+              //   ),
+              // ),
+            ],
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 

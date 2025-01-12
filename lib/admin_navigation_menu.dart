@@ -44,7 +44,7 @@ class AdminNavigationMenu extends StatelessWidget {
                 : Colors.white.withOpacity(0.1),
             destinations: const [
               NavigationDestination(
-                icon: Icon(Iconsax.global, color: TColors.cream),
+                icon: Icon(Iconsax.menu, color: TColors.cream),
                 label: 'Home',
               ),
               NavigationDestination(
