@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -197,6 +198,7 @@ class AdminSupportorg extends StatelessWidget {
     final contactNumberController = TextEditingController();
     final locationController = TextEditingController();
     final telegramHandleController = TextEditingController();
+    final passwordController = TextEditingController();
 
     showDialog(
       context: context,
@@ -216,6 +218,11 @@ class AdminSupportorg extends StatelessWidget {
                 TextField(
                   controller: emailController,
                   decoration: InputDecoration(labelText: 'Email'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(labelText: 'Password'),
                 ),
                 const SizedBox(height: 10),
                 TextField(
@@ -244,17 +251,24 @@ class AdminSupportorg extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                await FirebaseFirestore.instance
-                    .collection('SupportOrganisation')
-                    .add({
-                  'Organisation Name': organisationNameController.text,
-                  'Email': emailController.text,
-                  'Contact Number': contactNumberController.text,
-                  'Location': locationController.text,
-                  'Telegram Handle': telegramHandleController.text,
+                // Firebase Authentication handles password securely
+                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: emailController.text.trim(),
+                  password: passwordController.text.trim(),
+                );
+
+                await FirebaseFirestore.instance.collection('SupportOrganisation').add({
+                  'Id': userCredential.user!.uid,
+                  'Organisation Name': organisationNameController.text.trim(),
+                  'Email': emailController.text.trim(),
+                  'Contact Number': contactNumberController.text.trim(),
+                  'Location': locationController.text.trim(),
+                  'Telegram Handle': telegramHandleController.text.trim(),
                   'Role': 'Support Organisation',
                   'Active Status': 'Active',
+                  'Profile Picture': '',
                 });
+
                 Navigator.of(context).pop();
               },
               child: Text('Add', style: TextStyle(color: Colors.green)),
