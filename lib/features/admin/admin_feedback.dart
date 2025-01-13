@@ -238,7 +238,7 @@ class FeedbackPage extends StatelessWidget {
                                     context, feedbackId, feedbackText);
                               } else if (value == 'delete') {
                                 await FirebaseFirestore.instance
-                                    .collection("Admin")
+                                    .collection("Admins")
                                     .doc("feedbacks")
                                     .collection("userFeedbacks")
                                     .doc(feedbackId)
@@ -326,7 +326,7 @@ class FeedbackPage extends StatelessWidget {
               }
 
               await FirebaseFirestore.instance
-                  .collection("Admin")
+                  .collection("Admins")
                   .doc("feedbacks")
                   .collection("userFeedbacks")
                   .doc(feedbackId)

@@ -324,40 +324,88 @@ class FeedbackCard extends StatelessWidget {
   }
 
   void _deleteFeedback(BuildContext context, String feedbackId) async {
-    bool confirmDelete = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Confirm Delete"),
-            content:
-                const Text("Are you sure you want to delete this feedback?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text("Delete"),
-              ),
-            ],
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: TColors.cream, // Background color
+        title: const Text(
+          "Confirm Delete",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black, // Title text color
           ),
-        ) ??
-        false;
+        ),
+        content: const Text(
+          "Are you sure you want to delete this feedback?",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black, // Content text color
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15), // Rounded corners
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red, // Text color
+              backgroundColor: Colors.white, // Button background
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            child: const Text(
+              "Cancel",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red, // Button text color
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseFirestore.instance
+                  .collection("Admins")
+                  .doc("feedbacks")
+                  .collection("userFeedbacks")
+                  .doc(feedbackId)
+                  .delete();
 
-    if (confirmDelete) {
-      await FirebaseFirestore.instance
-          .collection("Admins")
-          .doc("feedbacks")
-          .collection("userFeedbacks")
-          .doc(feedbackId)
-          .delete();
-      Get.snackbar(
-        "Deleted",
-        "Feedback has been deleted.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
+              Navigator.pop(context);
+
+              Get.snackbar(
+                "Deleted",
+                "Feedback has been deleted.",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white, // Text color
+              backgroundColor: Colors.red, // Button background
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              side: BorderSide(
+                  color: Colors.black, // Border color of the button
+                  width: 2.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            child: const Text(
+              "Delete",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // Button text color
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
