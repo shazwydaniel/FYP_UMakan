@@ -194,17 +194,28 @@ class AdminStudent extends StatelessWidget {
     final usernameController = TextEditingController();
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
+    final phoneNumberController = TextEditingController();
+    final matricsNumberController = TextEditingController();
+    String selectedAccommodation = 'KK1';
+    String selectedVehicleOwnership = 'No';
+    String selectedMaritalStatus = 'Single';
+    final childrenNumberController = TextEditingController();
+    final monthlyAllowanceController = TextEditingController();
+    final monthlyCommitmentsController = TextEditingController();
+    final heightController = TextEditingController();
+    final weightController = TextEditingController();
+    DateTime? selectedBirthdate;
+
+    // Page Index
+    int pageIndex = 0;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: TColors.cream,
-          title: Text('Add Student'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final pages = [
+              [
                 TextField(
                   controller: fullNameController,
                   decoration: InputDecoration(labelText: 'Full Name'),
@@ -224,54 +235,215 @@ class AdminStudent extends StatelessWidget {
                   controller: passwordController,
                   decoration: InputDecoration(labelText: 'Password'),
                 ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: phoneNumberController,
+                  decoration: InputDecoration(labelText: 'Phone Number'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: matricsNumberController,
+                  decoration: InputDecoration(labelText: 'Matrics Number'),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedAccommodation,
+                  decoration: InputDecoration(labelText: 'Accommodation'),
+                  dropdownColor: TColors.cream,
+                  items: [
+                    'KK1', 'KK2', 'KK3', 'KK4', 'KK5', 'KK6',
+                    'KK7', 'KK8', 'KK9', 'KK10', 'KK11',
+                    'KK12', 'KK13', 'Outside',
+                  ].map((location) {
+                    return DropdownMenuItem<String>(
+                      value: location,
+                      child: Text(location),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedAccommodation = value!;
+                    });
+                  },
+                ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel', style: TextStyle(color: TColors.amber)),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    email: emailController.text.trim(),
-                    password: passwordController.text.trim(),
-                  );
+              [
+                DropdownButtonFormField<String>(
+                  value: selectedVehicleOwnership,
+                  decoration: InputDecoration(labelText: 'Vehicle Ownership'),
+                  dropdownColor: TColors.cream,
+                  items: ['Yes', 'No'].map((ownership) {
+                    return DropdownMenuItem<String>(
+                      value: ownership,
+                      child: Text(ownership),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedVehicleOwnership = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: selectedMaritalStatus,
+                  decoration: InputDecoration(labelText: 'Marital Status'),
+                  dropdownColor: TColors.cream,
+                  items: ['Single', 'Married'].map((status) {
+                    return DropdownMenuItem<String>(
+                      value: status,
+                      child: Text(status),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedMaritalStatus = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: childrenNumberController,
+                  decoration: InputDecoration(labelText: 'Number of Children'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: monthlyAllowanceController,
+                  decoration: InputDecoration(labelText: 'Monthly Allowance'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: monthlyCommitmentsController,
+                  decoration: InputDecoration(labelText: 'Monthly Commitments'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: heightController,
+                  decoration: InputDecoration(labelText: 'Height'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: weightController,
+                  decoration: InputDecoration(labelText: 'Weight'),
+                ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () async {
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        selectedBirthdate = pickedDate;
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: TextEditingController(
+                        text: selectedBirthdate != null
+                            ? "${selectedBirthdate!.day.toString().padLeft(2, '0')}/${selectedBirthdate!.month.toString().padLeft(2, '0')}/${selectedBirthdate!.year}"
+                            : '',
+                      ),
+                      decoration: InputDecoration(labelText: 'Birthdate'),
+                    ),
+                  ),
+                ),
+              ],
+            ];
 
-                  final userId = userCredential.user!.uid;
+            return AlertDialog(
+              backgroundColor: TColors.cream,
+              title: Text('Add Student'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: pages[pageIndex],
+                ),
+              ),
+              actions: [
+                if (pageIndex > 0)
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        pageIndex -= 1;
+                      });
+                    },
+                    child: Text('Previous', style: TextStyle(color: TColors.textDark)),
+                  ),
+                if (pageIndex < pages.length - 1)
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        pageIndex += 1;
+                      });
+                    },
+                    child: Text('Next', style: TextStyle(color: TColors.stark_blue)),
+                  ),
+                if (pageIndex == pages.length - 1)
+                  TextButton(
+                    onPressed: () async {
+                      try {
+                        final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
+                        );
 
-                  await FirebaseFirestore.instance.collection('Users').doc(userId).set({
-                    'FullName': fullNameController.text.trim(),
-                    'Username': usernameController.text.trim(),
-                    'Email': emailController.text.trim(),
-                  });
+                        final userId = userCredential.user!.uid;
 
-                  Get.snackbar(
-                    "Success",
-                    "Student Successfully Registered!",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.green,
-                    colorText: Colors.white,
-                  );
+                        await FirebaseFirestore.instance.collection('Users').doc(userId).set({
+                          'Id': userId,
+                          'FullName': fullNameController.text.trim(),
+                          'Username': usernameController.text.trim(),
+                          'Email': emailController.text.trim(),
+                          'Role': 'Student',
+                          'PhoneNumber': phoneNumberController.text.trim(),
+                          'MatricsNumber': matricsNumberController.text.trim(),
+                          'Accomodation': selectedAccommodation,
+                          'Vehicle Ownership': selectedVehicleOwnership,
+                          'Marital Status': selectedMaritalStatus,
+                          'Number of Children': childrenNumberController.text.trim(),
+                          'Monthly Allowance': monthlyAllowanceController.text.trim(),
+                          'Monthly Commitments': monthlyCommitmentsController.text.trim(),
+                          'Height': heightController.text.trim(),
+                          'Weight': weightController.text.trim(),
+                          'Birthdate': selectedBirthdate != null
+                              ? "${selectedBirthdate!.day.toString().padLeft(2, '0')}/${selectedBirthdate!.month.toString().padLeft(2, '0')}/${selectedBirthdate!.year}"
+                              : '',
+                        });
 
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  Get.snackbar(
-                    "Failed",
-                    "Registration Failed!",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.red,
-                    colorText: Colors.white,
-                  );
-                }
-              },
-              child: Text('Add', style: TextStyle(color: Colors.green)),
-            ),
-          ],
+                        Get.snackbar(
+                          "Success",
+                          "Student Successfully Registered!",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.green,
+                          colorText: Colors.white,
+                        );
+
+                        Navigator.of(context).pop();
+                      } catch (e) {
+                        Get.snackbar(
+                          "Failed",
+                          "Registration Failed!",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      }
+                    },
+                    child: Text('Add', style: TextStyle(color: Colors.green)),
+                  ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel', style: TextStyle(color: TColors.amber)),
+                ),
+              ],
+            );
+          },
         );
       },
     );
