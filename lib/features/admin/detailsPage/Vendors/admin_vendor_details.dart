@@ -183,7 +183,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
 
             const SizedBox(height: 22),
 
-          _sectionHeader('Cafes List', TColors.vermillion),
+            _sectionHeader('Cafes List', TColors.vermillion),
 
             Expanded(
               child: StreamBuilder<QuerySnapshot>(

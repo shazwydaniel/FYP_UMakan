@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/admin/detailsPage/Vendors/SubPages/admin_vendor_cafe_advertisment.dart';
 import 'package:fyp_umakan/features/admin/detailsPage/Vendors/SubPages/admin_vendor_cafe_item.dart';
@@ -61,6 +63,7 @@ class CafeSubPage extends StatelessWidget {
     );
   }
 
+  // Main Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,20 +77,24 @@ class CafeSubPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'View $cafeName info',
+              'Let\s Manage $cafeName',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
+
             const SizedBox(height: 22),
+
+            _sectionHeader('Choose One to Start', TColors.vermillion),
+
             _buildCard(
               context,
               'Items',
               Icons.fastfood,
-              Colors.blue,
-              Colors.white,
+              TColors.stark_blue,
+              TColors.cream,
               AdminItemsPage(vendorId: vendorId, cafeId: cafeId),
             ),
             const SizedBox(height: 16),
@@ -95,8 +102,8 @@ class CafeSubPage extends StatelessWidget {
               context,
               'Reviews',
               Icons.rate_review,
-              Colors.green,
-              Colors.white,
+              TColors.forest,
+              TColors.cream,
               AdminReviewsPage(vendorId: vendorId, cafeId: cafeId),
             ),
             const SizedBox(height: 16),
@@ -104,12 +111,38 @@ class CafeSubPage extends StatelessWidget {
               context,
               'Advertisements',
               Icons.campaign,
-              Colors.red,
-              Colors.white,
+              TColors.amber,
+              TColors.cream,
               AdminAdvertisementsPage(vendorId: vendorId, cafeId: cafeId),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }

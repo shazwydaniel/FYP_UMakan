@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -62,43 +64,58 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
           widget.cafeData['cafe_ID'],
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cafe details updated successfully')),
+        Get.snackbar(
+          "Success",
+          "Cafe details updated successfully!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
+
         Navigator.pop(context);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update cafe: $e')),
+        Get.snackbar(
+          "Failed",
+          "Failed to update cafe details!",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
+        print('Error updating cafe details: $e');
       }
     }
   }
 
+  // Main Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TColors.cream,
       appBar: AppBar(
         backgroundColor: TColors.cream,
-        title: Text(widget.cafeData['cafeName'] ?? 'Edit Cafe Details'),
+        // title: Text(widget.cafeData['cafeName'] ?? 'Edit Cafe Details'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 16.0),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 15),
                 Text(
-                  'Edit Cafe Details',
+                  widget.cafeData['cafeName'] ?? 'Cafe Name',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 20),
+
+                const SizedBox(height: 22),
+
+                _sectionHeader('Edit Details', TColors.vermillion),
+
                 TextField(
                   controller: _cafeNameController,
                   decoration: const InputDecoration(
@@ -138,24 +155,68 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: _saveCafeDetails,
-                  icon: const Icon(Icons.save),
-                  label: const Text('Save Changes'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+
+                const SizedBox(height: 25),
+
+                Center(
+                  child: Container(
+                    width: 200,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    child: TextButton.icon(
+                      onPressed: _saveCafeDetails,
+                      icon: const Icon(Icons.save, color: Colors.white),
+                      label: const Text(
+                        'Save Changes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
                     ),
                   ),
-                ),
+                )
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+  
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
