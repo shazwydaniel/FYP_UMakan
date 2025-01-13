@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -25,6 +27,7 @@ class _AdminVendor extends State<AdminVendor> {
         FirebaseFirestore.instance.collection('Vendors').snapshots();
   }
 
+  // Edit User Dialog
   void _showEditVendorDialog(BuildContext context, String vendorId) {
     final vendorNameController = TextEditingController();
     final vendorEmailController = TextEditingController();
@@ -124,6 +127,7 @@ class _AdminVendor extends State<AdminVendor> {
     });
   }
 
+  // Delete User Dialog
   void _deleteVendor(BuildContext context, String vendorId) {
     showDialog(
       context: context,
@@ -169,6 +173,7 @@ class _AdminVendor extends State<AdminVendor> {
     );
   }
 
+  // Add User Dialog
   void _addVendor(BuildContext context) {
     final vendorNameController = TextEditingController();
     final vendorEmailController = TextEditingController();
@@ -246,6 +251,7 @@ class _AdminVendor extends State<AdminVendor> {
     );
   }
 
+  // Main Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -266,7 +272,7 @@ class _AdminVendor extends State<AdminVendor> {
             ),
           ),
           Text(
-            'Support Organisations',
+            'Vendors',
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -276,7 +282,9 @@ class _AdminVendor extends State<AdminVendor> {
 
           const SizedBox(height: 22),
 
-          // Expanded to ensure the list takes up remaining space
+          _sectionHeader('Users List', TColors.vermillion),
+
+          // User List (Fetch from 'Vendors' Collection in Firebase)
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _vendorsStream,
@@ -302,8 +310,7 @@ class _AdminVendor extends State<AdminVendor> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                VendorDetailsPage(vendorData: vendorData),
+                            builder: (context) => VendorDetailsPage(vendorData: vendorData),
                           ),
                         );
                       },
@@ -325,15 +332,36 @@ class _AdminVendor extends State<AdminVendor> {
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
                                 children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: TColors.vermillion,
+                                    backgroundImage: vendorData['Profile Picture'] != null &&
+                                            vendorData['Profile Picture'].isNotEmpty
+                                        ? NetworkImage(vendorData['Profile Picture']) as ImageProvider
+                                        : null,
+                                    child: vendorData['Profile Picture'] == null ||
+                                            vendorData['Profile Picture'].isEmpty
+                                        ? Text(
+                                            vendorData['Vendor Name'] != null &&
+                                                    vendorData['Vendor Name'].isNotEmpty
+                                                ? vendorData['Vendor Name'][0]
+                                                    .toUpperCase()
+                                                : '',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          )
+                                        : null,
+                                  ),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          vendorData['Vendor Name'] ??
-                                              'No Name',
+                                          vendorData['Vendor Name'] ?? 'No Name',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -341,8 +369,7 @@ class _AdminVendor extends State<AdminVendor> {
                                           ),
                                         ),
                                         Text(
-                                          vendorData['Vendor Email'] ??
-                                              'No Email',
+                                          vendorData['Vendor Email'] ?? 'No Email',
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black54,
@@ -352,12 +379,10 @@ class _AdminVendor extends State<AdminVendor> {
                                     ),
                                   ),
                                   PopupMenuButton<String>(
-                                    color: TColors
-                                        .cream, // Set the background color of the popup menu
+                                    color: TColors.cream,
                                     onSelected: (value) {
                                       if (value == 'Edit') {
-                                        _showEditVendorDialog(
-                                            context, vendorDoc.id);
+                                        _showEditVendorDialog(context, vendorDoc.id);
                                       } else if (value == 'Delete') {
                                         _deleteVendor(context, vendorDoc.id);
                                       }
@@ -396,7 +421,7 @@ class _AdminVendor extends State<AdminVendor> {
         ]),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.orange,
+        color: TColors.vermillion,
         shape: const CircularNotchedRectangle(),
         notchMargin: 0.0,
         child: Container(
@@ -417,6 +442,32 @@ class _AdminVendor extends State<AdminVendor> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }

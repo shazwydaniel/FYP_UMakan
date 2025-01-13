@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -33,6 +35,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
         .snapshots();
   }
 
+  // Delete Cafe Dialog
   void _deleteCafe(String cafeId) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -73,6 +76,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
     }
   }
 
+  // Add Cafe Dialog
   void _addCafePopup(BuildContext context) {
     showDialog(
       context: context,
@@ -155,6 +159,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
     );
   }
 
+  // Main Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,12 +175,16 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
             Text(
               widget.vendorData['Vendor Name'] ?? 'Vendor Details',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 16),
+
+            const SizedBox(height: 22),
+
+          _sectionHeader('Cafes List', TColors.vermillion),
+
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _cafeStream,
@@ -295,7 +304,7 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.orange,
+        color: TColors.vermillion,
         shape: const CircularNotchedRectangle(),
         notchMargin: 0.0,
         child: Container(
@@ -311,6 +320,32 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
