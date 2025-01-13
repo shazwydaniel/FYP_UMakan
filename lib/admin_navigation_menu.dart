@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/admin/admin_homepage.dart';
 import 'package:fyp_umakan/features/admin/admin_profile.dart';
+import 'package:fyp_umakan/features/admin/user_pages/admin_view_feedback.dart';
 import 'package:fyp_umakan/features/authority/screens/authority_profile_page.dart';
 import 'package:fyp_umakan/features/authority/screens/authority_home_page.dart';
 import 'package:fyp_umakan/features/community/screens/community_main_page.dart';
@@ -48,6 +49,10 @@ class AdminNavigationMenu extends StatelessWidget {
                 label: 'Home',
               ),
               NavigationDestination(
+                icon: Icon(Icons.rate_review, color: TColors.cream),
+                label: 'Feedback',
+              ),
+              NavigationDestination(
                 icon: Icon(Iconsax.security_user, color: TColors.cream),
                 label: 'Profile',
               ),
@@ -70,6 +75,7 @@ class AdminNavigationController extends GetxController {
 
   final List<Widget> screens = [
     AdminHomePage(),
+    AdminFeedbackViewerPage(),
     AdminProfilePage(),
   ];
 }

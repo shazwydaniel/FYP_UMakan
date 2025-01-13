@@ -163,7 +163,6 @@ class StudentProfilePageScreen extends StatelessWidget {
                       color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 180),
                 ],
               ),
             ),

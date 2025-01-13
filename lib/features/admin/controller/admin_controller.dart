@@ -15,7 +15,7 @@ class AdminController extends GetxController {
   final AdminRepository adminRepository = Get.put(AdminRepository());
 
   Rx<Admin> admin = Admin.empty().obs;
-  final admins = <Admin>[].obs; // Observable list of admins
+  final admins = <Admin>[].obs;
 
   // Admin Details
   final adminName = TextEditingController();
@@ -37,7 +37,11 @@ class AdminController extends GetxController {
   Future<void> fetchAdminRecord() async {
     try {
       final user = await adminRepository.fetchAdminDetails();
-      admin(user);
+      if (user.id != null && user.id.isNotEmpty) {
+        admin(user); // Assign fetched admin
+      } else {
+        throw Exception("Admin ID is null or empty");
+      }
     } catch (e) {
       print("Error fetching admin: $e");
       admin(Admin.empty());
@@ -70,27 +74,6 @@ class AdminController extends GetxController {
     } catch (e) {
       print('Error registering admin: $e');
       Get.snackbar('Error', 'Failed to register admin');
-    }
-  }
-
-  Future<void> fetchAllAdmins() async {
-    try {
-      final adminList = await adminRepository.getAllAdmins();
-      admins.assignAll(adminList);
-    } catch (e) {
-      print('Error fetching admins: $e');
-      admins.clear();
-    }
-  }
-
-  Future<void> deleteAdmin(String adminId) async {
-    try {
-      await adminRepository.deleteAdmin(adminId);
-      admins.removeWhere((admin) => admin.id == adminId);
-      Get.snackbar('Success', 'Admin deleted successfully');
-    } catch (e) {
-      print('Error deleting admin: $e');
-      Get.snackbar('Error', 'Failed to delete admin');
     }
   }
 }

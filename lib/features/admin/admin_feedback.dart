@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/admin/controller/admin_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
@@ -8,13 +9,13 @@ import 'package:intl/intl.dart';
 class FeedbackPage extends StatelessWidget {
   final TextEditingController feedbackController = TextEditingController();
   final userController = Get.find<UserController>();
+  final adminController = Get.put(AdminController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TColors.teal,
       appBar: AppBar(
-        title: Text("Help/Feedback"),
         backgroundColor: TColors.teal,
       ),
       body: Padding(
@@ -61,7 +62,7 @@ class FeedbackPage extends StatelessWidget {
 
                   // Submit feedback to Firebase
                   await FirebaseFirestore.instance
-                      .collection("Admin")
+                      .collection("Admins")
                       .doc("feedbacks")
                       .collection("userFeedbacks")
                       .add({
@@ -69,6 +70,7 @@ class FeedbackPage extends StatelessWidget {
                     "username": userController.user.value.username,
                     "feedback": feedbackController.text.trim(),
                     "timestamp": Timestamp.now(),
+                    "resolved": false,
                   });
 
                   // Clear the text field
@@ -117,7 +119,7 @@ class FeedbackPage extends StatelessWidget {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection("Admin")
+                    .collection("Admins")
                     .doc("feedbacks")
                     .collection("userFeedbacks")
                     .where("userId", isEqualTo: userController.user.value.id)
@@ -148,90 +150,110 @@ class FeedbackPage extends StatelessWidget {
                       final feedback = feedbackDocs[index];
                       final feedbackText = feedback['feedback'];
                       final feedbackId = feedback.id;
+                      final feedbackResolved = feedback['resolved'];
 
                       return Card(
                         color: TColors.cream,
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
-                            title: Text(
-                              feedbackText,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            subtitle: Text(
-                              "Submitted on: ${DateFormat('dd-MM-yyyy').format(DateTime.fromMillisecondsSinceEpoch((feedback['timestamp'] as Timestamp).millisecondsSinceEpoch))} at ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((feedback['timestamp'] as Timestamp).millisecondsSinceEpoch))}",
-                              style: TextStyle(
+                          title: Text(
+                            feedbackText,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Submitted on: ${DateFormat('dd-MM-yyyy').format(DateTime.fromMillisecondsSinceEpoch((feedback['timestamp'] as Timestamp).millisecondsSinceEpoch))} at ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((feedback['timestamp'] as Timestamp).millisecondsSinceEpoch))}",
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: const Color.fromARGB(255, 91, 91, 91)),
+                                  color: const Color.fromARGB(255, 91, 91, 91),
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                "Status: ${feedback['resolved'] == true ? 'Resolved' : 'Unresolved'}",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: feedback['resolved'] == true
+                                      ? Colors.green
+                                      : Colors
+                                          .red, // Green for Resolved, Red for Unresolved
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: PopupMenuButton<String>(
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: Colors.black, // Icon color
                             ),
-                            trailing: PopupMenuButton<String>(
-                              icon: Icon(
-                                Icons.more_vert,
-                                color: Colors.black, // Icon color
-                              ),
-                              color: TColors.cream, // Popup background color
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Rounded corners for the popup
-                              ),
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  value: 'edit',
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.edit,
-                                          color: TColors.teal), // Icon for Edit
-                                      SizedBox(width: 8),
-                                      Text(
-                                        'Edit',
-                                        style: TextStyle(
-                                          color: Colors.black, // Text color
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                            color: TColors.cream, // Popup background color
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  10), // Rounded corners for the popup
+                            ),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit,
+                                        color: TColors.teal), // Icon for Edit
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Edit',
+                                      style: TextStyle(
+                                        color: Colors.black, // Text color
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                PopupMenuItem(
-                                  value: 'delete',
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.delete,
-                                          color: Colors.red), // Icon for Delete
-                                      SizedBox(width: 8),
-                                      Text(
-                                        'Delete',
-                                        style: TextStyle(
-                                          color: Colors.black, // Text color
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                              ),
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete,
+                                        color: Colors.red), // Icon for Delete
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Delete',
+                                      style: TextStyle(
+                                        color: Colors.black, // Text color
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                              onSelected: (value) async {
-                                if (value == 'edit') {
-                                  _editFeedback(
-                                      context, feedbackId, feedbackText);
-                                } else if (value == 'delete') {
-                                  await FirebaseFirestore.instance
-                                      .collection("Admin")
-                                      .doc("feedbacks")
-                                      .collection("userFeedbacks")
-                                      .doc(feedbackId)
-                                      .delete();
-                                  Get.snackbar(
-                                    "Deleted",
-                                    "Your feedback has been deleted.",
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
-                                  );
-                                }
-                              },
-                            )),
+                              ),
+                            ],
+                            onSelected: (value) async {
+                              if (value == 'edit') {
+                                _editFeedback(
+                                    context, feedbackId, feedbackText);
+                              } else if (value == 'delete') {
+                                await FirebaseFirestore.instance
+                                    .collection("Admin")
+                                    .doc("feedbacks")
+                                    .collection("userFeedbacks")
+                                    .doc(feedbackId)
+                                    .delete();
+                                Get.snackbar(
+                                  "Deleted",
+                                  "Your feedback has been deleted.",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       );
                     },
                   );
