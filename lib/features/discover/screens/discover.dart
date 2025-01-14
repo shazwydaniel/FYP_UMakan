@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fyp_umakan/features/cafes/screens/all_reviews.dart';
 import 'package:fyp_umakan/features/discover/controller/discover_controller.dart';
+import 'package:fyp_umakan/features/discover/screens/discover_all_reviews.dart';
 import 'package:fyp_umakan/features/discover/screens/discover_cafes.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/feedback/review_model.dart';
@@ -10,6 +12,8 @@ import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
+
+import 'package:carousel_slider/carousel_slider.dart';
 
 class DiscoverPageScreen extends StatefulWidget {
   const DiscoverPageScreen({super.key});
@@ -152,101 +156,104 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
 
             SizedBox(height: 20),
 
-            // Horizontal Scrollable List for Cafe Locations
-            Container(
-              height: 180,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: predefinedLocations.length,
-                itemBuilder: (context, index) {
-                  final location = predefinedLocations[index]['name']!;
-                  final imagePath = predefinedLocations[index]['imagePath']!;
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 200,
+                enableInfiniteScroll: true,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                autoPlayInterval: Duration(seconds: 2),
+                autoPlayAnimationDuration: Duration(milliseconds: 900),
+              ),
+              items: predefinedLocations.map((location) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    final String locationName = location['name']!;
+                    final String imagePath = location['imagePath']!;
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LocationCafesScreen(
-                            location: location,
-                            image: imagePath,
-                            discoverController: _discoverController,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LocationCafesScreen(
+                              location: locationName,
+                              image: imagePath,
+                              discoverController: _discoverController,
+                            ),
+                          ),
+                        ).then((_) {
+                          // Refresh data when returning to DiscoverPageScreen
+                          _discoverController
+                              .fetchUserReviews(userController.currentUserId);
+                          _discoverController.fetchAllCafesFromAllVendors();
+                          print('Refresh list going back to Discover Page');
+                        });
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 3),
+                          borderRadius: BorderRadius.circular(16.0),
+                          image: DecorationImage(
+                            image: AssetImage(imagePath),
+                            fit: BoxFit.fill,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.3),
+                              BlendMode.darken,
+                            ),
                           ),
                         ),
-                      ).then((_) {
-                        // Refresh data when returning to DiscoverPageScreen
-                        _discoverController
-                            .fetchUserReviews(userController.currentUserId);
-                        _discoverController.fetchAllCafesFromAllVendors();
-                        print('Refresh list going back to Discover Page');
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 16.0, right: 8.0),
-                      width: 150,
-                      decoration: BoxDecoration(
-                        color: TColors.amber,
-                        borderRadius: BorderRadius.circular(16.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.4),
-                            blurRadius: 10.0,
-                            offset: Offset(0, 5),
+                        alignment: Alignment.center,
+                        child: Text(
+                          locationName,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                        ],
+                        ),
                       ),
-                      child: Stack(
-                        children: [
-                          // Background Image
-                          Positioned.fill(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16.0),
-                              child: Image.asset(
-                                imagePath,
-                                fit: BoxFit.cover,
-                                color: Colors.black.withOpacity(0.3),
-                                colorBlendMode: BlendMode.darken,
-                              ),
-                            ),
-                          ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
 
-                          // Overlay Text
-                          Center(
-                            child: Text(
-                              location,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
+            SizedBox(height: 30),
+
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 40, right: 40, top: 10, bottom: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4, // Thin vertical line width
+                    height: 40, // Adjust the height as needed
+                    color: TColors.textDark,
+                  ),
+                  const SizedBox(width: 10), // Space between the line and text
+                  Text(
+                    'Your Reviews',
+                    style: TextStyle(
+                      fontSize: 20, // Adjust the font size as needed
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.black : Colors.black,
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
             ),
 
-            SizedBox(height: 20),
-
+            // User Reviews Section
             // User Reviews Section
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Your Reviews',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 10),
                   Obx(() {
                     if (_discoverController.isLoadingReviews.value) {
                       return Center(
@@ -269,26 +276,73 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
                       );
                     }
 
+                    // Display the first 5 reviews
+                    final displayedReviews =
+                        _discoverController.userReviews.take(5).toList();
+
                     return Column(
-                      children: _discoverController.userReviews.map((review) {
-                        return Card(
-                          color: TColors.cream,
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: ListTile(
-                            title: Text(
-                              review.cafeName,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                              '${review.feedback}\nRating: ${review.rating} ★',
-                            ),
+                      children: [
+                        // List of the first 5 reviews
+                        Column(
+                          children: displayedReviews.map((review) {
+                            return Card(
+                              color: TColors.cream,
+                              margin: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: ListTile(
+                                title: Text(
+                                  review.cafeName,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  '${review.feedback}\nRating: ${review.rating} ★',
+                                ),
+                                onTap: () {
+                                  _showUpdateDialog(
+                                      context, review, _discoverController);
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                        SizedBox(height: 20),
+
+                        // Button to view all reviews
+                        Center(
+                          child: GestureDetector(
                             onTap: () {
-                              _showUpdateDialog(
-                                  context, review, _discoverController);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AllUserReviews(
+                                    userId: userController.currentUserId,
+                                  ),
+                                ),
+                              );
                             },
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: TColors.textDark,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ],
                     );
                   }),
                 ],
@@ -314,7 +368,7 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
           backgroundColor: Colors.transparent,
           contentPadding: EdgeInsets.zero,
           content: SizedBox(
-            height: 500, // Increased height for the delete button
+            height: 420, // Increased height for the delete button
             width: 300,
             child: Container(
               width: double.infinity,
@@ -435,8 +489,38 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Column(
+                    child: Row(
                       children: [
+                        // Delete Button
+                        ElevatedButton(
+                          onPressed: () async {
+                            // Call the delete method
+                            await controller.deleteReview(review);
+
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Review deleted successfully!'),
+                            ));
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              side: BorderSide(
+                                  color: Colors
+                                      .black, // Border color of the button
+                                  width: 2.0)),
+                        ),
+                        SizedBox(width: 60),
                         // Update Button
                         ElevatedButton(
                           onPressed: () async {
@@ -472,38 +556,6 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
                               width: 2,
                             ),
                           ),
-                        ),
-
-                        SizedBox(height: 10),
-
-                        // Delete Button
-                        ElevatedButton(
-                          onPressed: () async {
-                            // Call the delete method
-                            await controller.deleteReview(review);
-
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Review deleted successfully!'),
-                            ));
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              side: BorderSide(
-                                  color: Colors
-                                      .black, // Border color of the button
-                                  width: 2.0)),
                         ),
                       ],
                     ),

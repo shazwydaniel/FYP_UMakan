@@ -25,6 +25,8 @@ class DiscoverController extends GetxController {
   DiscoverController(this.vendorRepository);
   late String userId;
 
+  get isLoadingCafes => null;
+
   @override
   void onInit() {
     super.onInit();

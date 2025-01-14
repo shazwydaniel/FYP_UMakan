@@ -33,6 +33,8 @@ class BadgeController extends GetxController {
   Future<void> setupUser(String userId) async {
     try {
       await badgeRepo.initializeAchievements(userId);
+      await badgeRepo.initializeMealStates(userId);
+      await badgeRepo.initializeStreaks(userId);
     } catch (e) {
       print('Error initializing user journal: $e');
     }
