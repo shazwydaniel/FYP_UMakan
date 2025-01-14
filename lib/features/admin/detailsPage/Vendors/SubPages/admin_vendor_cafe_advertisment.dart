@@ -167,6 +167,8 @@ class AdminAdvertisementsPage extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 await advertController.deleteAd(vendorId, cafeId, adId);
+                advertController.fetchAdvertisementsByCafe(vendorId, cafeId);
+
                 Navigator.pop(context);
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -236,6 +238,8 @@ class AdminAdvertisementsPage extends StatelessWidget {
                 if (advertController.menuFormKey.currentState?.validate() ??
                     false) {
                   await advertController.addAdvert(vendorId, cafeId);
+                  advertController.fetchAdvertisementsByCafe(vendorId, cafeId);
+
                   Navigator.pop(context);
                 }
               },
@@ -272,6 +276,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
                       ? 'Detail is required'
                       : null,
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: advertController.startDateUpdateController,
                   readOnly: true,
@@ -282,6 +287,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
                   onTap: () => _selectDate(
                       context, advertController.startDateUpdateController),
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: advertController.endDateUpdateController,
                   readOnly: true,
@@ -292,6 +298,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
                   onTap: () => _selectDate(
                       context, advertController.endDateUpdateController),
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
@@ -305,6 +312,8 @@ class AdminAdvertisementsPage extends StatelessWidget {
                 if (advertController.updateForm.currentState?.validate() ??
                     false) {
                   await advertController.updateAds(vendorId, cafeId, ad.id);
+                  advertController.fetchAdvertisementsByCafe(vendorId, cafeId);
+
                   Navigator.pop(context);
                 }
               },

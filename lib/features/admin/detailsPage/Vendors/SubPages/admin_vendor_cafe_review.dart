@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:fyp_umakan/features/vendor/controller/review_controller.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 class AdminReviewsPage extends StatelessWidget {
   final String vendorId;
@@ -81,7 +82,24 @@ class AdminReviewsPage extends StatelessWidget {
                                       children: List.generate(
                                         review.rating.toInt(),
                                         (index) => const Icon(Icons.star,
-                                            color: Colors.grey, size: 16),
+                                            color: Colors.black, size: 16),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      DateFormat('dd MMM yyyy, hh:mm a')
+                                          .format(review.timestamp),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'User: ${review.userId}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
                                       ),
                                     ),
                                   ],
@@ -196,6 +214,7 @@ class AdminReviewsPage extends StatelessWidget {
                   updatedRating,
                   review.anonymous,
                 );
+                _reviewController.fetchReviews(vendorId, cafeId);
                 Navigator.pop(context);
               },
               child:
