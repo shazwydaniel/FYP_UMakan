@@ -33,6 +33,7 @@ class UserModel {
   bool prefLowSugar;
   String telegramHandle;
   bool isMoneyJournalInitialized;
+  double initialFoodAllowance;
 
   UserModel({
     required this.id,
@@ -66,6 +67,7 @@ class UserModel {
     this.prefLowSugar = false,
     this.telegramHandle = '',
     this.isMoneyJournalInitialized = false,
+    this.initialFoodAllowance = 0.0,
   });
 
   // Method to log daily financial data
