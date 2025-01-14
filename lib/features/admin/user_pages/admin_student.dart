@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'dart:ui';
 
@@ -9,7 +9,21 @@ import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-class AdminStudent extends StatelessWidget {
+class AdminStudent extends StatefulWidget {
+  @override
+    _AdminStudentState createState() => _AdminStudentState();
+}
+
+class _AdminStudentState extends State<AdminStudent> {
+  final searchController = TextEditingController();
+  String searchQuery = "";
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,12 +58,36 @@ class AdminStudent extends StatelessWidget {
 
             _sectionHeader('Users List', TColors.forest),
 
+            // Search Bar
+            TextField(
+              controller: searchController,
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.trim().toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Search by Student Name",
+                prefixIcon: Icon(Icons.search, color: TColors.forest),
+                filled: true,
+                fillColor: TColors.cream,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: TColors.forest, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: TColors.forest, width: 2),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
             // User List (Fetch from 'Users' (Student) Collection in Firebase)
             Expanded(
               child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('Users')
-                    .snapshots(),
+                stream: FirebaseFirestore.instance.collection('Users').snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -58,12 +96,13 @@ class AdminStudent extends StatelessWidget {
                     return Center(child: Text('Error fetching data.'));
                   }
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(
-                      child: Text('No students found.'),
-                    );
+                    return Center(child: Text('No students found.'));
                   }
 
-                  final users = snapshot.data!.docs;
+                  final users = snapshot.data!.docs.where((user) {
+                    final fullName = (user['FullName'] ?? '').toLowerCase();
+                    return fullName.contains(searchQuery);
+                  }).toList();
 
                   return ListView.builder(
                     itemCount: users.length,
@@ -101,8 +140,7 @@ class AdminStudent extends StatelessWidget {
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           user['FullName'],
@@ -123,7 +161,7 @@ class AdminStudent extends StatelessWidget {
                                     ),
                                   ),
                                   PopupMenuButton<String>(
-                                    color: TColors.cream, // Popup background
+                                    color: TColors.cream,
                                     onSelected: (value) {
                                       if (value == 'Edit') {
                                         _showEditUserDialog(context, user);
@@ -134,19 +172,11 @@ class AdminStudent extends StatelessWidget {
                                     itemBuilder: (context) => [
                                       PopupMenuItem(
                                         value: 'Edit',
-                                        child: Row(
-                                          children: [
-                                            Text('Edit'),
-                                          ],
-                                        ),
+                                        child: Text('Edit'),
                                       ),
                                       PopupMenuItem(
                                         value: 'Delete',
-                                        child: Row(
-                                          children: [
-                                            Text('Delete'),
-                                          ],
-                                        ),
+                                        child: Text('Delete'),
                                       ),
                                     ],
                                   ),
