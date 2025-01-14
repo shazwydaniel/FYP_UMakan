@@ -12,7 +12,8 @@ class TImages {
   static const String foodBank = "assets/images/FoodBank.png";
   static const String masjid = "assets/images/Masjid.png";
   static const String Support = "assets/images/Support.png";
-  static const String default_profile_icon = "assets/images/default_profile_icon.png";
+  static const String default_profile_icon =
+      "assets/images/default_profile_icon.png";
 
   // -- Social Logos
   static const String google = "assets/logos/google-icon.png";
@@ -91,9 +92,11 @@ class TImages {
   static const String KK10_Logo = "assets/logos/KK10_Logo.png";
   static const String KK11_Logo = "assets/logos/KK11_Logo.png";
   static const String KK12_Logo = "assets/logos/KK12_Logo.png";
+  static const String KK13_Logo = "assets/logos/KK13_Logo.png";
   static const String Zus_Logo = "assets/logos/Zus_Logo.png";
   static const String QBistro_Logo = "assets/logos/QBistro_Logo.png";
   static const String Others_Logo = "assets/logos/Others_Logo.png";
+  static const String UM_Logo = "assets/logos/UM_Logo.png";
 
   //food items
   static const String blueberry_muffin =
