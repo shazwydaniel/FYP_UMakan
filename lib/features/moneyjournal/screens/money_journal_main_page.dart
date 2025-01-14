@@ -996,7 +996,7 @@ class MoneyJournalMainPage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 40, right: 40, top: 0, bottom: 20),
               child: Obx(() {
                 if (selectedFilter.value == 'Date') {
-                  // "Date" Filter Section
+                  // "Complete Log" Filter Section
                   if (controller.profileLoading.value) {
                     return Center(child: CircularProgressIndicator());
                   }
@@ -1284,7 +1284,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                     },
                   );
                 } else if (selectedFilter.value == 'Expense Type') {
-                  // "Expense Type" Filter Section
+                  // "Monthly Chart" Filter Section
                   if (controller.profileLoading.value) {
                     return Center(child: CircularProgressIndicator());
                   }
@@ -1349,297 +1349,304 @@ class MoneyJournalMainPage extends StatelessWidget {
                                 ),
 
                                 // Tab Bar View for Donut Charts and Filtered Items
-                                Container(
-                                  height: 1000,
-                                  child: TabBarView(
-                                    children: _calculateMonthlyTotals(expenses).keys.map((month) {
-                                      // Filter expenses for the selected month
-                                      final filteredFoodExpenses = foodExpenses.where((expense) {
-                                        final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                                        return createdAt != null &&
-                                            DateFormat('MMM yyyy').format(createdAt) == month;
-                                      }).toList();
+                                SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 1700,
+                                        child: TabBarView(
+                                          children: _calculateMonthlyTotals(expenses).keys.map((month) {
+                                            // Filter expenses for the selected month
+                                            final filteredFoodExpenses = foodExpenses.where((expense) {
+                                              final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                                              return createdAt != null &&
+                                                  DateFormat('MMM yyyy').format(createdAt) == month;
+                                            }).toList();
 
-                                      final filteredNonFoodExpenses = nonFoodExpenses.where((expense) {
-                                        final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
-                                        return createdAt != null &&
-                                            DateFormat('MMM yyyy').format(createdAt) == month;
-                                      }).toList();
+                                            final filteredNonFoodExpenses = nonFoodExpenses.where((expense) {
+                                              final createdAt = (expense['createdAt'] as Timestamp?)?.toDate();
+                                              return createdAt != null &&
+                                                  DateFormat('MMM yyyy').format(createdAt) == month;
+                                            }).toList();
 
-                                      final foodTotal = _calculateMonthlyTotals(filteredFoodExpenses)[month] ?? 0.0;
-                                      final nonFoodTotal =
-                                          _calculateMonthlyTotals(filteredNonFoodExpenses)[month] ?? 0.0;
-                                      final totalSpent = foodTotal + nonFoodTotal;
+                                            final foodTotal = _calculateMonthlyTotals(filteredFoodExpenses)[month] ?? 0.0;
+                                            final nonFoodTotal =
+                                                _calculateMonthlyTotals(filteredNonFoodExpenses)[month] ?? 0.0;
+                                            final totalSpent = foodTotal + nonFoodTotal;
 
-                                      return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          // Donut Chart
-                                          SfCircularChart(
-                                            title: ChartTitle(
-                                              text: 'Expense Breakdown for $month',
-                                              textStyle: TextStyle(
-                                                color: TColors.cream,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            legend: Legend(
-                                              isVisible: true,
-                                              position: LegendPosition.bottom,
-                                              textStyle: TextStyle(
-                                                color: TColors.cream,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            annotations: <CircularChartAnnotation>[
-                                              CircularChartAnnotation(
-                                                widget: Text(
-                                                  'RM ${totalSpent.toStringAsFixed(2)}',
-                                                  style: TextStyle(
-                                                    color: TColors.cream,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                            series: <CircularSeries>[
-                                              DoughnutSeries<MapEntry<String, double>, String>(
-                                                radius: '100%',
-                                                innerRadius: '60%',
-                                                dataSource: [
-                                                  MapEntry('Food', foodTotal),
-                                                  MapEntry('Non-Food', nonFoodTotal),
-                                                ],
-                                                xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
-                                                yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
-                                                dataLabelSettings: DataLabelSettings(
-                                                  isVisible: true,
-                                                  textStyle: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                pointColorMapper: (MapEntry<String, double> entry, _) {
-                                                  return entry.key == 'Food' ? TColors.blush : TColors.bubbleOrange;
-                                                },
-                                              ),
-                                            ],
-                                          ),
-
-                                          // Food Expenses Section
-                                          if (filteredFoodExpenses.isNotEmpty) ...[
-                                            Container(
-                                              margin: const EdgeInsets.only(bottom: 20, top: 20),
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: TColors.bubbleOlive.withOpacity(0.3),
-                                                borderRadius: BorderRadius.circular(15),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Iconsax.quote_down,
-                                                    size: 22,
-                                                    color: TColors.blush,
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    'Food Expenses',
-                                                    style: TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight: FontWeight.bold,
+                                            return Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Donut Chart
+                                                SfCircularChart(
+                                                  title: ChartTitle(
+                                                    text: 'Expense Breakdown for $month',
+                                                    textStyle: TextStyle(
                                                       color: TColors.cream,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            // Food Expense - Items Cards
-                                            ...filteredFoodExpenses.map((expense) {
-                                              final itemName = expense['itemName'] ?? 'No item name';
-                                              final price = (expense['price'] ?? '0').toString();
-
-                                              return Container(
-                                                height: 100,
-                                                margin: const EdgeInsets.only(bottom: 10),
-                                                decoration: BoxDecoration(
-                                                  color: TColors.cream,
-                                                  borderRadius: BorderRadius.circular(20),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(20.0),
-                                                  child: Stack(
-                                                    children: [
-                                                      Positioned(
-                                                        left: 0,
-                                                        top: 0,
-                                                        bottom: 0,
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Text(
-                                                              itemName,
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 20,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              'Food',
-                                                              style: TextStyle(
-                                                                color: TColors.darkGreen,
-                                                                fontSize: 12,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Positioned(
-                                                        bottom: -16.0,
-                                                        right: 0,
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding: const EdgeInsets.only(top: 22.0),
-                                                              child: Text(
-                                                                'RM',
-                                                                style: TextStyle(
-                                                                  color: TColors.darkGreen,
-                                                                  fontSize: 15,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              price,
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 50,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ],
-
-                                          // Non-Food Expenses Section
-                                          if (filteredNonFoodExpenses.isNotEmpty) ...[
-                                            Container(
-                                              margin: const EdgeInsets.only(bottom: 20, top: 20),
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: TColors.bubbleOlive.withOpacity(0.3),
-                                                borderRadius: BorderRadius.circular(15),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Iconsax.quote_down,
-                                                    size: 22,
-                                                    color: TColors.blush,
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    'Non-Food Expenses',
-                                                    style: TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight: FontWeight.bold,
+                                                  legend: Legend(
+                                                    isVisible: true,
+                                                    position: LegendPosition.bottom,
+                                                    textStyle: TextStyle(
                                                       color: TColors.cream,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            // Non-Food Expense - Items Cards
-                                            ...filteredNonFoodExpenses.map((expense) {
-                                              final itemName = expense['itemName'] ?? 'No item name';
-                                              final price = (expense['price'] ?? '0').toString();
+                                                  annotations: <CircularChartAnnotation>[
+                                                    CircularChartAnnotation(
+                                                      widget: Text(
+                                                        'RM ${totalSpent.toStringAsFixed(2)}',
+                                                        style: TextStyle(
+                                                          color: TColors.cream,
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                  series: <CircularSeries>[
+                                                    DoughnutSeries<MapEntry<String, double>, String>(
+                                                      radius: '100%',
+                                                      innerRadius: '60%',
+                                                      dataSource: [
+                                                        MapEntry('Food', foodTotal),
+                                                        MapEntry('Non-Food', nonFoodTotal),
+                                                      ],
+                                                      xValueMapper: (MapEntry<String, double> entry, _) => entry.key,
+                                                      yValueMapper: (MapEntry<String, double> entry, _) => entry.value,
+                                                      dataLabelSettings: DataLabelSettings(
+                                                        isVisible: true,
+                                                        textStyle: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      pointColorMapper: (MapEntry<String, double> entry, _) {
+                                                        return entry.key == 'Food' ? TColors.blush : TColors.bubbleOrange;
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
 
-                                              return Container(
-                                                height: 100,
-                                                margin: const EdgeInsets.only(bottom: 10),
-                                                decoration: BoxDecoration(
-                                                  color: TColors.cream,
-                                                  borderRadius: BorderRadius.circular(20),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(20.0),
-                                                  child: Stack(
-                                                    children: [
-                                                      Positioned(
-                                                        left: 0,
-                                                        top: 0,
-                                                        bottom: 0,
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Text(
-                                                              itemName,
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 20,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              'Non-Food',
-                                                              style: TextStyle(
-                                                                color: TColors.darkGreen,
-                                                                fontSize: 12,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                // Food Expenses Section
+                                                if (filteredFoodExpenses.isNotEmpty) ...[
+                                                  Container(
+                                                    margin: const EdgeInsets.only(bottom: 20, top: 20),
+                                                    padding: const EdgeInsets.all(12),
+                                                    decoration: BoxDecoration(
+                                                      color: TColors.bubbleOlive.withOpacity(0.3),
+                                                      borderRadius: BorderRadius.circular(15),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Iconsax.quote_down,
+                                                          size: 22,
+                                                          color: TColors.blush,
                                                         ),
-                                                      ),
-                                                      Positioned(
-                                                        bottom: -16.0,
-                                                        right: 0,
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding: const EdgeInsets.only(top: 22.0),
-                                                              child: Text(
-                                                                'RM',
-                                                                style: TextStyle(
-                                                                  color: TColors.darkGreen,
-                                                                  fontSize: 15,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              price,
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 50,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                        const SizedBox(width: 10),
+                                                        Text(
+                                                          'Food Expenses',
+                                                          style: TextStyle(
+                                                            fontSize: 22,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: TColors.cream,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ],
-                                        ],
-                                      );
-                                    }).toList(),
+                                                  // Food Expense - Items Cards
+                                                  ...filteredFoodExpenses.map((expense) {
+                                                    final itemName = expense['itemName'] ?? 'No item name';
+                                                    final price = (expense['price'] ?? '0').toString();
+
+                                                    return Container(
+                                                      height: 100,
+                                                      margin: const EdgeInsets.only(bottom: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: TColors.cream,
+                                                        borderRadius: BorderRadius.circular(20),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(20.0),
+                                                        child: Stack(
+                                                          children: [
+                                                            Positioned(
+                                                              left: 0,
+                                                              top: 0,
+                                                              bottom: 0,
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Text(
+                                                                    itemName,
+                                                                    style: TextStyle(
+                                                                      color: Colors.black,
+                                                                      fontSize: 20,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    'Food',
+                                                                    style: TextStyle(
+                                                                      color: TColors.darkGreen,
+                                                                      fontSize: 12,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Positioned(
+                                                              bottom: -16.0,
+                                                              right: 0,
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(top: 22.0),
+                                                                    child: Text(
+                                                                      'RM',
+                                                                      style: TextStyle(
+                                                                        color: TColors.darkGreen,
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    price,
+                                                                    style: TextStyle(
+                                                                      color: Colors.black,
+                                                                      fontSize: 50,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ],
+
+                                                // Non-Food Expenses Section
+                                                if (filteredNonFoodExpenses.isNotEmpty) ...[
+                                                  Container(
+                                                    margin: const EdgeInsets.only(bottom: 20, top: 20),
+                                                    padding: const EdgeInsets.all(12),
+                                                    decoration: BoxDecoration(
+                                                      color: TColors.bubbleOlive.withOpacity(0.3),
+                                                      borderRadius: BorderRadius.circular(15),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Iconsax.quote_down,
+                                                          size: 22,
+                                                          color: TColors.blush,
+                                                        ),
+                                                        const SizedBox(width: 10),
+                                                        Text(
+                                                          'Non-Food Expenses',
+                                                          style: TextStyle(
+                                                            fontSize: 22,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: TColors.cream,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  // Non-Food Expense - Items Cards
+                                                  ...filteredNonFoodExpenses.map((expense) {
+                                                    final itemName = expense['itemName'] ?? 'No item name';
+                                                    final price = (expense['price'] ?? '0').toString();
+
+                                                    return Container(
+                                                      height: 100,
+                                                      margin: const EdgeInsets.only(bottom: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: TColors.cream,
+                                                        borderRadius: BorderRadius.circular(20),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(20.0),
+                                                        child: Stack(
+                                                          children: [
+                                                            Positioned(
+                                                              left: 0,
+                                                              top: 0,
+                                                              bottom: 0,
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Text(
+                                                                    itemName,
+                                                                    style: TextStyle(
+                                                                      color: Colors.black,
+                                                                      fontSize: 20,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    'Non-Food',
+                                                                    style: TextStyle(
+                                                                      color: TColors.darkGreen,
+                                                                      fontSize: 12,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Positioned(
+                                                              bottom: -16.0,
+                                                              right: 0,
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(top: 22.0),
+                                                                    child: Text(
+                                                                      'RM',
+                                                                      style: TextStyle(
+                                                                        color: TColors.darkGreen,
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    price,
+                                                                    style: TextStyle(
+                                                                      color: Colors.black,
+                                                                      fontSize: 50,
+                                                                      fontWeight: FontWeight.bold,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ],
+                                              ],
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

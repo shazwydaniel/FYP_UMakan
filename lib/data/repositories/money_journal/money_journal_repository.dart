@@ -5,7 +5,7 @@ class MoneyJournalRepository {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Initialize the money journal for a user
+  // Method to Initialize the money journal for a user ------------------------------------
   Future<void> initializeUserJournal(String userId) async {
     try {
       final docRef = _db.collection('Users').doc(userId).collection('money_journal').doc('meta');
@@ -19,7 +19,7 @@ class MoneyJournalRepository {
     }
   }
 
-  // Add New Expense to Money Journal
+  // Method to Add New Expense to Money Journal ------------------------------------
   Future<void> addExpense(String userId, String expenseType, Map<String, dynamic> expenseData) async {
     try {
       final docRef = FirebaseFirestore.instance
@@ -39,7 +39,7 @@ class MoneyJournalRepository {
     }
   }
 
-  // Get All Expenses For a Specific User
+  // Method to Get All Expenses For a Specific User ------------------------------------
   Future<List<Map<String, dynamic>>> getExpenses(String userId) async {
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -63,7 +63,7 @@ class MoneyJournalRepository {
     }
   }
 
-  // Update a Specific Expense
+  // Method to Update a Specific Expense ------------------------------------
   Future<void> updateExpense(String userId, String expenseId, Map<String, dynamic> updatedData) async {
     try {
       await _db
@@ -83,7 +83,7 @@ class MoneyJournalRepository {
     }
   }
 
-  // Remove a Specific Expense
+  // Method to Remove a Specific Expense ------------------------------------
   Future<void> removeExpense(String userId, String expenseId) async {
     try {
       await FirebaseFirestore.instance
@@ -98,7 +98,7 @@ class MoneyJournalRepository {
     }
   }
 
-  // Add Extra Allowance to Actual Food Allowance
+  // Add Extra Allowance to Actual Food Allowance ------------------------------------
   Future<void> addExtraAllowance(String userId, double extraAmount) async {
     try {
       final userDoc = _db.collection('Users').doc(userId);
@@ -121,6 +121,34 @@ class MoneyJournalRepository {
     } catch (e) {
       print('Unknown error: $e');
       throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Method to Calculate Total Expenses For Current Month ------------------------------------
+  Future<double> calculateTotalExpensesForCurrentMonth(String userId) async {
+    try {
+        final now = DateTime.now();
+        final startOfMonth = DateTime(now.year, now.month, 1);
+        final endOfMonth = DateTime(now.year, now.month + 1, 1).subtract(Duration(seconds: 1));
+
+        final snapshot = await _db
+            .collection('Users')
+            .doc(userId)
+            .collection('money_journal')
+            .where('createdAt', isGreaterThanOrEqualTo: startOfMonth)
+            .where('createdAt', isLessThanOrEqualTo: endOfMonth)
+            .get();
+
+        // Sum up the 'price' field of all documents
+        double totalExpense = snapshot.docs.fold(0.0, (sum, doc) {
+            return sum + (doc.data()['price'] ?? 0.0);
+        });
+
+        print('Total Expenses for Current Month: $totalExpense');
+        return totalExpense;
+    } catch (e) {
+        print('Error calculating total expenses for current month: $e');
+        return 0.0; // Return 0 if there's an error
     }
   }
 }

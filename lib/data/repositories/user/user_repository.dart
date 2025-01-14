@@ -305,41 +305,133 @@ class UserRepository extends GetxController {
     }
   }
 
-  // Method to calculate and update updatedRecommendedAllowance
+  // Modify calculateAndUpdateAllowance to account for daily logs
   Future<void> calculateAndUpdateAllowance(String userId) async {
     try {
-      // Fetch the user data
-      final doc = await _db.collection('Users').doc(userId).get();
-      final userData = doc.data();
+      // Fetch user and latest daily data
+      final userDoc = await _db.collection('Users').doc(userId).get();
+      final userData = userDoc.data();
 
-      if (userData == null) {
-        throw 'User not found';
-      }
+      if (userData == null) throw 'User not found';
 
-      // Extract relevant fields
-      double recommendedMoneyAllowance = userData['recommendedMoneyAllowance']?.toDouble() ?? 0.0;
-      DateTime now = DateTime.now();
-      int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+      final now = DateTime.now();
+      final recommendedMoneyAllowance = userData['recommendedMoneyAllowance'] ?? 0.0;
+      final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+      final elapsedDays = now.day;
 
-      // Calculate allowance left based on days passed in the current month
-      int daysElapsed = now.day - 1;
-      double dailyAllowance = recommendedMoneyAllowance / daysInMonth;
-      double updatedAllowance = recommendedMoneyAllowance - (daysElapsed * dailyAllowance);
+      // Calculate daily allowance based on historical data
+      final dailyAllowance = recommendedMoneyAllowance / daysInMonth;
+      final updatedAllowance = recommendedMoneyAllowance - (elapsedDays * dailyAllowance);
 
-      // Ensure the allowance doesn't go below zero
-      updatedAllowance = updatedAllowance < 0 ? 0 : updatedAllowance;
+      // Ensure updated allowance does not go below 0
+      final safeAllowance = updatedAllowance < 0 ? 0 : updatedAllowance;
 
-      // Update the field in Firebase
+      // Update user record
       await _db.collection('Users').doc(userId).update({
-        'updatedRecommendedAllowance': updatedAllowance,
+        'updatedRecommendedAllowance': safeAllowance,
       });
+      print("Updated recommended allowance: $safeAllowance");
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
       throw TFirebaseException(e.code).message;
     } catch (e) {
-      print('Error calculating updatedRecommendedAllowance: $e');
+      print('Error calculating allowance: $e');
       throw 'Something went wrong. Please try again';
     }
   }
 
+  // Method to log daily financial data into MoneyJournalHistory  ------------------------------------
+  Future<void> logDailyData(String userId, Map<String, dynamic> dailyData) async {
+    try {
+      final now = DateTime.now();
+      final year = now.year.toString();
+      final month = now.month.toString().padLeft(2, '0');
+      final day = now.day.toString().padLeft(2, '0');
+
+      final dailyDoc = _db
+          .collection('Users')
+          .doc(userId)
+          .collection('MoneyJournalHistory')
+          .doc(year)
+          .collection('Months')
+          .doc(month)
+          .collection('Days')
+          .doc(day);
+
+      await dailyDoc.set(dailyData, SetOptions(merge: true));
+      print("Daily data logged successfully for $year/$month/$day");
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } catch (e) {
+      print('Error logging daily data: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Method to fetch the latest logged day's data  ------------------------------------
+  Future<Map<String, dynamic>> getLastLoggedData(String userId) async {
+    try {
+      final now = DateTime.now();
+      final year = now.year.toString();
+      final month = now.month.toString().padLeft(2, '0');
+
+      final daysRef = _db
+          .collection('Users')
+          .doc(userId)
+          .collection('MoneyJournalHistory')
+          .doc(year)
+          .collection('Months')
+          .doc(month)
+          .collection('Days');
+
+      final lastDaySnapshot =
+          await daysRef.orderBy('day', descending: true).limit(1).get();
+
+      if (lastDaySnapshot.docs.isNotEmpty) {
+        return lastDaySnapshot.docs.first.data();
+      } else {
+        return {};
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } catch (e) {
+      print('Error fetching last logged data: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  // Method to update actualRemainingFoodAllowance dynamically ------------------------------------
+  Future<void> updateRemainingAllowance(String userId) async {
+    try {
+      // Fetch the latest daily log
+      final lastLog = await getLastLoggedData(userId);
+
+      if (lastLog.isNotEmpty) {
+        // Calculate based on last log
+        final additionalAllowance = lastLog['additionalAllowance'] ?? 0.0;
+        final additionalExpense = lastLog['additionalExpense'] ?? 0.0;
+        final monthlyAllowance = lastLog['monthlyAllowance'] ?? 0.0;
+        final monthlyCommittments = lastLog['monthlyCommittments'] ?? 0.0;
+
+        final remaining = (monthlyAllowance + additionalAllowance) -
+            (monthlyCommittments + additionalExpense);
+
+        // Update the field in Firestore
+        await _db.collection('Users').doc(userId).update({
+          'actualRemainingFoodAllowance': remaining,
+        });
+        print("Updated actualRemainingFoodAllowance: $remaining");
+      } else {
+        print("No daily log found for $userId.");
+      }
+    } on FirebaseException catch (e) {
+      print('FirebaseException: ${e.message}');
+      throw TFirebaseException(e.code).message;
+    } catch (e) {
+      print('Error updating remaining allowance: $e');
+      throw 'Something went wrong. Please try again';
+    }
+  }
 }

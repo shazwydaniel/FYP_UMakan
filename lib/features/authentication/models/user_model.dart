@@ -32,6 +32,7 @@ class UserModel {
   bool prefVegetarian;
   bool prefLowSugar;
   String telegramHandle;
+  bool isMoneyJournalInitialized;
 
   UserModel({
     required this.id,
@@ -64,7 +65,57 @@ class UserModel {
     this.prefVegetarian = false,
     this.prefLowSugar = false,
     this.telegramHandle = '',
+    this.isMoneyJournalInitialized = false,
   });
+
+  // Method to log daily financial data
+  Future<void> logDailyData({
+    required FirebaseFirestore firestore,
+    required DateTime date,
+    required Map<String, dynamic> dailyData,
+  }) async {
+    final year = date.year.toString();
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+
+    final dailyDoc = firestore
+        .collection('Users')
+        .doc(id)
+        .collection('MoneyJournalHistory')
+        .doc(year)
+        .collection('Months')
+        .doc(month)
+        .collection('Days')
+        .doc(day);
+
+    await dailyDoc.set(dailyData, SetOptions(merge: true));
+  }
+
+  // Method to retrieve the last logged day's data
+  Future<Map<String, dynamic>> getLastLoggedData(
+      FirebaseFirestore firestore) async {
+    final now = DateTime.now();
+    final year = now.year.toString();
+    final month = now.month.toString().padLeft(2, '0');
+
+    final daysRef = firestore
+        .collection('Users')
+        .doc(id)
+        .collection('MoneyJournalHistory')
+        .doc(year)
+        .collection('Months')
+        .doc(month)
+        .collection('Days');
+
+    final lastDaySnapshot =
+        await daysRef.orderBy('day', descending: true).limit(1).get();
+
+    if (lastDaySnapshot.docs.isNotEmpty) {
+      return lastDaySnapshot.docs.first.data();
+    } else {
+      return {};
+    }
+  }
 
   // Convert a UserModel into a Map
   Map<String, dynamic> toMap() {
