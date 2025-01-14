@@ -628,6 +628,7 @@ class HomePageScreen extends StatelessWidget {
                             ); // Empty list case
                           } else {
                             final recommendedMeals = snapshot.data!;
+                            print('Recommended Meals: $recommendedMeals');
 
                             return Container(
                               height: 270,
@@ -682,10 +683,12 @@ class HomePageScreen extends StatelessWidget {
                                                       ),
                                                       child: ClipRRect(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                10), // Inner radius
+                                                            BorderRadius
+                                                                .circular(10),
                                                         child: item.itemImage
-                                                                .isNotEmpty
+                                                                    .isNotEmpty &&
+                                                                item.itemImage !=
+                                                                    "default_image_url"
                                                             ? Image.network(
                                                                 item.itemImage,
                                                                 width: 200,
@@ -696,14 +699,14 @@ class HomePageScreen extends StatelessWidget {
                                                             : Container(
                                                                 width: 200,
                                                                 height: 200,
-                                                                color: Colors
-                                                                    .grey[200],
+                                                                color: TColors
+                                                                    .mustard,
                                                                 child: Icon(
                                                                   Icons
                                                                       .fastfood,
                                                                   size: 100,
                                                                   color: Colors
-                                                                      .black54,
+                                                                      .white,
                                                                 ),
                                                               ),
                                                       ),
@@ -1004,41 +1007,44 @@ class HomePageScreen extends StatelessWidget {
                                         children: [
                                           // Circular container for the image
                                           Container(
-                                            width: 120,
-                                            height: 120,
-                                            decoration: BoxDecoration(
-                                              color: TColors.mustard,
-                                              borderRadius:
-                                                  BorderRadius.circular(200),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.25),
-                                                  spreadRadius: 2,
-                                                  blurRadius: 10,
-                                                  offset: const Offset(0, 4),
-                                                ),
-                                              ],
-                                              image: item.itemImage != null &&
-                                                      item.itemImage.isNotEmpty
-                                                  ? DecorationImage(
-                                                      image: NetworkImage(
-                                                          item.itemImage),
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : null, // Add fallback for missing image
-                                            ),
-                                            child: item.itemImage == null ||
-                                                    item.itemImage.isEmpty
-                                                ? Center(
-                                                    child: Icon(
-                                                      Icons.fastfood,
-                                                      size: 40,
-                                                      color: Colors.white,
+                                              width: 120,
+                                              height: 120,
+                                              decoration: BoxDecoration(
+                                                  color: TColors.mustard,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          200),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.25),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 10,
+                                                      offset:
+                                                          const Offset(0, 4),
                                                     ),
-                                                  )
-                                                : null,
-                                          ),
+                                                  ],
+                                                  image: item.itemImage
+                                                              .isNotEmpty &&
+                                                          item.itemImage !=
+                                                              "default_image_url"
+                                                      ? DecorationImage(
+                                                          image: NetworkImage(
+                                                              item.itemImage),
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : null),
+                                              child: item.itemImage.isEmpty ||
+                                                      item.itemImage ==
+                                                          "default_image_url"
+                                                  ? Center(
+                                                      child: Icon(
+                                                        Icons.fastfood,
+                                                        size: 40,
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : null),
                                           // Text Details
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),

@@ -17,6 +17,7 @@ import 'package:get/get.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/vendor/vendor_repository.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 class CafePage extends StatelessWidget {
@@ -64,14 +65,12 @@ class CafePage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
-                      overflow: TextOverflow
-                          .ellipsis, // Ensure long names don't overflow
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   IconButton(
                     onPressed: () {
                       showFeedbackDialog(context, vendorId, cafe);
-                      // Trigger DiscoverController refresh after feedback submission
                     },
                     icon: Icon(
                       Icons.feedback,
@@ -298,16 +297,15 @@ class CafePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 4, // Thin vertical line width
-                    height: 40, // Adjust the height as needed
+                    width: 4,
+                    height: 40,
                     color: TColors.amber,
                   ),
-                  const SizedBox(width: 10), // Space between the line and text
-
+                  const SizedBox(width: 10),
                   Text(
                     'Menu Items',
                     style: TextStyle(
-                      fontSize: 16, // Adjust the font size as needed
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -344,7 +342,7 @@ class CafePage extends StatelessWidget {
                               content: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: TColors.amber,
+                                  color: TColors.cream,
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
@@ -369,9 +367,11 @@ class CafePage extends StatelessWidget {
                                               BorderRadius.circular(12),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              10), // Inner radius
-                                          child: item.itemImage.isNotEmpty
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: item.itemImage.isNotEmpty &&
+                                                  item.itemImage !=
+                                                      "default_image_url"
                                               ? Image.network(
                                                   item.itemImage,
                                                   width: 200,
@@ -381,11 +381,13 @@ class CafePage extends StatelessWidget {
                                               : Container(
                                                   width: 200,
                                                   height: 200,
-                                                  color: Colors.grey[200],
+                                                  color: TColors.textLight,
                                                   child: Icon(
-                                                    Icons.fastfood,
-                                                    size: 100,
-                                                    color: Colors.black54,
+                                                    Icons
+                                                        .fastfood, // Replace with any other icon if desired
+                                                    size: 100, // Icon size
+                                                    color: Colors
+                                                        .black, // Icon color
                                                   ),
                                                 ),
                                         ),
@@ -412,7 +414,7 @@ class CafePage extends StatelessWidget {
                                             'Cost: RM${item.itemPrice.toStringAsFixed(2)}',
                                             style: TextStyle(
                                               fontSize: 16,
-                                              color: TColors.textLight,
+                                              color: TColors.textDark,
                                             ),
                                           ),
                                           SizedBox(height: 4),
@@ -420,7 +422,7 @@ class CafePage extends StatelessWidget {
                                             'Calories: ${item.itemCalories} cal',
                                             style: TextStyle(
                                               fontSize: 16,
-                                              color: TColors.textLight,
+                                              color: TColors.textDark,
                                             ),
                                           ),
                                         ],
@@ -445,7 +447,7 @@ class CafePage extends StatelessWidget {
                                                   6), // Circle color for Spicy
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.white,
+                                                  color: Colors.black,
                                                   width: 2), // White border
                                             ),
                                             alignment: Alignment.center,
@@ -453,7 +455,7 @@ class CafePage extends StatelessWidget {
                                               'S',
                                               style: TextStyle(
                                                 color:
-                                                    Colors.white, // Text color
+                                                    Colors.black, // Text color
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12, // Font size
                                               ),
@@ -472,14 +474,14 @@ class CafePage extends StatelessWidget {
                                                   75), // Circle color for Vegetarian
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.white,
+                                                  color: Colors.black,
                                                   width: 2),
                                             ),
                                             alignment: Alignment.center,
                                             child: Text(
                                               'V',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12,
                                               ),
@@ -495,14 +497,14 @@ class CafePage extends StatelessWidget {
                                                   .blush, // Circle color for Low Sugar
                                               shape: BoxShape.circle,
                                               border: Border.all(
-                                                  color: Colors.white,
+                                                  color: Colors.black,
                                                   width: 2),
                                             ),
                                             alignment: Alignment.center,
                                             child: Text(
                                               'LS',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize:
                                                     10, // Slightly smaller for "LS"
@@ -528,7 +530,7 @@ class CafePage extends StatelessWidget {
                                             child: Text(
                                               'Cancel',
                                               style: TextStyle(
-                                                color: TColors.textLight,
+                                                color: TColors.textDark,
                                                 fontSize: 16,
                                               ),
                                             ),
@@ -739,17 +741,24 @@ class CafePage extends StatelessWidget {
                                     color: Colors.black,
                                     width: 2,
                                   ),
-                                  image: DecorationImage(
-                                    image: item.itemImage.isNotEmpty
-                                        ? NetworkImage(item
-                                            .itemImage) // Load image from a URL
-                                        : AssetImage(
-                                                'assets/images/default_food.png')
-                                            as ImageProvider, // Default image
-                                    fit: BoxFit
-                                        .fill, // Ensures the image covers the circle
-                                  ),
+                                  color: Colors.grey[
+                                      300], // Background color for the icon
                                 ),
+                                child: item.itemImage.isNotEmpty &&
+                                        item.itemImage != "default_image_url"
+                                    ? ClipOval(
+                                        child: Image.network(
+                                          item.itemImage,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Center(
+                                        child: Icon(
+                                          Icons.fastfood,
+                                          size: 40,
+                                          color: Colors.black,
+                                        ),
+                                      ),
                               ),
                             ],
                           ),
