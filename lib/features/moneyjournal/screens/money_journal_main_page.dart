@@ -1954,11 +1954,6 @@ class MoneyJournalMainPage extends StatelessWidget {
       if (createdAt != null) {
         final dateKey = DateTime(createdAt.year, createdAt.month, createdAt.day);
 
-        // Exclude current day's expenses
-        if (dateKey == currentDay) {
-          continue;
-        }
-
         if (!grouped.containsKey(dateKey)) {
           grouped[dateKey] = [];
         }
