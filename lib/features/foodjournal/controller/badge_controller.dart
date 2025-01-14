@@ -21,12 +21,20 @@ class BadgeController extends GetxController {
   static BadgeController get instance => Get.find();
 
   final BadgeRepository badgeRepo = Get.put(BadgeRepository());
-  final UserController userController = Get.put(UserController());
+  final UserController userController = UserController.instance;
 
   @override
   void onInit() {
     super.onInit();
-    setupUser(userController.user.value.id);
+    ever(userController.user, (user) {
+      if (user != null && user.id.isNotEmpty) {
+        print(
+            "User data is ready. Initializing setupUser for userId: ${user.id}");
+        setupUser(user.id);
+      } else {
+        print("User data not ready yet.");
+      }
+    });
   }
 
   // Setup the Money Journal for a user
