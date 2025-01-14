@@ -30,7 +30,7 @@ class VendorAdsPage extends StatelessWidget {
                 Text(
                   'Your',
                   style: TextStyle(
-                    fontSize: 40,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: TColors.textLight,
                   ),
@@ -38,7 +38,7 @@ class VendorAdsPage extends StatelessWidget {
                 Text(
                   'Advertisements',
                   style: TextStyle(
-                    fontSize: 40,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: TColors.textLight,
                   ),
