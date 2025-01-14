@@ -283,7 +283,7 @@ class _AdminStudentState extends State<AdminStudent> {
                   items: [
                     'KK1', 'KK2', 'KK3', 'KK4', 'KK5', 'KK6',
                     'KK7', 'KK8', 'KK9', 'KK10', 'KK11',
-                    'KK12', 'KK13', 'Outside',
+                    'KK12', 'KK13', 'Outside Campus',
                   ].map((location) {
                     return DropdownMenuItem<String>(
                       value: location,
@@ -534,7 +534,7 @@ class _AdminStudentState extends State<AdminStudent> {
                   items: [
                     'KK1', 'KK2', 'KK3', 'KK4', 'KK5', 'KK6', 
                     'KK7', 'KK8', 'KK9', 'KK10', 'KK11', 
-                    'KK12', 'KK13', 'Outside',
+                    'KK12', 'KK13', 'Outside Campus',
                   ].map((location) {
                     return DropdownMenuItem<String>(
                       value: location,
