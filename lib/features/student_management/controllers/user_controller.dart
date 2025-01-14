@@ -57,20 +57,25 @@ class UserController extends GetxController {
         updateStatus();
 
         // Calculate total expenses for the current month
-        final totalExpenses = await moneyJournalRepository.calculateTotalExpensesForCurrentMonth(userFromDb.id);
+        final totalExpenses = await moneyJournalRepository
+            .calculateTotalExpensesForCurrentMonth(userFromDb.id);
 
         // Update User Model with Calculated additionalExpense
         user.update((u) {
-            if (u != null) {
-                u.additionalExpense = totalExpenses;
+          if (u != null) {
+            u.additionalExpense = totalExpenses;
 
-                // Recalculate actualRemainingFoodAllowance
-                double monthlyAllowance = double.tryParse(u.monthlyAllowance) ?? 0.0;
-                double monthlyCommittments = double.tryParse(u.monthlyCommittments) ?? 0.0;
-                double additionalAllowance = u.additionalAllowance ?? 0.0;
+            // Recalculate actualRemainingFoodAllowance
+            double monthlyAllowance =
+                double.tryParse(u.monthlyAllowance) ?? 0.0;
+            double monthlyCommittments =
+                double.tryParse(u.monthlyCommittments) ?? 0.0;
+            double additionalAllowance = u.additionalAllowance ?? 0.0;
 
-                u.actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + totalExpenses);
-            }
+            u.actualRemainingFoodAllowance =
+                (monthlyAllowance + additionalAllowance) -
+                    (monthlyCommittments + totalExpenses);
+          }
         });
 
         // Calculated Field
@@ -88,7 +93,7 @@ class UserController extends GetxController {
         // Recommended Allowance (Dynamic - Daily)
         await calculateAndUpdateRecommendedAllowance();
 
-        // Financial and Calorie Status 
+        // Financial and Calorie Status
         await initializeStatusSubcollections(userFromDb.id);
         // Sync Status
         await syncStatuses(userFromDb.id);
@@ -103,7 +108,6 @@ class UserController extends GetxController {
         // Access RecommendationController lazily if needed
         final recommendationController = Get.put(RecommendationController());
         recommendationController; // Call only if needed
-
       } else {
         this.user(UserModel.empty());
         print('No user document found.');
@@ -262,21 +266,25 @@ class UserController extends GetxController {
     // await fetchCalorieStatus(currentUser.id);
 
     // Convert String fields to double
-    double monthlyAllowance = double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
-    double monthlyCommittments = double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
+    double monthlyAllowance =
+        double.tryParse(currentUser.monthlyAllowance) ?? 0.0;
+    double monthlyCommittments =
+        double.tryParse(currentUser.monthlyCommittments) ?? 0.0;
 
     // Ensure additionalAllowance and additionalExpense are not null
     double additionalAllowance = currentUser.additionalAllowance ?? 0.0;
     double additionalExpense = currentUser.additionalExpense ?? 0.0;
 
     // Calculate Food Money
-    double actualRemainingFoodAllowance = (monthlyAllowance + additionalAllowance) - (monthlyCommittments + additionalExpense);
+    double actualRemainingFoodAllowance =
+        (monthlyAllowance + additionalAllowance) -
+            (monthlyCommittments + additionalExpense);
 
     if (currentUser != null) {
       user.update((u) {
-          if (u != null) {
-              u.actualRemainingFoodAllowance = actualRemainingFoodAllowance;
-          }
+        if (u != null) {
+          u.actualRemainingFoodAllowance = actualRemainingFoodAllowance;
+        }
       });
 
       // Log the updated daily snapshot
@@ -287,20 +295,24 @@ class UserController extends GetxController {
     double recommendedCalorieIntake = calculateBMR();
 
     // Calculate Recommended Monthly Budget Allocation for Food
-    double recommendedMoneyAllowance = getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
+    double recommendedMoneyAllowance =
+        getFoodBudgetAllocation(currentUser.status) * monthlyAllowance;
 
     // Calculate Updated Recommended Allowance
     DateTime now = DateTime.now();
     int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
     double dailyAllowance = recommendedMoneyAllowance / daysInMonth;
     int daysElapsed = now.day - 1;
-    double updatedRecommendedAllowance = recommendedMoneyAllowance - (daysElapsed * dailyAllowance);
+    double updatedRecommendedAllowance =
+        recommendedMoneyAllowance - (daysElapsed * dailyAllowance);
 
     // Ensure allowance does not go below zero
-    updatedRecommendedAllowance = updatedRecommendedAllowance < 0 ? 0 : updatedRecommendedAllowance;
+    updatedRecommendedAllowance =
+        updatedRecommendedAllowance < 0 ? 0 : updatedRecommendedAllowance;
 
     // Calculate financial status using updatedRecommendedAllowance
-    String financialStatus = calculateFinancialStatus(actualRemainingFoodAllowance, updatedRecommendedAllowance);
+    String financialStatus = calculateFinancialStatus(
+        actualRemainingFoodAllowance, updatedRecommendedAllowance);
     await updateFinancialStatus(currentUser.id, financialStatus);
 
     // Update the user model with the calculated values
@@ -536,37 +548,6 @@ class UserController extends GetxController {
         print(
             'Calorie Intake Status Subcollection already exists for user: $userId');
       }
-
-      // Money Journal Subcollection
-      final moneyJournalCollection = userRef.collection('money_journal');
-      final moneyJournalSnapshot = await moneyJournalCollection.limit(1).get();
-
-      if (moneyJournalSnapshot.size == 0) {
-        await moneyJournalCollection.doc('example').set({
-          'itemName': 'Example Item',
-          'price': 0.0,
-          'date': FieldValue.serverTimestamp(),
-          'type': 'Food', // Example entry
-        });
-        print('Money Journal Subcollection initialized for user: $userId');
-      } else {
-        print('Money Journal Subcollection already exists for user: $userId');
-      }
-
-      // Food Journal Subcollection
-      final foodJournalCollection = userRef.collection('food_journal');
-      final foodJournalSnapshot = await foodJournalCollection.limit(1).get();
-
-      if (foodJournalSnapshot.size == 0) {
-        await foodJournalCollection.doc('example').set({
-          'itemName': 'Example Food',
-          'calories': 0.0,
-          'date': FieldValue.serverTimestamp(),
-        });
-        print('Food Journal Subcollection initialized for user: $userId');
-      } else {
-        print('Food Journal Subcollection already exists for user: $userId');
-      }
     } catch (e) {
       print('Error initializing subcollections: $e');
     }
@@ -676,95 +657,99 @@ class UserController extends GetxController {
   // Method to Fetch Daily Log ------------------------------------
   Future<void> fetchDailyLog() async {
     try {
-        final dailyLog = await userRepository.getLastLoggedData(currentUserId);
+      final dailyLog = await userRepository.getLastLoggedData(currentUserId);
 
-        if (dailyLog.isNotEmpty) {
-            user.update((u) {
-                if (u != null) {
-                    u.additionalAllowance = dailyLog['additionalAllowance'] ?? 0.0;
-                    u.additionalExpense = dailyLog['additionalExpense'] ?? 0.0;
-                    u.actualRemainingFoodAllowance = dailyLog['actualRemainingFoodAllowance'] ?? 0.0;
-                }
-            });
-            print('Daily log fetched and applied: $dailyLog');
-        } else {
-            print('No daily log available. Starting fresh.');
-        }
+      if (dailyLog.isNotEmpty) {
+        user.update((u) {
+          if (u != null) {
+            u.additionalAllowance = dailyLog['additionalAllowance'] ?? 0.0;
+            u.additionalExpense = dailyLog['additionalExpense'] ?? 0.0;
+            u.actualRemainingFoodAllowance =
+                dailyLog['actualRemainingFoodAllowance'] ?? 0.0;
+          }
+        });
+        print('Daily log fetched and applied: $dailyLog');
+      } else {
+        print('No daily log available. Starting fresh.');
+      }
     } catch (e) {
-        print('Error fetching daily log: $e');
+      print('Error fetching daily log: $e');
     }
   }
 
   // Method to Log Daily Snapshot ------------------------------------
   Future<void> logDailySnapshot() async {
     try {
-        final currentUser = user.value;
+      final currentUser = user.value;
 
-        if (currentUser != null) {
-            final dailyData = {
-                'monthlyAllowance': currentUser.monthlyAllowance,
-                'monthlyCommittments': currentUser.monthlyCommittments,
-                'additionalAllowance': currentUser.additionalAllowance,
-                'additionalExpense': currentUser.additionalExpense,
-                'actualRemainingFoodAllowance': currentUser.actualRemainingFoodAllowance,
-                'recommendedMoneyAllowance': currentUser.recommendedMoneyAllowance,
-                'updatedRecommendedAllowance': currentUser.updatedRecommendedAllowance,
-            };
+      if (currentUser != null) {
+        final dailyData = {
+          'monthlyAllowance': currentUser.monthlyAllowance,
+          'monthlyCommittments': currentUser.monthlyCommittments,
+          'additionalAllowance': currentUser.additionalAllowance,
+          'additionalExpense': currentUser.additionalExpense,
+          'actualRemainingFoodAllowance':
+              currentUser.actualRemainingFoodAllowance,
+          'recommendedMoneyAllowance': currentUser.recommendedMoneyAllowance,
+          'updatedRecommendedAllowance':
+              currentUser.updatedRecommendedAllowance,
+        };
 
-            await userRepository.logDailyData(currentUserId, dailyData);
-            print('Daily snapshot logged: $dailyData');
-        }
+        await userRepository.logDailyData(currentUserId, dailyData);
+        print('Daily snapshot logged: $dailyData');
+      }
     } catch (e) {
-        print('Error logging daily snapshot: $e');
+      print('Error logging daily snapshot: $e');
     }
   }
 
   // Method to Initialize MoneyJournalHistory ------------------------------------
   Future<void> initializeMoneyJournalHistoryIfNeeded(String userId) async {
     try {
-        final userDoc = await _firestore.collection('Users').doc(userId).get();
+      final userDoc = await _firestore.collection('Users').doc(userId).get();
 
-        // Check if the flag exists or is set to false
-        if (userDoc.exists && !(userDoc.data()?['isMoneyJournalInitialized'] ?? false)) {
-            final now = DateTime.now();
-            final year = now.year.toString();
-            final month = now.month.toString().padLeft(2, '0');
-            final day = now.day.toString().padLeft(2, '0');
+      // Check if the flag exists or is set to false
+      if (userDoc.exists &&
+          !(userDoc.data()?['isMoneyJournalInitialized'] ?? false)) {
+        final now = DateTime.now();
+        final year = now.year.toString();
+        final month = now.month.toString().padLeft(2, '0');
+        final day = now.day.toString().padLeft(2, '0');
 
-            // Default values for the first day
-            final initialData = {
-                'monthlyAllowance': 0.0,
-                'monthlyCommittments': 0.0,
-                'additionalAllowance': 0.0,
-                'additionalExpense': 0.0,
-                'actualRemainingFoodAllowance': 0.0,
-                'recommendedMoneyAllowance': 0.0,
-                'updatedRecommendedAllowance': 0.0,
-            };
+        // Default values for the first day
+        final initialData = {
+          'monthlyAllowance': 0.0,
+          'monthlyCommittments': 0.0,
+          'additionalAllowance': 0.0,
+          'additionalExpense': 0.0,
+          'actualRemainingFoodAllowance': 0.0,
+          'recommendedMoneyAllowance': 0.0,
+          'updatedRecommendedAllowance': 0.0,
+        };
 
-            // Initialize the MoneyJournalHistory subcollection
-            await _firestore
-                .collection('Users')
-                .doc(userId)
-                .collection('MoneyJournalHistory')
-                .doc(year)
-                .collection('Months')
-                .doc(month)
-                .collection('Days')
-                .doc(day)
-                .set(initialData);
+        // Initialize the MoneyJournalHistory subcollection
+        await _firestore
+            .collection('Users')
+            .doc(userId)
+            .collection('MoneyJournalHistory')
+            .doc(year)
+            .collection('Months')
+            .doc(month)
+            .collection('Days')
+            .doc(day)
+            .set(initialData);
 
-            // Update the flag to true
-            await _firestore.collection('Users').doc(userId).update({
-                'isMoneyJournalInitialized': true,
-            });
+        // Update the flag to true
+        await _firestore.collection('Users').doc(userId).update({
+          'isMoneyJournalInitialized': true,
+        });
 
-            print('MoneyJournalHistory initialized for user: $userId');
-        } else {
-            print('MoneyJournalHistory already initialized for user: $userId');
-        }
+        print('MoneyJournalHistory initialized for user: $userId');
+      } else {
+        print('MoneyJournalHistory already initialized for user: $userId');
+      }
     } catch (e) {
-        print('Error initializing MoneyJournalHistory: $e');
+      print('Error initializing MoneyJournalHistory: $e');
     }
   }
 
@@ -773,72 +758,73 @@ class UserController extends GetxController {
     DateTime lastLoggedDate = DateTime.now();
 
     Timer.periodic(Duration(minutes: 1), (timer) async {
-        DateTime currentDate = DateTime.now();
-        
-        // Check if the date has changed
-        if (currentDate.day != lastLoggedDate.day) {
-            print("Date has changed. Logging new day's data.");
-            
-            // Log the current values into the new day's log
-            await logNewDayData();
-            
-            // Update the last logged date
-            lastLoggedDate = currentDate;
-        }
+      DateTime currentDate = DateTime.now();
+
+      // Check if the date has changed
+      if (currentDate.day != lastLoggedDate.day) {
+        print("Date has changed. Logging new day's data.");
+
+        // Log the current values into the new day's log
+        await logNewDayData();
+
+        // Update the last logged date
+        lastLoggedDate = currentDate;
+      }
     });
   }
 
   // Method to Log a New Day’s Data ------------------------------------
   Future<void> logNewDayData() async {
     try {
-        final currentUser = user.value;
-        final now = DateTime.now();
-        final year = now.year.toString();
-        final month = now.month.toString().padLeft(2, '0');
-        final day = now.day.toString().padLeft(2, '0');
+      final currentUser = user.value;
+      final now = DateTime.now();
+      final year = now.year.toString();
+      final month = now.month.toString().padLeft(2, '0');
+      final day = now.day.toString().padLeft(2, '0');
 
-        final dailyData = {
-            'monthlyAllowance': currentUser.monthlyAllowance,
-            'monthlyCommittments': currentUser.monthlyCommittments,
-            'additionalAllowance': currentUser.additionalAllowance,
-            'additionalExpense': currentUser.additionalExpense,
-            'actualRemainingFoodAllowance': currentUser.actualRemainingFoodAllowance,
-            'recommendedMoneyAllowance': currentUser.recommendedMoneyAllowance,
-            'updatedRecommendedAllowance': currentUser.updatedRecommendedAllowance,
-        };
+      final dailyData = {
+        'monthlyAllowance': currentUser.monthlyAllowance,
+        'monthlyCommittments': currentUser.monthlyCommittments,
+        'additionalAllowance': currentUser.additionalAllowance,
+        'additionalExpense': currentUser.additionalExpense,
+        'actualRemainingFoodAllowance':
+            currentUser.actualRemainingFoodAllowance,
+        'recommendedMoneyAllowance': currentUser.recommendedMoneyAllowance,
+        'updatedRecommendedAllowance': currentUser.updatedRecommendedAllowance,
+      };
 
-        await userRepository.logDailyData(currentUserId, dailyData);
-        print("New day's data logged: $dailyData");
+      await userRepository.logDailyData(currentUserId, dailyData);
+      print("New day's data logged: $dailyData");
     } catch (e) {
-        print("Error logging new day's data: $e");
+      print("Error logging new day's data: $e");
     }
   }
 
   // Method to Sync Current Day’s Data ------------------------------------
   Future<void> syncCurrentDayData() async {
     try {
-        final currentUser = user.value;
-        final now = DateTime.now();
-        final year = now.year.toString();
-        final month = now.month.toString().padLeft(2, '0');
-        final day = now.day.toString().padLeft(2, '0');
+      final currentUser = user.value;
+      final now = DateTime.now();
+      final year = now.year.toString();
+      final month = now.month.toString().padLeft(2, '0');
+      final day = now.day.toString().padLeft(2, '0');
 
-        final dailyData = {
-            'monthlyAllowance': currentUser.monthlyAllowance,
-            'monthlyCommittments': currentUser.monthlyCommittments,
-            'additionalAllowance': currentUser.additionalAllowance,
-            'additionalExpense': currentUser.additionalExpense, // Use the dynamically calculated value
-            'actualRemainingFoodAllowance': currentUser.actualRemainingFoodAllowance,
-            'recommendedMoneyAllowance': currentUser.recommendedMoneyAllowance,
-            'updatedRecommendedAllowance': currentUser.updatedRecommendedAllowance,
-        };
+      final dailyData = {
+        'monthlyAllowance': currentUser.monthlyAllowance,
+        'monthlyCommittments': currentUser.monthlyCommittments,
+        'additionalAllowance': currentUser.additionalAllowance,
+        'additionalExpense': currentUser
+            .additionalExpense, // Use the dynamically calculated value
+        'actualRemainingFoodAllowance':
+            currentUser.actualRemainingFoodAllowance,
+        'recommendedMoneyAllowance': currentUser.recommendedMoneyAllowance,
+        'updatedRecommendedAllowance': currentUser.updatedRecommendedAllowance,
+      };
 
-        await userRepository.logDailyData(currentUserId, dailyData);
-        print("Current day's data synced: $dailyData");
+      await userRepository.logDailyData(currentUserId, dailyData);
+      print("Current day's data synced: $dailyData");
     } catch (e) {
-        print("Error syncing current day's data: $e");
+      print("Error syncing current day's data: $e");
     }
   }
-
-
 }
