@@ -38,68 +38,57 @@ class RecommendationController extends GetxController {
   }
 
   Future<List<CafeItem>> getRecommendedList(String userId) async {
+    // Step 1: Calculate user-specific constraints
     final foodMoney = userController.user.value.actualRemainingFoodAllowance;
     final BMR = userController.calculateBMR();
 
     double dailyAllowance = foodMoney / 30;
     double allowancePerMeal = dailyAllowance / 4;
-    double caloriesPerMeal = (BMR / 4);
+    double caloriesPerMeal = BMR / 4;
 
-    // Step 1: Fetch user preferences
+    print('Allowance Per Meal: $allowancePerMeal');
+    print('Calories Per Meal: $caloriesPerMeal');
+
+    // Step 2: Fetch user preferences
     final userPreferences = userController.user.value;
     bool prefSpicy = userPreferences.prefSpicy;
     bool prefVegetarian = userPreferences.prefVegetarian;
     bool prefLowSugar = userPreferences.prefLowSugar;
 
-    print('Prefer Spicy? $prefSpicy');
-    print('Prefer Vegetarian? $prefVegetarian');
-    print('Prefer Low Sugar? $prefLowSugar');
-    print('Allowance Per Meal $allowancePerMeal');
-    print('Calories Per Meal $caloriesPerMeal');
+    print('Prefer Spicy: $prefSpicy');
+    print('Prefer Vegetarian: $prefVegetarian');
+    print('Prefer Low Sugar: $prefLowSugar');
 
-    // Step 2: Analyze food logs
-
+    // Step 3: Analyze food logs
     print('Current user from Recommendation Controller: $userId');
     Map<String, dynamic> analysis =
         await foodJournalRepo.analyzeFoodLogs(userId);
 
-    // Safely cast or transform `locationFrequency` and `foodFrequency`
+    // Safely cast or transform `locationFrequency`
     Map<String, int> locationFrequency =
         Map<String, int>.from(analysis['locationFrequency'] ?? {});
-    Map<String, int> foodFrequency =
-        Map<String, int>.from(analysis['foodFrequency'] ?? {});
 
     print('Location Frequency: ${analysis['locationFrequency']}');
-    print('Food Frequency: ${analysis['foodFrequency']}');
 
-    // Step 3: Get the top 3 most frequent cafes
+    // Step 4: Get the top 3 most frequent cafés
     List<MapEntry<String, int>> sortedEntries =
         locationFrequency.entries.toList();
     sortedEntries.sort((a, b) => b.value.compareTo(a.value));
     List<String> topFrequentCafes =
         sortedEntries.take(3).map((entry) => entry.key).toList();
 
-    // Step 4: Fetch all items from all cafes
+    print('Top Frequent Cafes: $topFrequentCafes');
+
+    // Step 5: Fetch all items from all cafés
     List<CafeItem> allItems = await vendorRepo.getAllItemsFromAllCafes();
 
-    // Step 5: Filter items from the top frequent cafes
-    List<CafeItem> itemsFromFrequentCafes = allItems.where((item) {
-      return topFrequentCafes.contains(item.itemLocation);
-    }).toList();
-
-    // Step 6: Filter out frequent foods and apply constraints
-    List<String> frequentlyLoggedFoodIds = foodFrequency.keys.toList();
-
-    List<CafeItem> recommendedItems = itemsFromFrequentCafes.where((item) {
-      bool isNewFood = !frequentlyLoggedFoodIds.contains(item.id);
+    // Step 6: Filter items from the top frequent cafés and apply constraints
+    List<CafeItem> recommendedItems = allItems.where((item) {
       bool withinCalorieLimit = item.itemCalories <= caloriesPerMeal;
       bool withinPriceLimit = item.itemPrice <= allowancePerMeal;
+      bool isFromTopCafe = topFrequentCafes.contains(item.itemLocation);
 
-      return isNewFood && withinCalorieLimit && withinPriceLimit;
-    }).toList();
-
-    // Step 7: Filter based on preferences
-    recommendedItems = recommendedItems.where((item) {
+      // Apply user preferences
       bool matchesPreference = true;
       if (prefSpicy) matchesPreference = matchesPreference && item.isSpicy;
       if (prefVegetarian)
@@ -107,15 +96,20 @@ class RecommendationController extends GetxController {
       if (prefLowSugar)
         matchesPreference = matchesPreference && item.isLowSugar;
 
-      //If a user has false preferences, return false, to filter out the values
+      // If preferences are false, exclude items with those characteristics
       if (!prefSpicy && item.isSpicy) matchesPreference = false;
       if (!prefVegetarian && item.isVegetarian) matchesPreference = false;
       if (!prefLowSugar && item.isLowSugar) matchesPreference = false;
 
-      return matchesPreference;
+      return isFromTopCafe &&
+          withinCalorieLimit &&
+          withinPriceLimit &&
+          matchesPreference;
     }).toList();
 
-    //print("Final Recommended Items: ${recommendedItems}");
+    print('Recommended Items: ${recommendedItems.length} items');
+
+    // Return the filtered list
     return recommendedItems;
   }
 
