@@ -71,7 +71,7 @@ class LocationCafesScreen extends StatelessWidget {
                       Text(
                         'Cafes in $location',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
