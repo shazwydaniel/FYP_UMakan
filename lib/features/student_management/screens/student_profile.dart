@@ -515,7 +515,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      height: 235,
+                      height: 225,
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
                         color: TColors.cream,
