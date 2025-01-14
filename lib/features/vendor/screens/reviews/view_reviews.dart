@@ -138,7 +138,7 @@ class ViewReviewPage extends StatelessWidget {
                         color: TColors.textDark.withOpacity(0.8),
                       ),
                     ),
-                    SizedBox(width: 230),
+                    SizedBox(width: 190),
                     GestureDetector(
                       onTap: () {
                         _showDeleteDialog(context, review);
@@ -182,25 +182,26 @@ class ViewReviewPage extends StatelessWidget {
         ),
         content: Text(
           'Are you sure you want to delete this review?',
-          style: TextStyle(color: Colors.black, fontSize: 16), // Content color
+          style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop(); // Close the dialog
+              Navigator.of(ctx).pop();
             },
             child: Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.black, // Cancel button color
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.of(ctx).pop(); // Close the dialog
+              Navigator.of(ctx).pop();
               await discoverController.deleteReview(review);
+              reviewController.fetchReviews(vendorId, cafeId);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('Review deleted successfully!'),
               ));
@@ -208,9 +209,7 @@ class ViewReviewPage extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.black,
-                side: BorderSide(
-                    color: Colors.black, // Border color of the button
-                    width: 2.0)),
+                side: BorderSide(color: Colors.black, width: 2.0)),
             child: Text('Delete'),
           ),
         ],
