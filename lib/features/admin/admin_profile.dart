@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -15,6 +17,9 @@ class AdminProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
+
+    // Get the current admin ID from FirebaseAuth
+    final currentAdminId = FirebaseAuth.instance.currentUser?.uid;
 
     return Scaffold(
       backgroundColor: TColors.cream,
@@ -51,7 +56,7 @@ class AdminProfilePage extends StatelessWidget {
                   Container(
                     width: 4,
                     height: 40,
-                    color: TColors.forest,
+                    color: TColors.charcoal,
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -66,115 +71,64 @@ class AdminProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Account Details Section
-              SizedBox(
-                width: double.infinity, // Takes the full width of the parent
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.4),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _profileDetail(title: 'Name', value: 'Admin Name', dark: dark),
-                      const SizedBox(height: 15),
-                      _profileDetail(title: 'Email', value: 'admin@example.com', dark: dark),
-                      const SizedBox(height: 15),
-                      _profileDetail(title: 'Role', value: 'Administrator', dark: dark),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Quick Actions Label
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 4,
-                    height: 40,
-                    color: Colors.orange,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Quick Actions',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.black : Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Quick Actions Section with Individual Frosted Glass Cards
-              Column(
-                children: [
-                  // View Dashboard - Frosted Glass Card
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                        width: 1.5,
+              // Fetch and display admin details
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Admins')
+                    .doc(currentAdminId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                    return Center(
+                      child: Text(
+                        'Error fetching admin data.',
+                        style: TextStyle(color: Colors.red),
                       ),
-                    ),
-                    child: ListTile(
-                      leading: Icon(Icons.dashboard, color: Colors.green),
-                      title: Text(
-                        'View Dashboard',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: dark ? Colors.black : Colors.black,
+                    );
+                  }
+
+                  final adminData = snapshot.data!.data() as Map<String, dynamic>;
+
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.4),
+                          width: 1.5,
                         ),
                       ),
-                      onTap: () {
-                        Get.toNamed('/dashboard');
-                      },
-                    ),
-                  ),
-
-                  // Manage Users - Frosted Glass Card
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                        width: 1.5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _profileDetail(
+                            title: 'Name',
+                            value: adminData['Admin Name'] ?? 'N/A',
+                            dark: dark,
+                          ),
+                          const SizedBox(height: 15),
+                          _profileDetail(
+                            title: 'Email',
+                            value: adminData['Admin Email'] ?? 'N/A',
+                            dark: dark,
+                          ),
+                          const SizedBox(height: 15),
+                          _profileDetail(
+                            title: 'Role',
+                            value: adminData['Role'] ?? 'N/A',
+                            dark: dark,
+                          ),
+                        ],
                       ),
                     ),
-                    child: ListTile(
-                      leading: Icon(Icons.group, color: Colors.orange),
-                      title: Text(
-                        'Manage Users',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: dark ? Colors.black : Colors.black,
-                        ),
-                      ),
-                      onTap: () {
-                        Get.toNamed('/manage-users');
-                      },
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
 
               const SizedBox(height: 40),
@@ -207,7 +161,7 @@ class AdminProfilePage extends StatelessWidget {
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
-                                    color: TColors.amber,
+                                    color: Colors.green,
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
