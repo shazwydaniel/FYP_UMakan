@@ -5,8 +5,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:fyp_umakan/features/vendor/screens/vendor_cafe_page/menu/controller/menu_controller.dart';
+import 'package:iconsax/iconsax.dart';
 
 class AdminItemsPage extends StatelessWidget {
   final String vendorId;
@@ -70,63 +72,99 @@ class AdminItemsPage extends StatelessWidget {
                               ),
                             ),
                             padding: const EdgeInsets.all(16.0),
-                            child: Row(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.itemName,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
+                                // Item Details
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.itemName,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Price: RM${item.itemPrice.toString()}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Calories: ${item.itemCalories.toString()}kcal',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        'Price: RM${item.itemPrice.toString()}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
+                                    ),
+                                    PopupMenuButton<String>(
+                                      color: TColors.cream, // Popup background
+                                      onSelected: (value) {
+                                        if (value == 'Edit') {
+                                          _showUpdateDialog(
+                                              context, item, vendorId, cafeId);
+                                        } else if (value == 'Delete') {
+                                          _confirmDeleteItem(context, vendorId,
+                                              cafeId, item.id);
+                                        }
+                                      },
+                                      itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          value: 'Edit',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.edit,
+                                                  color: TColors.teal),
+                                              SizedBox(width: 8),
+                                              Text('Edit'),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        'Calories: ${item.itemCalories.toString()}kcal',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
+                                        PopupMenuItem(
+                                          value: 'Delete',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.delete,
+                                                  color: Colors.red),
+                                              SizedBox(width: 8),
+                                              Text('Delete'),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                PopupMenuButton<String>(
-                                  color: TColors.cream, // Popup background
-                                  onSelected: (value) {
-                                    if (value == 'Edit') {
-                                      _showUpdateDialog(context, item, vendorId, cafeId);
-                                    } else if (value == 'Delete') {
-                                      _confirmDeleteItem(context, vendorId, cafeId, item.id);
-                                    }
-                                  },
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: 'Edit',
-                                      child: Row(
-                                        children: [
-                                          Text('Edit'),
-                                        ],
-                                      ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 'Delete',
-                                      child: Row(
-                                        children: [
-                                          Text('Delete'),
-                                        ],
-                                      ),
-                                    ),
+
+                                // Preferences Section
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    if (item.isSpicy)
+                                      _buildPreferenceCircle(
+                                          'S',
+                                          const Color.fromARGB(
+                                              255, 255, 134, 6)),
+                                    if (item.isVegetarian)
+                                      _buildPreferenceCircle(
+                                          'V',
+                                          const Color.fromARGB(
+                                              255, 70, 215, 75)),
+                                    if (item.isLowSugar)
+                                      _buildPreferenceCircle(
+                                          'LS', TColors.blush),
                                   ],
                                 ),
                               ],
@@ -145,27 +183,71 @@ class AdminItemsPage extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         color: TColors.stark_blue,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        child: IconButton(
-          icon: const Icon(Icons.add, size: 40, color: Colors.white),
-          onPressed: () => _showAddItemDialog(context, vendorId, cafeId),
-          tooltip: 'Add Menu Item',
+        notchMargin: 0.0,
+        child: Container(
+          height: 60.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Iconsax.add_circle,
+                    color: Colors.white, size: 40),
+                onPressed: () => _showAddItemDialog(context, vendorId, cafeId),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  void _deleteItem(BuildContext context, String itemId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: TColors.cream,
+        title: const Text('Delete Item'),
+        content: const Text('Are you sure you want to delete this item?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel', style: TextStyle(color: Colors.green)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: TColors.amber)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        _menuController.deleteMenuItem(vendorId, cafeId, itemId);
+        await _menuController.fetchItemsForCafe(vendorId, cafeId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Item deleted successfully')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete item: $e')),
+        );
+      }
+    }
+  }
+
   // Update Item Dialog
   void _showUpdateDialog(
       BuildContext context, CafeItem item, String vendorId, String cafeId) {
+    // Initialize the state of the checkboxes
+    _menuController.isSpicyUpdate.value = item.isSpicy;
+    _menuController.isVegetarianUpdate.value = item.isVegetarian;
+    _menuController.isLowSugarUpdate.value = item.isLowSugar;
+
+    // Pre-fill the text fields with the item's current values
     _menuController.itemNameUpdate.text = item.itemName;
     _menuController.itemCostUpdate.text = item.itemPrice.toString();
     _menuController.itemCaloriesUpdate.text = item.itemCalories.toString();
-
-    // Initialize checkboxes with the existing item data
-    _menuController.isLowSugarUpdate.value = item.isLowSugar ?? false;
-    _menuController.isSpicyUpdate.value = item.isSpicy ?? false;
-    _menuController.isVegetarianUpdate.value = item.isVegetarian ?? false;
 
     showDialog(
       context: context,
@@ -189,7 +271,8 @@ class AdminItemsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _menuController.itemCostUpdate,
-                  decoration: const InputDecoration(labelText: 'Item\'s Cost (RM)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Item\'s Cost (RM)'),
                   validator: (value) => value == null || value.isEmpty
                       ? 'Cost is required'
                       : null,
@@ -197,7 +280,8 @@ class AdminItemsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _menuController.itemCaloriesUpdate,
-                  decoration: const InputDecoration(labelText: 'Item\'s Calories (kcal)'),
+                  decoration: const InputDecoration(
+                      labelText: 'Item\'s Calories (kcal)'),
                   validator: (value) => value == null || value.isEmpty
                       ? 'Calories are required'
                       : null,
@@ -231,17 +315,27 @@ class AdminItemsPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                await _menuController.updateCafeDetails(vendorId, cafeId, item.id);
-                
-                Get.snackbar(
-                  "Success",
-                  "Item's Details Are Updated Successfully!",
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: Colors.green,
-                  colorText: Colors.white,
-                );
+                if (_menuController.menuUpdateKey.currentState?.validate() ??
+                    false) {
+                  // Update the item with new values
+                  await _menuController.updateCafeDetails(
+                      vendorId, cafeId, item.id);
 
-                Navigator.pop(context);
+                  await _menuController.updateItemPreferences(
+                      vendorId, cafeId, item.id);
+
+                  await _menuController.fetchItemsForCafe(vendorId, cafeId);
+
+                  Get.snackbar(
+                    "Success",
+                    "Item's Details Are Updated Successfully!",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                  );
+
+                  Navigator.pop(context);
+                }
               },
               child: Text('Save', style: TextStyle(color: Colors.green)),
             ),
@@ -253,7 +347,7 @@ class AdminItemsPage extends StatelessWidget {
 
   // Delete Item Dialog
   void _confirmDeleteItem(
-    BuildContext context, String vendorId, String cafeId, String itemId) {
+      BuildContext context, String vendorId, String cafeId, String itemId) {
     showDialog(
       context: context,
       builder: (context) {
@@ -275,6 +369,7 @@ class AdminItemsPage extends StatelessWidget {
               onPressed: () async {
                 // Call the delete method from the controller
                 await _menuController.deleteMenuItem(vendorId, cafeId, itemId);
+                await _menuController.fetchItemsForCafe(vendorId, cafeId);
 
                 Get.snackbar(
                   "Success",
@@ -303,7 +398,6 @@ class AdminItemsPage extends StatelessWidget {
     _menuController.itemName.clear();
     _menuController.itemCost.clear();
     _menuController.itemCalories.clear();
-    _menuController.resetPreferences();
 
     showDialog(
       context: context,
@@ -326,7 +420,8 @@ class AdminItemsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _menuController.itemCost,
-                  decoration: const InputDecoration(labelText: 'Item\'s Cost (RM)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Item\'s Cost (RM)'),
                   validator: (value) => value == null || value.isEmpty
                       ? 'Cost is required'
                       : null,
@@ -334,7 +429,8 @@ class AdminItemsPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: _menuController.itemCalories,
-                  decoration: const InputDecoration(labelText: 'Item\'s Calories (kcal)'),
+                  decoration: const InputDecoration(
+                      labelText: 'Item\'s Calories (kcal)'),
                   validator: (value) => value == null || value.isEmpty
                       ? 'Calories are required'
                       : null,
@@ -372,7 +468,9 @@ class AdminItemsPage extends StatelessWidget {
                     false) {
                   await _menuController.addItem(
                       vendorId, cafeId, 'default_image_url');
-                  Navigator.pop(context);
+                  // Refresh items after adding
+                  await _menuController.fetchItemsForCafe(vendorId, cafeId);
+                  Navigator.pop(context); // Close the dialog
                 }
               },
               child: Text('Add', style: TextStyle(color: Colors.green)),
@@ -382,4 +480,27 @@ class AdminItemsPage extends StatelessWidget {
       },
     );
   }
+}
+
+// Helper Function to Build Preference Circle
+Widget _buildPreferenceCircle(String text, Color color) {
+  return Container(
+    width: 24, // Circle size
+    height: 24,
+    margin: EdgeInsets.only(right: 6), // Spacing between circles
+    decoration: BoxDecoration(
+      color: color, // Circle color
+      shape: BoxShape.circle,
+      border: Border.all(color: Colors.black, width: 2),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      text,
+      style: TextStyle(
+        color: Colors.black, // Text color
+        fontWeight: FontWeight.bold,
+        fontSize: 12, // Font size
+      ),
+    ),
+  );
 }
