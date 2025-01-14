@@ -107,8 +107,8 @@ class VendorAdsPage extends StatelessWidget {
                                   color: isToday
                                       ? const Color.fromARGB(255, 52, 204, 128)
                                       : isCompleted
-                                          ? Colors.red
-                                          : Colors.red,
+                                          ? TColors.textGrey
+                                          : TColors.textGrey,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: TColors.textDark,
