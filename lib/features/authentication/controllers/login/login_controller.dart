@@ -17,8 +17,10 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
-    email.text = localStorage.read('REMEMBER_ME_EMAIL') ?? ''; // Fallback to empty string if null
-    password.text = localStorage.read('REMEMBER_ME_PASSWORD') ?? ''; // Fallback to empty string if null
+    email.text = localStorage.read('REMEMBER_ME_EMAIL') ??
+        ''; // Fallback to empty string if null
+    password.text = localStorage.read('REMEMBER_ME_PASSWORD') ??
+        ''; // Fallback to empty string if null
     super.onInit();
   }
 
@@ -26,7 +28,6 @@ class LoginController extends GetxController {
     try {
       // Form Validation
       if (!loginFormKey.currentState!.validate()) {
-        // TFullScreenLoader.stopLoading();
         return false;
       }
 
@@ -40,11 +41,40 @@ class LoginController extends GetxController {
       final userCredentials = await AuthenticatorRepository.instance
           .loginWithEmailandPassword(email.text.trim(), password.text.trim());
 
-      // Removed by chatgpt
       AuthenticatorRepository.instance.screenRedirect();
       return true;
+    } on FirebaseAuthException catch (e) {
+      // Handle specific FirebaseAuthException errors
+      if (e.code == 'wrong-password') {
+        Get.snackbar(
+          "Login Failed",
+          "The password you entered is incorrect.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          icon: const Icon(Icons.error, color: Colors.white),
+        );
+      } else if (e.code == 'user-not-found') {
+        Get.snackbar(
+          "Login Failed",
+          "No user found with this email.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          icon: const Icon(Icons.error, color: Colors.white),
+        );
+      }
+      return false;
     } catch (e) {
-      print('Login error: $e');
+      // Generic error handling
+      Get.snackbar(
+        "Login Failed",
+        "Password incorrect. Please try again.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        icon: const Icon(Icons.error, color: Colors.white),
+      );
       return false;
     }
   }
