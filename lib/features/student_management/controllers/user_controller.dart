@@ -56,22 +56,6 @@ class UserController extends GetxController {
         updateAge();
         updateStatus();
 
-        // Fetch initialFoodAllowance for the current month
-        final now = DateTime.now();
-        final year = now.year.toString();
-        final month = now.month.toString().padLeft(2, '0');
-
-        final monthDoc = await _firestore
-            .collection('Users')
-            .doc(userFromDb.id)
-            .collection('MoneyJournalHistory')
-            .doc(year)
-            .collection('Months')
-            .doc(month)
-            .get();
-
-        final initialFoodAllowance = monthDoc.data()?['initialFoodAllowance'] ?? 0.0;
-
         // Calculate total expenses for the current month
         final totalExpenses = await moneyJournalRepository
             .calculateTotalExpensesForCurrentMonth(userFromDb.id);
@@ -79,7 +63,6 @@ class UserController extends GetxController {
         // Update User Model with Calculated additionalExpense
         user.update((u) {
             if (u != null) {
-                u.initialFoodAllowance = initialFoodAllowance;
                 u.additionalExpense = totalExpenses;
 
             // Recalculate actualRemainingFoodAllowance
@@ -793,26 +776,26 @@ class UserController extends GetxController {
   // Method to Log a New Day’s Data ------------------------------------
   Future<void> logNewDayData() async {
     try {
-        final currentUser = user.value;
-        final now = DateTime.now();
-        final year = now.year.toString();
-        final month = now.month.toString().padLeft(2, '0');
-        final day = now.day.toString().padLeft(2, '0');
+      final currentUser = user.value;
+      final now = DateTime.now();
+      final year = now.year.toString();
+      final month = now.month.toString().padLeft(2, '0');
+      final day = now.day.toString().padLeft(2, '0');
 
-        // Check if it's the first day of the month
-        if (day == '01') {
-            final initialFoodAllowance = currentUser.actualRemainingFoodAllowance;
+      // Check if it's the first day of the month
+      // if (day == '01') {
+      //     final initialFoodAllowance = currentUser.actualRemainingFoodAllowance;
 
-            // Store the initial food allowance in the Months document
-            await _firestore
-                .collection('Users')
-                .doc(currentUserId)
-                .collection('MoneyJournalHistory')
-                .doc(year)
-                .collection('Months')
-                .doc(month)
-                .set({'initialFoodAllowance': initialFoodAllowance}, SetOptions(merge: true));
-        }
+      //     // Store the initial food allowance in the Months document
+      //     await _firestore
+      //         .collection('Users')
+      //         .doc(currentUserId)
+      //         .collection('MoneyJournalHistory')
+      //         .doc(year)
+      //         .collection('Months')
+      //         .doc(month)
+      //         .set({'initialFoodAllowance': initialFoodAllowance}, SetOptions(merge: true));
+      // }
 
       final dailyData = {
         'monthlyAllowance': currentUser.monthlyAllowance,
