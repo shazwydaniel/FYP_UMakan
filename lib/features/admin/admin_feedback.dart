@@ -160,7 +160,7 @@ class FeedbackPage extends StatelessWidget {
                             feedbackText,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(fontSize: 15, color: Colors.black),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,19 +237,7 @@ class FeedbackPage extends StatelessWidget {
                                 _editFeedback(
                                     context, feedbackId, feedbackText);
                               } else if (value == 'delete') {
-                                await FirebaseFirestore.instance
-                                    .collection("Admins")
-                                    .doc("feedbacks")
-                                    .collection("userFeedbacks")
-                                    .doc(feedbackId)
-                                    .delete();
-                                Get.snackbar(
-                                  "Deleted",
-                                  "Your feedback has been deleted.",
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
+                                _deleteFeedback(context, feedbackId);
                               }
                             },
                           ),
@@ -262,6 +250,76 @@ class FeedbackPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Updated delete function
+  void _deleteFeedback(BuildContext context, String feedbackId) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: TColors.cream, // Dialog background color
+        title: Text(
+          "Confirm Delete",
+          style: TextStyle(
+            color: Colors.black, // Title text color
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          "Are you sure you want to delete this feedback?",
+          style: TextStyle(color: Colors.black), // Content text color
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black, // Button text color
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              // Delete the feedback
+              await FirebaseFirestore.instance
+                  .collection("Admins")
+                  .doc("feedbacks")
+                  .collection("userFeedbacks")
+                  .doc(feedbackId)
+                  .delete();
+
+              Navigator.pop(context); // Close dialog
+
+              // Show success message
+              Get.snackbar(
+                "Deleted",
+                "Your feedback has been deleted.",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, // Button background color
+              foregroundColor: Colors.white, // Text color
+              side: BorderSide(
+                  color: Colors.black, // Border color of the button
+                  width: 2.0),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text("Delete"),
+          ),
+        ],
       ),
     );
   }
