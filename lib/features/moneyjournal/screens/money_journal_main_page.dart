@@ -159,21 +159,37 @@ class MoneyJournalMainPage extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 15),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: TColors.bubbleOlive.withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    '%',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
+                                Obx(() {
+                                  // Retrieve user data
+                                  final monthlyAllowance = double.tryParse(controller.user.value.monthlyAllowance) ?? 0.0;
+                                  final monthlyCommitments = double.tryParse(controller.user.value.monthlyCommittments) ?? 0.0;
+                                  final actualRemainingFoodAllowance = controller.user.value.actualRemainingFoodAllowance;
+
+                                  // Calculate the starting food allowance
+                                  final startingFoodAllowance = monthlyAllowance - monthlyCommitments;
+
+                                  // Calculate the percentage difference
+                                  String percentageLeft = "N/A";
+                                  if (startingFoodAllowance > 0) {
+                                    final percentage = (actualRemainingFoodAllowance / startingFoodAllowance) * 100;
+                                    percentageLeft = "${percentage.toStringAsFixed(1)}%";
+                                  }
+
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: TColors.bubbleOlive.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
-                                  ),
-                                ),
+                                    child: Text(
+                                      percentageLeft,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ],
                             ),
                           ),
