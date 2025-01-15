@@ -39,6 +39,8 @@ class HomePageScreen extends StatelessWidget {
     Get.put(BadgeController());
 
     final recommendedController = Get.put(RecommendationController());
+    recommendedController
+        .calculateAndStoreAverages(userController.user.value.id);
     final foodJController = Get.put(FoodJournalController());
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
