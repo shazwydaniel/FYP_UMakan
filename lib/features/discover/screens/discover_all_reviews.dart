@@ -96,14 +96,12 @@ class _AllUserReviewsState extends State<AllUserReviews> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          review.anonymous == "No"
-                              ? review.userName
-                              : 'Anonymous User',
+                          review.cafeName,
                           style: TextStyle(
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           '${review.rating} ★',
@@ -122,7 +120,17 @@ class _AllUserReviewsState extends State<AllUserReviews> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 15),
+                    Text(
+                      review.anonymous == "No"
+                          ? 'Made by ${review.userName}'
+                          : 'Anonymous User',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 5),
                     Text(
                       'Submitted on ${DateFormat('dd-MM-yyyy').format(review.timestamp)}',
                       style: TextStyle(

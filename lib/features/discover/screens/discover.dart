@@ -200,7 +200,7 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
                             image: AssetImage(imagePath),
                             fit: BoxFit.fill,
                             colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.3),
+                              Colors.black.withOpacity(0.2),
                               BlendMode.darken,
                             ),
                           ),
@@ -225,20 +225,20 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
 
             Padding(
               padding: const EdgeInsets.only(
-                  left: 40, right: 40, top: 10, bottom: 10),
+                  left: 40, right: 40, top: 10, bottom: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 4, // Thin vertical line width
-                    height: 40, // Adjust the height as needed
+                    width: 4,
+                    height: 40,
                     color: TColors.textDark,
                   ),
-                  const SizedBox(width: 10), // Space between the line and text
+                  const SizedBox(width: 10),
                   Text(
                     'Your Reviews',
                     style: TextStyle(
-                      fontSize: 20, // Adjust the font size as needed
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: dark ? Colors.black : Colors.black,
                     ),
@@ -248,104 +248,141 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
             ),
 
             // User Reviews Section
-            // User Reviews Section
+
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Obx(() {
-                    if (_discoverController.isLoadingReviews.value) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 255, 231, 114),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(() {
+                      if (_discoverController.isLoadingReviews.value) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                    if (_discoverController.userReviews.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'No reviews yet',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: dark ? Colors.white : Colors.black,
+                      if (_discoverController.userReviews.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'No reviews yet',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: dark ? Colors.white : Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
+                        );
+                      }
 
-                    // Display the first 5 reviews
-                    final displayedReviews =
-                        _discoverController.userReviews.take(5).toList();
+                      // Display the first 5 reviews
+                      final displayedReviews =
+                          _discoverController.userReviews.take(5).toList();
 
-                    return Column(
-                      children: [
-                        // List of the first 5 reviews
-                        Column(
-                          children: displayedReviews.map((review) {
-                            return Card(
-                              color: TColors.cream,
-                              margin: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: ListTile(
-                                title: Text(
-                                  review.cafeName,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Text(
-                                  '${review.feedback}\nRating: ${review.rating} ★',
-                                ),
-                                onTap: () {
-                                  _showUpdateDialog(
-                                      context, review, _discoverController);
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
-
-                        SizedBox(height: 20),
-
-                        // Button to view all reviews
-                        Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AllUserReviews(
-                                    userId: userController.currentUserId,
+                      return Column(
+                        children: [
+                          // List of the first 5 reviews
+                          Column(
+                            children: displayedReviews.map((review) {
+                              return Card(
+                                color: TColors.cream,
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: TColors.cream,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 4.0,
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      review.cafeName,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start, // Align text to the start
+                                      children: [
+                                        Text(
+                                          review.feedback,
+                                          style: TextStyle(
+                                              height:
+                                                  1.5), // Optional line-height for better readability
+                                        ),
+                                        SizedBox(
+                                            height:
+                                                8), // Add space between feedback and rating
+                                        Text(
+                                          'Rating: ${review.rating} ★',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      _showUpdateDialog(
+                                          context, review, _discoverController);
+                                    },
                                   ),
                                 ),
                               );
-                            },
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: TColors.textDark,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
+                            }).toList(),
+                          ),
+
+                          SizedBox(height: 20),
+
+                          // Button to view all reviews
+                          Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AllUserReviews(
+                                      userId: userController.currentUserId,
+                                    ),
                                   ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                                size: 30,
+                                );
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: TColors.textDark,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  }),
-                ],
+                        ],
+                      );
+                    }),
+                  ],
+                ),
               ),
             ),
           ],
