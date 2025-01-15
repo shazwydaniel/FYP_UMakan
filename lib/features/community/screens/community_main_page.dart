@@ -829,13 +829,6 @@ class CommunityMainPageScreen extends StatelessWidget {
                                 setState(() {
                                   attachedImageUrl = imageUrl;
                                 });
-                                Get.snackbar(
-                                  'Success',
-                                  'Image uploaded successfully!',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white,
-                                );
                               } catch (e) {
                                 Get.snackbar(
                                   'Error',

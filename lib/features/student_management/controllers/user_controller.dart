@@ -842,4 +842,22 @@ class UserController extends GetxController {
       print("Error syncing current day's data: $e");
     }
   }
+
+   // Method to Fetch User's Financial Status ------------------------------------
+  Future<String> fetchFinancialStatus(String userId) async {
+    try {
+      final financialStatusDoc = await _firestore
+          .collection("Users")
+          .doc(userId)
+          .collection("financial_status")
+          .doc("current")
+          .get();
+
+      return financialStatusDoc.data()?["status"] ?? "Unknown";
+    } catch (e) {
+      print("Error fetching financial status: $e");
+      return "Unknown";
+    }
+  }
+
 }
