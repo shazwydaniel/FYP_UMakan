@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Advertisement {
   final String id;
   final String cafeName;
@@ -75,6 +77,21 @@ class Advertisement {
           : null,
       endDate:
           json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
+    );
+  }
+
+  // Create a factory method to convert Firestore data into an Advertisement object
+  factory Advertisement.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Advertisement(
+      id: doc.id,
+      detail: data['detail'] ?? '',
+      startDate:
+          data['startDate'] != null ? DateTime.parse(data['startDate']) : null,
+      endDate: data['endDate'] != null ? DateTime.parse(data['endDate']) : null,
+      cafeName: data['cafeName'] ?? '',
+      location: data['location'] ?? '',
+      cafeId: data['cafeId'] ?? '',
     );
   }
 

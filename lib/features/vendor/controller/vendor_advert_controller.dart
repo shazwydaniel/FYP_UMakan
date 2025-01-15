@@ -75,6 +75,9 @@ class AdvertController extends GetxController {
         // Call the repository method to add the item to Firestore
         await vendorRepository.addAdvertisementToCafe(vendorId, cafeId, adData);
 
+        // Fetch advertisements again to update the UI
+        fetchAdvertisementsByCafe(vendorId, cafeId);
+
         // Clear the text fields after adding the item
         adDetail.clear();
         startDateController.clear();
@@ -199,6 +202,9 @@ class AdvertController extends GetxController {
       advertisment.value.endDate =
           DateTime.tryParse(endDateUpdateController.text.trim());
 
+      // Fetch advertisements again to update the UI
+      fetchAdvertisementsByCafe(vendorId, cafeId);
+
       // Show success Message
       TLoaders.successSnackBar(
           title: 'Congratulations',
@@ -238,6 +244,10 @@ class AdvertController extends GetxController {
           .doc(cafeId)
           .collection('Advertisements')
           .get();
+
+      allAdvertisements.value = querySnapshot.docs
+          .map((doc) => Advertisement.fromFirestore(doc))
+          .toList();
 
       // Map the query results to Advertisement objects
       final ads = querySnapshot.docs.map((doc) {
