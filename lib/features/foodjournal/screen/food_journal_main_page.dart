@@ -187,7 +187,6 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
 
             // Display Today Items (Cards)
             Obx(() {
-              // Get today's date without time (midnight)
               DateTime today = DateTime.now();
               DateTime startOfDay =
                   DateTime(today.year, today.month, today.day);
@@ -206,8 +205,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                       "No meals logged yet today",
                       style: TextStyle(
                         fontSize: 18,
-                        color: Colors
-                            .white, // Adjust the color based on your theme
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -227,27 +225,175 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                       onLongPress: () {
                         showDialog(
                           context: context,
+                          barrierDismissible: true,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Delete Meal from Journal'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Close'),
+                              backgroundColor: Colors.transparent,
+                              contentPadding: EdgeInsets.zero,
+                              content: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: TColors.cream,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    foodJController.deleteJournalItem(
-                                        userId, item.id!);
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  child: Text('Delete'),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: item.imagePath.isNotEmpty &&
+                                                  item.imagePath !=
+                                                      "default_image_url"
+                                              ? Image.network(
+                                                  item.imagePath,
+                                                  width: 200,
+                                                  height: 200,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Container(
+                                                  width: 200,
+                                                  height: 200,
+                                                  color: TColors.mustard,
+                                                  child: Icon(
+                                                    Icons.fastfood,
+                                                    size: 100,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Details Section
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            item.name,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'Location: ${item.cafe}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: TColors.textDark,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            'Calories: ${item.calories} cal',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: TColors.textDark,
+                                            ),
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'Cost: RM${item.price.toStringAsFixed(2)}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: TColors.textDark,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Tags Section
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        if (item.isSpicy)
+                                          _buildTag('S', Colors.orange),
+                                        if (item.isVegetarian)
+                                          _buildTag('V', Colors.green),
+                                        if (item.isLowSugar)
+                                          _buildTag('LS', TColors.blush),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+
+                                    // Buttons Section
+                                    Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: TColors.textDark,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              foodJController.deleteJournalItem(
+                                                  userId, item.id!);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              'Delete',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: TColors.amber,
+                                              foregroundColor: Colors.black,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 24,
+                                                vertical: 12,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              side: BorderSide(
+                                                color: Colors.black,
+                                                width: 2,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             );
                           },
                         );
@@ -282,16 +428,18 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                 ),
                                 child: ClipOval(
                                   child: item.imagePath != null &&
-                                          item.imagePath.isNotEmpty
+                                          item.imagePath.isNotEmpty &&
+                                          item.imagePath != "default_image_url"
                                       ? Image.network(
                                           item.imagePath,
                                           fit: BoxFit.fill,
                                         )
                                       : Center(
                                           child: Icon(
-                                            Icons.fastfood,
-                                            size: 50,
-                                            color: Colors.white,
+                                            Icons
+                                                .fastfood, // Replace with another icon if desired
+                                            size: 50, // Icon size
+                                            color: Colors.white, // Icon color
                                           ),
                                         ),
                                 ),
@@ -384,9 +532,8 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                        height: 8), // Space before the circles
-                                    // Preference Circles
+                                    SizedBox(height: 8),
+
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -578,16 +725,18 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                               ),
                               child: ClipOval(
                                 child: item.imagePath != null &&
-                                        item.imagePath.isNotEmpty
+                                        item.imagePath.isNotEmpty &&
+                                        item.imagePath != "default_image_url"
                                     ? Image.network(
                                         item.imagePath,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                       )
                                     : Center(
                                         child: Icon(
-                                          Icons.fastfood,
-                                          size: 50,
-                                          color: Colors.white,
+                                          Icons
+                                              .fastfood, // Replace with another icon if desired
+                                          size: 50, // Icon size
+                                          color: Colors.white, // Icon color
                                         ),
                                       ),
                               ),
@@ -879,21 +1028,28 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
                           ],
                         ),
                         SizedBox(height: 20),
-                        Text(
-                          'Percentage of Total Calories Consumed',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: TColors.textLight),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Total Calories Consumed',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: TColors.textLight),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              'Over Daily Required Calories(%)',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: TColors.textLight),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Over Daily Required Calories(%)',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: TColors.textLight),
-                        ),
+
                         SizedBox(height: 20),
 
                         // Two rectangular tags
@@ -1239,7 +1395,7 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
               ),
               backgroundColor: TColors.cream,
               content: SizedBox(
-                height: 550, // Increased height to accommodate image picker
+                height: 550,
                 width: 300,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1442,4 +1598,26 @@ class _FoodJournalMainPageState extends State<FoodJournalMainPage> {
       },
     );
   }
+}
+
+Widget _buildTag(String text, Color color) {
+  return Container(
+    width: 24,
+    height: 24,
+    margin: EdgeInsets.only(right: 6),
+    decoration: BoxDecoration(
+      color: color,
+      shape: BoxShape.circle,
+      border: Border.all(color: Colors.black, width: 2),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      text,
+      style: TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+      ),
+    ),
+  );
 }
