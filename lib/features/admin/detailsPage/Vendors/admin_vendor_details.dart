@@ -76,6 +76,117 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
     }
   }
 
+  void _showEditCafeDialog(
+      BuildContext context, Map<String, dynamic> cafeData, String vendorId) {
+    final TextEditingController cafeNameController =
+        TextEditingController(text: cafeData['cafeName']);
+    final TextEditingController cafeLocationController =
+        TextEditingController(text: cafeData['cafeLocation']);
+    final TextEditingController openingTimeController =
+        TextEditingController(text: cafeData['openingTime']);
+    final TextEditingController closingTimeController =
+        TextEditingController(text: cafeData['closingTime']);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: TColors.cream,
+          title: const Text('Edit Cafe Details'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  TextField(
+                    controller: cafeNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Cafe Name',
+                      filled: true,
+                      fillColor: TColors.cream,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: cafeLocationController,
+                    decoration: const InputDecoration(
+                      labelText: 'Cafe Location',
+                      filled: true,
+                      fillColor: TColors.cream,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: openingTimeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Opening Time',
+                      filled: true,
+                      fillColor: TColors.cream,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: closingTimeController,
+                    decoration: const InputDecoration(
+                      labelText: 'Closing Time',
+                      filled: true,
+                      fillColor: TColors.cream,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child:
+                  const Text('Cancel', style: TextStyle(color: TColors.amber)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    final updatedData = {
+                      'cafeName': cafeNameController.text.trim(),
+                      'cafeLocation': cafeLocationController.text.trim(),
+                      'openingTime': openingTimeController.text.trim(),
+                      'closingTime': closingTimeController.text.trim(),
+                    };
+
+                    await _vendorController.vendorRepository
+                        .updateSingleFieldCafe(
+                      updatedData,
+                      vendorId,
+                      cafeData['cafe_ID'],
+                    );
+
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Cafe details updated successfully')),
+                    );
+                  } catch (e) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to update cafe: $e')),
+                    );
+                  }
+                }
+              },
+              child: const Text('Save', style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Add Cafe Dialog
   void _addCafePopup(BuildContext context) {
     showDialog(
@@ -180,11 +291,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                 color: Colors.black,
               ),
             ),
-
             const SizedBox(height: 22),
-
             _sectionHeader('Cafes List', TColors.vermillion),
-
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _cafeStream,
@@ -262,17 +370,8 @@ class _VendorDetailsPageState extends State<VendorDetailsPage> {
                                       color: TColors.cream,
                                       onSelected: (value) {
                                         if (value == 'Edit') {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AdminVendorCafeEdit(
-                                                cafeData: cafeData,
-                                                vendorId:
-                                                    widget.vendorData['Id'],
-                                              ),
-                                            ),
-                                          );
+                                          _showEditCafeDialog(context, cafeData,
+                                              widget.vendorData['Id']);
                                         } else if (value == 'Delete') {
                                           _deleteCafe(cafeDoc.id);
                                         }

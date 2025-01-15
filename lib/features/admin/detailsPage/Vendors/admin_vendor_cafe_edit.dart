@@ -111,11 +111,8 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
                     color: Colors.black,
                   ),
                 ),
-
                 const SizedBox(height: 22),
-
                 _sectionHeader('Edit Details', TColors.vermillion),
-
                 TextField(
                   controller: _cafeNameController,
                   decoration: const InputDecoration(
@@ -155,9 +152,7 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
                 Center(
                   child: Container(
                     width: 200,
@@ -182,7 +177,8 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
                         ),
                       ),
                       style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
                       ),
                     ),
                   ),
@@ -194,7 +190,7 @@ class _AdminVendorCafeEditState extends State<AdminVendorCafeEdit> {
       ),
     );
   }
-  
+
   // Section Header Widget
   Widget _sectionHeader(String title, Color color) {
     return Padding(
