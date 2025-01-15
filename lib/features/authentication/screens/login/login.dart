@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/common/styles/spacing_styles.dart';
 import 'package:fyp_umakan/data/repositories/authentication/authentication_repository.dart';
@@ -29,201 +31,247 @@ class LoginScreen extends StatelessWidget {
     final dark = THelperFunctions.isDarkMode(context);
 
     return Scaffold(
-        backgroundColor: dark ? TColors.cream : TColors.cream,
-        body: SingleChildScrollView(
-            child: Padding(
+      body: Stack(
+        children: [
+          // Background Image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/Login_Graphic_v3.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // Main Content at the bottom
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SingleChildScrollView(
+              child: Padding(
                 padding: TSpacingStyle.paddingWithAppBarHeight,
                 child: Column(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image(
-                          height: 200,
-                          image: AssetImage(
-                              dark ? TImages.appLogo : TImages.appLogo),
-                        ),
-                        Text(
-                          TTexts.loginTitle,
-                          style: Theme.of(context).textTheme.headlineLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: TSizes.sm),
-                        Text(
-                          TTexts.loginSubTitle,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: TSizes.lg),
-                      ],
+                    // Title
+                    Text(
+                      'We Help U-Makan!',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: dark
+                            ? TColors.textDark
+                            : TColors.textDark,
+                      ),
                     ),
 
-                    Form(
-                      key: controller.loginFormKey,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: TSizes.spaceBtwSections),
-                        child: Column(
-                          children: [
-                            // Email
-                            TextFormField(
-                              controller: controller.email,
-                              validator: (value) =>
-                                  TValidator.validateEmail(value),
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Iconsax.direct_right),
-                                labelText: TTexts.email,
-                              ),
+                    // Subtitle
+                    Text(
+                      'Lets start managing your meals and finances.',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                        color: dark
+                            ? TColors.textDark
+                            : TColors.charcoal,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Frosted Glass Card
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.4),
+                              width: 1.5,
                             ),
+                          ),
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              // Login Form
+                              Form(
+                                key: controller.loginFormKey,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                  child: Column(
+                                    children: [
+                                      // Email Field
+                                      TextFormField(
+                                        controller: controller.email,
+                                        validator: (value) =>
+                                            TValidator.validateEmail(value),
+                                        decoration: InputDecoration(
+                                          prefixIcon:
+                                              Icon(Iconsax.direct_right),
+                                          labelText: TTexts.email,
+                                        ),
+                                      ),
 
-                            // White Space
-                            const SizedBox(height: TSizes.spaceBtwInputFields),
+                                      const SizedBox(height: TSizes.spaceBtwInputFields),
 
-                            // Password
-                            Obx(
-                              () => TextFormField(
-                                controller: controller.password,
-                                validator: (value) =>
-                                    TValidator.validatePassword(value),
-                                obscureText: controller.hidePassword.value,
-                                decoration: InputDecoration(
-                                  labelText: TTexts.password,
-                                  prefixIcon: const Icon(Iconsax.lock),
-                                  suffixIcon: IconButton(
-                                    onPressed: () => controller.hidePassword
-                                        .value = !controller.hidePassword.value,
-                                    icon: Icon(controller.hidePassword.value
-                                        ? Iconsax.eye_slash
-                                        : Iconsax.eye),
+                                      // Password Field
+                                      Obx(
+                                        () => TextFormField(
+                                          controller: controller.password,
+                                          validator: (value) => TValidator
+                                              .validatePassword(value),
+                                          obscureText:
+                                              controller.hidePassword.value,
+                                          decoration: InputDecoration(
+                                            labelText: TTexts.password,
+                                            prefixIcon: const Icon(Iconsax.lock),
+                                            suffixIcon: IconButton(
+                                              onPressed: () => controller
+                                                      .hidePassword.value =
+                                                  !controller
+                                                      .hidePassword.value,
+                                              icon: Icon(
+                                                  controller.hidePassword.value
+                                                      ? Iconsax.eye_slash
+                                                      : Iconsax.eye),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 10),
+
+                                      Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // Remember Me
+                                          Row(
+                                            children: [
+                                              Obx(() => Checkbox(
+                                                  value: controller
+                                                      .rememberMe.value,
+                                                  onChanged: (value) =>
+                                                      controller.rememberMe
+                                                          .value = !controller
+                                                              .rememberMe
+                                                              .value)),
+                                              const Text(TTexts.rememberMe),
+                                            ],
+                                          ),
+
+                                          // Forget Password
+                                          TextButton(
+                                            onPressed: () => Get.to(() => const ForgetPasswordScreen()),
+                                            child: const Text(TTexts.forgetPassword),
+                                            style: TextButton.styleFrom(
+                                                foregroundColor: TColors.amber),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
-
-                            // White Space
-                            const SizedBox(
-                                height: TSizes.spaceBtwInputFields / 2),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Remember Me
-                                Row(
-                                  children: [
-                                    Obx(() => Checkbox(
-                                        value: controller.rememberMe.value,
-                                        onChanged: (value) =>
-                                            controller.rememberMe.value =
-                                                !controller.rememberMe.value)),
-                                    const Text(TTexts.rememberMe),
-                                  ],
-                                ),
-
-                                // Forget Password
-                                TextButton(
-                                  onPressed: () => Get.to(
-                                      () => const ForgetPasswordScreen()),
-                                  child: const Text(TTexts.forgetPassword),
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: TColors.amber),
-                                ),
-                              ],
-                            ),
-
-                            // White Space
-                            const SizedBox(height: TSizes.spaceBtwSections),
-
-                            // Log In Button
-                            SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                    // onPressed: () => controller.emailAndPasswordLogIn(),
-                                    onPressed: () async {
-                                      bool isLogin = await controller
-                                          .emailAndPasswordLogIn();
-                                      if (isLogin) {
-                                        // Call the screenRedirect method to handle navigation
-                                        AuthenticatorRepository.instance
-                                            .screenRedirect();
-                                        print(
-                                            '-------------SUCCESSFULLY LOGGED IN!--------------');
-                                      }
-                                    },
-                                    child: const Text(TTexts.logIn))),
-                            const SizedBox(height: TSizes.spaceBtwItems),
-
-                            // Create Account Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                onPressed: () => _showAccountTypeModal(context),
-                                child: const Text(TTexts.createAccount),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
 
-                    /*Divider
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                            child: Divider(
-                                color: dark ? Colors.white : TColors.darkGreen,
-                                thickness: 0.5,
-                                indent: 60,
-                                endIndent: 5)),
-                        Text(TTexts.orLogInWith.capitalize!,
-                            style: Theme.of(context).textTheme.labelMedium),
-                        Flexible(
-                            child: Divider(
-                                color: dark ? Colors.white : TColors.darkGreen,
-                                thickness: 0.5,
-                                indent: 5,
-                                endIndent: 60)),
-                      ],
-                    ),*/
-                    const SizedBox(height: TSizes.spaceBtwSections),
+                    const SizedBox(height: 15),
 
-                    // Footer
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        /*Google Button
-                Container(
-                  decoration: BoxDecoration(border: Border.all(color: TColors.olive), borderRadius: BorderRadius.circular(100)),
-                  child: IconButton(
-                    onPressed: (){},
-                    icon: const Image(
-                      width: TSizes.iconMd,
-                      height: TSizes.iconMd,
-                      image: AssetImage(TImages.google),
-                    )
-                  ),
-                ),*/
+                    // Log In Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          bool isLogin =
+                              await controller.emailAndPasswordLogIn();
+                          if (isLogin) {
+                            AuthenticatorRepository.instance.screenRedirect();
+                          }
+                        },
+                        child: const Text(TTexts.logIn),
+                      ),
+                    ),
 
-                        SizedBox(width: TSizes.spaceBtwItems),
+                    const SizedBox(height: TSizes.spaceBtwItems),
 
-                        /* Facebook Button
-                Container(
-                  decoration: BoxDecoration(border: Border.all(color: TColors.olive), borderRadius: BorderRadius.circular(100)),
-                  child: IconButton(
-                    onPressed: (){},
-                    icon: const Image(
-                      width: TSizes.iconMd,
-                      height: TSizes.iconMd,
-                      image: AssetImage(TImages.facebook),
-                    )
-                  ),
-                ),*/
-                      ],
+                    // Create Account Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => _showAccountTypeModal(context),
+                        child: const Text(TTexts.createAccount),
+                      ),
                     ),
                   ],
-                ))));
+                ),
+              ),
+            ),
+          ),
+
+          // Divider Section
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Flexible(
+          //         child: Divider(
+          //             color: dark ? Colors.white : TColors.darkGreen,
+          //             thickness: 0.5,
+          //             indent: 60,
+          //             endIndent: 5)),
+          //     Text(TTexts.orLogInWith.capitalize!,
+          //         style: Theme.of(context).textTheme.labelMedium),
+          //     Flexible(
+          //         child: Divider(
+          //             color: dark ? Colors.white : TColors.darkGreen,
+          //             thickness: 0.5,
+          //             indent: 5,
+          //             endIndent: 60)),
+          //   ],
+          // ),
+
+          // const SizedBox(height: TSizes.spaceBtwSections),
+
+          // Footer Section (Restored)
+          // const Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          /*Google Button
+          Container(
+            decoration: BoxDecoration(border: Border.all(color: TColors.olive), borderRadius: BorderRadius.circular(100)),
+            child: IconButton(
+              onPressed: (){},
+              icon: const Image(
+                width: TSizes.iconMd,
+                height: TSizes.iconMd,
+                image: AssetImage(TImages.google),
+              )
+            ),
+          ),*/
+
+          // SizedBox(width: TSizes.spaceBtwItems),
+
+          /* Facebook Button
+          Container(
+            decoration: BoxDecoration(border: Border.all(color: TColors.olive), borderRadius: BorderRadius.circular(100)),
+            child: IconButton(
+              onPressed: (){},
+              icon: const Image(
+                width: TSizes.iconMd,
+                height: TSizes.iconMd,
+                image: AssetImage(TImages.facebook),
+              )
+            ),
+          ),*/
+          //   ],
+          // ),
+        ],
+      ),
+    );
   }
 
+  // Method for Create Account Types Modal
   void _showAccountTypeModal(BuildContext context) {
     showDialog(
       context: context,
@@ -231,7 +279,7 @@ class LoginScreen extends StatelessWidget {
       builder: (BuildContext context) {
         return Dialog(
           child: Container(
-            height: 400, // Adjusted height to fit the new option
+            height: 340,
             width: 400,
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
@@ -251,6 +299,7 @@ class LoginScreen extends StatelessWidget {
                     },
                   ),
                 ),
+
                 // Title
                 Text(
                   'Select Account Type',
@@ -260,7 +309,9 @@ class LoginScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
                 SizedBox(height: 30),
+
                 // Student Button
                 Container(
                   width: double.infinity,
@@ -297,7 +348,9 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 SizedBox(height: 15),
+
                 // Vendor Button
                 Container(
                   width: double.infinity,
@@ -333,7 +386,9 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 SizedBox(height: 15),
+
                 // Support Organisations Button
                 Container(
                   width: double.infinity,
@@ -368,39 +423,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                /*Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: TColors.stark_blue,
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 2.0,
-                    ),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Get.to(() => AdminRegisterPage());
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Iconsax.people, color: TColors.cream, size: 20),
-                        SizedBox(width: 10),
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            color: TColors.darkGreen,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),*/
               ],
             ),
           ),
