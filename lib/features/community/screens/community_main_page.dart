@@ -812,18 +812,47 @@ class CommunityMainPageScreen extends StatelessWidget {
                           onPressed: () async {
                             final result = await FilePicker.platform.pickFiles(type: FileType.image);
                             if (result != null && result.files.isNotEmpty) {
-                              final path = result.files.first.path!;
+                              final path = result.files.first.path;
+                              if (path == null || path.isEmpty) {
+                                Get.snackbar(
+                                  'Error',
+                                  'No valid file selected.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
+
                               try {
                                 final imageUrl = await _uploadImageToFirebase(path);
                                 setState(() {
                                   attachedImageUrl = imageUrl;
                                 });
-                                Get.snackbar('Success', 'Image uploaded successfully!',
-                                    snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+                                Get.snackbar(
+                                  'Success',
+                                  'Image uploaded successfully!',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                );
                               } catch (e) {
-                                Get.snackbar('Error', 'Failed to upload image.',
-                                    snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+                                Get.snackbar(
+                                  'Error',
+                                  'Failed to upload image.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
                               }
+                            } else {
+                              Get.snackbar(
+                                'Error',
+                                'No file selected.',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
                             }
                           },
                           child: Text(
@@ -936,10 +965,29 @@ class CommunityMainPageScreen extends StatelessWidget {
 
   // Function to Upload Image to Firebase Storage
   Future<String> _uploadImageToFirebase(String filePath) async {
-    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    final firebaseStorageRef = FirebaseStorage.instance.ref().child('community_news_images/$fileName');
-    await firebaseStorageRef.putFile(File(filePath));
-    return await firebaseStorageRef.getDownloadURL();
+    try {
+      // Ensure file exists
+      final file = File(filePath);
+      if (!file.existsSync()) {
+        throw Exception('File does not exist at path: $filePath');
+      }
+
+      // Generate unique file name
+      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final firebaseStorageRef = FirebaseStorage.instance.ref().child('community_news_images/$fileName');
+
+      // Upload file to Firebase Storage
+      final uploadTask = firebaseStorageRef.putFile(file);
+
+      // Monitor upload progress
+      final snapshot = await uploadTask;
+
+      // Retrieve download URL
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading image to Firebase: $e');
+      throw Exception('Image upload failed: $e');
+    }
   }
 
   // Helper Method to Fetch User Role
