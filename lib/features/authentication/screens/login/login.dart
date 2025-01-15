@@ -266,7 +266,7 @@ class LoginScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: TColors.blush,
+                    color: TColors.forest,
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(
                       color: Colors.black,
@@ -283,12 +283,12 @@ class LoginScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Iconsax.emoji_happy,
-                            color: Colors.black, size: 20),
+                            color: TColors.cream, size: 20),
                         SizedBox(width: 10),
                         Text(
                           'Student',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: TColors.cream,
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -303,7 +303,7 @@ class LoginScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: TColors.forest,
+                    color: TColors.vermillion,
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(
                       color: Colors.black,
@@ -339,7 +339,7 @@ class LoginScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: TColors.stark_blue,
+                    color: TColors.blush,
                     borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(
                       color: Colors.black,

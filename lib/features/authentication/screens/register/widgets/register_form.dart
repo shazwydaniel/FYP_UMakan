@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:fyp_umakan/features/authentication/controllers/register/register_controller.dart';
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
@@ -26,6 +28,101 @@ class TRegisterForm extends StatelessWidget {
       key: controller.registerFormKey,
       child: Column(
         children: [
+          // Base Detail - Header Label
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _sectionHeader('Base Details', TColors.forest),
+              // GestureDetector(
+              //   onTap: () {
+              //     showDialog(
+              //       context: context,
+              //       builder: (BuildContext context) {
+              //         return Dialog(
+              //           shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(10), 
+              //           ),
+              //           child: Container(
+              //             decoration: BoxDecoration(
+              //               color: TColors.cream,
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //             child: Stack(
+              //               children: [
+              //                 Padding(
+              //                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              //                   child: Column(
+              //                     mainAxisSize: MainAxisSize.min,
+              //                     crossAxisAlignment: CrossAxisAlignment.center,
+              //                     children: [
+              //                       // Title
+              //                       Text(
+              //                         "Why we need these info?",
+              //                         style: TextStyle(
+              //                           fontSize: 18,
+              //                           fontWeight: FontWeight.bold,
+              //                           color: TColors.charcoal,
+              //                         ),
+              //                         textAlign: TextAlign.center,
+              //                       ),
+              //                       const SizedBox(height: 15),
+
+              //                       // Description
+              //                       Text(
+              //                         "These infos are crucial to determine your user category hence affecting your budget and diet recommendations.",
+              //                         style: TextStyle(
+              //                           fontSize: 16,
+              //                           fontWeight: FontWeight.normal,
+              //                           color: TColors.charcoal,
+              //                         ),
+              //                         textAlign: TextAlign.center,
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 ),
+              //                 // Exit Button (Top-right corner)
+              //                 Positioned(
+              //                   top: 10,
+              //                   right: 10,
+              //                   child: GestureDetector(
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                     },
+              //                     child: CircleAvatar(
+              //                       backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+              //                       radius: 14,
+              //                       child: Icon(
+              //                         Icons.close,
+              //                         color: TColors.amber,
+              //                         size: 20,
+              //                       ),
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //     );
+              //   },
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(right: 10, bottom: 15),
+              //     child: CircleAvatar(
+              //       radius: 14,
+              //       backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+              //       child: Icon(
+              //         Icons.info_outline,
+              //         color: TColors.charcoal,
+              //         size: 26,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+
+          // Full Name Field
           Row(
             children: [
               Expanded(
@@ -44,6 +141,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Username Field
           Row(
             children: [
               Expanded(
@@ -66,6 +164,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Email Field
           Row(
             children: [
               Expanded(
@@ -83,6 +182,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Password Field
           Row(
             children: [
               Expanded(
@@ -110,6 +210,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Phone Number Field
           Row(
             children: [
               Expanded(
@@ -127,6 +228,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Matrics Number Field
           Row(
             children: [
               Expanded(
@@ -144,36 +246,103 @@ class TRegisterForm extends StatelessWidget {
           ),
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
-
-          // Gender Dropdown
-          DropdownButtonFormField<String>(
-            value: controller.gender.text.isNotEmpty
-                ? controller.gender.text
-                : null,
-            items: ['Male', 'Female']
-                .map((gender) => DropdownMenuItem(
-                      value: gender,
-                      child: Text(gender),
-                    ))
-                .toList(),
-            onChanged: (value) {
-              if (value != null) {
-                controller.gender.text = value;
-              }
-            },
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please select your gender'
-                : null,
-            decoration: const InputDecoration(
-              labelText: 'Gender',
-              prefixIcon: Icon(Iconsax.personalcard),
-            ),
-            dropdownColor: TColors.cream, // Match the dropdown color
-          ),
-
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-// Location Dropdown
+          // Personal Details - Header Label with Info Icon
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _sectionHeader('Personal Details', TColors.forest),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10), 
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: TColors.cream,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Title
+                                    Text(
+                                      "Why we need your personal details?",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: TColors.charcoal,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 15),
+
+                                    // Description
+                                    Text(
+                                      "They are crucial to determine your user category; affecting your budget and diet recommendations.",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        color: TColors.charcoal,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Exit Button (Top-right corner)
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+                                    radius: 14,
+                                    child: Icon(
+                                      Icons.close,
+                                      color: TColors.amber,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10, bottom: 15),
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+                    child: Icon(
+                      Icons.info_outline,
+                      color: TColors.charcoal,
+                      size: 26,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Accommodation Field
           DropdownButtonFormField<String>(
             value: controller.accommodation.text.isNotEmpty
                 ? controller.accommodation.text
@@ -213,9 +382,10 @@ class TRegisterForm extends StatelessWidget {
             ),
             dropdownColor: TColors.cream,
           ),
+
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-// Vehicle Ownership Dropdown
+          // Vehicle Ownership Field
           DropdownButtonFormField<String>(
             value: controller.vehicle.text.isNotEmpty
                 ? controller.vehicle.text
@@ -242,7 +412,7 @@ class TRegisterForm extends StatelessWidget {
           ),
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
-// Marital Status Dropdown
+          // Marital Status Field
           DropdownButtonFormField<String>(
             value: controller.maritalStatus.text.isNotEmpty
                 ? controller.maritalStatus.text
@@ -267,8 +437,10 @@ class TRegisterForm extends StatelessWidget {
             ),
             dropdownColor: TColors.cream,
           ),
+
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Number of Children Field
           Row(
             children: [
               Expanded(
@@ -286,7 +458,103 @@ class TRegisterForm extends StatelessWidget {
           ),
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
+          const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Financial Details - Header Label with Info Icon
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _sectionHeader('Financial Details', TColors.forest),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10), 
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: TColors.cream,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Title
+                                    Text(
+                                      "Why we need your financial details?",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: TColors.charcoal,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 15),
+
+                                    // Description
+                                    Text(
+                                      "Financial details are important to help you track your expenses in money journal.",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        color: TColors.charcoal,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Exit Button (Top-right corner)
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+                                    radius: 14,
+                                    child: Icon(
+                                      Icons.close,
+                                      color: TColors.amber,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10, bottom: 15),
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+                    child: Icon(
+                      Icons.info_outline,
+                      color: TColors.charcoal,
+                      size: 26,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Monthly Allowance Field
           Row(
             children: [
               Expanded(
@@ -305,6 +573,7 @@ class TRegisterForm extends StatelessWidget {
 
           const SizedBox(height: TSizes.spaceBtwInputFields),
 
+          // Monthly Committments Field
           Row(
             children: [
               Expanded(
@@ -313,8 +582,183 @@ class TRegisterForm extends StatelessWidget {
                   validator: (value) => TValidator.validateEmptyText(
                       'Monthly Commitments', value),
                   decoration: const InputDecoration(
-                    labelText: 'Monthly Committments (Non Food)',
+                    labelText: 'Monthly Committments (Non-Food)',
                     prefixIcon: Icon(Iconsax.money_remove),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: TSizes.spaceBtwInputFields),
+          const SizedBox(height: TSizes.spaceBtwInputFields),
+
+          // Health Details - Header Label with Info Icon
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _sectionHeader('Health Details', TColors.forest),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10), 
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: TColors.cream,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Title
+                                    Text(
+                                      "Why we need your health details?",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: TColors.charcoal,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 15),
+
+                                    // Description
+                                    Text(
+                                      "Health details are important to help you track your meals in food journal.",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        color: TColors.charcoal,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Exit Button (Top-right corner)
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+                                    radius: 14,
+                                    child: Icon(
+                                      Icons.close,
+                                      color: TColors.amber,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10, bottom: 15),
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: const Color.fromARGB(0, 192, 186, 186),
+                    child: Icon(
+                      Icons.info_outline,
+                      color: TColors.charcoal,
+                      size: 26,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Gender Dropdown
+          DropdownButtonFormField<String>(
+            value: controller.gender.text.isNotEmpty
+                ? controller.gender.text
+                : null,
+            items: ['Male', 'Female']
+                .map((gender) => DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.gender.text = value;
+              }
+            },
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please select your gender'
+                : null,
+            decoration: const InputDecoration(
+              labelText: 'Gender',
+              prefixIcon: Icon(Iconsax.personalcard),
+            ),
+            dropdownColor: TColors.cream,
+          ),
+
+          const SizedBox(height: TSizes.spaceBtwInputFields),
+
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () async {
+                    // Open date picker
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: TColors.teal,
+                              onPrimary: Colors.white,
+                              onSurface: TColors.darkGreen,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (pickedDate != null) {
+                      // Format the selected date
+                      String formattedDate =
+                          "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+
+                      // Update the controller's birthdate value
+                      controller.birthdate.text = formattedDate;
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: controller.birthdate,
+                      validator: (value) =>
+                          TValidator.validateEmptyText('Birthdate', value),
+                      decoration: const InputDecoration(
+                        labelText: 'Birthdate (dd/mm/yyyy)',
+                        prefixIcon: Icon(Iconsax.calendar),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -351,24 +795,6 @@ class TRegisterForm extends StatelessWidget {
                   decoration: const InputDecoration(
                     labelText: 'Weight (kg)',
                     prefixIcon: Icon(Iconsax.weight),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: TSizes.spaceBtwInputFields),
-
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: controller.birthdate,
-                  validator: (value) =>
-                      TValidator.validateEmptyText('Birthdate', value),
-                  decoration: const InputDecoration(
-                    labelText: 'Birthdate (dd/mm/yyyy)',
-                    prefixIcon: Icon(Iconsax.calendar),
                   ),
                 ),
               ),
@@ -493,6 +919,31 @@ class TRegisterForm extends StatelessWidget {
               ),*/
             ],
           ),*/
+        ],
+      ),
+    );
+  }
+  // Section Header Widget
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 4,
+            height: 40,
+            color: color,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );
