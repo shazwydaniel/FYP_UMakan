@@ -2,6 +2,7 @@
 
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp_umakan/features/admin/detailsPage/Vendors/admin_vendor_details.dart';
@@ -173,84 +174,6 @@ class _AdminVendor extends State<AdminVendor> {
     );
   }
 
-  // Add User Dialog
-  void _addVendor(BuildContext context) {
-    final vendorNameController = TextEditingController();
-    final vendorEmailController = TextEditingController();
-    final vendorPasswordController = TextEditingController();
-    final contactInfoController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: TColors.cream,
-          title: const Text('Add Vendor'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
-                TextField(
-                  controller: vendorNameController,
-                  decoration: const InputDecoration(labelText: 'Vendor Name'),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: vendorEmailController,
-                  decoration: const InputDecoration(labelText: 'Vendor Email'),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: vendorPasswordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: contactInfoController,
-                  decoration: const InputDecoration(labelText: 'Contact Info'),
-                  keyboardType: TextInputType.phone,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child:
-                  const Text('Cancel', style: TextStyle(color: TColors.amber)),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await FirebaseFirestore.instance.collection('Vendors').add({
-                    'Vendor Name': vendorNameController.text,
-                    'Vendor Email': vendorEmailController.text,
-                    'Password': vendorPasswordController.text,
-                    'Contact Info': contactInfoController.text,
-                  });
-                  Navigator.of(context).pop(); // Close the dialog on success
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Vendor added successfully')),
-                  );
-                } catch (e) {
-                  Navigator.of(context).pop(); // Close the dialog on error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to add vendor: $e')),
-                  );
-                }
-              },
-              child: const Text('Add', style: TextStyle(color: Colors.green)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   // Main Page
   @override
   Widget build(BuildContext context) {
@@ -310,7 +233,8 @@ class _AdminVendor extends State<AdminVendor> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => VendorDetailsPage(vendorData: vendorData),
+                            builder: (context) =>
+                                VendorDetailsPage(vendorData: vendorData),
                           ),
                         );
                       },
@@ -335,15 +259,23 @@ class _AdminVendor extends State<AdminVendor> {
                                   CircleAvatar(
                                     radius: 30,
                                     backgroundColor: TColors.vermillion,
-                                    backgroundImage: vendorData['Profile Picture'] != null &&
-                                            vendorData['Profile Picture'].isNotEmpty
-                                        ? NetworkImage(vendorData['Profile Picture']) as ImageProvider
+                                    backgroundImage: vendorData[
+                                                    'Profile Picture'] !=
+                                                null &&
+                                            vendorData['Profile Picture']
+                                                .isNotEmpty
+                                        ? NetworkImage(
+                                                vendorData['Profile Picture'])
+                                            as ImageProvider
                                         : null,
-                                    child: vendorData['Profile Picture'] == null ||
-                                            vendorData['Profile Picture'].isEmpty
+                                    child: vendorData['Profile Picture'] ==
+                                                null ||
+                                            vendorData['Profile Picture']
+                                                .isEmpty
                                         ? Text(
                                             vendorData['Vendor Name'] != null &&
-                                                    vendorData['Vendor Name'].isNotEmpty
+                                                    vendorData['Vendor Name']
+                                                        .isNotEmpty
                                                 ? vendorData['Vendor Name'][0]
                                                     .toUpperCase()
                                                 : '',
@@ -358,10 +290,12 @@ class _AdminVendor extends State<AdminVendor> {
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          vendorData['Vendor Name'] ?? 'No Name',
+                                          vendorData['Vendor Name'] ??
+                                              'No Name',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -369,7 +303,8 @@ class _AdminVendor extends State<AdminVendor> {
                                           ),
                                         ),
                                         Text(
-                                          vendorData['Vendor Email'] ?? 'No Email',
+                                          vendorData['Vendor Email'] ??
+                                              'No Email',
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black54,
@@ -382,7 +317,8 @@ class _AdminVendor extends State<AdminVendor> {
                                     color: TColors.cream,
                                     onSelected: (value) {
                                       if (value == 'Edit') {
-                                        _showEditVendorDialog(context, vendorDoc.id);
+                                        _showEditVendorDialog(
+                                            context, vendorDoc.id);
                                       } else if (value == 'Delete') {
                                         _deleteVendor(context, vendorDoc.id);
                                       }
@@ -432,17 +368,152 @@ class _AdminVendor extends State<AdminVendor> {
               IconButton(
                 icon: Icon(Iconsax.add_circle, color: Colors.white, size: 40),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => VendorRegisterPage()),
-                  );
+                  _showAddVendorDialog(context);
                 },
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void _showAddVendorDialog(BuildContext context) {
+    final vendorController = Get.put(VendorController());
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 550,
+          width: 200,
+          child: AlertDialog(
+            backgroundColor: TColors.cream,
+            title: Text('Add Vendor'),
+            content: Form(
+              key: vendorController.vendorFormKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: vendorController.vendorName,
+                      decoration: InputDecoration(labelText: 'Vendor Name'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vendor name is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: vendorController.vendorEmail,
+                      decoration: InputDecoration(labelText: 'Email'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: vendorController.vendorPassword,
+                      decoration: InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: vendorController.contactInfo,
+                      decoration: InputDecoration(labelText: 'Contact Info'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Contact info is required';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              Row(
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                        ),
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        side: const BorderSide(color: Colors.black, width: 2.0),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10), // Space between buttons
+                  // Register Button
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (vendorController.vendorFormKey.currentState
+                                ?.validate() ??
+                            false) {
+                          try {
+                            await vendorController.register();
+
+                            Navigator.of(context).pop();
+                          } catch (e) {
+                            Get.snackbar(
+                              "Error",
+                              "Failed to register vendor.",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                        ),
+                        backgroundColor: TColors.teal,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
