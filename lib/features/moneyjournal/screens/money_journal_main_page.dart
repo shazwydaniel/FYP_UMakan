@@ -543,11 +543,25 @@ class MoneyJournalMainPage extends StatelessWidget {
                             );
                           },
                           onDismissed: (direction) async {
-                            await controller.removeExpense(expenseID);
-                            TLoaders.errorSnackBar(
-                              title: 'Expense Deleted',
-                              message: "Selected expense has been deleted!",
-                            );
+                            try {
+                              // Remove the expense
+                              await controller.removeExpense(expenseID);
+
+                              // Refresh user data to fetch updated expenses
+                              await controller.refreshUserData();
+
+                              // Show a success message
+                              TLoaders.successSnackBar(
+                                title: 'Expense Deleted',
+                                message: "Selected expense has been deleted!",
+                              );
+                            } catch (e) {
+                              // Show an error message if something goes wrong
+                              TLoaders.errorSnackBar(
+                                title: 'Error',
+                                message: "Failed to delete the expense. Please try again.",
+                              );
+                            }
                           },
                           child: Container(
                             height: 100,
@@ -832,11 +846,25 @@ class MoneyJournalMainPage extends StatelessWidget {
                             );
                           },
                           onDismissed: (direction) async {
-                            await controller.removeExpense(expenseID);
-                            TLoaders.errorSnackBar(
-                              title: 'Expense Deleted',
-                              message: "Selected expense has been deleted!",
-                            );
+                            try {
+                              // Remove the expense
+                              await controller.removeExpense(expenseID);
+
+                              // Refresh user data to fetch updated expenses
+                              await controller.refreshUserData();
+
+                              // Show a success message
+                              TLoaders.successSnackBar(
+                                title: 'Expense Deleted',
+                                message: "Selected expense has been deleted!",
+                              );
+                            } catch (e) {
+                              // Show an error message if something goes wrong
+                              TLoaders.errorSnackBar(
+                                title: 'Error',
+                                message: "Failed to delete the expense. Please try again.",
+                              );
+                            }
                           },
                           child: Container(
                             height: 100,
@@ -1208,11 +1236,25 @@ class MoneyJournalMainPage extends StatelessWidget {
                                     );
                                   },
                                   onDismissed: (direction) async {
-                                    await controller.removeExpense(expenseID);
-                                    TLoaders.errorSnackBar(
-                                      title: 'Expense Deleted',
-                                      message: "Selected expense has been deleted!",
-                                    );
+                                    try {
+                                      // Remove the expense
+                                      await controller.removeExpense(expenseID);
+
+                                      // Refresh user data to fetch updated expenses
+                                      await controller.refreshUserData();
+
+                                      // Show a success message
+                                      TLoaders.successSnackBar(
+                                        title: 'Expense Deleted',
+                                        message: "Selected expense has been deleted!",
+                                      );
+                                    } catch (e) {
+                                      // Show an error message if something goes wrong
+                                      TLoaders.errorSnackBar(
+                                        title: 'Error',
+                                        message: "Failed to delete the expense. Please try again.",
+                                      );
+                                    }
                                   },
                                   child: Container(
                                     height: 100,
