@@ -57,7 +57,7 @@ class AuthorityHomePage extends StatelessWidget {
                               top: 160,
                               left: 40,
                               child: Text(
-                                "Authority !",
+                                "Authority",
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
@@ -294,25 +294,52 @@ class AuthorityHomePage extends StatelessWidget {
               },
             ),
             // Card #3
-            FutureBuilder<double>(
-              future: _fetchAverageMonthlyAllowance(),
+            // FutureBuilder<double>(
+            //   future: _fetchAverageMonthlyAllowance(),
+            //   builder: (context, snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return Center(child: CircularProgressIndicator());
+            //     } else if (snapshot.hasError) {
+            //       return Center(
+            //         child: Text(
+            //           'Error loading average monthly expenses',
+            //           style: TextStyle(color: Colors.red),
+            //         ),
+            //       );
+            //     }
+
+            //     final averageAllowance = snapshot.data ?? 0.0;
+            //     return _statCard(
+            //       title: 'Average Monthly Expenses',
+            //       value: 'RM ${averageAllowance.toStringAsFixed(2)}',
+            //       icon: Iconsax.wallet_2,
+            //       color: TColors.forest,
+            //     );
+            //   },
+            // ),
+            // Card #4
+            FutureBuilder<Map<String, double>>(
+              future: _fetchFoodMoneyRange(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(
                     child: Text(
-                      'Error loading average monthly expenses',
+                      'Error loading food money range',
                       style: TextStyle(color: Colors.red),
                     ),
                   );
                 }
 
-                final averageAllowance = snapshot.data ?? 0.0;
+                final range = snapshot.data ?? {'min': 0.0, 'max': 0.0};
+                final minFoodMoney = range['min']!;
+                final maxFoodMoney = range['max']!;
+
                 return _statCard(
-                  title: 'Average Monthly Expenses',
-                  value: 'RM ${averageAllowance.toStringAsFixed(2)}',
-                  icon: Iconsax.wallet_2,
+                  title: 'Food Money Range',
+                  value: 'RM ${minFoodMoney.toStringAsFixed(0)} - RM ${maxFoodMoney.toStringAsFixed(0)}',
+                  icon: Iconsax.chart_1,
                   color: TColors.forest,
                 );
               },
@@ -676,5 +703,33 @@ class AuthorityHomePage extends StatelessWidget {
     }
 
     return totalCafes;
+  }
+
+  // Food Money Range
+  Future<Map<String, double>> _fetchFoodMoneyRange() async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('Users').get();
+
+    double? minFoodMoney;
+    double? maxFoodMoney;
+
+    for (var doc in snapshot.docs) {
+      final role = doc.data()['Role'] ?? '';
+      if (role == 'Student') {
+        final foodMoney = doc.data()['Food Money']?.toDouble() ?? 0.0;
+
+        if (minFoodMoney == null || foodMoney < minFoodMoney) {
+          minFoodMoney = foodMoney;
+        }
+        if (maxFoodMoney == null || foodMoney > maxFoodMoney) {
+          maxFoodMoney = foodMoney;
+        }
+      }
+    }
+
+    return {
+      'min': minFoodMoney ?? 0.0,
+      'max': maxFoodMoney ?? 0.0,
+    };
   }
 }

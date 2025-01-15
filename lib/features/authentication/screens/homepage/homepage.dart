@@ -60,7 +60,7 @@ class HomePageScreen extends StatelessWidget {
                 color: TColors.amber,
                 padding: const EdgeInsets.all(0),
                 child: SizedBox(
-                  height: 580,
+                  height: 600,
                   child: Column(
                     children: [
                       Expanded(
@@ -86,7 +86,7 @@ class HomePageScreen extends StatelessWidget {
                               left: 40,
                               child: Obx(
                                 () => Text(
-                                  "${userController.user.value.username} !",
+                                  "${userController.user.value.username}",
                                   style: TextStyle(
                                     fontSize: 40,
                                     fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class HomePageScreen extends StatelessWidget {
                       // Stats Highlights (Label)
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 30, right: 30, bottom: 5, top: 10),
+                            left: 30, right: 30, bottom: 15, top: 10),
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
@@ -579,7 +579,7 @@ class HomePageScreen extends StatelessWidget {
                           Container(
                             width: 4,
                             height: 40,
-                            color: TColors.teal,
+                            color: TColors.mustard,
                           ),
                           const SizedBox(width: 10),
                           Text(

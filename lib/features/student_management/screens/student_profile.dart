@@ -52,7 +52,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                   ),
                   Obx(
                     () => Text(
-                      "${controller.user.value.username} !",
+                      "${controller.user.value.username}",
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,

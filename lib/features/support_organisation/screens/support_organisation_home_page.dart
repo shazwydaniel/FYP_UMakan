@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -163,25 +165,52 @@ class _SupportOrganisationHomePageState extends State<SupportOrganisationHomePag
                     },
                   ),
                   // Card #3
-                  FutureBuilder<double>(
-                    future: _fetchAverageMonthlyAllowance(),
+                  // FutureBuilder<double>(
+                  //   future: _fetchAverageMonthlyAllowance(),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return Center(child: CircularProgressIndicator());
+                  //     } else if (snapshot.hasError) {
+                  //       return Center(
+                  //         child: Text(
+                  //           'Error loading average monthly allowances',
+                  //           style: TextStyle(color: Colors.red),
+                  //         ),
+                  //       );
+                  //     }
+
+                  //     final averageAllowance = snapshot.data ?? 0.0;
+                  //     return _statCard(
+                  //       title: 'Average Allowances',
+                  //       value: 'RM ${averageAllowance.toStringAsFixed(2)}',
+                  //       icon: Iconsax.wallet_2,
+                  //       color: TColors.olive,
+                  //     );
+                  //   },
+                  // ),
+                  // Card #4
+                  FutureBuilder<Map<String, double>>(
+                    future: _fetchFoodMoneyRange(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
                         return Center(
                           child: Text(
-                            'Error loading average monthly allowances',
+                            'Error loading food money range',
                             style: TextStyle(color: Colors.red),
                           ),
                         );
                       }
 
-                      final averageAllowance = snapshot.data ?? 0.0;
+                      final range = snapshot.data ?? {'min': 0.0, 'max': 0.0};
+                      final minFoodMoney = range['min']!;
+                      final maxFoodMoney = range['max']!;
+
                       return _statCard(
-                        title: 'Average Allowances',
-                        value: 'RM ${averageAllowance.toStringAsFixed(2)}',
-                        icon: Iconsax.wallet_2,
+                        title: 'Food Money Range',
+                        value: 'RM ${minFoodMoney.toStringAsFixed(0)} - RM ${maxFoodMoney.toStringAsFixed(0)}',
+                        icon: Iconsax.chart_1,
                         color: TColors.olive,
                       );
                     },
@@ -341,5 +370,32 @@ class _SupportOrganisationHomePageState extends State<SupportOrganisationHomePag
     }
 
     return studentCount > 0 ? totalAllowance / studentCount : 0.0;
+  }
+
+  // Food Money Range
+  Future<Map<String, double>> _fetchFoodMoneyRange() async {
+    final snapshot = await _firestore.collection('Users').get();
+
+    double? minFoodMoney;
+    double? maxFoodMoney;
+
+    for (var doc in snapshot.docs) {
+      final role = doc.data()['Role'] ?? '';
+      if (role == 'Student') {
+        final foodMoney = doc.data()['Food Money']?.toDouble() ?? 0.0;
+
+        if (minFoodMoney == null || foodMoney < minFoodMoney) {
+          minFoodMoney = foodMoney;
+        }
+        if (maxFoodMoney == null || foodMoney > maxFoodMoney) {
+          maxFoodMoney = foodMoney;
+        }
+      }
+    }
+
+    return {
+      'min': minFoodMoney ?? 0.0,
+      'max': maxFoodMoney ?? 0.0,
+    };
   }
 }

@@ -224,7 +224,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                     controller.user.value.actualRemainingFoodAllowance.toStringAsFixed(2),
                                     style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 50,
+                                      fontSize: 45,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1094,7 +1094,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                           Text(
                                             DateFormat('MMMM yyyy').format(currentMonth),
                                             style: TextStyle(
-                                              fontSize: 22,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                               color: TColors.cream,
                                             ),
@@ -1106,7 +1106,7 @@ class MoneyJournalMainPage extends StatelessWidget {
                                           Text(
                                             'RM ${totalMonthlySpending.toStringAsFixed(2)}',
                                             style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: TColors.blush,
                                             ),

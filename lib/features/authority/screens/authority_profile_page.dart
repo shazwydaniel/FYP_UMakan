@@ -131,12 +131,12 @@ class AuthorityProfilePage extends StatelessWidget {
                                   value: profile['Email'],
                                   dark: dark,
                                 ),
-                                const SizedBox(height: 15),
-                                _profileDetail(
-                                  title: "ID",
-                                  value: profile['Id'],
-                                  dark: dark,
-                                ),
+                                // const SizedBox(height: 15),
+                                // _profileDetail(
+                                //   title: "ID",
+                                //   value: profile['Id'],
+                                //   dark: dark,
+                                // ),
                               ],
                             ),
                           );
