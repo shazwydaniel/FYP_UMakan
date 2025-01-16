@@ -63,7 +63,7 @@ class LoginScreen extends StatelessWidget {
 
                     // Subtitle
                     Text(
-                      'Lets start managing your meals and finances.',
+                      'Start managing your meals and finances.',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.normal,
