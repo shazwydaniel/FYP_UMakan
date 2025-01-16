@@ -42,7 +42,15 @@ class HomePageScreen extends StatelessWidget {
     recommendedController
         .calculateAndStoreAverages(userController.user.value.id);
     final foodJController = Get.put(FoodJournalController());
-    foodJController.resetMealStatesAtMidnight(userController.user.value.id);
+    final userIdforMealReset = userController.user.value.id;
+
+    if (userIdforMealReset != null && userIdforMealReset.isNotEmpty) {
+      foodJController.resetMealStatesAtMidnight(userIdforMealReset);
+      print("userId is null or empty. Reset meal states.");
+    } else {
+      print("Error: userId is null or empty. Cannot reset meal states.");
+    }
+
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
     // print("AMOUNT of completed days : ${foodJController.dayCount}");
