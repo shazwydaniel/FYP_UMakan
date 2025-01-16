@@ -31,14 +31,14 @@ class RecommendationController extends GetxController {
   void onInit() {
     super.onInit();
     // Set the initial time frame index
-    currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
+    // currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
     calculateAndStoreAverages(userController.user.value.id);
 
     // Update the time frame index every minute
-    Timer.periodic(Duration(minutes: 1), (_) {
+    /*Timer.periodic(Duration(minutes: 1), (_) {
       currentTimeFrameIndex.value = getCurrentTimeFrameIndex();
     });
-    print(getCurrentTimeFrameIndex());
+    print(getCurrentTimeFrameIndex());*/
   }
 
   Future<List<CafeItem>> getRecommendedList(String userId) async {
@@ -119,7 +119,7 @@ class RecommendationController extends GetxController {
       }
     }
 
-// Debugging output for the final result
+    // Debugging output for the final result
     print('Final determined meal time: $currentMealTime');
 
     // Step 4: Get average constraints for the current meal time or fallback to default
@@ -164,28 +164,31 @@ class RecommendationController extends GetxController {
     // Step 7: Fetch all café items
     List<CafeItem> allItems = await vendorRepo.getAllItemsFromAllCafes();
 
-    // Step 8: Filter items from the top frequent cafés and apply constraints
     List<CafeItem> recommendedItems = allItems.where((item) {
+      // Check calorie and price constraints
       bool withinCalorieLimit = item.itemCalories <= caloriesPerMeal;
       bool withinPriceLimit = item.itemPrice <= allowancePerMeal;
       bool isFromTopCafe = topFrequentCafes.contains(item.itemLocation);
 
-      // Apply user preferences
+      // Start with true and check preferences dynamically
       bool matchesPreference = true;
+
+      // Include items based on `true` preferences
       if (prefSpicy) matchesPreference = matchesPreference && item.isSpicy;
       if (prefVegetarian)
         matchesPreference = matchesPreference && item.isVegetarian;
       if (prefLowSugar)
         matchesPreference = matchesPreference && item.isLowSugar;
 
-      // Exclude items if preferences are false
+      // Exclude items that match `false` preferences
       if (!prefSpicy && item.isSpicy) matchesPreference = false;
       if (!prefVegetarian && item.isVegetarian) matchesPreference = false;
       if (!prefLowSugar && item.isLowSugar) matchesPreference = false;
 
-      return isFromTopCafe &&
-          withinCalorieLimit &&
+      // Return the item if it satisfies all constraints
+      return withinCalorieLimit &&
           withinPriceLimit &&
+          isFromTopCafe &&
           matchesPreference;
     }).toList();
 
@@ -195,7 +198,7 @@ class RecommendationController extends GetxController {
     return recommendedItems;
   }
 
-  int getCurrentTimeFrameIndex() {
+  /*int getCurrentTimeFrameIndex() {
     DateTime now = DateTime.now();
     if (now.hour >= 6 && now.hour < 12) {
       print("current index : 0, for breakfast");
@@ -214,7 +217,7 @@ class RecommendationController extends GetxController {
       print("current index : 4, outside of options");
       return 4;
     }
-  }
+  }*/
 
   Future<void> calculateAndStoreAverages(String userId) async {
     // Define time ranges for meals
