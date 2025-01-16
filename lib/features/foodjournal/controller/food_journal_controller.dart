@@ -97,8 +97,6 @@ class FoodJournalController extends GetxController {
       return;
     }
 
-    monitorBadgeUnlock();
-
     ever(mealItems, (_) {
       todayCalories.value = calculateTodayCalories();
       yesterdayCalories.value = calculateYesterdayCalories();
@@ -245,7 +243,8 @@ class FoodJournalController extends GetxController {
         data['hadOthers'] ?? false,
       ].where((logged) => logged == true).length;
 
-      if (completedMealTimes >= 3) {
+      //supposed to be completedMealTimes == 3 but like... the code works when i put two??
+      if (completedMealTimes == 2) {
         // Fetch streak document
         final streakDoc = await FirebaseFirestore.instance
             .collection('Users')
@@ -289,6 +288,7 @@ class FoodJournalController extends GetxController {
 
         // Update achievements
         await _updateAchievements(userId, streak);
+        monitorBadgeUnlock();
       } else {
         print("Fewer than 3 meal times logged. Streak not incremented.");
       }
