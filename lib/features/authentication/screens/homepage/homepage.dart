@@ -46,7 +46,7 @@ class HomePageScreen extends StatelessWidget {
 
     if (userIdforMealReset != null && userIdforMealReset.isNotEmpty) {
       foodJController.resetMealStatesAtMidnight(userIdforMealReset);
-      print("userId is null or empty. Reset meal states.");
+      print("userId is ready. Reset meal states.");
     } else {
       print("Error: userId is null or empty. Cannot reset meal states.");
     }
@@ -599,6 +599,98 @@ class HomePageScreen extends StatelessWidget {
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: dark ? Colors.black : Colors.black,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: TColors.cream,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30, vertical: 30),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                // Title
+                                                Text(
+                                                  "Recommendations",
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: TColors.charcoal,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                const SizedBox(height: 15),
+
+                                                // Description
+                                                Text(
+                                                  "Meals are recommended based on your average calories and spendings and preference choices",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: TColors.charcoal,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // Exit Button (Top-right corner)
+                                          Positioned(
+                                            top: 10,
+                                            right: 10,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                        0, 192, 186, 186),
+                                                radius: 14,
+                                                child: Icon(
+                                                  Icons.close,
+                                                  color: TColors.amber,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 30),
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor:
+                                    const Color.fromARGB(0, 192, 186, 186),
+                                child: Icon(
+                                  Icons.info_outline,
+                                  color: TColors.charcoal,
+                                  size: 26,
+                                ),
+                              ),
                             ),
                           ),
                         ],
