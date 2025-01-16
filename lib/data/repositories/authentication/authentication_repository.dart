@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -36,8 +37,10 @@ class AuthenticatorRepository extends GetxController {
   final _auth = FirebaseAuth.instance;
   final UserRepository userRepository = Get.put(UserRepository());
   final VendorRepository vendorRepository = Get.put(VendorRepository());
-  final SupportOrganisationRepository supportOrganisationRepository = Get.put(SupportOrganisationRepository());
-  final AuthorityRepository authorityRepository = Get.put(AuthorityRepository());
+  final SupportOrganisationRepository supportOrganisationRepository =
+      Get.put(SupportOrganisationRepository());
+  final AuthorityRepository authorityRepository =
+      Get.put(AuthorityRepository());
 
   // Get Authenticated User
   User? get authUser => _auth.currentUser;
@@ -197,6 +200,43 @@ class AuthenticatorRepository extends GetxController {
       Get.delete<UpdateProfileController>();
       Get.delete<UserController>();
       Get.delete<VendorController>();
+      Get.offAll(() => const LoginScreen());
+    } on FirebaseAuthException catch (e) {
+      throw TFirebaseAuthException(e.code).message;
+    } on FirebaseException catch (e) {
+      throw TFirebaseException(e.code).message;
+    } on FormatException catch (_) {
+      throw const TFormatException();
+    } on PlatformException catch (e) {
+      throw TPlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong. Please try again';
+    }
+  }
+
+  Future<void> logoutUser(String userId) async {
+    try {
+      // Store the logout timestamp in Firebase
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('LogoutRecords')
+          .doc('latest')
+          .set({
+        'timestamp': Timestamp.now(),
+      });
+
+      print("Logout timestamp recorded for user: $userId");
+
+      // Sign out the user
+      await FirebaseAuth.instance.signOut();
+
+      // Clean up controllers
+      Get.delete<UpdateProfileController>();
+      Get.delete<UserController>();
+      Get.delete<VendorController>();
+
+      // Redirect to the login screen
       Get.offAll(() => const LoginScreen());
     } on FirebaseAuthException catch (e) {
       throw TFirebaseAuthException(e.code).message;

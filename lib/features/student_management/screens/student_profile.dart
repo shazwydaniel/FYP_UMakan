@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/admin/admin_feedback.dart";
@@ -1059,8 +1060,15 @@ class StudentProfilePageScreen extends StatelessWidget {
                               onPressed: () async {
                                 Navigator.of(context).pop(); // Close the dialog
                                 try {
-                                  await AuthenticatorRepository.instance
-                                      .logout();
+                                  final userId =
+                                      FirebaseAuth.instance.currentUser?.uid;
+                                  if (userId != null) {
+                                    await AuthenticatorRepository.instance
+                                        .logoutUser(userId);
+                                  } else {
+                                    print(
+                                        "User ID is null. Unable to record logout timestamp.");
+                                  }
                                 } catch (e) {
                                   Get.snackbar(
                                     'Logout Error',
