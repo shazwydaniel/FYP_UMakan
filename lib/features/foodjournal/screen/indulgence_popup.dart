@@ -45,7 +45,7 @@ class IndulgencePopup extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: mealImage.isNotEmpty
+                child: mealImage.isNotEmpty && mealImage != "default_image_url"
                     ? Image.network(
                         mealImage,
                         height: 150,
@@ -55,10 +55,10 @@ class IndulgencePopup extends StatelessWidget {
                     : Container(
                         height: 150,
                         width: 150,
-                        color: Colors.grey,
+                        color: Colors.white,
                         child: Icon(
                           Icons.fastfood,
-                          color: Colors.orange,
+                          color: Colors.black,
                           size: 50,
                         ),
                       ),
