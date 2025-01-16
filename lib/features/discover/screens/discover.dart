@@ -158,7 +158,7 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
 
             CarouselSlider(
               options: CarouselOptions(
-                height: 200,
+                height: 250,
                 enableInfiniteScroll: true,
                 enlargeCenterPage: true,
                 autoPlay: true,
@@ -200,19 +200,36 @@ class _DiscoverPageScreenState extends State<DiscoverPageScreen> {
                             image: AssetImage(imagePath),
                             fit: BoxFit.fill,
                             colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.2),
+                              Colors.black.withOpacity(0.1),
                               BlendMode.darken,
                             ),
                           ),
                         ),
                         alignment: Alignment.center,
-                        child: Text(
-                          locationName,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                        child: Stack(
+                          children: [
+                            // Border Text
+                            Text(
+                              locationName,
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 4.0 // Adjust the stroke width
+                                  ..color = Colors.black, // Border color
+                              ),
+                            ),
+                            // Inner Text
+                            Text(
+                              locationName,
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Fill color
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );

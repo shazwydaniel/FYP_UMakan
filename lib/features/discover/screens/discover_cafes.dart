@@ -123,45 +123,89 @@ class LocationCafesScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          color: isOpen ? TColors.cream : Colors.grey[300],
+                          color: TColors.cream,
                           margin: const EdgeInsets.only(bottom: 20),
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListTile(
-                              title: Text(
-                                cafe.name,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      isOpen ? Colors.black : Colors.grey[600],
-                                ),
-                              ),
-                              subtitle: Text(
-                                "From ${cafe.openingTime} to ${cafe.closingTime}",
-                                style: TextStyle(
-                                  color:
-                                      isOpen ? Colors.black : Colors.grey[600],
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: isOpen ? Colors.black : Colors.grey[600],
-                              ),
-                              enabled: isOpen,
-                              onTap: isOpen
-                                  ? () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CafePage(
-                                            cafe: cafe,
-                                            vendorId: cafe.vendorId,
+                            padding: const EdgeInsets.only(
+                                top: 15.0, left: 15, right: 15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  contentPadding:
+                                      const EdgeInsets.only(bottom: 8.0),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          cafe.name,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: isOpen
+                                              ? const Color.fromARGB(255, 52,
+                                                  204, 128) // Green for open
+                                              : Colors
+                                                  .red[400], // Red for closed
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: Colors.black,
                                           ),
                                         ),
-                                      );
-                                    }
-                                  : null,
+                                        child: Text(
+                                          isOpen ? 'Open' : 'Closed',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 20.0),
+                                    child: Text(
+                                      "Opens from ${cafe.openingTime} to ${cafe.closingTime}",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  trailing: Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    color: isOpen
+                                        ? Colors.black
+                                        : Colors.grey[600],
+                                  ),
+                                  enabled: isOpen,
+                                  onTap: isOpen
+                                      ? () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => CafePage(
+                                                cafe: cafe,
+                                                vendorId: cafe.vendorId,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      : null,
+                                ),
+                              ],
                             ),
                           ),
                         );
