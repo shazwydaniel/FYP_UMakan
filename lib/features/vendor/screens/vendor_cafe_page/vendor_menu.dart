@@ -228,9 +228,13 @@ class _VendorMenuState extends State<VendorMenu> {
                                         ),
                                       ),
                                       // Circular Image on the Right
-                                      ClipOval(
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Adds rounded corners
                                         child: item.itemImage != null &&
-                                                item.itemImage.isNotEmpty
+                                                item.itemImage.isNotEmpty &&
+                                                item.itemImage !=
+                                                    "default_image_url"
                                             ? Image.network(
                                                 item.itemImage,
                                                 width: 80,
@@ -238,16 +242,30 @@ class _VendorMenuState extends State<VendorMenu> {
                                                 fit: BoxFit.cover,
                                                 errorBuilder: (context, error,
                                                         stackTrace) =>
-                                                    Icon(
-                                                  Icons.broken_image,
-                                                  size: 80,
-                                                  color: Colors.grey,
+                                                    Container(
+                                                  width: 80,
+                                                  height: 80,
+                                                  color: Colors.grey[
+                                                      300], // Background color for broken image
+                                                  child: Icon(
+                                                    Icons.broken_image,
+                                                    size:
+                                                        40, // Smaller icon for better alignment
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
                                               )
-                                            : Icon(
-                                                Icons.fastfood,
-                                                size: 80,
-                                                color: Colors.grey,
+                                            : Container(
+                                                width: 80,
+                                                height: 80,
+                                                color: Colors.grey[
+                                                    300], // Default background color
+                                                child: Icon(
+                                                  Icons.fastfood,
+                                                  size:
+                                                      40, // Smaller icon for better alignment
+                                                  color: Colors.grey,
+                                                ),
                                               ),
                                       ),
                                     ],

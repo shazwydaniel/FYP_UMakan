@@ -258,13 +258,27 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
                                 fit: BoxFit.cover,
                               )
                             : (widget.menuItem.itemImage != null &&
-                                    widget.menuItem.itemImage.isNotEmpty)
+                                    widget.menuItem.itemImage.isNotEmpty &&
+                                    widget.menuItem.itemImage !=
+                                        "default_image_url")
                                 ? Image.network(
                                     widget.menuItem.itemImage,
                                     fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Center(
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        size: 50, // Adjust size as needed
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                   )
                                 : const Center(
-                                    child: Icon(Icons.add_a_photo),
+                                    child: Icon(
+                                      Icons.add_a_photo,
+                                      size: 50, // Adjust size as needed
+                                      color: Colors.white,
+                                    ),
                                   ),
                       ),
                     ),
