@@ -76,10 +76,10 @@ class TTexts {
   static const String changeYourPasswordTitle = "Password Reset Email Sent";
   static const String changeYourPasswordSubTitle = "Your Account Security is Our Priority! We've Sent You a Secure Link to Safely Change Your Password and Keep Your Account Protected.";
   static const String confirmEmail = "Verify your email address!";
-  static const String confirmEmailSubTitle = "Congratulations! Your Account Awaits: Verify Your Email to Start Shopping and Experience a World of Unrivaled Deals and Personalized Offers.";
+  static const String confirmEmailSubTitle = "Congratulations! Your Account Awaits: Verify Your Email to Start Managing Your Meals and Finances.";
   static const String emailNotReceivedMessage = "Didn’t get the email? Check your junk/spam or resend it.";
   static const String yourAccountCreatedTitle = "Your account is successfully created!";
-  static const String yourAccountCreatedSubTitle = "Welcoming Food Security: Your Account is Created, Start Your Healthier Lifestyle Now!";
+  static const String yourAccountCreatedSubTitle = "Welcome to UMakan!";
 
 
   // -- Product
