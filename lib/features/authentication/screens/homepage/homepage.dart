@@ -42,6 +42,7 @@ class HomePageScreen extends StatelessWidget {
     recommendedController
         .calculateAndStoreAverages(userController.user.value.id);
     final foodJController = Get.put(FoodJournalController());
+    foodJController.resetMealStatesAtMidnight(userController.user.value.id);
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
     // print("AMOUNT of completed days : ${foodJController.dayCount}");

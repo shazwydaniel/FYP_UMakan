@@ -97,7 +97,6 @@ class FoodJournalController extends GetxController {
       return;
     }
 
-    initializeMealCounts();
     monitorBadgeUnlock();
 
     ever(mealItems, (_) {
@@ -117,41 +116,6 @@ class FoodJournalController extends GetxController {
       updateDailyCalories();
       calculateWeeklyAverages();
     });
-  }
-
-  Future<void> initializeMealCounts() async {
-    try {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      if (userId == null) {
-        print("User not logged in.");
-        return;
-      }
-
-      final mealCountsRef = FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userId)
-          .collection('Badges')
-          .doc('mealCounts');
-
-      final snapshot = await mealCountsRef.get();
-      if (snapshot.exists) {
-        final data = snapshot.data();
-        breakfastCount.value = data?['breakfast'] ?? 0;
-        lunchCount.value = data?['lunch'] ?? 0;
-        dinnerCount.value = data?['dinner'] ?? 0;
-        othersCount.value = data?['others'] ?? 0;
-      } else {
-        print("Meal counts not found. Initializing with default values.");
-        await mealCountsRef.set({
-          'breakfast': 0,
-          'lunch': 0,
-          'dinner': 0,
-          'others': 0,
-        });
-      }
-    } catch (e) {
-      print("Error initializing meal counts: $e");
-    }
   }
 
   void testFoodLogAnalysis() async {
@@ -329,7 +293,8 @@ class FoodJournalController extends GetxController {
         print("Fewer than 3 meal times logged. Streak not incremented.");
       }
     } catch (e) {
-      print("Error checking and updating streaks: $e");
+      print(
+          "Error checking and updating streaks from Food Journal Controller _checkStreakAndAchievements:  $e");
     }
   }
 
@@ -397,29 +362,28 @@ class FoodJournalController extends GetxController {
     print("Achievements updated with lastUnlocked: $achievements");
   }
 
-  void resetMealStatesAtMidnight(String userId) {
-    if (isTimerRunning) return;
-    isTimerRunning = true;
+  Future<void> resetMealStatesAtMidnight(String userId) async {
+    try {
+      // Fetch the latest logout timestamp from Firebase
+      final logoutDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('LogoutRecords')
+          .doc('latest')
+          .get();
 
-    Timer.periodic(Duration(minutes: 1), (timer) async {
-      DateTime now = DateTime.now();
-      print("Timer triggered at ${now.toIso8601String()}");
+      if (logoutDoc.exists) {
+        final Timestamp lastLogoutTimestamp = logoutDoc['timestamp'];
+        final DateTime lastLogoutDate = lastLogoutTimestamp.toDate();
+        final DateTime now = DateTime.now();
 
-      if (now.hour == 0 && now.minute == 0) {
-        timer.cancel(); // Cancel the timer after execution
-        isTimerRunning = false; // Reset the flag
+        // Check if the last logout day is not today
+        if (lastLogoutDate.day != now.day ||
+            lastLogoutDate.month != now.month ||
+            lastLogoutDate.year != now.year) {
+          print("Resetting meal states for a new day for user: $userId.");
 
-        // Call the streak checking method
-        await checkAndResetStreak(userId);
-
-        // Reset local meal state variables
-        hadBreakfast = false;
-        hadLunch = false;
-        hadDinner = false;
-        hadOthers = false;
-
-        // Reset meal states in Firebase
-        try {
+          // Reset meal states in Firebase
           await FirebaseFirestore.instance
               .collection('Users')
               .doc(userId)
@@ -431,14 +395,23 @@ class FoodJournalController extends GetxController {
             'hadDinner': false,
             'hadOthers': false,
           });
-          print("Meal states reset in Firebase for user $userId.");
-        } catch (e) {
-          print("Failed to reset meal states in Firebase: $e");
-        }
 
-        print("Meal states reset for a new day.");
+          print("Meal states reset in Firebase for user: $userId.");
+
+          // Optionally, update the local variables (if used)
+          hadBreakfast = false;
+          hadLunch = false;
+          hadDinner = false;
+          hadOthers = false;
+        } else {
+          print("Meal states are already up-to-date for user: $userId.");
+        }
+      } else {
+        print("No logout record found for user: $userId. Skipping reset.");
       }
-    });
+    } catch (e) {
+      print("Error resetting meal states: $e");
+    }
   }
 
   Future<void> checkAndResetStreak(String userId) async {
@@ -498,6 +471,7 @@ class FoodJournalController extends GetxController {
     }
   }
 
+  //For HomePage
   Future<int> fetchStreakCount(String userId) async {
     try {
       final streakDoc = await FirebaseFirestore.instance
@@ -510,16 +484,16 @@ class FoodJournalController extends GetxController {
       if (streakDoc.exists) {
         final data = streakDoc.data();
         print("Streak count = $data .");
-        print("Raw data from Firestore: ${streakDoc.data()}");
+        // print("Raw data from Firestore: ${streakDoc.data()}");
 
         return data?['streakCount'] ?? 0;
       } else {
         print("Streak document does not exist.");
-        return 0; // Default streak count if the document doesn't exist
+        return 0;
       }
     } catch (e) {
       print("Error fetching streak count: $e");
-      return 0; // Return 0 in case of an error
+      return 0;
     }
   }
 
