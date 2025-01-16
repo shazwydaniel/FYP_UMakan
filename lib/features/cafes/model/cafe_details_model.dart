@@ -117,7 +117,7 @@ class CafeItem {
   // Override toString to print a more readable output
   @override
   String toString() {
-    return 'Cafe Item(Name: $itemName,cost: $itemPrice, Cafe: $itemCafe , Spicy? $isSpicy, Vegetarian? $isVegetarian, Low Sugar? $isLowSugar)';
+    return 'Cafe Item(Name: $itemName, Cafe: $itemCafe , Location? $itemLocation)';
   }
 
   Map<String, dynamic> toMap() {
@@ -187,5 +187,20 @@ class CafeItem {
       'isVegetarian': isVegetarian,
       'isLowSugar': isLowSugar,
     };
+  }
+
+  factory CafeItem.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return CafeItem(
+      id: doc.id,
+      itemName: data['itemName'] ?? '',
+      itemPrice: (data['itemPrice'] ?? 0).toDouble(),
+      itemCalories: (data['itemCalories'] ?? 0).toDouble(),
+      itemImage: data['itemImage'] ?? '',
+      itemLocation: data['itemLocation'] ?? '',
+      itemCafe: data['itemCafe'] ?? '',
+      vendorId: data['vendorId'] ?? '',
+      cafeId: data['cafeId'] ?? '',
+    );
   }
 }
