@@ -601,6 +601,7 @@ class HomePageScreen extends StatelessWidget {
                               color: dark ? Colors.black : Colors.black,
                             ),
                           ),
+                          Spacer(),
                           GestureDetector(
                             onTap: () {
                               showDialog(
