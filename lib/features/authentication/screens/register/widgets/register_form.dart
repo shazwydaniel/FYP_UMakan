@@ -6,6 +6,8 @@ import 'package:fyp_umakan/features/authentication/controllers/register/register
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/personal_details.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/verify_email.dart';
+import 'package:fyp_umakan/legal/privacy_policy.dart';
+import 'package:fyp_umakan/legal/terms_and_conditions.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/image_strings.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
@@ -783,9 +785,7 @@ class TRegisterForm extends StatelessWidget {
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // TODO: launch your Terms & Conditions URL
-                            },
+                            ..onTap = () => _showTermsDialog(context),
                         ),
                         TextSpan(text: ' and '),
                         TextSpan(
@@ -795,9 +795,7 @@ class TRegisterForm extends StatelessWidget {
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // TODO: launch your Privacy Policy URL
-                            },
+                            ..onTap = () => _showPrivacyDialog(context),
                         ),
                         TextSpan(text: '.'),
                       ],
@@ -913,6 +911,143 @@ class TRegisterForm extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+  
+  // Terms & Conditions Popup
+  void _showTermsDialog(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          // constrain the dialog’s height
+          constraints: BoxConstraints(maxHeight: screenHeight * 0.6),
+          decoration: BoxDecoration(
+            color: TColors.cream,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Stack(
+            children: [
+              // Main column: title + scrollable body
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Sticky title
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Text(
+                      TermsAndConditions.title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: TColors.charcoal,
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1, color: Colors.grey),
+                  // Scrollable content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                      child: Text(
+                        TermsAndConditions.content,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: TColors.charcoal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Close button
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Colors.transparent,
+                    child: Icon(Icons.close, color: TColors.amber, size: 20),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Privacy Policy Popup
+  void _showPrivacyDialog(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          constraints: BoxConstraints(maxHeight: screenHeight * 0.6),
+          decoration: BoxDecoration(
+            color: TColors.cream,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Text(
+                      PrivacyPolicy.title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: TColors.charcoal,
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1, color: Colors.grey),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                      child: Text(
+                        PrivacyPolicy.content,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: TColors.charcoal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Colors.transparent,
+                    child: Icon(Icons.close, color: TColors.amber, size: 20),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
