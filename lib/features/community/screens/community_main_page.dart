@@ -628,6 +628,17 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                                             // Status Tag
                                                             statusTag,
+
+                                                            // Edit Button
+                                                            if (postedUserId == AuthenticatorRepository.instance.authUser?.uid)
+                                                            IconButton(
+                                                              icon: Icon(Icons.edit, size: 16, color: Colors.black54),
+                                                              onPressed: () => _showEditMessageModal(
+                                                                context,
+                                                                newsId,
+                                                                doc.data() as Map<String, dynamic>,
+                                                              ),
+                                                            ),
                                                           ],
                                                         ),
                                                       ],
@@ -1170,6 +1181,212 @@ class CommunityMainPageScreen extends StatelessWidget {
                 child: Text('Save', style: TextStyle(color: TColors.forest)),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Edit Post Popup
+  void _showEditMessageModal(
+    BuildContext context,
+    String newsId,
+    Map<String, dynamic> data,
+  ) {
+    final messageController = TextEditingController(text: data['news_message']);
+    String selectedType     = data['type_of_news_message'] as String? ?? 'Offer Help';
+    String selectedDuration = data['news_duration']            as String? ?? '1 Day';
+    String anonymityStatus  = data['anonymity_status']         as String? ?? 'Public';
+    String includeTelegram  = data['include_telegram']         as String? ?? 'Yes';
+    String? attachedImageUrl = data['attached_image'];
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          child: Container(
+            height: 700,
+            width: 500,
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: TColors.cream,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+            ),
+            child: Column(
+              children: [
+
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: Icon(Icons.close, size: 24, color: Colors.black),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ),
+                Text(
+                  'Edit Message',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 30),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        // Message field
+                        Text('Message', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        TextField(
+                          controller: messageController,
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            border: OutlineInputBorder(),
+                            hintText: 'Edit your message',
+                          ),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Type dropdown
+                        Text('Type of Message', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        Container(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedType,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(),
+                            ),
+                            items: [
+                              DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
+                              DropdownMenuItem(value: 'Need Help',  child: Text('Need Help')),
+                            ],
+                            onChanged: (val) => selectedType = val!,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Duration dropdown
+                        Text('Duration', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        Container(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedDuration,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(),
+                            ),
+                            items: [
+                              DropdownMenuItem(value: '1 Day',  child: Text('1 Day')),
+                              DropdownMenuItem(value: '3 Days', child: Text('3 Days')),
+                              DropdownMenuItem(value: '1 Week', child: Text('1 Week')),
+                            ],
+                            onChanged: (val) => selectedDuration = val!,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Anonymity dropdown
+                        Text('Anonymity', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        Container(
+                          child: DropdownButtonFormField<String>(
+                            value: anonymityStatus,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(),
+                            ),
+                            items: [
+                              DropdownMenuItem(value: 'Public',    child: Text('Public')),
+                              DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
+                            ],
+                            onChanged: (val) => anonymityStatus = val!,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Telegram dropdown
+                        Text('Include Telegram?', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        Container(
+                          child: DropdownButtonFormField<String>(
+                            value: includeTelegram,
+                            decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(),
+                            ),
+                            items: [
+                              DropdownMenuItem(value: 'Yes', child: Text('Yes')),
+                              DropdownMenuItem(value: 'No',  child: Text('No')),
+                            ],
+                            onChanged: (val) => includeTelegram = val!,
+                          ),
+                        ),
+
+                        // (Optional) image attach/change logic here…
+
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 20),
+
+                // Save button
+                Container(
+                  width: 200,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: TColors.bubbleOrange,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.black, width: 2),
+                  ),
+                  child: TextButton(
+                    onPressed: () async {
+                      await FirebaseFirestore.instance
+                          .collection('community_news')
+                          .doc(newsId)
+                          .update({
+                        'news_message': messageController.text,
+                        'type_of_news_message': selectedType,
+                        'news_duration': selectedDuration,
+                        'anonymity_status': anonymityStatus,
+                        'include_telegram': includeTelegram,
+                        'attached_image': attachedImageUrl,
+                      });
+                      Get.snackbar('Success', 'Message updated');
+                      Navigator.pop(ctx);
+                    },
+                    child: Center(
+                      child: Text(
+                        'SAVE CHANGES',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
           ),
         );
       },
