@@ -368,6 +368,36 @@ class CommunityMainPageScreen extends StatelessWidget {
                                         final username = userData?['Username'] ?? 'Unknown User';
                                         final userRole = userData?['Role'] ?? 'Unknown';
 
+                                        // Status Tag - Tappable
+                                        Widget statusTag = Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: doc['news_status'] == 'Available' ? TColors.teal : TColors.amber,
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          child: Text(
+                                            doc['news_status'],
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        );
+
+                                        // Author Access Checker - Status Update 
+                                        if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                          statusTag = InkWell(
+                                            borderRadius: BorderRadius.circular(15),
+                                            onTap: () => _showStatusUpdateDialog(
+                                              context,
+                                              newsId,
+                                              doc['news_status'] ?? 'Available',
+                                            ),
+                                            child: statusTag,
+                                          );
+                                        }
+
                                         return Dismissible(
                                           key: Key(newsId),
                                           direction: DismissDirection.endToStart,
@@ -597,35 +627,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                             const SizedBox(width: 5), // Spacing between tags
 
                                                             // Status Tag
-                                                            if ((doc.data() as Map<String, dynamic>).containsKey('news_status'))
-                                                              Container(
-                                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                decoration: BoxDecoration(
-                                                                  color: doc['news_status'] == 'Available'
-                                                                      ? TColors.teal
-                                                                      : TColors.amber,
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                ),
-                                                                child: Text(
-                                                                  doc['news_status'],
-                                                                  style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 12,
-                                                                  ),
-                                                                ),
-                                                              ),
-
-                                                            // allow only the author to edit status
-                                                            if (postedUserId == AuthenticatorRepository.instance.authUser?.uid)
-                                                              IconButton(
-                                                                icon: Icon(Icons.edit, size: 16, color: Colors.black54),
-                                                                onPressed: () => _showStatusUpdateDialog(
-                                                                  context,
-                                                                  newsId,
-                                                                  doc['news_status'] ?? 'Available',
-                                                                ),
-                                                            ),
+                                                            statusTag,
                                                           ],
                                                         ),
                                                       ],
