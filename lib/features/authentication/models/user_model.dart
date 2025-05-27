@@ -33,6 +33,7 @@ class UserModel {
   bool prefLowSugar;
   String telegramHandle;
   bool isMoneyJournalInitialized;
+  bool agreedToTerms;
 
   UserModel({
     required this.id,
@@ -66,6 +67,7 @@ class UserModel {
     this.prefLowSugar = false,
     this.telegramHandle = '',
     this.isMoneyJournalInitialized = false,
+    this.agreedToTerms = false,
   });
 
   // Method to log daily financial data
@@ -150,6 +152,7 @@ class UserModel {
       'prefVegetarian': prefVegetarian,
       'prefLowSugar': prefLowSugar,
       'telegramHandle': telegramHandle,
+      'agreedToTerms': agreedToTerms,
     };
   }
 
@@ -186,6 +189,7 @@ class UserModel {
       prefVegetarian: map['prefVegetarian'] ?? false,
       prefLowSugar: map['prefLowSugar'] ?? false,
       telegramHandle: map['telegramHandle'] ?? '',
+      agreedToTerms: map['agreedToTerms'] ?? false,
     );
   }
 
@@ -228,6 +232,7 @@ class UserModel {
       'prefVegetarian': prefVegetarian,
       'prefLowSugar': prefLowSugar,
       'telegramHandle': telegramHandle,
+      'agreedToTerms': agreedToTerms,
     };
   }
 
@@ -263,6 +268,7 @@ class UserModel {
         prefVegetarian: false,
         prefLowSugar: false,
         telegramHandle: '',
+        agreedToTerms: false,
       );
 
   // Create a UserModel from Firebase Document Snapshot
@@ -301,6 +307,7 @@ class UserModel {
         prefVegetarian: data['prefVegetarian'] ?? false,
         prefSpicy: data['prefSpicy'] ?? false,
         telegramHandle: data['telegramHandle'] ?? '',
+        agreedToTerms: data['agreedToTerms'] ?? false,
       );
     } else {
       return UserModel.empty();

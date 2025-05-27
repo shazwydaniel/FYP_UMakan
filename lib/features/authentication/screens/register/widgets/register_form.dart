@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:fyp_umakan/common/widgets/loaders/loaders.dart';
 import 'package:fyp_umakan/features/authentication/controllers/register/register_controller.dart';
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/personal_details.dart';
@@ -13,6 +14,7 @@ import 'package:fyp_umakan/utils/helpers/helper_functions.dart';
 import 'package:fyp_umakan/utils/validators/validation.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter/gestures.dart';
 
 class TRegisterForm extends StatelessWidget {
   const TRegisterForm({
@@ -33,92 +35,6 @@ class TRegisterForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _sectionHeader('Base Details', TColors.forest),
-              // GestureDetector(
-              //   onTap: () {
-              //     showDialog(
-              //       context: context,
-              //       builder: (BuildContext context) {
-              //         return Dialog(
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(10), 
-              //           ),
-              //           child: Container(
-              //             decoration: BoxDecoration(
-              //               color: TColors.cream,
-              //               borderRadius: BorderRadius.circular(10),
-              //             ),
-              //             child: Stack(
-              //               children: [
-              //                 Padding(
-              //                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              //                   child: Column(
-              //                     mainAxisSize: MainAxisSize.min,
-              //                     crossAxisAlignment: CrossAxisAlignment.center,
-              //                     children: [
-              //                       // Title
-              //                       Text(
-              //                         "Why we need these info?",
-              //                         style: TextStyle(
-              //                           fontSize: 18,
-              //                           fontWeight: FontWeight.bold,
-              //                           color: TColors.charcoal,
-              //                         ),
-              //                         textAlign: TextAlign.center,
-              //                       ),
-              //                       const SizedBox(height: 15),
-
-              //                       // Description
-              //                       Text(
-              //                         "These infos are crucial to determine your user category hence affecting your budget and diet recommendations.",
-              //                         style: TextStyle(
-              //                           fontSize: 16,
-              //                           fontWeight: FontWeight.normal,
-              //                           color: TColors.charcoal,
-              //                         ),
-              //                         textAlign: TextAlign.center,
-              //                       ),
-              //                     ],
-              //                   ),
-              //                 ),
-              //                 // Exit Button (Top-right corner)
-              //                 Positioned(
-              //                   top: 10,
-              //                   right: 10,
-              //                   child: GestureDetector(
-              //                     onTap: () {
-              //                       Navigator.of(context).pop();
-              //                     },
-              //                     child: CircleAvatar(
-              //                       backgroundColor: const Color.fromARGB(0, 192, 186, 186),
-              //                       radius: 14,
-              //                       child: Icon(
-              //                         Icons.close,
-              //                         color: TColors.amber,
-              //                         size: 20,
-              //                       ),
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ],
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //     );
-              //   },
-              //   child: Padding(
-              //     padding: const EdgeInsets.only(right: 10, bottom: 15),
-              //     child: CircleAvatar(
-              //       radius: 14,
-              //       backgroundColor: const Color.fromARGB(0, 192, 186, 186),
-              //       child: Icon(
-              //         Icons.info_outline,
-              //         color: TColors.charcoal,
-              //         size: 26,
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
 
@@ -843,20 +759,72 @@ class TRegisterForm extends StatelessWidget {
             ],
           ),*/
 
+          // Terms & Conditions
+          Obx(() {
+            final dark = THelperFunctions.isDarkMode(context);
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Checkbox(
+                  value: controller.agreedToTerms.value,
+                  onChanged: (v) => controller.agreedToTerms.value = v ?? false,
+                ),
+                const SizedBox(width: TSizes.spaceBtwItems),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      style: Theme.of(context).textTheme.bodySmall,
+                      children: [
+                        TextSpan(text: 'I agree to the '),
+                        TextSpan(
+                          text: 'Terms & Conditions',
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: dark ? Colors.white : TColors.teal,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              // TODO: launch your Terms & Conditions URL
+                            },
+                        ),
+                        TextSpan(text: ' and '),
+                        TextSpan(
+                          text: 'Privacy Policy',
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: dark ? Colors.white : TColors.teal,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              // TODO: launch your Privacy Policy URL
+                            },
+                        ),
+                        TextSpan(text: '.'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }),
+
           const SizedBox(height: TSizes.spaceBtwSections),
 
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-                onPressed: () => controller.register(),
-                //async {
-                //bool isRegistered = await controller.register();
-                //if (isRegistered) {
-                //Get.to(() => const VerifyEmailScreen());
-                //print('-------------SUCCESSFULLY REGISTERED!--------------');
-                //}
-                // },
-                child: const Text('Register')),
+              onPressed: () {
+                if (!controller.agreedToTerms.value) {
+                  TLoaders.errorSnackBar(
+                    title: 'Ooops!',
+                    message: 'You must accept our Terms & Conditions.',
+                  );
+                  return;
+                }
+                controller.register();
+              },
+              child: const Text('Register'),
+            ),
           ),
 
           const SizedBox(height: TSizes.spaceBtwSections),

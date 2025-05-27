@@ -41,6 +41,8 @@ class RegisterController extends GetxController {
 
   final usernameError = ''.obs;
 
+  final agreedToTerms = false.obs;
+
   // Store userId after registration
   late String userId;
   final NetworkManager networkManager = Get.put(NetworkManager());
@@ -55,11 +57,12 @@ class RegisterController extends GetxController {
   // Register
   Future<void> register() async {
     try {
-      //Start loading
+      //Start loading ─────────────
       //TFullScreenLoader.openLoadingDialog(
       //  "Processing Your request", TImages.loading);
+      // ────────────────────────────────────────────────
 
-      //Check internet connection
+      //Check internet connection ─────────────
       final isConnected = await networkManager.isConnected();
       if (!isConnected) {
         TLoaders.errorSnackBar(
@@ -67,14 +70,27 @@ class RegisterController extends GetxController {
             message: 'Please check your internet connection.');
         return;
       }
+      // ────────────────────────────────────────────────
+
+      // Terms & Conditions check ─────────────
+      if (!agreedToTerms.value) {
+        TLoaders.errorSnackBar(
+          title: 'Please Accept Terms',
+          message: 'You must agree to our Terms and Conditions to continue.'
+        );
+        return;
+      }
+      // ────────────────────────────────────────────────
 
       // Form Validation
       if (!registerFormKey.currentState!.validate()) {
         TLoaders.errorSnackBar(
-            title: 'Invalid Input',
-            message: 'Please fill all the required fields correctly.');
+          title: 'Invalid Input',
+          message: 'Please fill all the required fields correctly.'
+        );
         return;
       }
+      // ────────────────────────────────────────────────
 
       // Privacy Policy Check
       /* if (!privacyPolicy.value) {
@@ -83,6 +99,7 @@ class RegisterController extends GetxController {
             message: 'You need to accept the privacy policy to proceed.');
         return;
       }*/
+      // ────────────────────────────────────────────────
 
       // Check Username Availability
       final usernameAvailable = await isUsernameAvailable(username.text.trim());
@@ -93,6 +110,7 @@ class RegisterController extends GetxController {
                 'The username is already in use. Please choose another one.');
         return;
       }
+      // ────────────────────────────────────────────────
 
       // Register User in Firebase Auth + User Data
       final userCredential = await AuthenticatorRepository.instance
@@ -125,6 +143,7 @@ class RegisterController extends GetxController {
         age: defaultAge,
         status: defaultStatus,
         role: role,
+        agreedToTerms: agreedToTerms.value,
       );
 
       //Save User Data in Firestore
