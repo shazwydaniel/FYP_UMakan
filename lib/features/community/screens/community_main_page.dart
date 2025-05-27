@@ -9,6 +9,7 @@ import "package:file_picker/file_picker.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
+import "package:fyp_umakan/common/widgets/loaders/loaders.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/support_organisation/controller/support_organisation_controller.dart";
 import "package:fyp_umakan/features/support_organisation/model/support_organisation_model.dart";
@@ -347,7 +348,6 @@ class CommunityMainPageScreen extends StatelessWidget {
                                 child: Column(
                                   children: newsList.map((doc) {
                                     final newsType = doc['type_of_news_message'];
-                                    final tagColor = newsType == 'Offer Help' ? TColors.forest : TColors.amber;
                                     final newsId = doc.id; // Document ID
                                     final postedUserId = doc['user_id'];
                                     final anonymityStatus = doc['anonymity_status'] ?? 'Public';
@@ -367,6 +367,36 @@ class CommunityMainPageScreen extends StatelessWidget {
                                         final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
                                         final username = userData?['Username'] ?? 'Unknown User';
                                         final userRole = userData?['Role'] ?? 'Unknown';
+
+                                        // Post Type Tag - Tappable
+                                        Widget typeTag = Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: doc['type_of_news_message'] == 'Offer Help' ? TColors.forest : TColors.vermillion,
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          child: Text(
+                                            doc['type_of_news_message'],
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        );
+
+                                        // Author Access Checker - Type Update 
+                                        if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                          typeTag = InkWell(
+                                            borderRadius: BorderRadius.circular(15),
+                                            onTap: () => _showTypeUpdateDialog(
+                                              context,
+                                              newsId,
+                                              doc['type_of_news_message'] ?? 'Offer Help',
+                                            ),
+                                            child: typeTag,
+                                          );
+                                        }
 
                                         // Status Tag - Tappable
                                         Widget statusTag = Container(
@@ -607,22 +637,8 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                                             const SizedBox(width: 5), // Spacing between tags
 
-                                                            // Primary Tag (Offer Help/Need Help)
-                                                            Container(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                              decoration: BoxDecoration(
-                                                                color: tagColor,
-                                                                borderRadius: BorderRadius.circular(15),
-                                                              ),
-                                                              child: Text(
-                                                                newsType,
-                                                                style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            ),
+                                                            // Post Type Tag (Offer Help/Need Help)
+                                                            typeTag,
 
                                                             const SizedBox(width: 5), // Spacing between tags
 
@@ -1121,7 +1137,65 @@ class CommunityMainPageScreen extends StatelessWidget {
     return false; // Message is not sensitive
   }
 
-  // Status Popup
+  //  Post Type Edit Pop
+  void _showTypeUpdateDialog(
+    BuildContext context,
+    String newsId,
+    String currentType,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        String selectedType = currentType;
+        return StatefulBuilder(
+          builder: (ctx, setState) => AlertDialog(
+            backgroundColor: TColors.cream,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text('Change Post Type', style: TextStyle(color: TColors.textDark)),
+            content: DropdownButtonFormField<String>(
+              value: selectedType,
+              decoration: InputDecoration(
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              items: [
+                DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
+                DropdownMenuItem(value: 'Need Help',  child: Text('Need Help')),
+              ],
+              onChanged: (val) {
+                if (val != null) setState(() => selectedType = val);
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text('Cancel', style: TextStyle(color: TColors.brown)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await FirebaseFirestore.instance
+                      .collection('community_news')
+                      .doc(newsId)
+                      .update({'type_of_news_message': selectedType});
+                  Navigator.of(ctx).pop();
+                  TLoaders.successSnackBar(
+                    title: 'Post Type Updated',
+                    message: 'Your post type has been updated successfully.',
+                  );
+                },
+                child: Text('Save', style: TextStyle(color: TColors.forest)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Status Update Popup
   void _showStatusUpdateDialog(
     BuildContext context,
     String newsId,
@@ -1177,6 +1251,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                       .doc(newsId)
                       .update({'news_status': selectedStatus});
                   Navigator.of(ctx).pop();
+                  TLoaders.successSnackBar(
+                    title: 'Status Updated',
+                    message: 'Your post status has been updated successfully.',
+                  );
                 },
                 child: Text('Save', style: TextStyle(color: TColors.forest)),
               ),
@@ -1227,7 +1305,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Edit Message',
+                  'Edit Post',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 18,
@@ -1258,7 +1336,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                         SizedBox(height: 20),
 
                         // Type dropdown
-                        Text('Type of Message', style: TextStyle(fontSize: 18)),
+                        Text('Type of Post', style: TextStyle(fontSize: 18)),
                         SizedBox(height: 10),
                         Container(
                           child: DropdownButtonFormField<String>(
@@ -1369,7 +1447,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                         'include_telegram': includeTelegram,
                         'attached_image': attachedImageUrl,
                       });
-                      Get.snackbar('Success', 'Message updated');
+                      TLoaders.successSnackBar(
+                        title: 'Post Updated',
+                        message: 'Your post has been updated successfully.',
+                      );
                       Navigator.pop(ctx);
                     },
                     child: Center(
