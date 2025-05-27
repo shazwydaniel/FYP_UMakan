@@ -347,7 +347,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                 child: Column(
                                   children: newsList.map((doc) {
                                     final newsType = doc['type_of_news_message'];
-                                    final tagColor = newsType == 'Offer Help' ? TColors.teal : TColors.amber;
+                                    final tagColor = newsType == 'Offer Help' ? TColors.forest : TColors.amber;
                                     final newsId = doc.id; // Document ID
                                     final postedUserId = doc['user_id'];
                                     final anonymityStatus = doc['anonymity_status'] ?? 'Public';
@@ -510,8 +510,9 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                           })(),
                                                     style: TextStyle(
                                                       color: Colors.black,
-                                                      fontSize: 15,
+                                                      fontSize: 13,
                                                       fontWeight: FontWeight.normal,
+                                                      fontStyle: FontStyle.italic,
                                                     ),
                                                   ),
                                                   SizedBox(height: 20),
@@ -555,24 +556,24 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                         Row(
                                                           children: [
                                                             // Role Tag
-                                                            if (userRole == 'Support Organisation' || userRole == 'Authority')
-                                                              Container(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                decoration: BoxDecoration(
-                                                                  color: userRole == 'Support Organisation'
-                                                                      ? TColors.blush
-                                                                      : TColors.stark_blue,
-                                                                  borderRadius: BorderRadius.circular(15),
-                                                                ),
-                                                                child: Text(
-                                                                  userRole, // Display the role
-                                                                  style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 12,
-                                                                  ),
-                                                                ),
-                                                              ),
+                                                            // if (userRole == 'Support Organisation' || userRole == 'Authority')
+                                                            //   Container(
+                                                            //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                            //     decoration: BoxDecoration(
+                                                            //       color: userRole == 'Support Organisation'
+                                                            //           ? TColors.blush
+                                                            //           : TColors.stark_blue,
+                                                            //       borderRadius: BorderRadius.circular(15),
+                                                            //     ),
+                                                            //     child: Text(
+                                                            //       userRole, // Display the role
+                                                            //       style: TextStyle(
+                                                            //         color: Colors.white,
+                                                            //         fontWeight: FontWeight.bold,
+                                                            //         fontSize: 12,
+                                                            //       ),
+                                                            //     ),
+                                                            //   ),
 
                                                             const SizedBox(width: 5), // Spacing between tags
 
@@ -591,6 +592,39 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                                   fontSize: 12,
                                                                 ),
                                                               ),
+                                                            ),
+
+                                                            const SizedBox(width: 5), // Spacing between tags
+
+                                                            // Status Tag
+                                                            if ((doc.data() as Map<String, dynamic>).containsKey('news_status'))
+                                                              Container(
+                                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                decoration: BoxDecoration(
+                                                                  color: doc['news_status'] == 'Available'
+                                                                      ? TColors.teal
+                                                                      : TColors.amber,
+                                                                  borderRadius: BorderRadius.circular(15),
+                                                                ),
+                                                                child: Text(
+                                                                  doc['news_status'],
+                                                                  style: TextStyle(
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 12,
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                            // allow only the author to edit status
+                                                            if (postedUserId == AuthenticatorRepository.instance.authUser?.uid)
+                                                              IconButton(
+                                                                icon: Icon(Icons.edit, size: 16, color: Colors.black54),
+                                                                onPressed: () => _showStatusUpdateDialog(
+                                                                  context,
+                                                                  newsId,
+                                                                  doc['news_status'] ?? 'Available',
+                                                                ),
                                                             ),
                                                           ],
                                                         ),
@@ -924,7 +958,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                               'anonymity_status': anonymityStatus,
                               'user_role': userRole,
                               'include_telegram': includeTelegram,
-                              'attached_image': attachedImageUrl, // Add image URL
+                              'attached_image': attachedImageUrl,
+                              'news_status': 'Available',
                             });
 
                             Get.snackbar('Success', 'Your message has been posted!',
@@ -1055,7 +1090,7 @@ class CommunityMainPageScreen extends StatelessWidget {
   //   }
   // }
 
-  // Backup Sensitive Sentiment Detection using Dart Sentiment Package
+  // Sensitive Sentiment Detection using Dart Sentiment Package
   Future<bool> isMessageSensitiveWithDartSentiment(String message) async {
     final sentiment = Sentiment();
     final analysis = sentiment.analysis(message);
@@ -1071,5 +1106,71 @@ class CommunityMainPageScreen extends StatelessWidget {
     }
 
     return false; // Message is not sensitive
+  }
+
+  // Status Popup
+  void _showStatusUpdateDialog(
+    BuildContext context,
+    String newsId,
+    String currentStatus,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        // local dropdown state
+        String selectedStatus = currentStatus;
+        return StatefulBuilder(
+          builder: (ctx, setState) => AlertDialog(
+            backgroundColor: TColors.cream,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text(
+              'Update Status',
+              style: TextStyle(color: TColors.textDark),
+            ),
+            content: DropdownButtonFormField<String>(
+              value: selectedStatus,
+              decoration: InputDecoration(
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'Available',
+                  child: Text('Available'),
+                ),
+                DropdownMenuItem(
+                  value: 'Unavailable',
+                  child: Text('Unavailable'),
+                ),
+              ],
+              onChanged: (val) {
+                if (val != null) setState(() => selectedStatus = val);
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text('Cancel', style: TextStyle(color: TColors.brown)),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await FirebaseFirestore.instance
+                      .collection('community_news')
+                      .doc(newsId)
+                      .update({'news_status': selectedStatus});
+                  Navigator.of(ctx).pop();
+                },
+                child: Text('Save', style: TextStyle(color: TColors.forest)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
