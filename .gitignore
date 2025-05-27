@@ -9,6 +9,8 @@
 .history
 .svn/
 migrate_working_dir/
+ios/Pods/
+ios/build/
 
 # IntelliJ related
 *.iml
