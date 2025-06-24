@@ -10,6 +10,7 @@ import 'package:fyp_umakan/features/authentication/controllers/homepage/recommen
 import 'package:fyp_umakan/features/cafes/model/cafe_details_model.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/badge_controller.dart';
 import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
+import 'package:fyp_umakan/features/foodjournal/meal_notification_scheduler.dart';
 import 'package:fyp_umakan/features/foodjournal/model/journal_model.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart';
@@ -51,6 +52,8 @@ class HomePageScreen extends StatelessWidget {
       print("Error: userId is null or empty. Cannot reset meal states.");
     }
 
+    scheduleMealCheck(userController.user.value.id);
+
     advertController.fetchAllAdvertisements();
     // print("FOOD JOURNAL ITEMS  : ${foodJController.mealItems}");
     // print("AMOUNT of completed days : ${foodJController.dayCount}");
@@ -82,7 +85,7 @@ class HomePageScreen extends StatelessWidget {
                               top: 80,
                               left: 40,
                               child: Text(
-                                'Welcome,',
+                                'Lets,',
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
@@ -91,18 +94,15 @@ class HomePageScreen extends StatelessWidget {
                               ),
                             ),
 
-                            // Title 2
                             Positioned(
                               top: 130,
                               left: 40,
-                              child: Obx(
-                                () => Text(
-                                  "${userController.user.value.username}",
-                                  style: TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.bold,
-                                    color: dark ? Colors.white : Colors.white,
-                                  ),
+                              child: Text(
+                                'Track!',
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: dark ? Colors.white : Colors.white,
                                 ),
                               ),
                             ),
