@@ -19,9 +19,9 @@ class NavigationMenu extends StatelessWidget {
     final darkMode = THelperFunctions.isDarkMode(context);
 
     final indicatorColors = [
-      TColors.amber, // Home
+      TColors.cobalt, // Home
       TColors.mustard, // Discover
-      TColors.cobalt, // Community
+      TColors.amber, // Community
       TColors.bubbleOrange, // Profile
     ];
 
@@ -54,19 +54,19 @@ class NavigationMenu extends StatelessWidget {
             backgroundColor: darkMode ? TColors.teal : TColors.teal,
             destinations: [
               NavigationDestination(
-                icon: Icon(Iconsax.home, color: TColors.cream),
-                selectedIcon: Icon(Iconsax.home, color: Colors.black),
-                label: 'Home',
-              ),
-              NavigationDestination(
-                icon: Icon(Iconsax.emoji_happy, color: TColors.cream),
-                selectedIcon: Icon(Iconsax.emoji_happy, color: Colors.black),
-                label: 'Discover',
-              ),
-              NavigationDestination(
                 icon: Icon(Iconsax.people, color: TColors.cream),
                 selectedIcon: Icon(Iconsax.people, color: Colors.black),
                 label: 'Community',
+              ),
+              NavigationDestination(
+                icon: Icon(Iconsax.home, color: TColors.cream),
+                selectedIcon: Icon(Iconsax.home, color: Colors.black),
+                label: 'Cafe',
+              ),
+              NavigationDestination(
+                icon: Icon(Iconsax.calculator, color: TColors.cream),
+                selectedIcon: Icon(Iconsax.calculator, color: Colors.black),
+                label: 'Track',
               ),
               NavigationDestination(
                 icon: Icon(Iconsax.user_tag, color: TColors.cream),
@@ -86,9 +86,9 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
 
   final screens = [
-    const HomePageScreen(),
-    const DiscoverPageScreen(),
     const CommunityMainPageScreen(),
+    const DiscoverPageScreen(),
+    const HomePageScreen(),
     const StudentProfilePageScreen(),
   ];
 }
