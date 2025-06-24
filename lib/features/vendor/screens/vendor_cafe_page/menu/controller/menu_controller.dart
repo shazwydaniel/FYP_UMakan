@@ -25,6 +25,9 @@ class VendorMenuController extends GetxController {
   RxBool isVegetarianUpdate = false.obs;
   RxBool isLowSugarUpdate = false.obs;
 
+  RxBool isAvailable = false.obs;
+  RxBool isAvailableUpdate = false.obs;
+
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
 
   //Update Variable
@@ -38,6 +41,11 @@ class VendorMenuController extends GetxController {
     isSpicyUpdate.value = menuItem.isSpicy ?? false;
     isVegetarianUpdate.value = menuItem.isVegetarian ?? false;
     isLowSugarUpdate.value = menuItem.isLowSugar ?? false;
+  }
+
+  // Add method to initialize these preferences when editing
+  void initializeAvailability(CafeItem menuItem) {
+    isAvailableUpdate.value = menuItem.isAvailable ?? false;
   }
 
   Rx<CafeItem> cafeItem = CafeItem.empty().obs;
@@ -58,6 +66,7 @@ class VendorMenuController extends GetxController {
     isSpicy.value = false;
     isVegetarian.value = false;
     isLowSugar.value = false;
+    isAvailable.value = false;
   }
 
   //Fetch User Record
@@ -74,6 +83,7 @@ class VendorMenuController extends GetxController {
       'isSpicy': isSpicyUpdate.value,
       'isVegetarian': isVegetarianUpdate.value,
       'isLowSugar': isLowSugarUpdate.value,
+      'isAvailable': isAvailableUpdate.value
     };
 
     await vendorRepository.updateSingleMenuItem(
@@ -101,6 +111,7 @@ class VendorMenuController extends GetxController {
           'isSpicy': isSpicy.value,
           'isVegetarian': isVegetarian.value,
           'isLowSugar': isLowSugar.value,
+          'isAvailable': isAvailable.value,
         };
 
         print('itemData being sent: $itemData');

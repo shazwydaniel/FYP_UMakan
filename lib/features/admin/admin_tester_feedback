@@ -1,0 +1,251 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
+import 'package:fyp_umakan/utils/constants/colors.dart';
+import 'package:get/get.dart';
+
+class TesterQuestionsPage extends StatefulWidget {
+  @override
+  _TesterQuestionsPageState createState() => _TesterQuestionsPageState();
+}
+
+class _TesterQuestionsPageState extends State<TesterQuestionsPage> {
+  final userController = Get.find<UserController>();
+
+  final List<String> questions = [
+    "1. What did you like most about the app?",
+    "2. What features did you find confusing?",
+    "3. Were there any bugs or errors?",
+    "4. What improvements would you suggest?",
+    "5. Would you recommend this app to others?",
+    "6. How easy was it to navigate through the app? (5 being the easiest)",
+    "7. Did you encounter any issues while registering or logging in?",
+    "8. How visually appealing is the app’s design to you?",
+    "9. Did the app respond quickly to your actions?",
+    "10. Any other comments or suggestions you'd like to share?",
+  ];
+
+  final Map<int, TextEditingController> answerControllers = {
+    for (int i = 0; i < 10; i++) i: TextEditingController(),
+  };
+
+  final Map<int, String> yesNoAnswers = {};
+  double easeSliderValue = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: TColors.teal,
+      appBar: AppBar(
+        backgroundColor: TColors.teal,
+        title: Text("Tester Questions", style: TextStyle(color: TColors.cream)),
+        iconTheme: IconThemeData(color: TColors.cream),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                itemCount: questions.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 20),
+                itemBuilder: (context, index) {
+                  // Yes/No questions: 5, 7, 9 (index 4, 6, 8)
+                  if ([4, 6, 8].contains(index)) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          questions[index],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: ["Yes", "No"].map((option) {
+                            return Expanded(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                decoration: BoxDecoration(
+                                  color: TColors.cream,
+                                  borderRadius: BorderRadius.circular(12), // Rounded edges
+                                  border: Border.all(color: Colors.black12),
+                                ),
+                                child: RadioListTile<String>(
+                                  title: Text(option),
+                                  value: option,
+                                  groupValue: yesNoAnswers[index],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      yesNoAnswers[index] = value!;
+                                    });
+                                  },
+                                  activeColor: Colors.black,
+                                  dense: true,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                      ],
+                    );
+                  }
+
+                  // Range question: 6 (index 5)
+                  if (index == 5) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          questions[index],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        const SizedBox(height: 10),
+                        Slider(
+                          value: easeSliderValue,
+                          onChanged: (value) {
+                            setState(() {
+                              easeSliderValue = value;
+                            });
+                          },
+                          divisions: 4,
+                          label: easeSliderValue.toStringAsFixed(0),
+                          min: 1,
+                          max: 5,
+                          activeColor: Colors.black,
+                          inactiveColor: Colors.black26,
+                        ),
+                        Text(
+                          "Ease: ${easeSliderValue.toStringAsFixed(0)} / 5",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    );
+                  }
+
+                  // Normal text answer for all others
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        questions[index],
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        controller: answerControllers[index],
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: TColors.cream,
+                          hintText: "Your answer...",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Map<String, dynamic> answers = {
+                    "userId": userController.user.value.id,
+                    "username": userController.user.value.username,
+                    "timestamp": Timestamp.now(),
+                  };
+
+                  for (int i = 0; i < questions.length; i++) {
+                    String answer = "";
+
+                    if ([4, 6, 8].contains(i)) {
+                      answer = yesNoAnswers[i] ?? "";
+                    } else if (i == 5) {
+                      answer = easeSliderValue.toStringAsFixed(0);
+                    } else {
+                      answer = answerControllers[i]!.text.trim();
+                    }
+
+                    answers["Q${i + 1}"] = {
+                      "question": questions[i],
+                      "answer": answer
+                    };
+                  }
+
+                  // Check if all required inputs (5,6,7,9) are filled
+                  if ((yesNoAnswers[4]?.isEmpty ?? true) ||
+                      (yesNoAnswers[6]?.isEmpty ?? true) ||
+                      (yesNoAnswers[8]?.isEmpty ?? true)) {
+                    Get.snackbar(
+                      "Incomplete",
+                      "Please answer all Yes/No questions.",
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
+
+                  await FirebaseFirestore.instance
+                      .collection("Admins")
+                      .doc("testerQuestions")
+                      .collection("responses")
+                      .add(answers);
+
+                  answerControllers.forEach((_, controller) {
+                    controller.clear();
+                  });
+                  yesNoAnswers.clear();
+                  easeSliderValue = 3;
+
+                  setState(() {}); // Refresh UI
+
+                  Get.snackbar(
+                    "Thank you!",
+                    "Your responses have been submitted.",
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.green,
+                    colorText: Colors.white,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TColors.cream,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  "Submit Responses",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: TColors.teal,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

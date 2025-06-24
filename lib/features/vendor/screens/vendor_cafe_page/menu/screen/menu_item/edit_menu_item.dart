@@ -37,6 +37,7 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
 
     // Initialize the preferences
     controller.initializePreferences(widget.menuItem);
+    controller.initializeAvailability(widget.menuItem);
   }
 
   Future<void> pickImage() async {
@@ -124,6 +125,23 @@ class _EditMenuItemPageState extends State<EditMenuItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Obx(() => SwitchListTile(
+                      title: const Text(
+                        'In Stock?',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      activeColor: Colors.white,
+                      inactiveTrackColor: Colors.grey,
+                      value: controller.isAvailableUpdate.value,
+                      onChanged: (value) {
+                        controller.isAvailableUpdate.value = value;
+                      },
+                    )),
+
+                const SizedBox(height: 20),
                 // Item Name Field
                 TextFormField(
                   style: const TextStyle(color: Colors.white),

@@ -182,12 +182,16 @@ class _VendorMenuState extends State<VendorMenu> {
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.9,
-                              height: 120,
+                              height: 190,
                               child: Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                                 color: TColors.amber,
-                                margin: const EdgeInsets.only(bottom: 16.0),
+                                margin: const EdgeInsets.only(bottom: 30.0),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(20.0),
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -203,68 +207,185 @@ class _VendorMenuState extends State<VendorMenu> {
                                             Text(
                                               item.itemName,
                                               style: const TextStyle(
-                                                fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 color: TColors.textLight,
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
                                             Text(
-                                              '\RM${item.itemPrice.toStringAsFixed(2)}',
+                                              'Cost: RM${item.itemPrice.toStringAsFixed(2)}',
                                               style: const TextStyle(
                                                 fontSize: 14,
                                                 color: TColors.textLight,
                                               ),
                                             ),
-                                            const SizedBox(height: 8),
                                             Text(
-                                              '${item.itemCalories} kcal',
+                                              'Calories: ${item.itemCalories} cal',
                                               style: const TextStyle(
                                                 color: TColors.textLight,
                                                 fontSize: 12,
                                               ),
                                             ),
+                                            const SizedBox(height: 5),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 9,
+                                                      vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: item.isAvailable
+                                                    ? const Color.fromARGB(
+                                                        255, 52, 204, 128)
+                                                    : TColors.textGrey,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  color: TColors.textLight,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                item.isAvailable
+                                                    ? 'Available'
+                                                    : 'Unavailable',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Row(
+                                              children: [
+                                                if (item.isSpicy)
+                                                  Container(
+                                                    width: 24, // Circle size
+                                                    height: 24,
+                                                    margin: EdgeInsets.only(
+                                                        right:
+                                                            6), // Spacing between circles
+                                                    decoration: BoxDecoration(
+                                                      color: const Color
+                                                          .fromARGB(
+                                                          255,
+                                                          255,
+                                                          134,
+                                                          6), // Circle color for Spicy
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                          color: Colors.white,
+                                                          width:
+                                                              2), // White border
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'S',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .black, // Text color
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            12, // Font size
+                                                      ),
+                                                    ),
+                                                  ),
+                                                if (item.isVegetarian)
+                                                  Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    margin: EdgeInsets.only(
+                                                        right: 6),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color
+                                                          .fromARGB(
+                                                          255,
+                                                          70,
+                                                          215,
+                                                          75), // Circle color for Vegetarian
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                          color: Colors.white,
+                                                          width: 2),
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'V',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                if (item.isLowSugar)
+                                                  Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    margin: EdgeInsets.only(
+                                                        right: 6),
+                                                    decoration: BoxDecoration(
+                                                      color: TColors
+                                                          .blush, // Circle color for Low Sugar
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                          color: Colors.white,
+                                                          width: 2),
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'LS',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            10, // Slightly smaller for "LS"
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
                                           ],
                                         ),
                                       ),
                                       // Circular Image on the Right
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                            10), // Adds rounded corners
-                                        child: item.itemImage != null &&
-                                                item.itemImage.isNotEmpty &&
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 2,
+                                          ),
+                                          color: Colors.grey[300],
+                                        ),
+                                        child: item.itemImage.isNotEmpty &&
                                                 item.itemImage !=
                                                     "default_image_url"
-                                            ? Image.network(
-                                                item.itemImage,
-                                                width: 80,
-                                                height: 80,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (context, error,
-                                                        stackTrace) =>
-                                                    Container(
+                                            ? ClipOval(
+                                                child: Image.network(
+                                                  item.itemImage,
+                                                  fit: BoxFit.cover,
                                                   width: 80,
                                                   height: 80,
-                                                  color: Colors.grey[
-                                                      300], // Background color for broken image
-                                                  child: Icon(
-                                                    Icons.broken_image,
-                                                    size:
-                                                        40, // Smaller icon for better alignment
-                                                    color: Colors.grey,
+                                                  errorBuilder: (context, error,
+                                                          stackTrace) =>
+                                                      Center(
+                                                    child: Icon(
+                                                      Icons.broken_image,
+                                                      size: 40,
+                                                      color: Colors.grey,
+                                                    ),
                                                   ),
                                                 ),
                                               )
-                                            : Container(
-                                                width: 80,
-                                                height: 80,
-                                                color: Colors.grey[
-                                                    300], // Default background color
+                                            : Center(
                                                 child: Icon(
                                                   Icons.fastfood,
-                                                  size:
-                                                      40, // Smaller icon for better alignment
-                                                  color: Colors.grey,
+                                                  size: 40,
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                       ),

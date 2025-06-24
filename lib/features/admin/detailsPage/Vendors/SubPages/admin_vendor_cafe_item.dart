@@ -105,6 +105,17 @@ class AdminItemsPage extends StatelessWidget {
                                               color: Colors.black54,
                                             ),
                                           ),
+                                          Text(
+                                            item.isAvailable
+                                                ? 'Available'
+                                                : 'Unavailable',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: item.isAvailable
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -304,6 +315,12 @@ class AdminItemsPage extends StatelessWidget {
                       value: _menuController.isVegetarianUpdate.value,
                       onChanged: (value) => _menuController
                           .isVegetarianUpdate.value = value ?? false,
+                    )),
+                Obx(() => CheckboxListTile(
+                      title: const Text('Availability'),
+                      value: _menuController.isAvailableUpdate.value,
+                      onChanged: (value) => _menuController
+                          .isAvailableUpdate.value = value ?? false,
                     )),
               ],
             ),

@@ -98,21 +98,22 @@ class CafeItem {
   bool isSpicy;
   bool isVegetarian;
   bool isLowSugar;
+  bool isAvailable;
 
-  CafeItem({
-    required this.id,
-    required this.itemName,
-    required this.itemPrice,
-    required this.itemCalories,
-    required this.itemImage,
-    required this.itemLocation,
-    required this.itemCafe,
-    required this.vendorId,
-    required this.cafeId,
-    this.isSpicy = false,
-    this.isVegetarian = false,
-    this.isLowSugar = false,
-  });
+  CafeItem(
+      {required this.id,
+      required this.itemName,
+      required this.itemPrice,
+      required this.itemCalories,
+      required this.itemImage,
+      required this.itemLocation,
+      required this.itemCafe,
+      required this.vendorId,
+      required this.cafeId,
+      this.isSpicy = false,
+      this.isVegetarian = false,
+      this.isLowSugar = false,
+      this.isAvailable = false});
 
   // Override toString to print a more readable output
   @override
@@ -134,24 +135,25 @@ class CafeItem {
       'isSpicy': isSpicy,
       'isVegetarian': isVegetarian,
       'isLowSugar': isLowSugar,
+      'isAvailable': isAvailable
     };
   }
 
   // Static Function to Create an Empty CafeItem Model
   static CafeItem empty() => CafeItem(
-        id: '',
-        itemName: '',
-        itemPrice: 0,
-        itemCalories: 0,
-        itemImage: '',
-        itemLocation: '',
-        itemCafe: '',
-        vendorId: '',
-        cafeId: '',
-        isSpicy: false,
-        isVegetarian: false,
-        isLowSugar: false,
-      );
+      id: '',
+      itemName: '',
+      itemPrice: 0,
+      itemCalories: 0,
+      itemImage: '',
+      itemLocation: '',
+      itemCafe: '',
+      vendorId: '',
+      cafeId: '',
+      isSpicy: false,
+      isVegetarian: false,
+      isLowSugar: false,
+      isAvailable: false);
 
   factory CafeItem.fromMap(Map<String, dynamic> map, String documentId) {
     return CafeItem(
@@ -169,6 +171,7 @@ class CafeItem {
       isSpicy: map['isSpicy'] ?? false,
       isVegetarian: map['isVegetarian'] ?? false,
       isLowSugar: map['isLowSugar'] ?? false,
+      isAvailable: map['isAvailable'] ?? false,
     );
   }
 
@@ -186,6 +189,7 @@ class CafeItem {
       'isSpicy': isSpicy,
       'isVegetarian': isVegetarian,
       'isLowSugar': isLowSugar,
+      'isAvailable': isAvailable,
     };
   }
 
@@ -201,6 +205,10 @@ class CafeItem {
       itemCafe: data['itemCafe'] ?? '',
       vendorId: data['vendorId'] ?? '',
       cafeId: data['cafeId'] ?? '',
+      isSpicy: data['isSpicy'] ?? false,
+      isVegetarian: data['isVegetarian'] ?? false,
+      isLowSugar: data['isLowSugar'] ?? false,
+      isAvailable: data['isAvailable'] ?? false,
     );
   }
 }

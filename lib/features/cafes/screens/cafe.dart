@@ -644,7 +644,32 @@ class CafePage extends StatelessWidget {
                                       style:
                                           TextStyle(color: TColors.textLight),
                                     ),
-                                    SizedBox(height: 8),
+                                    SizedBox(height: 5),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 9, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: item.isAvailable
+                                            ? const Color.fromARGB(
+                                                255, 52, 204, 128)
+                                            : TColors.textGrey,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: TColors.textLight,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        item.isAvailable
+                                            ? 'Available'
+                                            : 'Unavailable',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
                                     Row(
                                       children: [
                                         if (item.isSpicy)
@@ -670,7 +695,7 @@ class CafePage extends StatelessWidget {
                                               'S',
                                               style: TextStyle(
                                                 color:
-                                                    Colors.white, // Text color
+                                                    Colors.black, // Text color
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12, // Font size
                                               ),
@@ -696,7 +721,7 @@ class CafePage extends StatelessWidget {
                                             child: Text(
                                               'V',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12,
                                               ),
@@ -719,7 +744,7 @@ class CafePage extends StatelessWidget {
                                             child: Text(
                                               'LS',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize:
                                                     10, // Slightly smaller for "LS"

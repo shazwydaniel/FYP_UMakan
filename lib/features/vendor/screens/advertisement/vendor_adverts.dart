@@ -83,7 +83,6 @@ class VendorAdsPage extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // First Row: Details, Edit Icon, and Tag
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

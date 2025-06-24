@@ -5,6 +5,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/admin/admin_feedback.dart";
+import "package:fyp_umakan/features/admin/admin_tester_feedback";
 import "package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
@@ -1016,6 +1017,50 @@ class StudentProfilePageScreen extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         "Help/Feedback",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Center(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TesterQuestionsPage(),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.black, width: 2.0),
+                    backgroundColor: TColors.teal,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.feedback,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Tester Feedback",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
