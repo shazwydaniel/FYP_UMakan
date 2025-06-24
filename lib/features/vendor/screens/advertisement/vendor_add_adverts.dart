@@ -126,7 +126,7 @@ class VendorAdverts extends StatelessWidget {
                     // Close the page and return the entered data (optional)
                     Navigator.pop(context);
                   },
-                  child: Text('Add Item'),
+                  child: Text('Add Advertisement'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TColors.textLight,
                     foregroundColor: TColors.textDark,
