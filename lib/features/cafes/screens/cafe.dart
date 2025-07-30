@@ -331,287 +331,318 @@ class CafePage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = cafeController.menuItems[index];
                     return GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.transparent,
-                              contentPadding: EdgeInsets.zero,
-                              content: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: TColors.cream,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 2, // Border width
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: item.itemImage.isNotEmpty &&
-                                                  item.itemImage !=
-                                                      "default_image_url"
-                                              ? Image.network(
-                                                  item.itemImage,
-                                                  width: 200,
-                                                  height: 200,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Container(
-                                                  width: 200,
-                                                  height: 200,
-                                                  color: TColors.textLight,
-                                                  child: Icon(
-                                                    Icons
-                                                        .fastfood, // Replace with any other icon if desired
-                                                    size: 100, // Icon size
-                                                    color: Colors
-                                                        .black, // Icon color
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Details Section
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            item.itemName,
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Cost: RM${item.itemPrice.toStringAsFixed(2)}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: TColors.textDark,
-                                            ),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            'Calories: ${item.itemCalories} cal',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: TColors.textDark,
-                                            ),
+                      onTap: item.isAvailable == true
+                          ? () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.transparent,
+                                    contentPadding: EdgeInsets.zero,
+                                    content: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: TColors.cream,
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            blurRadius: 10,
+                                            offset: Offset(0, 4),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        if (item.isSpicy)
-                                          Container(
-                                            width: 24, // Circle size
-                                            height: 24,
-                                            margin: EdgeInsets.only(
-                                                right:
-                                                    6), // Spacing between circles
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                  255,
-                                                  255,
-                                                  134,
-                                                  6), // Circle color for Spicy
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 2), // White border
-                                            ),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              'S',
-                                              style: TextStyle(
-                                                color:
-                                                    Colors.black, // Text color
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12, // Font size
-                                              ),
-                                            ),
-                                          ),
-                                        if (item.isVegetarian)
-                                          Container(
-                                            width: 24,
-                                            height: 24,
-                                            margin: EdgeInsets.only(right: 6),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                  255,
-                                                  70,
-                                                  215,
-                                                  75), // Circle color for Vegetarian
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 2),
-                                            ),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              'V',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ),
-                                        if (item.isLowSugar)
-                                          Container(
-                                            width: 24,
-                                            height: 24,
-                                            margin: EdgeInsets.only(right: 6),
-                                            decoration: BoxDecoration(
-                                              color: TColors
-                                                  .blush, // Circle color for Low Sugar
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 2),
-                                            ),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              'LS',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize:
-                                                    10, // Slightly smaller for "LS"
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10),
-
-                                    //  Button
-                                    Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(); // Close the dialog
-                                            },
-                                            child: Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                color: TColors.textDark,
-                                                fontSize: 16,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 20.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 2, // Border width
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                               ),
-                                            ),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              final journalItem = JournalItem(
-                                                  id: item.id,
-                                                  name: item.itemName,
-                                                  price: item.itemPrice,
-                                                  calories: item.itemCalories,
-                                                  cafe: cafe.name,
-                                                  cafeId: cafe.id,
-                                                  cafeLocation: cafe.location,
-                                                  imagePath: item.itemImage,
-                                                  vendorId: vendorId,
-                                                  isLowSugar: item.isLowSugar,
-                                                  isSpicy: item.isSpicy,
-                                                  isVegetarian:
-                                                      item.isVegetarian);
-
-                                              String userId =
-                                                  FoodJournalController.instance
-                                                      .getCurrentUserId();
-
-                                              // Add the meal to the Food Journal
-                                              controller.addFoodToJournal(
-                                                  userId, journalItem);
-
-                                              // Prepare expense data for the Money Journal
-                                              final expenseData = {
-                                                'itemName': item.itemName,
-                                                'price': item.itemPrice,
-                                                'date': DateTime.now()
-                                                    .toIso8601String(),
-                                                'type': 'Food',
-                                              };
-
-                                              // Access UserController and add the expense
-                                              final userController =
-                                                  UserController.instance;
-                                              userController.addExpense(
-                                                  userId, 'Food', expenseData);
-
-                                              Navigator.of(context)
-                                                  .pop(); // Close the dialog
-                                            },
-                                            child: Text(
-                                              'Add',
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: TColors.mustard,
-                                              foregroundColor: Colors.black,
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 24,
-                                                vertical: 12,
-                                              ),
-                                              shape: RoundedRectangleBorder(
+                                              child: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(10),
+                                                child: item.itemImage
+                                                            .isNotEmpty &&
+                                                        item.itemImage !=
+                                                            "default_image_url"
+                                                    ? Image.network(
+                                                        item.itemImage,
+                                                        width: 200,
+                                                        height: 200,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : Container(
+                                                        width: 200,
+                                                        height: 200,
+                                                        color:
+                                                            TColors.textLight,
+                                                        child: Icon(
+                                                          Icons
+                                                              .fastfood, // Replace with any other icon if desired
+                                                          size:
+                                                              100, // Icon size
+                                                          color: Colors
+                                                              .black, // Icon color
+                                                        ),
+                                                      ),
                                               ),
-                                              side: BorderSide(
-                                                color: Colors
-                                                    .black, // Border color
-                                                width: 2, // Border width
-                                              ),
+                                            ),
+                                          ),
+
+                                          // Details Section
+                                          Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  item.itemName,
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8),
+                                                Text(
+                                                  'Cost: RM${item.itemPrice.toStringAsFixed(2)}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: TColors.textDark,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  'Calories: ${item.itemCalories} cal',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: TColors.textDark,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              if (item.isSpicy)
+                                                Container(
+                                                  width: 24, // Circle size
+                                                  height: 24,
+                                                  margin: EdgeInsets.only(
+                                                      right:
+                                                          6), // Spacing between circles
+                                                  decoration: BoxDecoration(
+                                                    color: const Color.fromARGB(
+                                                        255,
+                                                        255,
+                                                        134,
+                                                        6), // Circle color for Spicy
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                        color: Colors.black,
+                                                        width:
+                                                            2), // White border
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    'S',
+                                                    style: TextStyle(
+                                                      color: Colors
+                                                          .black, // Text color
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12, // Font size
+                                                    ),
+                                                  ),
+                                                ),
+                                              if (item.isVegetarian)
+                                                Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  margin:
+                                                      EdgeInsets.only(right: 6),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color.fromARGB(
+                                                        255,
+                                                        70,
+                                                        215,
+                                                        75), // Circle color for Vegetarian
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                        color: Colors.black,
+                                                        width: 2),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    'V',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              if (item.isLowSugar)
+                                                Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  margin:
+                                                      EdgeInsets.only(right: 6),
+                                                  decoration: BoxDecoration(
+                                                    color: TColors
+                                                        .blush, // Circle color for Low Sugar
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                        color: Colors.black,
+                                                        width: 2),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    'LS',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          10, // Slightly smaller for "LS"
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 10),
+
+                                          //  Button
+                                          Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Close the dialog
+                                                  },
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: TextStyle(
+                                                      color: TColors.textDark,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    final journalItem =
+                                                        JournalItem(
+                                                            id: item.id,
+                                                            name: item.itemName,
+                                                            price:
+                                                                item.itemPrice,
+                                                            calories: item
+                                                                .itemCalories,
+                                                            cafe: cafe.name,
+                                                            cafeId: cafe.id,
+                                                            cafeLocation:
+                                                                cafe.location,
+                                                            imagePath:
+                                                                item.itemImage,
+                                                            vendorId: vendorId,
+                                                            isLowSugar:
+                                                                item.isLowSugar,
+                                                            isSpicy:
+                                                                item.isSpicy,
+                                                            isVegetarian: item
+                                                                .isVegetarian);
+
+                                                    String userId =
+                                                        FoodJournalController
+                                                            .instance
+                                                            .getCurrentUserId();
+
+                                                    // Add the meal to the Food Journal
+                                                    controller.addFoodToJournal(
+                                                        userId, journalItem);
+
+                                                    // Prepare expense data for the Money Journal
+                                                    final expenseData = {
+                                                      'itemName': item.itemName,
+                                                      'price': item.itemPrice,
+                                                      'date': DateTime.now()
+                                                          .toIso8601String(),
+                                                      'type': 'Food',
+                                                    };
+
+                                                    // Access UserController and add the expense
+                                                    final userController =
+                                                        UserController.instance;
+                                                    userController.addExpense(
+                                                        userId,
+                                                        'Food',
+                                                        expenseData);
+
+                                                    Navigator.of(context)
+                                                        .pop(); // Close the dialog
+                                                  },
+                                                  child: Text(
+                                                    'Add',
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        TColors.mustard,
+                                                    foregroundColor:
+                                                        Colors.black,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 24,
+                                                      vertical: 12,
+                                                    ),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    side: BorderSide(
+                                                      color: Colors
+                                                          .black, // Border color
+                                                      width: 2, // Border width
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
+                                  );
+                                },
+                              );
+                            }
+                          : null,
                       child: Card(
-                        elevation: 5,
+                        elevation: item.isAvailable == true ? 10 : 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
