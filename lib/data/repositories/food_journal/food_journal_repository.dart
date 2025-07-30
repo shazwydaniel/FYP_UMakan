@@ -41,10 +41,6 @@ class FoodJournalRepository {
     try {
       final docRef =
           _db.collection('Users').doc(userId).collection('food_journal').doc();
-
-      // Print the expense data being added
-      print('Adding food: $foodData');
-
       await docRef.set({
         'entry_ID': docRef.id,
         ...foodData,
@@ -207,13 +203,9 @@ class FoodJournalRepository {
           }
         }
 
-        print("$cafeName has $fiveStarCount five-star reviews");
-
         // Add the count to the map
         cafeFiveStarCounts[cafeName] = fiveStarCount;
       }
-
-      print("Cafe Five-Star Counts: $cafeFiveStarCounts");
 
       // If no 5-star reviews are found, return 'None'
       if (cafeFiveStarCounts.isEmpty) {
@@ -231,7 +223,6 @@ class FoodJournalRepository {
         }
       });
 
-      print("Cafe with Most 5 Stars: $mostFiveStarCafe");
       return mostFiveStarCafe;
     } on FirebaseException catch (e) {
       print('FirebaseException: ${e.message}');
@@ -277,9 +268,6 @@ class FoodJournalRepository {
             oneStarCount++;
           }
         }
-
-        print("$cafeName has $oneStarCount one-star reviews");
-
         // Add the count to the map
         cafeOneStarCounts[cafeName] = oneStarCount;
       }
