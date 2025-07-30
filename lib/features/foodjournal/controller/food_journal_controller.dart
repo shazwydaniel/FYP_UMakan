@@ -134,10 +134,10 @@ class FoodJournalController extends GetxController {
       await analyzeWeeklyMeals(userId, journalItem.name, journalItem.imagePath);
 
       // Update meal states
-      _updateMealStates(userId);
+      //_updateMealStates(userId);
 
       // Check streaks and achievements
-      _checkStreakAndAchievements(userId);
+      //_checkStreakAndAchievements(userId);
 
       for (int i = 0; i < 4; i++) {
         updateAndCacheAverageCalories(i);
