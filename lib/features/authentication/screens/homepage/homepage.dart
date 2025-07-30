@@ -1400,7 +1400,7 @@ class HomePageScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              // White tag container for "Your Streaks"
+                              /*// White tag container for "Your Streaks"
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 5),
@@ -1445,7 +1445,7 @@ class HomePageScreen extends StatelessWidget {
                                     },
                                   ),
                                 ),
-                              ),
+                              ),*/
                             ],
                           ),
                         ),
@@ -1532,6 +1532,8 @@ class HomePageScreen extends StatelessWidget {
                           DateTime? startDate = advertisement.startDate;
                           DateTime? endDate = advertisement.endDate;
 
+                          if (advertisement.status != 'Promotion') return false;
+
                           // If both dates are not null, check the range
                           if (startDate != null && endDate != null) {
                             return today.isAfter(startDate
@@ -1539,7 +1541,6 @@ class HomePageScreen extends StatelessWidget {
                                 today.isBefore(
                                     endDate.add(const Duration(days: 1)));
                           }
-                          // If either date is null, exclude the advertisement
                           return false;
                         }).toList();
 
