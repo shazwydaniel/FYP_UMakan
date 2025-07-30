@@ -498,7 +498,7 @@ class VendorRepository {
       // Get cafes for the specific vendor
       final cafeSnapshot = await _db
           .collection('Vendors')
-          .doc(vendorId) // Filter by the specific vendor's ID
+          .doc(vendorId)
           .collection('Cafe')
           .get();
 

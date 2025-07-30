@@ -441,7 +441,6 @@ class _VendorMenuState extends State<VendorMenu> {
                 ),
               ),
 
-              // Add Advertisement button
               Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 margin: const EdgeInsets.only(bottom: 40),

@@ -21,7 +21,7 @@ class VendorProfilePageScreen extends StatelessWidget {
     final controller = Get.put(VendorController());
 
     return Scaffold(
-      backgroundColor: TColors.bubbleOrange,
+      backgroundColor: TColors.cream,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +37,7 @@ class VendorProfilePageScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
+                      color: dark ? Colors.black : Colors.black,
                     ),
                   ),
                   Obx(
@@ -46,7 +46,7 @@ class VendorProfilePageScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
-                        color: dark ? Colors.white : Colors.white,
+                        color: dark ? Colors.black : Colors.black,
                       ),
                     ),
                   ),
@@ -67,11 +67,11 @@ class VendorProfilePageScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Personal Details',
+                    'Vendor Details',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white : Colors.white,
+                      color: dark ? Colors.black : Colors.black,
                     ),
                   ),
                 ],
@@ -97,74 +97,79 @@ class VendorProfilePageScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      color: TColors.cream,
+                      color: TColors.forest,
                       margin: const EdgeInsets.only(bottom: 20),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Vendor Name
-                                  Text(
-                                    controller.vendor.value.vendorName,
-                                    style: TextStyle(
-                                      color: dark ? Colors.black : Colors.black,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-
-                                  // Vendor Email
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 5.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      controller.vendor.value.vendorEmail,
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Vendor Name
+                                    Text(
+                                      controller.vendor.value.vendorName,
                                       style: TextStyle(
                                         color:
-                                            dark ? Colors.black : Colors.black,
-                                        fontSize: 14,
+                                            dark ? Colors.white : Colors.white,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
+                                    const SizedBox(height: 10),
 
-                                  // Vendor Contact Info
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 5.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      controller.vendor.value.contactInfo,
-                                      style: TextStyle(
-                                        color:
-                                            dark ? Colors.black : Colors.black,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                    // Vendor Email
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 5.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        controller.vendor.value.vendorEmail,
+                                        style: TextStyle(
+                                          color: dark
+                                              ? Colors.white
+                                              : Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
+                                    const SizedBox(height: 10),
 
-                                  // Business Revenue (if applicable)
-                                ],
+                                    // Vendor Contact Info
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 5.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        controller.vendor.value.contactInfo,
+                                        style: TextStyle(
+                                          color: dark
+                                              ? Colors.white
+                                              : Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+
+                                    // Business Revenue (if applicable)
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
