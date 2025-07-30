@@ -13,7 +13,6 @@ class VendorAdsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch advertisements when the page loads
     advertController.fetchVendorAds();
 
     return Scaffold(
@@ -144,17 +143,25 @@ class VendorAdsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
 
-                      // Second Row: Location
                       Text(
                         ad.cafeName,
                         style: TextStyle(
-                          fontSize: 16,
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 5),
+
+                      Text(
+                        "Status: ${ad.status.isNotEmpty ? ad.status : 'No status'}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                           color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 5),
 
-                      // Third Row: Date Range
                       Text(
                         "From ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'} until ${ad.endDate != null ? dateFormat.format(ad.endDate!) : "N/A"}",
                         style: TextStyle(

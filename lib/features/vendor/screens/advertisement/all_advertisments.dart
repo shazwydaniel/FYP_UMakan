@@ -11,11 +11,13 @@ class AllAdvertisementsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("All Advertisements"),
-        backgroundColor: TColors.cream, // Adjust the AppBar color as needed
+        backgroundColor: TColors.cream,
       ),
-      backgroundColor: TColors.cream, // Cream background color
+      backgroundColor: TColors.cream,
       body: Obx(() {
-        final advertisements = advertController.allAdvertisements;
+        final advertisements = advertController.allAdvertisements
+            .where((ad) => ad.status == "Promotion")
+            .toList();
 
         if (advertisements.isEmpty) {
           return Center(

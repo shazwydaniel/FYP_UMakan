@@ -16,11 +16,13 @@ class AdvertController extends GetxController {
   final TextEditingController adDetail = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
+  var selectedStatus = ''.obs;
 
   //For Updating
   final detailUpdateController = TextEditingController();
   final startDateUpdateController = TextEditingController();
   final endDateUpdateController = TextEditingController();
+  final RxString statusUpdate = 'Promotion'.obs;
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   GlobalKey<FormState> updateForm = GlobalKey<FormState>();
 
@@ -28,9 +30,7 @@ class AdvertController extends GetxController {
   GlobalKey<FormState> menuFormKey = GlobalKey<FormState>();
   Rx<Advertisement> advertisment = Advertisement.empty().obs;
   final vendorRepository = VendorRepository.instance;
-  final vendorController =
-      Get.put(VendorController()); //Added Put here, fixed the vendor.value.name
-
+  final vendorController = Get.put(VendorController());
   var allAdvertisements = <Advertisement>[].obs;
 
   //init user data when Home Screen Appears
@@ -70,6 +70,7 @@ class AdvertController extends GetxController {
           'detail': adDetail.text.trim(),
           'startDate': startDate.toIso8601String(),
           'endDate': endDate.toIso8601String(),
+          'status': selectedStatus.value,
         };
 
         // Call the repository method to add the item to Firestore
@@ -116,8 +117,6 @@ class AdvertController extends GetxController {
   void fetchAllAdvertisements() async {
     List<Advertisement> allAds =
         await vendorRepository.getAllAdvertisementsFromAllCafes();
-    print(
-        "Total cafes fetched from all vendors: ${allAds.length}"); // Debug log
     allAdvertisements
         .assignAll(allAds); // Update observable list with all cafes
   }
@@ -125,8 +124,7 @@ class AdvertController extends GetxController {
   void fetchVendorAds() async {
     List<Advertisement> allAds = await vendorRepository
         .getAllAdvertisementsForVendor(vendorController.currentUserId);
-    print(
-        "Total cafes fetched from all vendors: ${allAds.length}"); // Debug log
+
     allAdvertisements
         .assignAll(allAds); // Update observable list with all cafes
   }
@@ -167,15 +165,6 @@ class AdvertController extends GetxController {
         return;
       }
 
-      // Debug: Log the data being sent to Firestore
-      print('Updating ad with data:');
-      print('Vendor ID: $vendorId');
-      print('Cafe ID: $cafeId');
-      print('Ad ID: $adId');
-      print('Detail: ${detailUpdateController.text.trim()}');
-      print('Start Date: ${startDateUpdateController.text.trim()}');
-      print('End Date: ${endDateUpdateController.text.trim()}');
-
       // Update data in Firebase Firestore
       Map<String, dynamic> detailUpdated = {
         'detail': detailUpdateController.text.trim()
@@ -186,6 +175,7 @@ class AdvertController extends GetxController {
       Map<String, dynamic> endDateUpdated = {
         'endDate': endDateUpdateController.text.trim()
       };
+      Map<String, dynamic> statusUpdated = {'status': selectedStatus.value};
 
       // Use methods in User Repository to transfer to Firebase
       await vendorRepository.updateSingleFieldAdvert(
@@ -194,6 +184,8 @@ class AdvertController extends GetxController {
           startDateUpdated, vendorId, cafeId, adId);
       await vendorRepository.updateSingleFieldAdvert(
           endDateUpdated, vendorId, cafeId, adId);
+      await vendorRepository.updateSingleFieldAdvert(
+          statusUpdated, vendorId, cafeId, adId);
 
       // Update Rx value safely
       advertisment.value.detail = detailUpdateController.text.trim();
@@ -201,6 +193,14 @@ class AdvertController extends GetxController {
           DateTime.tryParse(startDateUpdateController.text.trim());
       advertisment.value.endDate =
           DateTime.tryParse(endDateUpdateController.text.trim());
+      advertisment.value.status = selectedStatus.value;
+
+      if (selectedStatus.value.isEmpty) {
+        TLoaders.warningSnackBar(
+            title: 'Status missing',
+            message: 'Please select advertisement type.');
+        return;
+      }
 
       // Fetch advertisements again to update the UI
       fetchAdvertisementsByCafe(vendorId, cafeId);
@@ -210,7 +210,7 @@ class AdvertController extends GetxController {
           title: 'Congratulations',
           message: "Your advertisement has been updated!");
 
-      Get.off(() => const VendorNavigationMenu());
+      Get.off(() => const VendorNavigationMenu(), transition: Transition.fade);
     } catch (e) {
       // Log the error for debugging
       debugPrint("Error update: $e");
@@ -264,5 +264,23 @@ class AdvertController extends GetxController {
         message: 'Failed to fetch advertisements',
       );
     }
+  }
+
+  Future<List<Advertisement>> fetchBantuanAds() async {
+    final allAds = await fetchAll(); // Your existing fetch logic
+    final now = DateTime.now();
+
+    return allAds.where((ad) {
+      final isBantuan = ad.status == 'Bantuan';
+      final isActive = ad.startDate != null &&
+          ad.endDate != null &&
+          ad.startDate!.isBefore(now) &&
+          ad.endDate!.isAfter(now);
+      return isBantuan && isActive;
+    }).toList();
+  }
+
+  Future<List<Advertisement>> fetchAll() async {
+    return await vendorRepository.getAllAdvertisementsFromAllCafes();
   }
 }

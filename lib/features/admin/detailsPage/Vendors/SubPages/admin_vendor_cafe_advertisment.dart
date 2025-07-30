@@ -75,6 +75,13 @@ class AdminAdvertisementsPage extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
+                                    "Type: ${ad.status}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color.fromARGB(137, 0, 0, 0),
+                                    ),
+                                  ),
+                                  Text(
                                     "From: ${ad.startDate != null ? dateFormat.format(ad.startDate!) : 'N/A'}",
                                     style: const TextStyle(
                                       fontSize: 14,
@@ -183,6 +190,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
     advertController.adDetail.clear();
     advertController.startDateController.clear();
     advertController.endDateController.clear();
+    advertController.selectedStatus.value = 'Promotion';
 
     showDialog(
       context: context,
@@ -225,6 +233,21 @@ class AdminAdvertisementsPage extends StatelessWidget {
                       _selectDate(context, advertController.endDateController),
                 ),
                 const SizedBox(height: 16),
+                Obx(() => DropdownButtonFormField<String>(
+                      value: advertController.selectedStatus.value,
+                      decoration: const InputDecoration(labelText: 'Status'),
+                      items: ['Promotion', 'Bantuan']
+                          .map((status) => DropdownMenuItem(
+                                value: status,
+                                child: Text(status),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          advertController.selectedStatus.value = value;
+                        }
+                      },
+                    )),
               ],
             ),
           ),
@@ -257,6 +280,7 @@ class AdminAdvertisementsPage extends StatelessWidget {
         ad.startDate?.toLocal().toString().split(' ')[0] ?? '';
     advertController.endDateUpdateController.text =
         ad.endDate?.toLocal().toString().split(' ')[0] ?? '';
+    advertController.statusUpdate.value = ad.status;
 
     showDialog(
       context: context,
@@ -276,6 +300,23 @@ class AdminAdvertisementsPage extends StatelessWidget {
                       ? 'Detail is required'
                       : null,
                 ),
+                const SizedBox(height: 16),
+                Obx(() => DropdownButtonFormField<String>(
+                      value: advertController.selectedStatus.value,
+                      items: ['Promotion', 'Bantuan'].map((status) {
+                        return DropdownMenuItem<String>(
+                          value: status,
+                          child: Text(status),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          advertController.selectedStatus.value = newValue;
+                        }
+                      },
+                      decoration: const InputDecoration(labelText: 'Status'),
+                    )),
+                const SizedBox(height: 16),
                 const SizedBox(height: 16),
                 TextField(
                   controller: advertController.startDateUpdateController,

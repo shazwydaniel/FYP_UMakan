@@ -4,6 +4,7 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:fyp_umakan/utils/constants/sizes.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
@@ -13,10 +14,9 @@ class EditAdPage extends StatelessWidget {
   // Constructor for the EditAdPage
   EditAdPage({required this.ad}) {
     final advertController = AdvertController.instance;
-
-    // Ensure the advertisement data is set properly
     advertController.advertisment.value = ad;
-    advertController.initalizeNames(); // Initialize text fields
+    advertController.selectedStatus.value = ad.status;
+    advertController.initalizeNames();
   }
 
   @override
@@ -25,14 +25,12 @@ class EditAdPage extends StatelessWidget {
     final advertController = AdvertController.instance;
     final vendorController = VendorController.instance;
 
-    // Initialize the controllers with the data from `ad`
     advertController.detailUpdateController.text = ad.detail;
     advertController.startDateUpdateController.text =
         ad.startDate != null ? dateFormat.format(ad.startDate!) : '';
     advertController.endDateUpdateController.text =
         ad.endDate != null ? dateFormat.format(ad.endDate!) : '';
 
-    // Function to show the date picker and update the text field
     Future<void> _selectDate(
         BuildContext context, TextEditingController controller) async {
       final DateTime? picked = await showDatePicker(
@@ -204,6 +202,35 @@ class EditAdPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 25),
 
+                Obx(() => DropdownButtonFormField<String>(
+                      value: advertController.selectedStatus.value,
+                      dropdownColor: TColors.amber,
+                      decoration: const InputDecoration(
+                        labelText: 'Status',
+                        labelStyle: TextStyle(color: Colors.white),
+                        floatingLabelStyle: TextStyle(color: Colors.white),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                      ),
+                      items: ['Promotion', 'Bantuan'].map((status) {
+                        return DropdownMenuItem<String>(
+                          value: status,
+                          child: Text(status,
+                              style: TextStyle(color: Colors.white)),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          advertController.selectedStatus.value = newValue;
+                        }
+                      },
+                    )),
+                const SizedBox(height: 25),
+
                 Center(
                   child: Column(
                     children: [
@@ -216,9 +243,7 @@ class EditAdPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: TColors.textLight,
                           foregroundColor: TColors.textDark,
-                          side: BorderSide(
-                              color: Colors.white, // Border color of the button
-                              width: 2.0),
+                          side: BorderSide(color: Colors.white, width: 2.0),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
                           minimumSize: const Size(double.infinity, 10),

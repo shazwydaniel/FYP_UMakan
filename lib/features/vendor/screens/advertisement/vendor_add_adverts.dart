@@ -35,7 +35,7 @@ class VendorAdverts extends StatelessWidget {
       backgroundColor: TColors.amber,
       appBar: AppBar(
         title: Text(
-          'Add Advertisment',
+          'Add Advertisement',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: TColors.amber,
@@ -50,7 +50,6 @@ class VendorAdverts extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text Field for Item Name
               TextField(
                 style: const TextStyle(color: Colors.white),
                 controller: controller.adDetail,
@@ -72,7 +71,6 @@ class VendorAdverts extends StatelessWidget {
               // Text Field for Start Date
               TextField(
                 style: const TextStyle(color: Colors.white),
-
                 controller: controller.startDateController,
                 readOnly: true, // Prevent manual input
                 decoration: const InputDecoration(
@@ -96,7 +94,6 @@ class VendorAdverts extends StatelessWidget {
               // Text Field for End Date
               TextField(
                 style: const TextStyle(color: Colors.white),
-
                 controller: controller.endDateController,
                 readOnly: true, // Prevent manual input
                 decoration: const InputDecoration(
@@ -116,23 +113,51 @@ class VendorAdverts extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
 
+              // Dropdown for selecting status
+              Obx(() => DropdownButtonFormField<String>(
+                    value: controller.selectedStatus.value.isNotEmpty
+                        ? controller.selectedStatus.value
+                        : null,
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        controller.selectedStatus.value = newValue;
+                      }
+                    },
+                    dropdownColor: TColors.amber,
+                    decoration: const InputDecoration(
+                      labelText: 'Advertisement Type',
+                      labelStyle: TextStyle(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    iconEnabledColor: Colors.white,
+                    items: <String>['Promotion', 'Bantuan']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  )),
+              const SizedBox(height: 16.0),
+
               // Add Button
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    // Call the addAdvert function from the controller
                     await controller.addAdvert(vendorId, cafeId);
-
-                    // Close the page and return the entered data (optional)
                     Navigator.pop(context);
                   },
                   child: Text('Add Advertisement'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TColors.textLight,
                     foregroundColor: TColors.textDark,
-                    side: BorderSide(
-                        color: Colors.white, // Border color of the button
-                        width: 2.0),
+                    side: BorderSide(color: Colors.white, width: 2.0),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 50, vertical: 15),
                     minimumSize: const Size(double.infinity, 10),

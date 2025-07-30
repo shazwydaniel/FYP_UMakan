@@ -10,6 +10,7 @@ class Advertisement {
   String detail;
   DateTime? startDate;
   DateTime? endDate;
+  String status;
 
   Advertisement({
     required this.id,
@@ -19,9 +20,9 @@ class Advertisement {
     required this.startDate,
     required this.endDate,
     required this.cafeId,
+    required this.status,
   });
 
-  // Convert Advertisement to JSON (dates as ISO strings).
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -29,12 +30,12 @@ class Advertisement {
       'cafeId': cafeId,
       'location': location,
       'detail': detail,
-      'startDate': startDate?.toIso8601String(), // Convert DateTime to string.
-      'endDate': endDate?.toIso8601String(), // Handle nulls gracefully.
+      'startDate': startDate?.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+      'status': status,
     };
   }
 
-  // Create an Advertisement from a Map object.
   factory Advertisement.fromMap(Map<String, dynamic> data, String documentId) {
     return Advertisement(
       id: documentId,
@@ -48,10 +49,10 @@ class Advertisement {
       endDate: data['endDate'] != null
           ? DateTime.tryParse(data['endDate']) ?? DateTime.now()
           : null,
+      status: data['status'] ?? '',
     );
   }
 
-  // Convert Advertisement to a Map (for database operations).
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -61,10 +62,10 @@ class Advertisement {
       'detail': detail,
       'startDate': startDate?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'status': status,
     };
   }
 
-  // Create an Advertisement from a JSON object.
   factory Advertisement.fromJson(Map<String, dynamic> json) {
     return Advertisement(
       id: json['id'] ?? '', // Handle missing id gracefully.
@@ -77,10 +78,10 @@ class Advertisement {
           : null,
       endDate:
           json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
+      status: json['status'] ?? '',
     );
   }
 
-  // Create a factory method to convert Firestore data into an Advertisement object
   factory Advertisement.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Advertisement(
@@ -92,6 +93,7 @@ class Advertisement {
       cafeName: data['cafeName'] ?? '',
       location: data['location'] ?? '',
       cafeId: data['cafeId'] ?? '',
+      status: data['status'] ?? '',
     );
   }
 
@@ -102,7 +104,8 @@ class Advertisement {
         cafeId: '',
         location: '',
         detail: '',
-        startDate: null, // Use null to represent an empty date.
+        startDate: null,
         endDate: null,
+        status: '',
       );
 }
