@@ -66,7 +66,7 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
-            // Achievements (Label)
+            /* // Achievements (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Row(
@@ -142,7 +142,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            ), */
 
             // Personal Details (Label)
             Padding(
