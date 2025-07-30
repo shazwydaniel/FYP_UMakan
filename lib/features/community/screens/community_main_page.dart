@@ -13,6 +13,8 @@ import "package:fyp_umakan/common/widgets/loaders/loaders.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/support_organisation/controller/support_organisation_controller.dart";
 import "package:fyp_umakan/features/support_organisation/model/support_organisation_model.dart";
+import "package:fyp_umakan/features/vendor/controller/vendor_advert_controller.dart";
+import "package:fyp_umakan/features/vendor/model/advertisment/vendor_adverts_model.dart";
 import "package:fyp_umakan/utils/constants/colors.dart";
 import "package:fyp_umakan/utils/helpers/helper_functions.dart";
 import "package:get/get.dart";
@@ -26,8 +28,10 @@ class CommunityMainPageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AdvertController advertController = Get.put(AdvertController());
     final dark = THelperFunctions.isDarkMode(context);
-    final supportOrganisationController = Get.put(SupportOrganisationController());
+    final supportOrganisationController =
+        Get.put(SupportOrganisationController());
 
     return Scaffold(
       backgroundColor: TColors.cobalt,
@@ -42,7 +46,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Campus',
+                    'Available',
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -50,7 +54,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Community',
+                    'Communities',
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -60,6 +64,118 @@ class CommunityMainPageScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Bantuan Advertisements Section
+            FutureBuilder<List<Advertisement>>(
+              future: advertController.fetchBantuanAds(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error loading advertisements'));
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  final bantuanAds = snapshot.data!;
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(left: 40, right: 40, top: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Section Title
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                                width: 4, height: 40, color: TColors.amber),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Community Assistance',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Cards
+                        ...bantuanAds.map((ad) {
+                          return Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: TColors.cream,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ad.detail,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 241, 185, 41), // yellow tag
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.store,
+                                          size: 16, color: Colors.black),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${ad.cafeName} (${ad.location})',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Valid from: ${ad.startDate != null ? "${ad.startDate!.day}-${ad.startDate!.month}-${ad.startDate!.year}" : "N/A"} '
+                                  'to ${ad.endDate != null ? "${ad.endDate!.day}-${ad.endDate!.month}-${ad.endDate!.year}" : "N/A"}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  );
+                } else {
+                  return SizedBox.shrink(); // no ads
+                }
+              },
+            ),
+
             // Supporting Organisations (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
@@ -95,18 +211,26 @@ class CommunityMainPageScreen extends StatelessWidget {
                 } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   final organisations = snapshot.data!;
                   return Padding(
-                    padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+                    padding:
+                        const EdgeInsets.only(left: 40, right: 40, top: 20),
                     child: Column(
                       children: organisations.map((org) {
                         // Determine the style based on the active status
                         final isActive = org.activeStatus == 'Active';
-                        final activeStatusColor = isActive ? TColors.forest.withOpacity(0.5) : TColors.amber.withOpacity(0.5);
-                        final activeStatusIcon = isActive ? Iconsax.tick_circle : Iconsax.warning_2;
+                        final activeStatusColor = isActive
+                            ? TColors.forest.withOpacity(0.5)
+                            : TColors.amber.withOpacity(0.5);
+                        final activeStatusIcon =
+                            isActive ? Iconsax.tick_circle : Iconsax.warning_2;
 
                         // Determine the style based on the location
                         final isInCampus = org.location == 'In Campus';
-                        final locationColor = isInCampus ? TColors.stark_blue.withOpacity(0.5) : TColors.blush.withOpacity(0.5);
-                        final locationIcon = isInCampus ? Iconsax.location : Iconsax.location_add;
+                        final locationColor = isInCampus
+                            ? TColors.stark_blue.withOpacity(0.5)
+                            : TColors.blush.withOpacity(0.5);
+                        final locationIcon = isInCampus
+                            ? Iconsax.location
+                            : Iconsax.location_add;
 
                         return Container(
                           height: 220,
@@ -132,7 +256,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                                   top: 0,
                                   bottom: 0,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
@@ -162,17 +287,20 @@ class CommunityMainPageScreen extends StatelessWidget {
                                         ],
                                       ),
                                       const SizedBox(height: 10),
-                                      if (org.telegramHandle?.isNotEmpty == true)
+                                      if (org.telegramHandle?.isNotEmpty ==
+                                          true)
                                         GestureDetector(
                                           onTap: () async {
-                                            final url = "https://t.me/${org.telegramHandle}";
+                                            final url =
+                                                "https://t.me/${org.telegramHandle}";
                                             if (await canLaunch(url)) {
                                               await launch(url);
                                             } else {
                                               Get.snackbar(
                                                 'Error',
                                                 'Failed to open Telegram link.',
-                                                snackPosition: SnackPosition.BOTTOM,
+                                                snackPosition:
+                                                    SnackPosition.BOTTOM,
                                                 backgroundColor: Colors.red,
                                                 colorText: Colors.white,
                                               );
@@ -199,18 +327,23 @@ class CommunityMainPageScreen extends StatelessWidget {
                                         ),
                                       const SizedBox(height: 20),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           // Active Status Tag with Icon
                                           Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
                                             decoration: BoxDecoration(
                                               color: activeStatusColor,
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(activeStatusIcon, size: 16, color: Colors.black),
+                                                Icon(activeStatusIcon,
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 const SizedBox(width: 5),
                                                 Text(
                                                   org.activeStatus,
@@ -226,14 +359,18 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                           // Location Tag with Icon
                                           Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
                                             decoration: BoxDecoration(
                                               color: locationColor,
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(locationIcon, size: 16, color: Colors.black),
+                                                Icon(locationIcon,
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 const SizedBox(width: 5),
                                                 Text(
                                                   org.location,
@@ -258,7 +395,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Center(child: Text('No Supporting Organisations found.'));
+                  return Center(
+                      child: Text('No Supporting Organisations found.'));
                 }
               },
             ),
@@ -289,7 +427,9 @@ class CommunityMainPageScreen extends StatelessWidget {
 
             // Fetch and display Community News (Firebase)
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('community_news').snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('community_news')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -324,16 +464,19 @@ class CommunityMainPageScreen extends StatelessWidget {
                   return Center(child: Text('No community news available'));
                 }
 
-                bool isExpanded = false; // State to track if container is expanded
+                bool isExpanded =
+                    false; // State to track if container is expanded
 
                 return StatefulBuilder(
                   builder: (context, setState) {
                     return Padding(
-                      padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+                      padding:
+                          const EdgeInsets.only(left: 40, right: 40, top: 20),
                       child: Container(
                         decoration: BoxDecoration(
                           color: TColors.bubbleBlue, // Outer container color
-                          borderRadius: BorderRadius.circular(20), // Rounded corners
+                          borderRadius:
+                              BorderRadius.circular(20), // Rounded corners
                         ),
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -342,38 +485,57 @@ class CommunityMainPageScreen extends StatelessWidget {
                             SizedBox(height: 10),
                             Container(
                               constraints: BoxConstraints(
-                                maxHeight: isExpanded ? double.infinity : 380, // Expandable height
+                                maxHeight: isExpanded
+                                    ? double.infinity
+                                    : 380, // Expandable height
                               ),
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: newsList.map((doc) {
-                                    final newsType = doc['type_of_news_message'];
+                                    final newsType =
+                                        doc['type_of_news_message'];
                                     final newsId = doc.id; // Document ID
                                     final postedUserId = doc['user_id'];
-                                    final anonymityStatus = doc['anonymity_status'] ?? 'Public';
-                                    final includeTelegram = doc['include_telegram'] ?? 'Yes';
+                                    final anonymityStatus =
+                                        doc['anonymity_status'] ?? 'Public';
+                                    final includeTelegram =
+                                        doc['include_telegram'] ?? 'Yes';
 
                                     // Cross Reference
                                     return FutureBuilder<DocumentSnapshot>(
                                       future: _fetchUserRole(postedUserId),
                                       builder: (context, userSnapshot) {
-                                        if (userSnapshot.connectionState == ConnectionState.waiting) {
-                                          return Center(child: CircularProgressIndicator());
+                                        if (userSnapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Center(
+                                              child:
+                                                  CircularProgressIndicator());
                                         }
-                                        if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                                        if (!userSnapshot.hasData ||
+                                            !userSnapshot.data!.exists) {
                                           return Container(); // Display nothing if user data is not found
                                         }
 
-                                        final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
-                                        final username = userData?['Username'] ?? 'Unknown User';
-                                        final userRole = userData?['Role'] ?? 'Unknown';
+                                        final userData = userSnapshot.data!
+                                            .data() as Map<String, dynamic>?;
+                                        final username =
+                                            userData?['Username'] ??
+                                                'Unknown User';
+                                        final userRole =
+                                            userData?['Role'] ?? 'Unknown';
 
                                         // Post Type Tag - Tappable
                                         Widget typeTag = Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
                                           decoration: BoxDecoration(
-                                            color: doc['type_of_news_message'] == 'Offer Help' ? TColors.forest : TColors.vermillion,
-                                            borderRadius: BorderRadius.circular(15),
+                                            color:
+                                                doc['type_of_news_message'] ==
+                                                        'Offer Help'
+                                                    ? TColors.forest
+                                                    : TColors.vermillion,
+                                            borderRadius:
+                                                BorderRadius.circular(15),
                                           ),
                                           child: Text(
                                             doc['type_of_news_message'],
@@ -385,14 +547,18 @@ class CommunityMainPageScreen extends StatelessWidget {
                                           ),
                                         );
 
-                                        // Author Access Checker - Type Update 
-                                        if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                        // Author Access Checker - Type Update
+                                        if (postedUserId ==
+                                            AuthenticatorRepository
+                                                .instance.authUser?.uid) {
                                           typeTag = InkWell(
-                                            borderRadius: BorderRadius.circular(15),
+                                            borderRadius:
+                                                BorderRadius.circular(15),
                                             onTap: () => _showTypeUpdateDialog(
                                               context,
                                               newsId,
-                                              doc['type_of_news_message'] ?? 'Offer Help',
+                                              doc['type_of_news_message'] ??
+                                                  'Offer Help',
                                             ),
                                             child: typeTag,
                                           );
@@ -400,10 +566,15 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                         // Status Tag - Tappable
                                         Widget statusTag = Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
                                           decoration: BoxDecoration(
-                                            color: doc['news_status'] == 'Available' ? TColors.teal : TColors.amber,
-                                            borderRadius: BorderRadius.circular(15),
+                                            color: doc['news_status'] ==
+                                                    'Available'
+                                                ? TColors.teal
+                                                : TColors.amber,
+                                            borderRadius:
+                                                BorderRadius.circular(15),
                                           ),
                                           child: Text(
                                             doc['news_status'],
@@ -415,11 +586,15 @@ class CommunityMainPageScreen extends StatelessWidget {
                                           ),
                                         );
 
-                                        // Author Access Checker - Status Update 
-                                        if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                        // Author Access Checker - Status Update
+                                        if (postedUserId ==
+                                            AuthenticatorRepository
+                                                .instance.authUser?.uid) {
                                           statusTag = InkWell(
-                                            borderRadius: BorderRadius.circular(15),
-                                            onTap: () => _showStatusUpdateDialog(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            onTap: () =>
+                                                _showStatusUpdateDialog(
                                               context,
                                               newsId,
                                               doc['news_status'] ?? 'Available',
@@ -430,32 +605,41 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                         return Dismissible(
                                           key: Key(newsId),
-                                          direction: DismissDirection.endToStart,
+                                          direction:
+                                              DismissDirection.endToStart,
                                           confirmDismiss: (direction) async {
                                             return await showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
-                                                  backgroundColor: TColors.cream,
+                                                  backgroundColor:
+                                                      TColors.cream,
                                                   title: Text('Delete Message'),
-                                                  content: Text('Are you sure you want to delete this message?'),
+                                                  content: Text(
+                                                      'Are you sure you want to delete this message?'),
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () {
-                                                        Navigator.of(context).pop(false); // Cancel deletion
+                                                        Navigator.of(context).pop(
+                                                            false); // Cancel deletion
                                                       },
                                                       child: Text(
                                                         "Cancel",
-                                                        style: TextStyle(color: TColors.textDark),
+                                                        style: TextStyle(
+                                                            color: TColors
+                                                                .textDark),
                                                       ),
                                                     ),
                                                     TextButton(
                                                       onPressed: () {
-                                                        Navigator.of(context).pop(true); // Confirm deletion
+                                                        Navigator.of(context).pop(
+                                                            true); // Confirm deletion
                                                       },
                                                       child: Text(
                                                         "Delete",
-                                                        style: TextStyle(color: TColors.amber),
+                                                        style: TextStyle(
+                                                            color:
+                                                                TColors.amber),
                                                       ),
                                                     ),
                                                   ],
@@ -464,44 +648,60 @@ class CommunityMainPageScreen extends StatelessWidget {
                                             );
                                           },
                                           onDismissed: (direction) async {
-                                            if (postedUserId == AuthenticatorRepository.instance.authUser?.uid) {
+                                            if (postedUserId ==
+                                                AuthenticatorRepository
+                                                    .instance.authUser?.uid) {
                                               await FirebaseFirestore.instance
                                                   .collection('community_news')
                                                   .doc(newsId)
                                                   .delete();
-                                              Get.snackbar('Success', 'Message deleted successfully.',
-                                                  backgroundColor: Colors.green, colorText: Colors.white);
+                                              Get.snackbar('Success',
+                                                  'Message deleted successfully.',
+                                                  backgroundColor: Colors.green,
+                                                  colorText: Colors.white);
                                             } else {
-                                              Get.snackbar('Error', 'You can only delete your own messages.',
-                                                  backgroundColor: Colors.red, colorText: Colors.white);
+                                              Get.snackbar('Error',
+                                                  'You can only delete your own messages.',
+                                                  backgroundColor: Colors.red,
+                                                  colorText: Colors.white);
                                             }
                                           },
                                           // News Card Template
                                           background: Container(
                                             decoration: BoxDecoration(
                                               color: Colors.red,
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                             ),
-                                            padding: EdgeInsets.symmetric(horizontal: 20),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20),
                                             alignment: Alignment.centerRight,
-                                            child: Icon(Icons.delete, color: Colors.white),
+                                            child: Icon(Icons.delete,
+                                                color: Colors.white),
                                           ),
                                           child: Container(
                                             width: double.infinity,
-                                            constraints: BoxConstraints(minHeight: 100),
-                                            margin: const EdgeInsets.only(bottom: 20),
+                                            constraints:
+                                                BoxConstraints(minHeight: 100),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 20),
                                             decoration: BoxDecoration(
                                               color: TColors.cream,
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                               border: Border.all(
-                                                color: userRole == 'Support Organisation'
+                                                color: userRole ==
+                                                        'Support Organisation'
                                                     ? TColors.teal
-                                                    : (userRole == 'Authority' ? TColors.stark_blue : Colors.transparent),
+                                                    : (userRole == 'Authority'
+                                                        ? TColors.stark_blue
+                                                        : Colors.transparent),
                                                 width: 4.0,
                                               ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black.withOpacity(0.07),
+                                                  color: Colors.black
+                                                      .withOpacity(0.07),
                                                   spreadRadius: 2,
                                                   blurRadius: 10,
                                                   offset: Offset(0, 8),
@@ -509,9 +709,11 @@ class CommunityMainPageScreen extends StatelessWidget {
                                               ],
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(20.0),
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   // News Message
                                                   Text(
@@ -519,32 +721,50 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 18,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                     softWrap: true,
                                                   ),
                                                   SizedBox(height: 10),
-                                                  
+
                                                   // Display Attached Image (if exists)
-                                                  if ((doc.data() as Map<String, dynamic>).containsKey('attached_image') &&
-                                                      doc['attached_image'] != null &&
-                                                      doc['attached_image'].toString().isNotEmpty)
+                                                  if ((doc.data() as Map<String,
+                                                              dynamic>)
+                                                          .containsKey(
+                                                              'attached_image') &&
+                                                      doc['attached_image'] !=
+                                                          null &&
+                                                      doc['attached_image']
+                                                          .toString()
+                                                          .isNotEmpty)
                                                     Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 0.0),
                                                       child: ClipRRect(
-                                                        borderRadius: BorderRadius.circular(10), // Optional: Rounded corners
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                10), // Optional: Rounded corners
                                                         child: Image.network(
                                                           doc['attached_image'],
                                                           fit: BoxFit.cover,
-                                                          width: double.infinity,
-                                                          errorBuilder: (context, error, stackTrace) {
+                                                          width:
+                                                              double.infinity,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
                                                             return Center(
                                                               child: Text(
                                                                 'Image failed to load',
-                                                                style: TextStyle(
-                                                                  color: Colors.red,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .red,
                                                                   fontSize: 14,
-                                                                  fontWeight: FontWeight.bold,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                             );
@@ -557,12 +777,17 @@ class CommunityMainPageScreen extends StatelessWidget {
 
                                                   // Username/Anonymity Information
                                                   Text(
-                                                    anonymityStatus == 'Anonymous'
+                                                    anonymityStatus ==
+                                                            'Anonymous'
                                                         ? 'Posted by: Anonymous'
                                                         : (() {
-                                                            if (userRole == 'Support Organisation') {
+                                                            if (userRole ==
+                                                                'Support Organisation') {
                                                               // Fetch organisation name
-                                                              final organisationName = userData?['Organisation Name'] ?? 'Unknown Organisation';
+                                                              final organisationName =
+                                                                  userData?[
+                                                                          'Organisation Name'] ??
+                                                                      'Unknown Organisation';
                                                               return 'Posted by: $organisationName';
                                                             } else {
                                                               return 'Posted by: $username';
@@ -571,35 +796,58 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.normal,
-                                                      fontStyle: FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontStyle:
+                                                          FontStyle.italic,
                                                     ),
                                                   ),
                                                   SizedBox(height: 20),
 
                                                   // Bottom Action Row
                                                   Align(
-                                                    alignment: Alignment.bottomCenter,
+                                                    alignment:
+                                                        Alignment.bottomCenter,
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
                                                         // Telegram Icon (Only if include_telegram is 'Yes')
-                                                        if ((doc.data() as Map<String, dynamic>).containsKey('include_telegram') &&
-                                                            doc['include_telegram'] == 'Yes')
+                                                        if ((doc.data() as Map<
+                                                                    String,
+                                                                    dynamic>)
+                                                                .containsKey(
+                                                                    'include_telegram') &&
+                                                            doc['include_telegram'] ==
+                                                                'Yes')
                                                           GestureDetector(
                                                             onTap: () async {
-                                                              if (userData != null) {
+                                                              if (userData !=
+                                                                  null) {
                                                                 // Check for Telegram Handle across all collections
-                                                                final telegramHandle = userData['telegramHandle'] ?? 
-                                                                                      userData['Telegram Handle']; // Handles different key naming conventions
-                                                                if (telegramHandle != null && telegramHandle.toString().isNotEmpty) {
-                                                                  final url = "https://t.me/$telegramHandle";
-                                                                  await launchUrl(Uri.parse(url));
+                                                                final telegramHandle =
+                                                                    userData[
+                                                                            'telegramHandle'] ??
+                                                                        userData[
+                                                                            'Telegram Handle']; // Handles different key naming conventions
+                                                                if (telegramHandle !=
+                                                                        null &&
+                                                                    telegramHandle
+                                                                        .toString()
+                                                                        .isNotEmpty) {
+                                                                  final url =
+                                                                      "https://t.me/$telegramHandle";
+                                                                  await launchUrl(
+                                                                      Uri.parse(
+                                                                          url));
                                                                 } else {
                                                                   Get.snackbar(
                                                                     'Error',
                                                                     'Telegram handle not found',
-                                                                    snackPosition: SnackPosition.BOTTOM,
+                                                                    snackPosition:
+                                                                        SnackPosition
+                                                                            .BOTTOM,
                                                                   );
                                                                 }
                                                               }
@@ -635,26 +883,41 @@ class CommunityMainPageScreen extends StatelessWidget {
                                                             //     ),
                                                             //   ),
 
-                                                            const SizedBox(width: 5), // Spacing between tags
+                                                            const SizedBox(
+                                                                width:
+                                                                    5), // Spacing between tags
 
                                                             // Post Type Tag (Offer Help/Need Help)
                                                             typeTag,
 
-                                                            const SizedBox(width: 5), // Spacing between tags
+                                                            const SizedBox(
+                                                                width:
+                                                                    5), // Spacing between tags
 
                                                             // Status Tag
                                                             statusTag,
 
                                                             // Edit Button
-                                                            if (postedUserId == AuthenticatorRepository.instance.authUser?.uid)
-                                                            IconButton(
-                                                              icon: Icon(Icons.edit, size: 16, color: Colors.black54),
-                                                              onPressed: () => _showEditMessageModal(
-                                                                context,
-                                                                newsId,
-                                                                doc.data() as Map<String, dynamic>,
+                                                            if (postedUserId ==
+                                                                AuthenticatorRepository
+                                                                    .instance
+                                                                    .authUser
+                                                                    ?.uid)
+                                                              IconButton(
+                                                                icon: Icon(
+                                                                    Icons.edit,
+                                                                    size: 16,
+                                                                    color: Colors
+                                                                        .black54),
+                                                                onPressed: () =>
+                                                                    _showEditMessageModal(
+                                                                  context,
+                                                                  newsId,
+                                                                  doc.data() as Map<
+                                                                      String,
+                                                                      dynamic>,
+                                                                ),
                                                               ),
-                                                            ),
                                                           ],
                                                         ),
                                                       ],
@@ -674,7 +937,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                             TextButton(
                               onPressed: () {
                                 setState(() {
-                                  isExpanded = !isExpanded; // Toggle expand/collapse
+                                  isExpanded =
+                                      !isExpanded; // Toggle expand/collapse
                                 });
                               },
                               child: Text(
@@ -701,7 +965,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                   onPressed: () => _showPostMessageModal(context),
                   style: TextButton.styleFrom(
                     backgroundColor: TColors.mustard,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: BorderSide(color: Colors.black, width: 2.0),
@@ -730,7 +995,7 @@ class CommunityMainPageScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   void _showPostMessageModal(BuildContext context) {
     final TextEditingController messageController = TextEditingController();
     String selectedType = 'Offer Help';
@@ -793,8 +1058,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                       ),
                       value: selectedType,
                       items: [
-                        DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
-                        DropdownMenuItem(value: 'Need Help', child: Text('Need Help')),
+                        DropdownMenuItem(
+                            value: 'Offer Help', child: Text('Offer Help')),
+                        DropdownMenuItem(
+                            value: 'Need Help', child: Text('Need Help')),
                       ],
                       onChanged: (String? newValue) {
                         selectedType = newValue!;
@@ -810,8 +1077,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                       value: selectedDuration,
                       items: [
                         DropdownMenuItem(value: '1 Day', child: Text('1 Day')),
-                        DropdownMenuItem(value: '3 Days', child: Text('3 Days')),
-                        DropdownMenuItem(value: '1 Week', child: Text('1 Week')),
+                        DropdownMenuItem(
+                            value: '3 Days', child: Text('3 Days')),
+                        DropdownMenuItem(
+                            value: '1 Week', child: Text('1 Week')),
                       ],
                       onChanged: (String? newValue) {
                         selectedDuration = newValue!;
@@ -826,8 +1095,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                       ),
                       value: anonymityStatus,
                       items: [
-                        DropdownMenuItem(value: 'Public', child: Text('Public')),
-                        DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
+                        DropdownMenuItem(
+                            value: 'Public', child: Text('Public')),
+                        DropdownMenuItem(
+                            value: 'Anonymous', child: Text('Anonymous')),
                       ],
                       onChanged: (String? newValue) {
                         anonymityStatus = newValue!;
@@ -868,12 +1139,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          attachedImageUrl != null ? 'Image Selected' : 'Attach an Image',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          attachedImageUrl != null
+                              ? 'Image Selected'
+                              : 'Attach an Image',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () async {
-                            final result = await FilePicker.platform.pickFiles(type: FileType.image);
+                            final result = await FilePicker.platform
+                                .pickFiles(type: FileType.image);
                             if (result != null && result.files.isNotEmpty) {
                               final path = result.files.first.path;
                               if (path == null || path.isEmpty) {
@@ -888,7 +1163,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                               }
 
                               try {
-                                final imageUrl = await _uploadImageToFirebase(path);
+                                final imageUrl =
+                                    await _uploadImageToFirebase(path);
                                 setState(() {
                                   attachedImageUrl = imageUrl;
                                 });
@@ -913,7 +1189,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                           },
                           child: Text(
                             attachedImageUrl != null ? 'Change' : 'Attach',
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: TColors.forest),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: TColors.forest),
                           ),
                         ),
                       ],
@@ -933,7 +1212,9 @@ class CommunityMainPageScreen extends StatelessWidget {
                             final message = messageController.text;
 
                             // Call the backup method for sentiment detection
-                            final isSensitive = await isMessageSensitiveWithDartSentiment(message);
+                            final isSensitive =
+                                await isMessageSensitiveWithDartSentiment(
+                                    message);
 
                             if (isSensitive) {
                               Get.snackbar(
@@ -956,14 +1237,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                             if (userDoc.exists) {
                               userRole = userDoc.data()?['Role'];
                             } else {
-                              final authorityDoc = await FirebaseFirestore.instance
+                              final authorityDoc = await FirebaseFirestore
+                                  .instance
                                   .collection('Authority')
                                   .doc(userId)
                                   .get();
                               if (authorityDoc.exists) {
                                 userRole = 'Authority';
                               } else {
-                                final supportOrgDoc = await FirebaseFirestore.instance
+                                final supportOrgDoc = await FirebaseFirestore
+                                    .instance
                                     .collection('SupportOrganisation')
                                     .doc(userId)
                                     .get();
@@ -978,7 +1261,9 @@ class CommunityMainPageScreen extends StatelessWidget {
                             }
 
                             // Add the news message to the community_news collection
-                            await FirebaseFirestore.instance.collection('community_news').add({
+                            await FirebaseFirestore.instance
+                                .collection('community_news')
+                                .add({
                               'news_message': messageController.text,
                               'type_of_news_message': selectedType,
                               'news_duration': selectedDuration,
@@ -991,13 +1276,16 @@ class CommunityMainPageScreen extends StatelessWidget {
                               'news_status': 'Available',
                             });
 
-                            Get.snackbar('Success', 'Your message has been posted!',
-                                backgroundColor: Colors.green, colorText: Colors.white);
+                            Get.snackbar(
+                                'Success', 'Your message has been posted!',
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white);
 
                             Navigator.pop(context);
                           } catch (e) {
                             Get.snackbar('Error', 'Failed to post the message',
-                                backgroundColor: Colors.red, colorText: Colors.white);
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white);
                           }
                         },
                         child: Text(
@@ -1031,7 +1319,9 @@ class CommunityMainPageScreen extends StatelessWidget {
 
       // Generate unique file name
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final firebaseStorageRef = FirebaseStorage.instance.ref().child('community_news_images/$fileName');
+      final firebaseStorageRef = FirebaseStorage.instance
+          .ref()
+          .child('community_news_images/$fileName');
 
       // Upload file to Firebase Storage
       final uploadTask = firebaseStorageRef.putFile(file);
@@ -1051,13 +1341,17 @@ class CommunityMainPageScreen extends StatelessWidget {
   Future<DocumentSnapshot<Object?>> _fetchUserRole(String userId) async {
     try {
       // Check "Users" collection
-      DocumentSnapshot<Object?> userDoc =
-          await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+      DocumentSnapshot<Object?> userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
       if (userDoc.exists) return userDoc;
 
       // Check "Authority" collection
-      DocumentSnapshot<Object?> authorityDoc =
-          await FirebaseFirestore.instance.collection('Authority').doc(userId).get();
+      DocumentSnapshot<Object?> authorityDoc = await FirebaseFirestore.instance
+          .collection('Authority')
+          .doc(userId)
+          .get();
       if (authorityDoc.exists) return authorityDoc;
 
       // Check "SupportOrganisation" collection
@@ -1102,7 +1396,7 @@ class CommunityMainPageScreen extends StatelessWidget {
 
   //       // Extract the 'flagged' field
   //       final flagged = result['results'][0]['flagged'];
-        
+
   //       // Log the response for debugging
   //       print('Moderation API Response: $result');
 
@@ -1153,17 +1447,20 @@ class CommunityMainPageScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            title: Text('Change Post Type', style: TextStyle(color: TColors.textDark)),
+            title: Text('Change Post Type',
+                style: TextStyle(color: TColors.textDark)),
             content: DropdownButtonFormField<String>(
               value: selectedType,
               decoration: InputDecoration(
                 fillColor: Colors.white,
                 filled: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               items: [
-                DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
-                DropdownMenuItem(value: 'Need Help',  child: Text('Need Help')),
+                DropdownMenuItem(
+                    value: 'Offer Help', child: Text('Offer Help')),
+                DropdownMenuItem(value: 'Need Help', child: Text('Need Help')),
               ],
               onChanged: (val) {
                 if (val != null) setState(() => selectedType = val);
@@ -1272,10 +1569,11 @@ class CommunityMainPageScreen extends StatelessWidget {
     Map<String, dynamic> data,
   ) {
     final messageController = TextEditingController(text: data['news_message']);
-    String selectedType     = data['type_of_news_message'] as String? ?? 'Offer Help';
-    String selectedDuration = data['news_duration']            as String? ?? '1 Day';
-    String anonymityStatus  = data['anonymity_status']         as String? ?? 'Public';
-    String includeTelegram  = data['include_telegram']         as String? ?? 'Yes';
+    String selectedType =
+        data['type_of_news_message'] as String? ?? 'Offer Help';
+    String selectedDuration = data['news_duration'] as String? ?? '1 Day';
+    String anonymityStatus = data['anonymity_status'] as String? ?? 'Public';
+    String includeTelegram = data['include_telegram'] as String? ?? 'Yes';
     String? attachedImageUrl = data['attached_image'];
 
     showDialog(
@@ -1296,7 +1594,6 @@ class CommunityMainPageScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
@@ -1319,7 +1616,6 @@ class CommunityMainPageScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         // Message field
                         Text('Message', style: TextStyle(fontSize: 18)),
                         SizedBox(height: 10),
@@ -1347,8 +1643,11 @@ class CommunityMainPageScreen extends StatelessWidget {
                               border: OutlineInputBorder(),
                             ),
                             items: [
-                              DropdownMenuItem(value: 'Offer Help', child: Text('Offer Help')),
-                              DropdownMenuItem(value: 'Need Help',  child: Text('Need Help')),
+                              DropdownMenuItem(
+                                  value: 'Offer Help',
+                                  child: Text('Offer Help')),
+                              DropdownMenuItem(
+                                  value: 'Need Help', child: Text('Need Help')),
                             ],
                             onChanged: (val) => selectedType = val!,
                           ),
@@ -1367,9 +1666,12 @@ class CommunityMainPageScreen extends StatelessWidget {
                               border: OutlineInputBorder(),
                             ),
                             items: [
-                              DropdownMenuItem(value: '1 Day',  child: Text('1 Day')),
-                              DropdownMenuItem(value: '3 Days', child: Text('3 Days')),
-                              DropdownMenuItem(value: '1 Week', child: Text('1 Week')),
+                              DropdownMenuItem(
+                                  value: '1 Day', child: Text('1 Day')),
+                              DropdownMenuItem(
+                                  value: '3 Days', child: Text('3 Days')),
+                              DropdownMenuItem(
+                                  value: '1 Week', child: Text('1 Week')),
                             ],
                             onChanged: (val) => selectedDuration = val!,
                           ),
@@ -1388,8 +1690,10 @@ class CommunityMainPageScreen extends StatelessWidget {
                               border: OutlineInputBorder(),
                             ),
                             items: [
-                              DropdownMenuItem(value: 'Public',    child: Text('Public')),
-                              DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
+                              DropdownMenuItem(
+                                  value: 'Public', child: Text('Public')),
+                              DropdownMenuItem(
+                                  value: 'Anonymous', child: Text('Anonymous')),
                             ],
                             onChanged: (val) => anonymityStatus = val!,
                           ),
@@ -1397,7 +1701,8 @@ class CommunityMainPageScreen extends StatelessWidget {
                         SizedBox(height: 20),
 
                         // Telegram dropdown
-                        Text('Include Telegram?', style: TextStyle(fontSize: 18)),
+                        Text('Include Telegram?',
+                            style: TextStyle(fontSize: 18)),
                         SizedBox(height: 10),
                         Container(
                           child: DropdownButtonFormField<String>(
@@ -1408,8 +1713,9 @@ class CommunityMainPageScreen extends StatelessWidget {
                               border: OutlineInputBorder(),
                             ),
                             items: [
-                              DropdownMenuItem(value: 'Yes', child: Text('Yes')),
-                              DropdownMenuItem(value: 'No',  child: Text('No')),
+                              DropdownMenuItem(
+                                  value: 'Yes', child: Text('Yes')),
+                              DropdownMenuItem(value: 'No', child: Text('No')),
                             ],
                             onChanged: (val) => includeTelegram = val!,
                           ),
@@ -1465,7 +1771,6 @@ class CommunityMainPageScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
