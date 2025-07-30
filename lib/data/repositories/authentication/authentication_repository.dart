@@ -11,10 +11,10 @@ import 'package:fyp_umakan/features/authentication/controllers/homepage/recommen
 import 'package:fyp_umakan/features/authentication/models/user_model.dart';
 import 'package:fyp_umakan/features/authentication/screens/homepage/homepage.dart';
 import 'package:fyp_umakan/features/authentication/screens/login/login.dart';
-import 'package:fyp_umakan/features/authentication/screens/onboarding/onboarding.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/register.dart';
 import 'package:fyp_umakan/features/authentication/screens/register/verify_email.dart';
 import 'package:fyp_umakan/features/authority/screens/authority_home_page.dart';
+import 'package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/update_profile_controller.dart';
 import 'package:fyp_umakan/features/student_management/controllers/user_controller.dart';
 import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
@@ -108,7 +108,7 @@ class AuthenticatorRepository extends GetxController {
       bool isFirstTime = deviceStorage.read('isFirstTime') ?? true;
 
       if (isFirstTime) {
-        Get.offAll(() => const OnBoardingScreen());
+        Get.offAll(() => const LoginScreen());
         deviceStorage.write('isFirstTime', false);
       } else {
         Get.offAll(() => const LoginScreen());
