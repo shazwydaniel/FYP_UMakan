@@ -97,7 +97,7 @@ Future<void> main() async {
 
   runApp(const App());
 
-  // Schedule the midnight reset
+  /* Schedule the midnight reset
   ever(userController.user, (user) {
     print("User state changed: ${user.toJson()}");
     if (user.id.isNotEmpty && user.role == 'Student') {
@@ -107,7 +107,7 @@ Future<void> main() async {
     } else {
       print('MealStates NOT Updated from Main Dart');
     }
-  });
+  });*/
 
   // Wait until the user data is loaded
   ever(userController.user, (user) {
@@ -118,7 +118,7 @@ Future<void> main() async {
       _isMealCheckScheduled = true; // Set the flag to prevent re-scheduling
       print("User ID for Notification: ${user.id}");
       print("User Role: ${user.role}");
-      scheduleMealCheck(user.id); // Schedule meal notifications for students
+      scheduleMealCheck(user.id);
     }
   });
 }
