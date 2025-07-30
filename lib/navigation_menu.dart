@@ -59,8 +59,8 @@ class NavigationMenu extends StatelessWidget {
                 label: 'Community',
               ),
               NavigationDestination(
-                icon: Icon(Iconsax.home, color: TColors.cream),
-                selectedIcon: Icon(Iconsax.home, color: Colors.black),
+                icon: Icon(Iconsax.reserve, color: TColors.cream),
+                selectedIcon: Icon(Iconsax.reserve, color: Colors.black),
                 label: 'Cafe',
               ),
               NavigationDestination(
