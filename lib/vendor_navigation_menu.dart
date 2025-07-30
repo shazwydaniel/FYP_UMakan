@@ -7,7 +7,6 @@ import 'package:fyp_umakan/features/vendor/controller/vendor_controller.dart';
 import 'package:fyp_umakan/features/vendor/screens/advertisement/vendor_adverts.dart';
 import 'package:fyp_umakan/features/vendor/screens/profile/vendor_profile.dart';
 import 'package:fyp_umakan/features/vendor/screens/reviews/vendor_reviews.dart';
-
 import 'package:fyp_umakan/features/vendor/screens/vendor_register.dart';
 import 'package:fyp_umakan/features/vendor/screens/home/vendors_home.dart';
 import 'package:fyp_umakan/utils/constants/colors.dart';
@@ -39,13 +38,18 @@ class VendorNavigationMenu extends StatelessWidget {
               : Colors.white.withOpacity(0.1),
           destinations: const [
             NavigationDestination(
-                icon: Icon(Iconsax.add, color: TColors.cream), label: 'Items'),
+                icon: Icon(Iconsax.add, color: TColors.cream), label: 'Home'),
+            NavigationDestination(
+              icon: Icon(Iconsax.people, color: TColors.cream),
+              selectedIcon: Icon(Iconsax.people, color: Colors.black),
+              label: 'Community',
+            ),
             NavigationDestination(
                 icon: Icon(Iconsax.star, color: TColors.cream),
-                label: 'Reviews'),
+                label: 'Review'),
             NavigationDestination(
                 icon: Icon(Iconsax.note_214, color: TColors.cream),
-                label: 'Advertisment'),
+                label: 'Ads'),
             NavigationDestination(
                 icon: Icon(Iconsax.user, color: TColors.cream),
                 label: 'Profile'),
@@ -62,6 +66,7 @@ class VendorNavigationController extends GetxController {
 
   final screens = [
     VendorsHome(),
+    CommunityMainPageScreen(),
     ReviewsPage(),
     VendorAdsPage(),
     VendorProfilePageScreen(),
