@@ -19,11 +19,13 @@ class NavigationMenu extends StatelessWidget {
     final darkMode = THelperFunctions.isDarkMode(context);
 
     final indicatorColors = [
-      TColors.cobalt, // Home
-      TColors.mustard, // Discover
-      TColors.amber, // Community
+      TColors.cobalt, // Community
+      TColors.mustard, // Cafe
+      Colors.grey, // Track (disabled)
       TColors.bubbleOrange, // Profile
     ];
+
+    const disabledIndex = 2; // Track
 
     return Scaffold(
       bottomNavigationBar: Obx(
@@ -49,8 +51,20 @@ class NavigationMenu extends StatelessWidget {
             height: 80,
             elevation: 0,
             selectedIndex: controller.selectedIndex.value,
-            onDestinationSelected: (index) =>
-                controller.selectedIndex.value = index,
+            onDestinationSelected: (index) {
+              if (index == disabledIndex) {
+                Get.snackbar(
+                  'Track Feature Unavailable',
+                  'The Track feature is temporarily disabled.',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.grey.shade800,
+                  colorText: Colors.white,
+                  margin: const EdgeInsets.all(12),
+                );
+                return;
+              }
+              controller.selectedIndex.value = index;
+            },
             backgroundColor: darkMode ? TColors.teal : TColors.teal,
             destinations: [
               NavigationDestination(
@@ -63,11 +77,42 @@ class NavigationMenu extends StatelessWidget {
                 selectedIcon: Icon(Iconsax.reserve, color: Colors.black),
                 label: 'Cafe',
               ),
+
+              // Disabled Track destination (centered label + red wrench badge)
               NavigationDestination(
-                icon: Icon(Iconsax.calculator, color: TColors.cream),
-                selectedIcon: Icon(Iconsax.calculator, color: Colors.black),
+                icon: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(Iconsax.calculator, color: TColors.cream),
+                    Positioned(
+                      right: -2,
+                      top: 2,
+                      child: Icon(
+                        Icons.build_rounded,
+                        size: 14,
+                        color: TColors.amber,
+                      ),
+                    ),
+                  ],
+                ),
+                selectedIcon: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(Iconsax.calculator, color: Colors.black),
+                    Positioned(
+                      right: -2,
+                      top: 2,
+                      child: Icon(
+                        Icons.build_rounded,
+                        size: 14,
+                        color: TColors.amber,
+                      ),
+                    ),
+                  ],
+                ),
                 label: 'Track',
               ),
+
               NavigationDestination(
                 icon: Icon(Iconsax.user_tag, color: TColors.cream),
                 selectedIcon: Icon(Iconsax.user_tag, color: Colors.black),
@@ -88,7 +133,7 @@ class NavigationController extends GetxController {
   final screens = [
     const CommunityMainPageScreen(),
     const DiscoverPageScreen(),
-    const HomePageScreen(),
+    const HomePageScreen(), // Track (disabled)
     const StudentProfilePageScreen(),
   ];
 }
