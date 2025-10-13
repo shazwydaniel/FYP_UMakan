@@ -984,98 +984,128 @@ class StudentProfilePageScreen extends StatelessWidget {
               ),
             ),
 
-            // Help/Feedback Button
+            // Feedback & Surveys (Label)
             Padding(
-              padding: const EdgeInsets.only(top: 40, bottom: 10),
-              child: Center(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FeedbackPage(),
-                      ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.black, width: 2.0),
-                    backgroundColor: TColors.teal,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4,
+                    height: 40,
+                    color: TColors.mustard,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Feedback & Surveys',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.white : Colors.white,
                     ),
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.feedback,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Help/Feedback",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
             ),
 
+            // Feedback & Survey Cards
             Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Center(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TesterQuestionsPage(),
-                      ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.black, width: 2.0),
-                    backgroundColor: TColors.teal,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 15),
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
+              child: Column(
+                children: [
+                  // Help / Feedback Card
+                  Card(
+                    color: TColors.cream,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.feedback,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Tester Feedback",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    elevation: 4,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                    ],
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => FeedbackPage()),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.feedback, color: Colors.black),
+                              SizedBox(width: 12),
+                              Text(
+                                'Help / Feedback',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Icon(Icons.chevron_right, color: Colors.black),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+
+                  // Tester Feedback Card
+                  Card(
+                    color: TColors.cream,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 4,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => TesterQuestionsPage()),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.assignment, color: Colors.black),
+                              SizedBox(width: 12),
+                              Text(
+                                'Test Survey',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Icon(Icons.chevron_right, color: Colors.black),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
             // Logout Button
             Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 40),
+              padding: const EdgeInsets.only(top: 25, bottom: 40),
               child: Center(
                 child: OutlinedButton(
                   onPressed: () {
