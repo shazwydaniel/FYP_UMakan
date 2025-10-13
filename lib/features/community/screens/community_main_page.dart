@@ -65,117 +65,6 @@ class CommunityMainPageScreen extends StatelessWidget {
               ),
             ),
 
-            // Bantuan Advertisements Section
-            FutureBuilder<List<Advertisement>>(
-              future: advertController.fetchBantuanAds(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error loading advertisements'));
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final bantuanAds = snapshot.data!;
-                  return Padding(
-                    padding:
-                        const EdgeInsets.only(left: 40, right: 40, top: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Section Title
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                                width: 4, height: 40, color: TColors.amber),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Community Assistance',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Cards
-                        ...bantuanAds.map((ad) {
-                          return Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.only(bottom: 16),
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: TColors.cream,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  ad.detail,
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                        255, 241, 185, 41), // yellow tag
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.store,
-                                          size: 16, color: Colors.black),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        '${ad.cafeName} (${ad.location})',
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'Valid from: ${ad.startDate != null ? "${ad.startDate!.day}-${ad.startDate!.month}-${ad.startDate!.year}" : "N/A"} '
-                                  'to ${ad.endDate != null ? "${ad.endDate!.day}-${ad.endDate!.month}-${ad.endDate!.year}" : "N/A"}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ],
-                    ),
-                  );
-                } else {
-                  return SizedBox.shrink(); // no ads
-                }
-              },
-            ),
-
             // Supporting Organisations (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
@@ -401,9 +290,123 @@ class CommunityMainPageScreen extends StatelessWidget {
               },
             ),
 
-            // Community News (Label)
+            // Community Assistance (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 4,
+                    height: 40,
+                    color: TColors.amber,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Community Assistance',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: dark ? Colors.white : Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Bantuan Advertisements Section
+            FutureBuilder<List<Advertisement>>(
+              future: advertController.fetchBantuanAds(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error loading advertisements'));
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  final bantuanAds = snapshot.data!;
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, top: 20),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: bantuanAds.map((ad) {
+                          return Container(
+                            width: 250, // give each card a fixed width
+                            margin: const EdgeInsets.only(right: 16),
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: TColors.cream,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ad.detail,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 241, 185, 41),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.store,
+                                          size: 16, color: Colors.black),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${ad.cafeName} (${ad.location})',
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Valid from: ${ad.startDate != null ? "${ad.startDate!.day}-${ad.startDate!.month}-${ad.startDate!.year}" : "N/A"} '
+                                  'to ${ad.endDate != null ? "${ad.endDate!.day}-${ad.endDate!.month}-${ad.endDate!.year}" : "N/A"}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+
+            // Community News (Label)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 30),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
