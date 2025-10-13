@@ -290,7 +290,7 @@ class CommunityMainPageScreen extends StatelessWidget {
               },
             ),
 
-            // Community Assistance (Label)
+            // Vendor News (Label)
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
               child: Row(
@@ -299,11 +299,11 @@ class CommunityMainPageScreen extends StatelessWidget {
                   Container(
                     width: 4,
                     height: 40,
-                    color: TColors.amber,
+                    color: TColors.bubbleOrange,
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Community Assistance',
+                    'Vendor News',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
@@ -314,7 +314,7 @@ class CommunityMainPageScreen extends StatelessWidget {
               ),
             ),
 
-            // Bantuan Advertisements Section
+            // Vendor News (Cards) Section
             FutureBuilder<List<Advertisement>>(
               future: advertController.fetchBantuanAds(),
               builder: (context, snapshot) {
@@ -325,7 +325,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                 } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   final bantuanAds = snapshot.data!;
                   return Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 8, top: 20),
+                    padding: const EdgeInsets.only(left: 40, right: 40, top: 20),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -361,8 +361,7 @@ class CommunityMainPageScreen extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
-                                    color:
-                                        const Color.fromARGB(255, 241, 185, 41),
+                                    color: const Color.fromARGB(255, 241, 185, 41),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Row(
