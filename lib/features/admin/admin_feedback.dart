@@ -5,49 +5,86 @@ import 'package:fyp_umakan/features/student_management/controllers/user_controll
 import 'package:fyp_umakan/utils/constants/colors.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:iconsax/iconsax.dart';
 
 class FeedbackPage extends StatelessWidget {
   final TextEditingController feedbackController = TextEditingController();
   final userController = Get.find<UserController>();
   final adminController = Get.put(AdminController());
 
+  FeedbackPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TColors.teal,
+      backgroundColor: TColors.forest,
       appBar: AppBar(
-        backgroundColor: TColors.teal,
+        backgroundColor: TColors.forest,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          "UMakan App Feedback",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            // Heading
+            const Text(
               "Write your feedback below:",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: feedbackController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: "Enter your feedback here...",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+            const SizedBox(height: 10),
+
+            // Input card
+            Card(
+              color: TColors.cream,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Colors.black12, width: 1),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: TextField(
+                  controller: feedbackController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: "Enter your feedback here...",
+                    hintStyle: const TextStyle(color: Colors.black54),
+                    filled: true,
+                    fillColor: TColors.cream,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.black26),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.black26),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                  ),
+                  style: const TextStyle(color: Colors.black),
                 ),
-                filled: true,
-                fillColor: TColors.cream,
               ),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 12),
+
+            // Submit button – match "Logout" style (outlined, rounded, icon on right)
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: OutlinedButton(
                 onPressed: () async {
                   if (feedbackController.text.isEmpty) {
                     Get.snackbar(
@@ -60,7 +97,6 @@ class FeedbackPage extends StatelessWidget {
                     return;
                   }
 
-                  // Submit feedback to Firebase
                   await FirebaseFirestore.instance
                       .collection("Admins")
                       .doc("feedbacks")
@@ -73,10 +109,8 @@ class FeedbackPage extends StatelessWidget {
                     "resolved": false,
                   });
 
-                  // Clear the text field
                   feedbackController.clear();
 
-                  // Show success message
                   Get.snackbar(
                     "Thank you!",
                     "Your feedback has been submitted successfully.",
@@ -85,37 +119,47 @@ class FeedbackPage extends StatelessWidget {
                     colorText: Colors.white,
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.teal,
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.black, width: 2.0),
+                  backgroundColor: TColors.vermillion,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  side: BorderSide(
-                    color: TColors.cream, // Border color
-                    width: 2, // Border width
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: Text(
-                  "Submit Feedback",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: TColors.cream,
-                  ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Submit Feedback",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Iconsax.send_2, color: Colors.white, size: 20),
+                  ],
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
-            Text(
+
+            // List heading
+            const Text(
               "Your Feedbacks:",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 10),
+
+            // List of feedbacks
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -123,18 +167,19 @@ class FeedbackPage extends StatelessWidget {
                     .doc("feedbacks")
                     .collection("userFeedbacks")
                     .where("userId", isEqualTo: userController.user.value.id)
+                    .orderBy("timestamp", descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Text(
                         "No feedbacks submitted yet.",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: TColors.cream,
                         ),
@@ -144,102 +189,105 @@ class FeedbackPage extends StatelessWidget {
 
                   final feedbackDocs = snapshot.data!.docs;
 
-                  return ListView.builder(
+                  return ListView.separated(
                     itemCount: feedbackDocs.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final feedback = feedbackDocs[index];
-                      final feedbackText = feedback['feedback'];
+                      final feedbackText = feedback['feedback'] as String;
                       final feedbackId = feedback.id;
-                      final feedbackResolved = feedback['resolved'];
+                      final bool resolved = feedback['resolved'] == true;
+                      final ts = (feedback['timestamp'] as Timestamp).toDate();
 
                       return Card(
                         color: TColors.cream,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          title: Text(
-                            feedbackText,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 15, color: Colors.black),
-                          ),
-                          subtitle: Column(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: const BorderSide(color: Colors.black12, width: 1),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Top row: status pill + menu
+                              Row(
+                                children: [
+                                  _StatusPill(resolved: resolved),
+                                  const Spacer(),
+                                  PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert, color: Colors.black),
+                                    color: TColors.cream,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    itemBuilder: (context) => const [
+                                      PopupMenuItem<String>(
+                                        value: 'edit',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.edit, color: Colors.teal, size: 18), // use TColors.teal if it's const
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Edit',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.delete, color: Colors.red, size: 18),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                    onSelected: (value) async {
+                                      if (value == 'edit') {
+                                        _editFeedback(context, feedbackId, feedbackText);
+                                      } else if (value == 'delete') {
+                                        _deleteFeedback(context, feedbackId);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+
+                              // Feedback text
                               Text(
-                                "Submitted on: ${DateFormat('dd-MM-yyyy').format(DateTime.fromMillisecondsSinceEpoch((feedback['timestamp'] as Timestamp).millisecondsSinceEpoch))} at ${DateFormat('hh:mm a').format(DateTime.fromMillisecondsSinceEpoch((feedback['timestamp'] as Timestamp).millisecondsSinceEpoch))}",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: const Color.fromARGB(255, 91, 91, 91),
+                                feedbackText,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  height: 1.3,
                                 ),
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 10),
+
+                              // Timestamp
                               Text(
-                                "Status: ${feedback['resolved'] == true ? 'Resolved' : 'Unresolved'}",
-                                style: TextStyle(
+                                "Submitted on: ${DateFormat('dd-MM-yyyy, hh:mm a').format(ts)}",
+                                style: const TextStyle(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: feedback['resolved'] == true
-                                      ? Colors.green
-                                      : Colors
-                                          .red, // Green for Resolved, Red for Unresolved
+                                  color: Color.fromARGB(255, 91, 91, 91),
                                 ),
                               ),
                             ],
-                          ),
-                          trailing: PopupMenuButton<String>(
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: Colors.black, // Icon color
-                            ),
-                            color: TColors.cream, // Popup background color
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  10), // Rounded corners for the popup
-                            ),
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'edit',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.edit,
-                                        color: TColors.teal), // Icon for Edit
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Edit',
-                                      style: TextStyle(
-                                        color: Colors.black, // Text color
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.delete,
-                                        color: Colors.red), // Icon for Delete
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Delete',
-                                      style: TextStyle(
-                                        color: Colors.black, // Text color
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                            onSelected: (value) async {
-                              if (value == 'edit') {
-                                _editFeedback(
-                                    context, feedbackId, feedbackText);
-                              } else if (value == 'delete') {
-                                _deleteFeedback(context, feedbackId);
-                              }
-                            },
                           ),
                         ),
                       );
@@ -254,50 +302,39 @@ class FeedbackPage extends StatelessWidget {
     );
   }
 
-  // Updated delete function
+  // Delete
   void _deleteFeedback(BuildContext context, String feedbackId) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: TColors.cream, // Dialog background color
-        title: Text(
+        backgroundColor: TColors.cream,
+        title: const Text(
           "Confirm Delete",
-          style: TextStyle(
-            color: Colors.black, // Title text color
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        content: Text(
+        content: const Text(
           "Are you sure you want to delete this feedback?",
-          style: TextStyle(color: Colors.black), // Content text color
+          style: TextStyle(color: Colors.black),
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-            },
+            onPressed: () => Navigator.pop(context),
             style: TextButton.styleFrom(
-              foregroundColor: Colors.black, // Button text color
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
           ),
           ElevatedButton(
             onPressed: () async {
-              // Delete the feedback
               await FirebaseFirestore.instance
                   .collection("Admins")
                   .doc("feedbacks")
                   .collection("userFeedbacks")
                   .doc(feedbackId)
                   .delete();
-
-              Navigator.pop(context); // Close dialog
-
-              // Show success message
+              Navigator.pop(context);
               Get.snackbar(
                 "Deleted",
                 "Your feedback has been deleted.",
@@ -307,68 +344,63 @@ class FeedbackPage extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Button background color
-              foregroundColor: Colors.white, // Text color
-              side: BorderSide(
-                  color: Colors.black, // Border color of the button
-                  width: 2.0),
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.black, width: 2.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text("Delete"),
+            child: const Text("Delete"),
           ),
         ],
       ),
     );
   }
 
-  void _editFeedback(
-      BuildContext context, String feedbackId, String currentFeedback) {
+  // Edit
+  void _editFeedback(BuildContext context, String feedbackId, String currentFeedback) {
     final editController = TextEditingController(text: currentFeedback);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: TColors.cream, // Dialog background color
-        title: Text(
+        backgroundColor: TColors.cream,
+        title: const Text(
           "Edit Feedback",
-          style: TextStyle(
-            color: Colors.black, // Title text color
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         content: SizedBox(
-          width: 300, // Set the fixed width for the dialog
+          width: 320,
           child: TextField(
             controller: editController,
             maxLines: 5,
             decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
               hintText: "Update your feedback here...",
               filled: true,
-              fillColor: Colors.grey[200], // TextField background color
-              hintStyle: TextStyle(color: Colors.grey), // Hint text color
+              fillColor: Colors.white,
+              hintStyle: const TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black26),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.black),
+              ),
             ),
-            style: TextStyle(color: Colors.black), // Text color
+            style: const TextStyle(color: Colors.black),
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             style: TextButton.styleFrom(
-              foregroundColor: Colors.black, // Text color
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -404,16 +436,41 @@ class FeedbackPage extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: TColors.teal, // Button background color
-              foregroundColor: Colors.white, // Text color
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              backgroundColor: TColors.teal,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text("Update"),
+            child: const Text("Update"),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  final bool resolved;
+  const _StatusPill({required this.resolved});
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = resolved ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2);
+    final fg = resolved ? Colors.green.shade800 : Colors.red.shade800;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: fg, width: 1),
+      ),
+      child: Text(
+        resolved ? "Resolved" : "Unresolved",
+        style: TextStyle(
+          color: fg,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
       ),
     );
   }

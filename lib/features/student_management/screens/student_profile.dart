@@ -5,7 +5,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:fyp_umakan/data/repositories/authentication/authentication_repository.dart";
 import "package:fyp_umakan/features/admin/admin_feedback.dart";
-import "package:fyp_umakan/features/admin/admin_tester_feedback";
+import "package:fyp_umakan/features/admin/admin_tester_feedback.dart";
 import "package:fyp_umakan/features/foodjournal/controller/food_journal_controller.dart";
 import "package:fyp_umakan/features/student_management/controllers/user_controller.dart";
 import "package:fyp_umakan/features/student_management/screens/financial_details_edit.dart";
@@ -1042,7 +1042,7 @@ class StudentProfilePageScreen extends StatelessWidget {
                               Icon(Icons.feedback, color: Colors.black),
                               SizedBox(width: 12),
                               Text(
-                                'Help / Feedback',
+                                'Help / App Feedback',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
